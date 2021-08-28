@@ -1,0 +1,3 @@
+Dialog Simple Example
+
+Brings up a basic dialog sample for a LUA gadget.

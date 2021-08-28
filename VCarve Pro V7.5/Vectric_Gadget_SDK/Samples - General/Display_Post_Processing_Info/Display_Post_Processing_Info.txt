@@ -1,0 +1,41 @@
+Display Post Proccesing Info
+
+Copies post processor information to clipboard, example below:
+
+PostProccesor Used = ''
+PostProccesor Units = 
+
+JOB / FILE INFO
+
+   Job / File Name  = Unknown
+   JoB / File Path  = Unknown
+   Job / File Units = 
+   Job / File Notes = 
+
+MATERIAL - In Post Processor Units
+
+   Material Thickness  = 0.000mm
+   Material Length (X) = 0.000mm
+   Material Width (Y)  = 0.000mm
+   Material Limits     = (0.000 ,0.000 ,0.000) -> (0.000 ,0.000 ,0.000)
+
+ORIGIN - In Post Processor Units
+
+   Z Origin   = 
+   XY Origin  = 
+      Origin Offset  = 0.000, 0.000
+
+HOME POSITION and SAFE Z - In Post Processor Units
+
+   Home Position X  = 0.000mm
+   Home Position Y  = 0.000mm
+   Home Position Z  = 0.000mm
+   Safe Z = 0.000mm
+
+OUTPUT DATA
+
+   Post Processed File  = 
+   Post Processed Dir   = 
+   Post Processed Path  = 
+
+   Number of Toolpaths output to file  = 1

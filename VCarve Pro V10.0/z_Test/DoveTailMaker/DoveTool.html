@@ -1,0 +1,90 @@
+<html><head><title>Dovetail Toolpath Creator</title><style type="text/css">html{overflow:hidden}
+  .helpbutton{background-color:#E1E1E1;border:1px solid #999;border-right-color:#000;border-bottom-color:#000;border-top-color:#FFF;border-left-color:#FFF;padding:2px 12px;font-family:Arial,Helvetica,sans-serif;text-align:center;text-decoration:none;font-size:12px;margin:4px 2px;color:#000}.helpbuttonx{background-color:##E1E1E1;border:1px solid #999;font-family:Arial,Helvetica,sans-serif;text-align:center;text-decoration:none;display:inline-block;font-size:12px;margin:40px 20px;cursor:pointer;color:#000;padding:2px 12px}
+  .helpbutton:active{border-right-color:#FFF;border-bottom-color:#FFF;border-top-color:#000;border-left-color:#000}
+  .helpbutton:hover{border-right-color:#000;border-bottom-color:#000;border-top-color:#FFF;border-left-color:#FFF}
+  .LuaButton{font-weight:bold;font-family:Arial,Helvetica,sans-serif;font-size:12px}
+  .DirectoryPicker{font-weight:bold;font-family:Arial,Helvetica,sans-serif;font-size:12px}
+  .ToolPicker{font-weight:bold;text-align:center;font-family:Arial,Helvetica,sans-serif;  font-size:12px;text-align:center;width:50px}
+  .ToolNameLabel{font-family:Arial,Helvetica,sans-serif;font-weight:bolder;font-size:14px;text-align:left;color:#0000FF}
+  .FormButton{font-weight:bold;width:75px;font-family:Arial,Helvetica,sans-serif;font-size:12px;white-space:nowrap}
+  .h1-l{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:left;white-space:nowrap}
+  .h2-l{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:left}
+  .h1-r{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:right;white-space:nowrap}
+  .h1-rP{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:right; white-space:nowrap;padding-right:4px;padding-left:4px}
+  .h1-rPx{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:right; white-space:nowrap;padding-right:8px;padding-left:8px}
+  .alert{font-family:Arial,Helvetica,sans-serif;font-size:12px; font-weight:bold;color:#00F;text-align:center;white-space:nowrap}
+  .h1-c{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:center;white-space:nowrap}
+  .header1-c{font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;text-align:center;white-space:nowrap}
+  .header2-c{font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;text-align:center;white-space:nowrap}
+  body{background-color:#CCC;overflow:hidden;font-family:Arial,Helvetica,sans-serif;font-size:12px}</style></head><body>
+
+  <table width="100%" border="0" summary="Dovetail bit Tool Data">
+    <tr>
+      <td class="h1-rPx"><span class="h1-rP">Tool Brand</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.Brand" type="text" id="Dovetail.Brand">
+      </span></td>
+      <td class="h1-rPx"><span class="h1-rP">Mgf Part Number</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.PartNumber" type="text" id="Dovetail.PartNumber">
+      </span></td>
+    </tr>
+    <tr>
+      <td class="h1-rPx"><span class="h1-rP">Tool Type</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.ToolType" type="text" id="Dovetail.ToolType">
+      </span></td>
+      <td class="h1-rPx"><span class="h1-rP">Bit Angle</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.BitAngle" type="text" id="Dovetail.BitAngle">
+      </span></td>
+    </tr>
+    <tr>
+      <td class="h1-rPx"><span class="h1-rP">Base Dia</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.BitDia" type="text" id="Dovetail.BitDia">
+      </span></td>
+      <td class="h1-rPx"><span class="h1-rP">Cut Depth</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.CutDepth" type="text" id="Dovetail.CutDepth">
+      </span></td>
+    </tr>
+    <tr>
+      <td class="h1-rPx"><span class="h1-rP">Shank Dia</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.ShankeDia" type="text" id="Dovetail.ShankeDia">
+      </span></td>
+      <td class="h1-rPx"><span class="h1-rP">Flute Count</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.FluteCount" type="text" id="Dovetail.FluteCount">
+      </span></td>
+    </tr>
+    <tr>
+      <td class="h1-rPx"><span class="h1-rP">Overall Length </span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.BitLength" type="text" id="Dovetail.BitLength">
+      </span></td>
+      <td class="h1-rPx"><span class="h1-rP">RPM</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.RPM" type="text" id="Dovetail.RPM">
+      </span></td>
+    </tr>
+    <tr>
+      <td class="h1-rPx"><span class="h1-rP">Plunge Rate</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.PlungeRate" type="text" id="Dovetail.PlungeRate">
+      </span></td>
+      <td class="h1-rPx"><span class="h1-rP">Feed Rate</span></td>
+      <td><span class="h1-l">
+        <input name="Dovetail.FeedRate" type="text" id="Dovetail.FeedRate">
+      </span></td>
+    </tr>
+    <tr>
+      <td class="h1-rPx">Note</td>
+      <td colspan="3"><span class="h1-l">
+        <input name="Dovetail.MgfDiscription" type="text" id="Dovetail.MgfDiscription" size="70">
+      </span></td>
+    </tr>
+  </table>
+  <table width="550" border="0" id="ButtonTable">
+  <tr><td height="12" colspan="3" align="right" valign="middle" nowrap class="h2"><hr></td></tr><tr><td><strong> <a href="https://jimandi.com/SDKWiki/index.php?title=Easy_Dovetail_Maker-Page1" target="_blank" class="helpbutton">Help</a></strong></td><td class="FormButton"><span style="width: 15%"> <input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK"> </span></td><td class="FormButton"><span style="width: 20%"> <input id = "ButtonCancel" class = "FormButton" name = "ButtonCancel" type = "button" value = "Cancel"> </span></td></tr></table></body></html>

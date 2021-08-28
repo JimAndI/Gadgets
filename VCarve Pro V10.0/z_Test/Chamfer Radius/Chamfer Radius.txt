@@ -1,0 +1,5 @@
+Chamfer Radius Gadget
+
+Creates a toolpath for efficient cutting of radiused chamfers without a dedicated tool.
+
+Chamfer In & Out - is a modified version of the Chamfer In & Out gadget

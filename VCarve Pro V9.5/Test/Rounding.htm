@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Create Rounding Toolpath</title>
+<style type="text/css">
+html {
+overflow: auto;
+}
+</style>
+<style type="text/css">
+<!--
+
+body {
+	background-color: #F0F0F0;
+}
+.DirectoryPicker {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+.style1 {font-family: Arial, Helvetica, sans-serif}
+body,td,th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size:12px
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+}
+-->
+</style></head>
+
+<body>
+<table width="100%" border="0">
+   <tr>
+      <td colspan="3">
+         <table width="100%" border="0">
+            <tr>
+               <td><span class="DirectoryPicker">Create Rounding Toolpath</span></td>
+               <td width="20%" align="right" valign="top" style="color:#999999">Version <span id="GadgetVersion" color="#ff0000">0.0</span></td>
+            </tr>   
+         </table>
+      </td>   
+   </tr>
+   <tr>
+      <td colspan="3">
+         This gadget creates a toolpath to 'round' a square blank into a cylinder<br><br>
+         <b>NOTE:</b> When post-processing, if the output is generated with the "Z Zero Position On Cylinder" 
+         set to "Surface of Cylinder", the surface will be the surface of the FINISHED cylinder. For rounding 
+         operations "Center of Cylinder" is a much safer choice. 
+      </td>
+   </tr>
+   <tr>
+      <td colspan="3"><hr size="1" width="100%" /></td>
+   </tr> 
+
+   <tr>
+      <td colspan="3">
+         <table width="100%" border="0">
+            <tr>
+               <td colspan="3"width = "100%">
+                  <table width="100%" border="0">
+                     <tr>
+                        <td colspan="2">
+                        <strong>Blank Size and Shape</strong><br>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td  align="left" valign="center" >
+                           <input type="radio" name="BlankShapeOptionGroup" value="radio">
+                           <img src="SquareSize.png" width="60" height="54" align="middle">
+                           Size of square blank &nbsp;&nbsp;
+                           <input name="SquareSideLength" type="text" id="SquareSideLength" size="5" maxlength="8">
+                           &nbsp;<span id="Units10">units</span>
+                        </td>
+                        <td  align="left" >
+                        <input type="radio" name="BlankShapeOptionGroup" value="radio">
+                           <img src="RoundSize.png" width="60" height="54" align="middle">
+                           Diameter of round blank&nbsp;&nbsp;
+                           <input name="BlankDiameter" type="text" id="BlankDiameter" size="5" maxlength="8">
+                           &nbsp;<span id="Units11">units</span>
+                        </td>
+                     </tr>
+
+                     <tr>
+                        <td width="50%">&nbsp;</td>
+                        <td valign="top">&nbsp;</td>
+                     </tr>   
+                  </table> 
+                </td>
+            </tr> 
+            <tr>
+               <td colspan="3">
+                  <hr size="1" width="100%" />
+                  <strong><br>Tool: </strong> - Select tool to machine with, this also sets stepover and stepdown
+               </td>
+            </tr>
+            <tr>
+               <td colspan="3">
+                  <table width="100%" border="0">
+                     <tr>
+                        <td height="30" width="99%" align="left" class="ToolNameLabel" >&nbsp;&nbsp;
+                           <span id="ToolNameLabel"">Tool Name</span>
+                        </td>
+                        <td align="right" >
+                           <input type="button" name="ToolChooseButton"  id="ToolChooseButton" value="Select ..." CLASS="ToolPicker">
+                        </td>
+                     </tr>
+                     <tr>
+                        <td colspan="4">
+                           <b>Toolpath Name</b>&nbsp;&nbsp;&nbsp;&nbsp;<input name="ToolpathName" type="text" id="ToolpathName" size="30">
+                        </td>
+                     </tr>
+                  </table>
+               </td>
+            </tr>   
+         </table>      
+      </td>
+   </tr>  
+
+   <tr>
+      <td colspan="3"><hr size="1" width="100%" /></td>
+   </tr> 
+   
+   <tr>
+      <td colspan="2"><strong>Cylinder Dimensions </strong></td>
+   </tr>
+   <tr>
+	   <td  align="center"><img src="CylinderDimensions.png" width="44" height="49"></td>
+      
+      <td>
+         <table width="100%" border="0">
+            <tr>
+               <td width="35%">Cylinder Length (<b>L</b>)</td>
+               <td>
+                  <span id="CylinderLength"></span>&nbsp
+                  <span id="Units1">units</span>
+               </td>
+            </tr>
+            <tr>
+               <td>Cylinder Diameter (<b>D</b>)</td>
+               <td>
+                  <span id="CylinderDiameter"></span>&nbsp
+                  <span id="Units2">units</span>
+               </td>
+            </tr>
+            
+         </table>
+      </td>
+   </tr>
+  
+   <tr>
+      <td colspan="3"><hr size="1" width="100%" /></td>
+   </tr> 
+  
+  
+   <tr>
+      <td colspan="3">
+         <table width="100%" border="0">
+            <tr>
+               <td width="20%">&nbsp;</td>
+               <td width="20%"><input name="ButtonOK" type="button" class="FormButton" id="ButtonOK" value="OK"></td>
+               <td width="20%">&nbsp;</td>
+               <td width="20%"><input name="ButtonCancel" type="button" class="FormButton" id="ButtonCancel" value="Cancel"></td>
+               <td width="20%">&nbsp;</td>
+            </tr>
+         </table>
+      </td>
+   </tr> 
+   
+   
+</table>
+
+</body>
+</html>

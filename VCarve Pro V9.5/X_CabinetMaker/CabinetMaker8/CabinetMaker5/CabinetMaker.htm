@@ -1,0 +1,493 @@
+<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<title>Cabinet Maker and Tool-path Creator</title>
+<style type="text/css">
+html {
+	overflow: auto;
+}
+
+
+body {
+	background-color: #D7E4F2;
+}
+.ToolPicker {
+	width: 69px;
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #000;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.h1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+.h2 {
+	font-size: 10px;
+	font-weight: bold;
+}
+.ToolNameLabel {
+	color: #555;
+}
+</style>
+</head>
+
+<body>
+<table width="783" border="1" cellpadding="0">
+  <tr>
+    <th colspan="4" align="center" valign="middle" bgcolor="#FFFF00" id="g_programTitle">0.0</th>
+    <th align="right" valign="middle" bgcolor="#FFFF00" id="g_codeBy"><strong>0.0</strong></th>
+  </tr>
+  <tr>
+    <th colspan="4" align="left" valign="middle" bgcolor="#FFFF00" id="Message">Message Here</th>
+    <th align="right" valign="middle" bgcolor="#FFFF00" id="g_programVersion">0.0</th>
+  </tr>
+  <tr>
+    <th width="104" align="center" valign="middle" bgcolor="#FFFF00"><strong>Area</strong></th>
+    <th width="136" align="center" valign="middle" bgcolor="#FFFF00"><strong>Item</strong></th>
+    <th width="74" align="center" valign="middle" bgcolor="#FFFF00">Value</th>
+    <th width="71" align="center" valign="middle" bgcolor="#FFFF00"><strong>Default Value</strong></th>
+    <th width="374" align="center" valign="middle" bgcolor="#FFFF00"><strong>Information</strong></th>
+  </tr>
+  <tr>
+    <td  align="center" valign="middle">Project Path</td>
+    <td align="center" valign="middle" nowrap>
+      <input type="submit" name="g_selectJobPath" id="g_selectJobPath" class="DirectoryPicker" value="Job Path">
+    </td>
+    <td colspan="3" align="left" valign="middle">
+        <input name="textfield" type="text" size="70" maxlength="128" ID="g_jobPath">
+      </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">    Tool Selection</td>
+    <td align="center" valign="middle" nowrap>
+      <input id="ToolChooseButton" class="ToolPicker" name="ToolChooseButton" type="button" value="Tool...">
+    </td>
+    <td colspan="3" align="left" valign="middle">
+      <span id="ToolNameLabel" class="ToolNameLabel">Tool Name</span>
+  </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Tooling</td>
+    <td align="right" valign="middle">Milling Offset</td>
+    <td align="center" valign="middle"><input name="g_millOffset" type="text" class="h2" id="g_millOffset" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.05</td>
+    <td align="left" valign="middle"><label for="g_millingTool">Milling Offset Amount To Mill Over The Edge of Material</label>
+      Name</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Tooling</td>
+    <td align="right" valign="middle">Mill Clearance Offset</td>
+    <td align="center" valign="middle"><input name="g_millClearnaceOffset" type="text" class="h2" id="g_millClearnaceOffset" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.01</td>
+    <td align="left" valign="middle"><label for="g_millingTool">Amount To Mill over for Dato</label>
+      Name</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet Material</td>
+    <td align="right" valign="middle" nowrap>Material Thickness</td>
+    <td align="center" valign="middle"><input name="g_materialThickness" type="text" class="h2" id="g_materialThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Material Thickness for Cabinet Sides</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet Material</td>
+    <td align="right" valign="middle" nowrap>Material Thickness Back</td>
+    <td align="center" valign="middle"><input name="g_materialThicknessBack" type="text" class="h2" id="g_materialThicknessBack" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.5</td>
+    <td align="left" valign="middle">Material Thickness Used On The Back</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#99FF66">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap bgcolor="#99FF66">Wall Cabinet Length</td>
+    <td align="center" valign="middle" bgcolor="#99FF66"><input name="g_upperCabinetLenght" type="text" class="h2" id="g_upperCabinetLenght" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#99FF66">36</td>
+    <td align="left" valign="middle" bgcolor="#99FF66">Wall Cabinet Length (wide / left to right)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#99FF66">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap bgcolor="#99FF66">Wall Cabinet Height</td>
+    <td align="center" valign="middle" bgcolor="#99FF66"><input name="g_upperCabinetHeight" type="text" class="h2" id="g_upperCabinetHeight" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#99FF66">28</td>
+    <td align="left" valign="middle" bgcolor="#99FF66">Wall Cabinet Height (floor to ceiling)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#99FF66">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap bgcolor="#99FF66">Wall Cabinet Depth</td>
+    <td align="center" valign="middle" bgcolor="#99FF66"><input name="g_upperCabinetDepth" type="text" class="h2" id="g_upperCabinetDepth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#99FF66">12</td>
+    <td align="left" valign="middle" bgcolor="#99FF66">Wall Cabinet Depth (from wall out)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Add Center Panel</td>
+    <td align="center" valign="middle"><input name="g_centerPanel" type="text" class="h2" id="g_centerPanel" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">&quot;Y&quot;</td>
+    <td align="left" valign="middle">Cabinet Has A Center Frame Panel In The Opening</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Add Center Face Frame</td>
+    <td align="center" valign="middle"><input name="g_faceFrameCenter" type="text" class="h2" id="g_faceFrameCenter" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">&quot;Y&quot;</td>
+    <td align="left" valign="middle">Cabinet Has A Center Face Frame In The Opening</td>
+  </tr>
+  <tr>
+    <td  align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Shelf Width Clearance</td>
+    <td align="center" valign="middle"><input name="g_shelfWidthClearance" type="text" class="h2" id="g_shelfWidthClearance" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.25</td>
+    <td align="left" valign="middle">Amount Of Space For Shelf Frount To Back Clearance</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Shelf Count</td>
+    <td align="center" valign="middle"><input name="g_shelfCount" type="text" class="h2" id="g_shelfCount" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Number of Shelves In The Cabnet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Shelf</td>
+    <td align="right" valign="middle" nowrap>Pin Outer Percent</td>
+    <td align="center" valign="middle"><input name="g_pinOuter" type="text" class="h2" id="g_pinOuter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.7</td>
+    <td align="left" valign="middle">Shelf Pin Outer Hole Offset</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Shelf</td>
+    <td align="right" valign="middle" nowrap>Pin Inter Percent</td>
+    <td align="center" valign="middle"><input name="g_pinInter" type="text" class="h2" id="g_pinInter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.16</td>
+    <td align="left" valign="middle">Shelf Pin Inter Hole Offset</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf End Clarence</td>
+    <td align="center" valign="middle"><input name="g_pinShelfClarence" type="text" class="h2" id="g_pinShelfClarence" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.18</td>
+    <td align="left" valign="middle">Shelf End Clarence, To Clear The Pin Plate (amount applied to each end)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Face Frame Side Gap</td>
+    <td align="center" valign="middle"><input name="g_faceFrameSideGap" type="text" class="h2" id="g_faceFrameSideGap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.25</td>
+    <td align="left" valign="middle">How Far To Extend The Face Frame Passed The Cabinet Side</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Face Frame Stile Width</td>
+    <td align="center" valign="middle"><input name="g_faceFrameSideWidth" type="text" class="h2" id="g_faceFrameSideWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Face Frame Stile Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Face Frame Bottom Width</td>
+    <td align="center" valign="middle"><input name="g_faceFrameBottomWidth" type="text" class="h2" id="g_faceFrameBottomWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Face Frame Bottom Rail Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Face Frame Thickness</td>
+    <td align="center" valign="middle"><input name="g_faceFrameThickness" type="text" class="h2" id="g_faceFrameThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Face Frame Thickness</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Top Face Frame Width</td>
+    <td align="center" valign="middle"><input name="g_faceFrameTopWidth" type="text" class="h2" id="g_faceFrameTopWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Top Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Center Face Frame Width</td>
+    <td align="center" valign="middle"><input name="g_faceFrameCenterWidth" type="text" class="h2" id="g_faceFrameCenterWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.25</td>
+    <td align="left" valign="middle">Center Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>Shelf Face Frame Width</td>
+    <td align="center" valign="middle"><input name="g_shelfFaceFrameWidth" type="text" class="h2" id="g_shelfFaceFrameWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">1.5</td>
+    <td align="left" valign="middle">Shelf Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle">Bottom Face Frame Overlap</td>
+    <td align="center" valign="middle"><input name="g_faceFrameBottomOverlap" type="text" class="h2" id="g_faceFrameBottomOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.0625</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Bottom Of The Cabinet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle">Top Frame Overlap</td>
+    <td align="center" valign="middle"><input name="g_faceFrameTopOverlap" type="text" class="h2" id="g_faceFrameTopOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Amount Face Frame Is Lowered Below The Inside Cabinet Top</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle">Shelf Hole Spacing</td>
+    <td align="center" valign="middle"><input name="g_holeSpacing" type="text" class="h2" id="g_holeSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Distance Of Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle" nowrap>First Row Spacing For Hole</td>
+    <td align="center" valign="middle"><input name="g_holeFirstRowSpacing" type="text" class="h2" id="g_holeFirstRowSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">4</td>
+    <td align="left" valign="middle">Amount Offset Befor First Row Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall Cabinet</td>
+    <td align="right" valign="middle">Top Hole Row Spacing</td>
+    <td align="center" valign="middle"><input name="g_holeLastRowSpacing" type="text" class="h2" id="g_holeLastRowSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">3</td>
+    <td align="left" valign="middle">Amount g_holeLastRowSpacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#FF0000">&nbsp;</td>
+    <td align="right" valign="middle" nowrap bgcolor="#FF0000">&nbsp;</td>
+    <td align="center" valign="middle" bgcolor="#FF0000">&nbsp;</td>
+    <td align="center" valign="middle" bgcolor="#FF0000">&nbsp;</td>
+    <td align="left" valign="middle" bgcolor="#FF0000">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#00FFFF">Base Cabinet</td>
+    <td align="right" valign="middle" bgcolor="#00FFFF">Base Cabinet Length</td>
+    <td align="center" valign="middle" bgcolor="#00FFFF"><input name="g_lowerCabinetLenght" type="text" class="h2" id="g_lowerCabinetLenght" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#00FFFF">36</td>
+    <td align="left" valign="middle" bgcolor="#00FFFF">Base Cabinet Lenght (wide / left to right)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#00FFFF">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap bgcolor="#00FFFF"><label for="g_cabinetHeight4">Base Cabinet Height</label></td>
+    <td align="center" valign="middle" bgcolor="#00FFFF"><input name="g_lowerCabinetHeight" type="text" class="h2" id="g_lowerCabinetHeight" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#00FFFF">32</td>
+    <td align="left" valign="middle" bgcolor="#00FFFF">Base Cabinet Height (floor to ceiling)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#00FFFF">Base Cabinet</td>
+    <td align="right" valign="middle" bgcolor="#00FFFF">Base Cabinet Depth</td>
+    <td align="center" valign="middle" bgcolor="#00FFFF"><input name="g_lowerCabinetDepth" type="text" class="h2" id="g_lowerCabinetDepth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#00FFFF">24</td>
+    <td align="left" valign="middle" bgcolor="#00FFFF">Base Cabinet Depth (from wall out)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Add Center Panel </td>
+    <td align="center" valign="middle"><input name="g_lowerAddCenterPanel" type="text" class="h2" id="g_lowerAddCenterPanel" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">&quot;Y&quot;</td>
+    <td align="left" valign="middle">Cabinet Has A Center Frame Panel In The Opening</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Add Center Face Frame</td>
+    <td align="center" valign="middle"><input name="g_lowerAddCenterFaceFrame" type="text" class="h2" id="g_lowerAddCenterFaceFrame" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">&quot;Y&quot;</td>
+    <td align="left" valign="middle">Cabinet Has A Center Face Frame In The Opening</td>
+  </tr>
+  <tr>
+    <td  align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Shelf Count </td>
+    <td align="center" valign="middle"><input name="g_lowerShelfCount" type="text" class="h2" id="g_lowerShelfCount" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Number of Shelves In The Cabinet. (0 = No Shelf)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Add Drawer </td>
+    <td align="center" valign="middle"><input name="g_lowerAddDrawers" type="text" class="h2" id="g_lowerAddDrawers" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">&quot;Y&quot;</td>
+    <td align="left" valign="middle">Cabinet Has A Drawer Opening</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Drawer Height</td>
+    <td align="center" valign="middle"><input name="g_lowerDrawerHeight" type="text" class="h2" id="g_lowerDrawerHeight" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">6</td>
+    <td align="left" valign="middle">Drawer Opening Height</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Drawer Row Count </td>
+    <td align="center" valign="middle"><input name="g_lowerDrawerRowCount" type="text" class="h2" id="g_lowerDrawerRowCount" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">1</td>
+    <td align="left" valign="middle">Number of Rows of Drawers In Base Cabinet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Number of  Drawers Per Row</td>
+    <td align="center" valign="middle"><input name="g_lowerNumberDrawersPerRow" type="text" class="h2" id="g_lowerNumberDrawersPerRow" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Number of Drawers Per Rows In Base Cabinet (1 or 2)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Toe Kick Depth </td>
+    <td align="center" valign="middle"><input name="g_toeKickDepth" type="text" class="h2" id="g_toeKickDepth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">4</td>
+    <td align="left" valign="middle">Upper Cabinet Lenght (wide / left to right)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Toe Kick Hight</td>
+    <td align="center" valign="middle"><input name="g_toeKickHight" type="text" class="h2" id="g_toeKickHight" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">3.5</td>
+    <td align="left" valign="middle">Upper Cabinet Height (floor to ceiling)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Toe Kick Bottom Offset Hight</td>
+    <td align="center" valign="middle"><input name="g_toeKickBottomOffsetHight" type="text" class="h2" id="g_toeKickBottomOffsetHight" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.5</td>
+    <td align="left" valign="middle">Upper Cabinet Depth (from wall out)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Pin Outer Percent</td>
+    <td align="center" valign="middle"><input name="g_lowerPinOuter" type="text" class="h2" id="g_lowerPinOuter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.7</td>
+    <td align="left" valign="middle">Shelf Pin Outer Hole Offset</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Pin Inter Percent</td>
+    <td align="center" valign="middle"><input name="g_lowerPinInter" type="text" class="h2" id="g_lowerPinInter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.16</td>
+    <td align="left" valign="middle">Shelf Pin Inter Hole Offset</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf End Clarence</td>
+    <td align="center" valign="middle"><input name="g_lowerShelfClarence" type="text" class="h2" id="g_lowerShelfClarence" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.18</td>
+    <td align="left" valign="middle">Shelf End Clarence, To Clear The Pin Plate (amount applied to each end)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Face Frame</td>
+    <td align="right" valign="middle" nowrap>Face Frame Side Gap</td>
+    <td align="center" valign="middle"><input name="g_lowerFaceFrameSideGap" type="text" class="h2" id="g_lowerFaceFrameSideGap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.25</td>
+    <td align="left" valign="middle">How Far To Extend The Face Frame Passed The Cabinet Side</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Face Frame</td>
+    <td align="right" valign="middle" nowrap>Face Frame Stile Width</td>
+    <td align="center" valign="middle"><input name="g_lowerFaceFrameStileWidth" type="text" class="h2" id="g_lowerFaceFrameStileWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Base Cabinet Face Frame Stile Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Face Frame</td>
+    <td align="right" valign="middle" nowrap>Face Frame Bottom Width</td>
+    <td align="center" valign="middle"><input name="g_lowerFaceFrameBottomWidth" type="text" class="h2" id="g_lowerFaceFrameBottomWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Base Cabinet Face Frame Bottom Rail Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Face Frame</td>
+    <td align="right" valign="middle" nowrap>Face Frame Thickness</td>
+    <td align="center" valign="middle"><input name="g_lowerFaceFrameThickness" type="text" class="h2" id="g_lowerFaceFrameThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Base Cabinet Face Frame Thickness</td>
+  </tr>
+  <tr>
+    <td  align="center" valign="middle">Base Face Frame</td>
+    <td align="right" valign="middle" nowrap>Face Frame Top Width</td>
+    <td align="center" valign="middle"><input name="g_lowerFaceFrameTopWidth" type="text" class="h2" id="g_lowerFaceFrameTopWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Top Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Face Frame</td>
+    <td align="right" valign="middle" nowrap>Center Face Frame Width</td>
+    <td align="center" valign="middle"><input name="g_lowerCenterFaceFrameWidth" type="text" class="h2" id="g_lowerCenterFaceFrameWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.25</td>
+    <td align="left" valign="middle">Center Face Frame Width</td>
+  </tr>
+  <tr>
+    <td height="19" align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Top  Framing Width</td>
+    <td align="center" valign="middle"><input name="g_lowerTopFrameWidth" type="text" class="h2" id="g_lowerTopFrameWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.25</td>
+    <td align="left" valign="middle">Top Cabinet Framing Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Bottom Face Frame Overlap</td>
+    <td align="center" valign="middle"><input name="g_lowerBottomFaceFrameOverlap" type="text" class="h2" id="g_lowerBottomFaceFrameOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.0625</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Bottom Of The Cabinet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Shelf Hole Spacing</td>
+    <td align="center" valign="middle"><input name="g_lowerHoleSpacing" type="text" class="h2" id="g_lowerHoleSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Distance Of Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>First Row Spacing For Hole</td>
+    <td align="center" valign="middle"><input name="g_lowerFirstRowSpacingForHole" type="text" class="h2" id="g_lowerFirstRowSpacingForHole" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">4</td>
+    <td align="left" valign="middle">Amount Offset Before First Row Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet</td>
+    <td align="right" valign="middle" nowrap>Last Hole Row Spacing</td>
+    <td align="center" valign="middle"><input name="g_lowerLastHoleRowSpacing" type="text" class="h2" id="g_lowerLastHoleRowSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">3</td>
+    <td align="left" valign="middle">Amount g_holeLastRowSpacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Standards</td>
+    <td align="right" valign="middle" nowrap>Shelf Overlap</td>
+    <td align="center" valign="middle"><input name="g_shelfOverlap" type="text" class="h2" id="g_shelfOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.0625</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Shelf</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Standards</td>
+    <td align="right" valign="middle" nowrap>Shelf Pin Diameter</td>
+    <td align="center" valign="middle"><input name="g_shelfPinDiameter" type="text" class="h2" id="g_shelfPinDiameter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.194</td>
+    <td align="left" valign="middle">Sheilf Pin Diameter</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Standards</td>
+    <td align="right" valign="middle" nowrap>Shelf Face Frame Width</td>
+    <td align="center" valign="middle"><input name="g_lowerShelfFaceFrameWidth" type="text" class="h2" id="g_lowerShelfFaceFrameWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">1.5</td>
+    <td align="left" valign="middle">Shelf Face Frame Width</td>
+  </tr>
+  <tr>
+    <td colspan="5" align="center" valign="middle"><table border="0" width="82%">
+        <tr>
+          <td style="width: 20%">&nbsp;</td>
+          <td style="width: 20%"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+          <td style="width: 20%">&nbsp;</td>
+          <td style="width: 20%"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+          <td style="width: 20%">&nbsp;</td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+</body>
+</html>

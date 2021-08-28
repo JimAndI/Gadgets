@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>Test HTML Dialog From Lua</title>
+<style type="text/css">
+<!--
+     .style2 {color: #000000;	font-family: Arial, Helvetica, sans-serif;}
+    .html {overflow: hidden;}
+    .LuaButton {	font-weight: bold;	font-family: Arial, Helvetica, sans-serif;	font-size: 12px;}
+    .FormButton {	font-weight: bold;	width: 75px;	font-family: Arial, Helvetica, sans-serif;	font-size: 12px;}
+    .h1-l {	font-family: Arial, Helvetica, sans-serif;	font-size: 12px;	text-align:left;}
+    .h1-r {	font-family: Arial, Helvetica, sans-serif;	font-size: 12px;	text-align:right;}
+    .h1-c {	font-family: Arial, Helvetica, sans-serif;	font-size: 12px;	text-align:center;}
+    body {	background-color: #CCC;	overflow:hidden;}
+-->
+</style>
+</head>
+
+<body bgcolor="#EEEEFF">
+<p class="style2"><span id="WelcomeText">Welcome to our first test HTML dialog <br>
+  created via Lua </span></p>
+  
+<table  border="0" class="style2">
+  <tr>
+    <td width="240" id="MachineNameTD">Name&nbsp;of&nbsp;machine&nbsp;</td>
+    <td width=120><input name="textfield" type="text" size="20" maxlength="8" ID="MachineName"></td>
+  </tr>
+  <tr>
+    <td width="240">Cost&nbsp;of&nbsp;machine</td>
+    <td width=120><input name="textfield" type="text" size="8" maxlength="8" ID="MachineCost"></td>
+  </tr>
+  <tr>
+    <td width="240">Number&nbsp;of&nbsp;machines</td>
+    <td width=120><input name="textfield" type="text" size="4" maxlength="8" ID="MachineCount"></td>
+  </tr>
+  <tr>
+    <td align="left"><INPUT class="LuaButton" type="checkbox" checked ID="CreatePreviewCheck" value='active'>
+      Create a preview </td>
+    <td align="left">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan=2 align="left"><br>
+      Type of Machine<br>
+      <br>
+      &nbsp;&nbsp;&nbsp;
+      <input class="LuaButton" type="radio" name="MachineType" ID="MachineRadio1">
+      Engraver &nbsp;&nbsp;&nbsp;
+      <input class="LuaButton" type="radio" name="MachineType" ID="MachineRadio2">
+      Router &nbsp;&nbsp;&nbsp;
+      <input class="LuaButton" type="radio" name="MachineType" ID="MachineRadio3">
+      CNC Mill<br></td>
+  </tr>
+  <tr>
+    <td colspan=2 align="left"><br>
+      Colour of Machine<br>
+      <br>
+      &nbsp;&nbsp;&nbsp;
+      <input type="radio" name="MachineColour" >
+      Blue &nbsp;&nbsp;&nbsp;
+      <input type="radio" name="MachineColour" >
+      Red &nbsp;&nbsp;&nbsp;
+      <input type="radio" name="MachineColour" >
+      Green<br></td>
+  <tr>
+    <td align="left"><br>
+      Choose a directory </td>
+    <td align="left">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width=240>&nbsp;&nbsp;&nbsp;
+      <input name="textfield" type="text" size="40" maxlength="128" ID="DirNameEdit"></td>
+    <td><BUTTON style='FONT-WEIGHT:bold; WIDTH:100%' CLASS="DirectoryPicker" ID="ChooseDirButton1" type=button>Choose...</BUTTON></td>
+  </tr>
+  <tr>
+    <td width=240>Dir:&nbsp;</td>
+    <td><BUTTON style='FONT-WEIGHT:bold; WIDTH:100%' CLASS="DirectoryPicker" ID="ChooseDirButton2" type=button>Choose...</BUTTON></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="left"><br>
+      Choose a file </td>
+    <td align="left">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width=240>&nbsp;&nbsp;&nbsp;
+      <input name="textfield" type="text" size="40" maxlength="128" ID="FileNameEdit"></td>
+    <td nowrap><BUTTON style='FONT-WEIGHT:bold; WIDTH:100%' CLASS="FilePicker" ID="ChooseFileButton1" type=button>Save As ...</BUTTON></td>
+  </tr>
+  <tr>
+    <td width=240>File:&nbsp;</td>
+    <td><BUTTON style='FONT-WEIGHT:bold; WIDTH:100%' CLASS="FilePicker" ID="ChooseFileButton2" type=button>Open File ...</BUTTON></td>
+  </tr>
+  <tr>
+    <td width=240>Button Test:&nbsp;</td>
+    <td><BUTTON style='FONT-WEIGHT:bold; WIDTH:100%' CLASS="LuaButton" ID="TestButton1" type=button>Press Me!</BUTTON></td>
+  </tr>
+  <tr>
+    <td align="left" style="width: 20%"><input id="ToolChooseButton" class = "ToolPicker" name="ToolChooseButton" type="button" value="Tool...">
+      <input id="ToolEditButton"         class = "ToolEditor" name="ToolEditButton" type="button" value="Edit Tool..."></td>
+    <td align="left" class="ToolNameLabel"><span id="ToolNameLabel" class="ToolNameLabel">Tool Name</span></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Droplist Test:&nbsp;</td>
+    <td><select id="DropDownList" name="DropDownList">
+        <option value="1">first</option>
+        <option value="2" selected>second</option>
+        <option value="3" >third</option>
+      </select>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan=2 align="center"><BUTTON style='FONT-WEIGHT:bold; WIDTH:30%; COLOR:black' ID="ButtonOK" type=button>OK</BUTTON>
+      &nbsp;&nbsp;&nbsp;
+      <BUTTON style='FONT-WEIGHT:bold; WIDTH:30%; COLOR:black' ID="ButtonCancel" type=button>Cancel</BUTTON></td>
+  </tr>
+</table>
+<p class="style2">&nbsp;</p>
+<p class="style2">&nbsp;</p>
+</body>
+</html>
+

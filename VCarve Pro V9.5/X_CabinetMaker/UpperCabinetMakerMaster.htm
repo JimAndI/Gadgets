@@ -1,0 +1,382 @@
+<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<title>Cabinet Maker and Toolpath Creator</title>
+<style type="text/css">
+html {
+	overflow: auto;
+}
+body {
+	background-color: #F0F0F0;
+}
+.ToolPicker {
+	width: 69px;
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #000;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.h1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+.h2 {
+	font-size: 12px;
+	font-weight: bold;
+}
+.ToolNameLabel {
+	color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<table border="1" width="940">
+	<tr>
+	  <td width="3%" class="h1">&nbsp;</td>
+	  <td width="68%" class="h1"><span id="g_programTitle">0.0</span></td>
+      <td width="29%" align="right" style="color: #999999" "width:20%><span id="g_programVersion" style="color: #999999">0.0</span></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+		<p>Message Here</p></td>
+        
+		<td align="right"><span id="g_codeBy" style="color: #999999">0.0</span></td>
+	</tr>
+	<tr>
+		<td colspan="3"><hr style="width: 100%"></td>
+	</tr>
+</table>
+
+
+<table width="940" border="1" cellpadding="0">
+  <tr>
+    <th width="75" align="center" valign="middle" bgcolor="#FFFF00"><strong>Area</strong></th>
+    <th width="218" align="center" valign="middle" bgcolor="#FFFF00"><strong>User Value</strong></th>
+    <th width="142" align="center" valign="middle" bgcolor="#FFFF00">&nbsp;</th>
+    <th width="142" align="center" valign="middle" bgcolor="#FFFF00"><p> <strong>Code</strong></p></th>
+    <th width="93" align="center" valign="middle" bgcolor="#FFFF00"><strong>Defalt Value</strong></th>
+    <th width="361" align="center" valign="middle" bgcolor="#FFFF00"><strong>Informaction</strong></th>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="right" valign="middle">&nbsp;</td>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="left" valign="middle">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="right" valign="middle">&nbsp;</td>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="left" valign="middle">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Tooling</td>
+    <td align="right" valign="middle"><form name="form3" method="post" action="">
+      <label for="g_millClearnaceOffset">Milling Offset</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_millOffset" type="text" id="g_millOffset" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_millOffset</td>
+    <td align="center" valign="middle">nil</td>
+    <td align="left" valign="middle"><label for="g_millingTool">Milling Offset Amount To Mill Over The Edge of Materal</label>
+      Name</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Tooling</td>
+    <td align="right" valign="middle"><form name="form3" method="post" action="">
+      <label for="g_millClearnaceOffset"></label>
+      Mill Clearnace Offset
+    </form></td>
+    <td align="center" valign="middle"><input name="g_millClearnaceOffset" type="text" id="g_millClearnaceOffset" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_millClearnaceOffset</td>
+    <td align="center" valign="middle">0.010</td>
+    <td align="left" valign="middle"><label for="g_millingTool">Amount To Mill over for Dato</label>
+      Name</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form9" method="post" action="">
+        Material Thickness
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_materialThickness" type="text" id="g_materialThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_materialThickness</td>
+    <td align="center" valign="middle">0.750</td>
+    <td align="left" valign="middle">Material Thickness for Cabinet Sides</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form10" method="post" action="">
+        <label for="g_pinRadus"></label>
+        Shelf Pin Radus
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_pinRadus" type="text" id="g_pinRadus" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_pinRadus</td>
+    <td align="center" valign="middle">0.0970</td>
+    <td align="left" valign="middle">Sheilf Pin Radus</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Upper Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form11" method="post" action="">
+        Upper Cabinet Length
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_cabinetLenght" type="text" id="g_cabinetLenght" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_cabinetLenght</td>
+    <td align="center" valign="middle">30.00</td>
+    <td align="left" valign="middle">Upper Cabinet Lenght (wide / left to right)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Upper Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form12" method="post" action="">
+        <label for="g_cabinetHeight">Upper Cabinet Height</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_cabinetHeight" type="text" id="g_cabinetHeight" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_cabinetHeight</td>
+    <td align="center" valign="middle">28.00</td>
+    <td align="left" valign="middle">Upper Cabinet Height (floor to celinig)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Upper Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form13" method="post" action="">
+        <label for="g_cabinetDepth"></label>
+        Upper Cabinet Depth
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_cabinetDepth" type="text" id="g_cabinetDepth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_cabinetDepth</td>
+    <td align="center" valign="middle">12.00</td>
+    <td align="left" valign="middle">Upper Cabinet Depth (from wall out)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form17" method="post" action="">
+        <label for="g_materialThicknessBack">Material Thickness Back</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_materialThicknessBack" type="text" id="g_materialThicknessBack" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_materialThicknessBack</td>
+    <td align="center" valign="middle">0.500</td>
+    <td align="left" valign="middle">Material Thickness Used On The Back</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap><form name="form18" method="post" action="">
+        <label for="g_pinOuter">Pin Outer Percent</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_pinOuter" type="text" id="g_pinOuter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_pinOuter</td>
+    <td align="center" valign="middle">0.700</td>
+    <td align="left" valign="middle">Shelf Pin Outer Hole Offset</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap><form name="form19" method="post" action="">
+        <label for="g_pinInter"></label>
+        Pin Inter Percent
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_pinInter" type="text" id="g_pinInter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_pinInter</td>
+    <td align="center" valign="middle">0.160</td>
+    <td align="left" valign="middle">Shelf Pin Inter Hole Offset</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap><form name="form20" method="post" action="">
+        <label for="g_pinShelfClarence"></label>
+        Pin Shelf Clarence
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_pinShelfClarence" type="text" id="g_pinShelfClarence" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_pinShelfClarence</td>
+    <td align="center" valign="middle">0.180</td>
+    <td align="left" valign="middle">Shelf End Clarence To Clear The Pin plate (aplied to each end)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Face Frame</td>
+    <td align="right" valign="middle" nowrap><form name="form21" method="post" action="">
+        <label for="g_faceFrameSideGap">Face Frame Side Gap</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameSideGap" type="text" id="g_faceFrameSideGap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameSideGap</td>
+    <td align="center" valign="middle">0.250</td>
+    <td align="left" valign="middle">How Far To Extend The Face Frame Passed The Cabinet Side</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Face Frame</td>
+    <td align="right" valign="middle" nowrap><form name="form22" method="post" action="">
+        <label for="g_faceFrameSideWidth"></label>
+        Face Frame Stile Width
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameSideWidth" type="text" id="g_faceFrameSideWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameSideWidth</td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Face Frame Stile Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Face Frame</td>
+    <td align="right" valign="middle" nowrap><form name="form23" method="post" action="">
+        <label for="g_faceFrameBottomWidth">Face Frame Bottom Width</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameBottomWidth" type="text" id="g_faceFrameBottomWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameBottomWidth</td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Face Frame Bottom Rail Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Face Frame</td>
+    <td align="right" valign="middle" nowrap><form name="form24" method="post" action="">
+        <label for="g_faceFrameThickness"></label>
+        Face Frame Thickness
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameThickness" type="text" id="g_faceFrameThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameThickness</td>
+    <td align="center" valign="middle">0.750</td>
+    <td align="left" valign="middle">Face Frame Thickness</td>
+  </tr>
+  <tr>
+    <td height="28" align="center" valign="middle">Face Frame</td>
+    <td align="right" valign="middle" nowrap><form name="form25" method="post" action="">
+        Top Face Frame  Width
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameTopWidth" type="text" id="g_faceFrameTopWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameTopWidth</td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Top Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Face Frame</td>
+    <td align="right" valign="middle" nowrap><form name="form26" method="post" action="">
+        <label for="g_faceFrameCenterWidth">Center Face Frame Width</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameCenterWidth" type="text" id="g_faceFrameCenterWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameCenterWidth</td>
+    <td align="center" valign="middle">2.25</td>
+    <td align="left" valign="middle">Center Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form27" method="post" action="">
+        <label for="g_faceFrameCenter"></label>
+        Add Center Frame
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameCenter" type="text" id="g_faceFrameCenter" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">g_faceFrameCenter</td>
+    <td align="center" valign="middle">&quot;Y&quot;</td>
+    <td align="left" valign="middle">Cabinet Has A Center Frame In The Opening</td>
+  </tr>
+  <tr>
+    <td height="28" align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form28" method="post" action="">
+        <label for="g_faceFrameShelfOverlap"></label>
+        Shelf Overlap
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameShelfOverlap" type="text" id="g_faceFrameShelfOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameShelfOverlap</td>
+    <td align="center" valign="middle">0.0625</td>
+    <td align="left" valign="middle">Amount Face Frame Is Rised Above The Shelf</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form29" method="post" action="">
+        Bottom Face Frame Overlap
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameBottomOverlap" type="text" id="g_faceFrameBottomOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameBottomOverlap</td>
+    <td align="center" valign="middle">0.750</td>
+    <td align="left" valign="middle">Amount Face Frame Is Rised Above The Bottom Of The Cabinet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form30" method="post" action="">
+        <label for="g_faceFrameTopOverlap">Top Frame Overlap</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_faceFrameTopOverlap" type="text" id="g_faceFrameTopOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_faceFrameTopOverlap</td>
+    <td align="center" valign="middle">0.750</td>
+    <td align="left" valign="middle">Amount Face Frame Is Lowered Below The Inside Cabinet Top</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form31" method="post" action="">
+        <label for="g_holeSpacing"></label>
+        Shelf Hole Spacing
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_holeSpacing" type="text" id="g_holeSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_holeSpacing</td>
+    <td align="center" valign="middle">2.000</td>
+    <td align="left" valign="middle">Distance Of Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form32" method="post" action="">
+        <label for="g_holeFirstRowSpacing">First Row Spacing For Hole</label>
+    </form></td>
+    <td align="center" valign="middle"><input name="g_holeFirstRowSpacing" type="text" id="g_holeFirstRowSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_holeFirstRowSpacing</td>
+    <td align="center" valign="middle">4.000</td>
+    <td align="left" valign="middle">Amount Offset Befor First Row Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Cabinet</td>
+    <td align="right" valign="middle" nowrap><form name="form33" method="post" action="">
+        Last Hole Row Spacing
+        
+      </form></td>
+    <td align="center" valign="middle"><input name="g_holeLastRowSpacing" type="text" id="g_holeLastRowSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">g_holeLastRowSpacing</td>
+    <td align="center" valign="middle">3.000</td>
+    <td align="left" valign="middle">Amount g_holeLastRowSpacing</td>
+  </tr>
+  <tr>
+    <td height="28" align="center" valign="middle">Project Path</td>
+    <td align="center" valign="middle" nowrap><form name="form39" method="post" action="">
+      <input type="submit" name="g_selectJobPath" id="g_selectJobPath" class="DirectoryPicker" value="Job Path">
+    </form></td>
+    <td colspan="4" align="left" valign="middle"><form name="form41" method="post" action="">
+      <input name="textfield" type="text" size="40" maxlength="128" ID="g_jobPath">
+    </form></td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Tool Selection</td>
+    <td align="center" valign="middle" nowrap><form name="form40" method="post" action="">
+        <input id="ToolChooseButton" class="ToolPicker" name="ToolChooseButton" type="button" value="Tool...">
+      </form></td>
+    <td colspan="6" align="left" valign="middle"><form name="form41" method="post" action=""><span id="ToolNameLabel" class="ToolNameLabel">Tool Name</span> 
+    </form></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table border="0" width="82%">
+  <tr>
+    <td style="width: 20%">&nbsp;</td>
+    <td style="width: 20%"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td style="width: 20%">&nbsp;</td>
+    <td style="width: 20%"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+    <td style="width: 20%">&nbsp;</td>
+  </tr>
+</table>
+</body>
+</html>

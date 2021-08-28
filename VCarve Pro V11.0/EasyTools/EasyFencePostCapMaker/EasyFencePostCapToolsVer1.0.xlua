@@ -1,0 +1,858 @@
+-- ===================================================]]
+function RegistryReader()                                 -- Reads data from the Registry
+  local RegistryRead                        = Registry(PostCap.RegistryTag)
+  PostCap.Border                            = RegistryRead:GetString("PostCap.Border",                          "Border")
+  PostCap.Carving                           = RegistryRead:GetString("PostCap.Carving",                         "Carving")
+  PostCap.Clearing                          = RegistryRead:GetString("PostCap.Clearing",                        "Clearing")
+  PostCap.Edge                              = RegistryRead:GetString("PostCap.Edge",                            "Edge")
+  PostCap.AppName                           = RegistryRead:GetString("PostCap.AppName",                         "Easy Fence Post Cap Maker")
+  PostCap.By                                = RegistryRead:GetString("PostCap.By",                              "By: JimAndi Gadgets")
+  PostCap.Year                              = RegistryRead:GetString("PostCap.Year",                            "2021")
+  PostCap.CapSizeY                          = RegistryRead:GetDouble("PostCap.CapSizeY",                        5.000)
+  PostCap.CapSizeX                          = RegistryRead:GetDouble("PostCap.CapSizeX",                        5.000)
+  PostCap.FlatAmount                        = RegistryRead:GetDouble("PostCap.FlatAmount",                      1.000)
+  PostCap.SlopAmount                        = RegistryRead:GetDouble("PostCap.SlopAmount",                      0.500)
+  Milling.MillTool1.FeedRate                = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",              30.000)
+  Milling.MillTool1.InMM                    = RegistryRead:GetBool("Milling.MillTool1.InMM",                    false)
+  Milling.MillTool1.Name                    = RegistryRead:GetString("Milling.MillTool1.Name",                  "No Tool Selected")
+  Milling.MillTool1.BitType                 = RegistryRead:GetString("Milling.MillTool1.BitType",               "END_MILL") -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool1.RateUnits               = RegistryRead:GetInt("Milling.MillTool1.RateUnits",                4)
+  Milling.MillTool1.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool1.SpindleSpeed",             20000)
+  Milling.MillTool1.ToolNumber              = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",               1)
+  Milling.MillTool1.Stepdown                = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",              0.2000)
+  Milling.MillTool1.Stepover                = RegistryRead:GetDouble("Milling.MillTool1.Stepover",              0.0825)
+  Milling.MillTool1.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",               0.1250)
+  Milling.MillTool1.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",            15.000)
+  Milling.MillTool2.FeedRate                = RegistryRead:GetDouble("Milling.MillTool2.FeedRate",              30.000)
+  Milling.MillTool2.InMM                    = RegistryRead:GetBool("Milling.MillTool2.InMM",                    false)
+  Milling.MillTool2.Name                    = RegistryRead:GetString("Milling.MillTool2.Name",                  "No Tool Selected")
+  Milling.MillTool2.BitType                 = RegistryRead:GetString("Milling.MillTool2.BitType",               "BALL_NOSE") -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool2.RateUnits               = RegistryRead:GetInt("Milling.MillTool2.RateUnits",                4)
+  Milling.MillTool2.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool2.SpindleSpeed",             20000)
+  Milling.MillTool2.ToolNumber              = RegistryRead:GetInt("Milling.MillTool2.ToolNumber",               2)
+  Milling.MillTool2.Stepdown                = RegistryRead:GetDouble("Milling.MillTool2.Stepdown",              0.2000)
+  Milling.MillTool2.Stepover                = RegistryRead:GetDouble("Milling.MillTool2.Stepover",              0.0825)
+  Milling.MillTool2.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool2.ToolDia",               0.1250)
+  Milling.MillTool2.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool2.PlungeRate",            15.000)
+  Milling.MillTool3.FeedRate                = RegistryRead:GetDouble("Milling.MillTool3.FeedRate",              30.000)
+  Milling.MillTool3.InMM                    = RegistryRead:GetBool("Milling.MillTool3.InMM",                    false)
+  Milling.MillTool3.Name                    = RegistryRead:GetString("Milling.MillTool3.Name",                  "No Tool Selected")
+  Milling.MillTool3.BitType                 = RegistryRead:GetString("Milling.MillTool3.BitType",               "END_MILL")  -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool3.RateUnits               = RegistryRead:GetInt("Milling.MillTool3.RateUnits",                4)
+  Milling.MillTool3.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool3.SpindleSpeed",             20000)
+  Milling.MillTool3.ToolNumber              = RegistryRead:GetInt("Milling.MillTool3.ToolNumber",               3)
+  Milling.MillTool3.Stepdown                = RegistryRead:GetDouble("Milling.MillTool3.Stepdown",              0.2000)
+  Milling.MillTool3.Stepover                = RegistryRead:GetDouble("Milling.MillTool3.Stepover",              0.0825)
+  Milling.MillTool3.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool3.ToolDia",               0.5000)
+  Milling.MillTool3.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool3.PlungeRate",            15.000)
+  return true
+end -- function end
+-- ===================================================]]
+function RegistryWriter()                             -- Writes data to the Registry
+  local RegistryWrite = Registry(PostCap.RegistryTag)
+  local RegValue = RegistryWrite:SetString("PostCap.Border",                  PostCap.Border)
+        RegValue = RegistryWrite:SetString("PostCap.Carving",                 PostCap.Carving)
+        RegValue = RegistryWrite:SetString("PostCap.Clearing",                PostCap.Clearing)
+        RegValue = RegistryWrite:SetString("PostCap.Edge",                    PostCap.Edge)
+        RegValue = RegistryWrite:SetString("PostCap.AppName",                 PostCap.AppName)
+        RegValue = RegistryWrite:SetString("PostCap.By",                      PostCap.By)
+        RegValue = RegistryWrite:SetString("PostCap.Year",                    PostCap.Year)
+        RegValue = RegistryWrite:SetDouble("PostCap.CapSizeY",                PostCap.CapSizeY)
+        RegValue = RegistryWrite:SetDouble("PostCap.CapSizeX",                PostCap.CapSizeX)
+        RegValue = RegistryWrite:SetDouble("PostCap.FlatAmount",              PostCap.FlatAmount)
+        RegValue = RegistryWrite:SetDouble("PostCap.SlopAmount",              PostCap.SlopAmount)
+        RegValue = RegistryWrite:SetString("PostCap.InquiryPostCapXY",        PostCap.InquiryPostCapXY)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool1.FeedRate" ,     Milling.MillTool1.FeedRate)
+        RegValue = RegistryWrite:SetBool("Milling.MillTool1.InMM",            Milling.MillTool1.InMM)
+        RegValue = RegistryWrite:SetString("Milling.MillTool1.Name",          Milling.MillTool1.Name)
+        RegValue = RegistryWrite:SetString("Milling.MillTool1.BitType",       Milling.MillTool1.BitType)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool1.PlungeRate" ,   Milling.MillTool1.PlungeRate)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool1.RateUnits",        Milling.MillTool1.RateUnits)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool1.SpindleSpeed",     Milling.MillTool1.SpindleSpeed)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepdown" ,     Milling.MillTool1.Stepdown)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepover" ,     Milling.MillTool1.Stepover)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool1.ToolDia" ,      Milling.MillTool1.ToolDia)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool1.ToolNumber",       Milling.MillTool1.ToolNumber)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool2.FeedRate" ,     Milling.MillTool2.FeedRate)
+        RegValue = RegistryWrite:SetBool("Milling.MillTool2.InMM",            Milling.MillTool2.InMM)
+        RegValue = RegistryWrite:SetString("Milling.MillTool2.Name",          Milling.MillTool2.Name)
+        RegValue = RegistryWrite:SetString("Milling.MillTool2.BitType",       Milling.MillTool2.BitType)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool2.PlungeRate" ,   Milling.MillTool2.PlungeRate)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool2.RateUnits",        Milling.MillTool2.RateUnits)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool2.SpindleSpeed",     Milling.MillTool2.SpindleSpeed)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool2.Stepdown" ,     Milling.MillTool2.Stepdown)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool2.Stepover" ,     Milling.MillTool2.Stepover)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool2.ToolDia" ,      Milling.MillTool2.ToolDia)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool2.ToolNumber",       Milling.MillTool2.ToolNumber)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool3.FeedRate" ,     Milling.MillTool3.FeedRate)
+        RegValue = RegistryWrite:SetBool("Milling.MillTool3.InMM",            Milling.MillTool3.InMM)
+        RegValue = RegistryWrite:SetString("Milling.MillTool3.Name",          Milling.MillTool3.Name)
+        RegValue = RegistryWrite:SetString("Milling.MillTool3.BitType",       Milling.MillTool3.BitType)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool3.PlungeRate",    Milling.MillTool3.PlungeRate)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool3.RateUnits",        Milling.MillTool3.RateUnits)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool3.SpindleSpeed",     Milling.MillTool3.SpindleSpeed)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool3.Stepdown" ,     Milling.MillTool3.Stepdown)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool3.Stepover" ,     Milling.MillTool3.Stepover)
+        RegValue = RegistryWrite:SetDouble("Milling.MillTool3.ToolDia" ,      Milling.MillTool3.ToolDia)
+        RegValue = RegistryWrite:SetInt("Milling.MillTool3.ToolNumber",       Milling.MillTool3.ToolNumber)
+  return true
+end -- function end
+-- ===================================================]]
+function Polar2D(pt, ang, dis)
+-- The Polar2D function will calculate a new point in space based on a Point of reference, Angle of direction, and Projected distance.
+-- ::''Returns a 2Dpoint(x, y)''
+  return Point2D((pt.X + dis * math.cos(math.rad(ang))), (pt.Y + dis * math.sin(math.rad(ang))))
+end -- End Function
+-- ===================================================]]
+function DrawBox(p1, p2, p3, p4, Layer)
+--[[ Draw Box
+function main(script_path)
+local MyPt1 = Point2D(1.0,1.0)
+local MyPt2 = Point2D(1.0,3.0)
+local MyPt3 = Point2D(3.0,1.0)
+local MyPt4 = Point2D(3.0,3.0)
+local layer = "My Box"
+DrawBox(MyPt1 ,MyPt2, MyPt3, MyPt4, Layer)
+return true
+end -- function end
+-- -----------------------------------------------------]]
+    local job = VectricJob()
+    if not job.Exists then
+      DisplayMessageBox("Error: No job loaded")
+      return false ;
+    end -- if end
+    local line = Contour(0.0)
+    local layer = job.LayerManager:GetLayerWithName(Layer)
+    line:AppendPoint(p1) ;
+    line:LineTo(p2);
+    line:LineTo(p3) ;
+    line:LineTo(p4);
+    line:LineTo(p1);
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+  end -- function end
+-- ===================================================]]
+function GetMaterialSettings()
+  local mtl_block = MaterialBlock()
+  --local units
+  if mtl_block.InMM then
+    PostCap.Units  = "Drawing Units: mm"
+    PostCap.Unit = true
+    PostCap.Cal = 1.0
+  else
+    PostCap.Units  = "Drawing Units: inches"
+    PostCap.Unit = false
+    PostCap.Cal = 25.4
+  end
+	PostCap.MaterialWidth     = mtl_block.Width
+	PostCap.MaterialLength    = mtl_block.Height
+  PostCap.MaterialThickness = mtl_block.Thickness
+  return true
+end -- function end
+--====================================================]]
+function DrawCap()
+  PostCap.pt1 = Point2D(0.0, 0.0)
+  PostCap.pt2 = Point2D(PostCap.CapSizeX + (Milling.MillTool3.ToolDia * 2.0), 0.0)
+  PostCap.pt3 = Point2D(PostCap.CapSizeX + (Milling.MillTool3.ToolDia * 2.0), PostCap.CapSizeY + (Milling.MillTool3.ToolDia * 2.0))
+  PostCap.pt4 = Point2D(0.0, PostCap.CapSizeY + (Milling.MillTool3.ToolDia * 2.0))
+  DrawBox(PostCap.pt1, PostCap.pt2, PostCap.pt3, PostCap.pt4, PostCap.Clearing)
+
+  PostCap.pt1 = Point2D(Milling.MillTool3.ToolDia, Milling.MillTool3.ToolDia)
+  PostCap.pt2 = Polar2D(PostCap.pt1,  0.0, PostCap.CapSizeX)
+  PostCap.pt3 = Polar2D(PostCap.pt2, 90.0, PostCap.CapSizeY)
+  PostCap.pt4 = Polar2D(PostCap.pt1, 90.0, PostCap.CapSizeY)
+  DrawBox(PostCap.pt1, PostCap.pt2, PostCap.pt3, PostCap.pt4, PostCap.Border)
+  DrawBox(PostCap.pt1, PostCap.pt2, PostCap.pt3, PostCap.pt4, PostCap.Clearing)
+
+  local pt1, pt2
+  pt1 = Polar2D(PostCap.pt1, 180.0, Milling.MillTool2.Stepover)
+  pt1 = Polar2D(pt1,   90.0, PostCap.DropAmount)
+  pt2 = Polar2D(pt1, 270.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+  DrawLine(pt1, pt2,  PostCap.Carving)
+
+  for i = PostCap.BottomCount,0, -1 do
+    pt1 = Polar2D(pt1,   0.0, Milling.MillTool2.Stepover)
+    pt2 = Polar2D(pt1, 270.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+    DrawLine(pt1, pt2,  PostCap.Carving)
+  end
+
+  pt1 = Polar2D(PostCap.pt4, 180.0, Milling.MillTool2.Stepover)
+  pt1 = Polar2D(pt1,  270.0, PostCap.DropAmount)
+  pt2 = Polar2D(pt1,   90.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+
+  DrawLine(pt1, pt2,  PostCap.Carving)
+
+  for i = PostCap.BottomCount,0, -1 do
+    pt1 = Polar2D(pt1,  0.0, Milling.MillTool2.Stepover)
+    pt2 = Polar2D(pt1, 90.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+    DrawLine(pt1, pt2,  PostCap.Carving)
+  end
+
+  pt1 = Polar2D(PostCap.pt2, 270.0, Milling.MillTool2.Stepover)
+  pt1 = Polar2D(pt1, 180.0, PostCap.DropAmount)
+  pt2 = Polar2D(pt1,   0.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+
+  DrawLine(pt1, pt2,  PostCap.Carving)
+
+  for i = PostCap.SideCount,0, -1 do
+    pt1 = Polar2D(pt1, 90.0, Milling.MillTool2.Stepover)
+    pt2 = Polar2D(pt1,  0.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+    DrawLine(pt1, pt2,  PostCap.Carving)
+  end
+
+  pt1 = Polar2D(PostCap.pt4, 90.0, Milling.MillTool2.Stepover)
+  pt1 = Polar2D(pt1, 0.0, PostCap.DropAmount)
+  pt2 = Polar2D(pt1, 180.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+
+  DrawLine(pt1, pt2,  PostCap.Carving)
+
+  for i = PostCap.SideCount,0, -1 do
+    pt1 = Polar2D(pt1, 270.0, Milling.MillTool2.Stepover)
+    pt2 = Polar2D(pt1, 180.0, PostCap.DropAmount + (Milling.MillTool3.ToolDia * 0.5))
+    DrawLine(pt1, pt2,  PostCap.Carving)
+  end
+  return true
+
+end -- function end
+-- ===================================================]]
+function ToolPaths()
+ CreateLayerPocketingToolpath(PostCap.Clearing, "Clearing Pocket")
+ CreateLayerFlutingToolpath(PostCap.Carving, "Carving Path")
+ CreateLayerProfileToolpath(PostCap.Border, "Profile Path")
+end -- function end
+-- ===================================================]]
+function DrawLine(Pt1, Pt2, Layer)
+--[[Draws a line from Pt1 to Pt2 on the layer name.
+function main(script_path)
+local MyPt1 = Point2D(3.5,3.8)
+local MyPt2 = Point2D(3.5,6.8)
+local layer = "My Line"
+DrawLine(MyPt1 , MyPt2, MyPt3, Layer)
+return true
+end -- function end
+-- -----------------------------------------------------]]
+  local job = VectricJob()
+  if not job.Exists then
+    DisplayMessageBox("Error: No job loaded")
+    return false ;
+  end
+  local line = Contour(0.0)
+  local layer = job.LayerManager:GetLayerWithName(Layer)
+  line:AppendPoint(Pt1) ;
+  line:LineTo(Pt2) ;
+  layer:AddObject(CreateCadContour(line), true)
+  return true
+end -- function end
+-- ===================================================]]
+function GetDistance(objA, objB)                        -- Returns the distance between two points
+   local xDist = objB.x - objA.x
+   local yDist = objB.y - objA.y
+   return math.sqrt((xDist ^ 2) + (yDist ^ 2))
+end -- End Fuction
+-- ===================================================]]
+function SelectVectorsOnLayer(layer, selection, select_closed, select_open, select_groups)
+ --[[
+|   Add all the vectors on the layer to the selection
+|     layer,            -- layer we are selecting vectors on
+|     selection         -- selection object
+|     select_closed     -- if true select closed objects
+|     select_open       -- if true  select open objects
+|     select_groups     -- if true select grouped vectors (irrespective of open / closed state of member objects)
+|  Return Values:
+|     true if selected one or more vectors
+]]
+   local objects_selected = false
+   local WarningDisplayed = false
+   local pos = layer:GetHeadPosition()
+      while pos ~= nil do
+	     local object
+         object, pos = layer:GetNext(pos)
+         local contour = object:GetContour()
+         if contour == nil then
+            if (object.ClassName == "vcCadObjectGroup") and select_groups then
+               selection:Add(object, true, true)
+               objects_selected = true
+            else
+               if not WarningDisplayed then
+                  local message = "Object(s) without contour information found on layer - ignoring"
+                  if not select_groups then
+                     message = message ..
+                               "\r\n\r\n" ..
+                               "If layer contains grouped vectors these must be ungrouped for this script"
+                  end
+                  DisplayMessageBox(message)
+                  WarningDisplayed = true
+               end
+            end
+         else  -- contour was NOT nil, test if Open or Closed
+            if contour.IsOpen and select_open then
+               selection:Add(object, true, true)
+               objects_selected = true
+            else if select_closed then
+               selection:Add(object, true, true)
+               objects_selected = true
+            end
+         end
+         end
+      end
+   -- to avoid excessive redrawing etc we added vectors to the selection in 'batch' mode
+   -- tell selection we have now finished updating
+   if objects_selected then
+      selection:GroupSelectionFinished()
+   end
+   return objects_selected
+end
+-- ===================================================]]
+function CreateLayerProfileToolpath(layer_name, name)
+  --  Please Note: CreateLayerProfileToolpath is provided by Vectric and can be found in the SDK and Sample Gadget files.
+    local selection = PostCap.Job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = PostCap.Job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      DisplayMessageBox("No layer found with name = " .. layer_name)
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      DisplayMessageBox("No closed vectors found on layer " .. layer_name)
+      return false
+    end
+  -- Create tool we will use to machine vectors
+    local tool               = Tool(Milling.MillTool1.Name, Tool.END_MILL) -- BALL_NOSE, END_MILL, VBIT
+          tool.InMM          = Milling.MillTool1.InMM         -- tool_in_mm
+          tool.ToolDia       = Milling.MillTool1.ToolDia      -- tool_dia
+          tool.Stepdown      = Milling.MillTool1.Stepdown     -- tool_stepdown
+          tool.Stepover      = Milling.MillTool1.Stepover     -- tool_dia * 0.25
+          tool.RateUnits     = Milling.MillTool1.RateUnits    -- Tool.MM_SEC -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC ...
+          tool.FeedRate      = Milling.MillTool1.FeedRate     -- 30
+          tool.PlungeRate    = Milling.MillTool1.PlungeRate   -- 10
+          tool.SpindleSpeed  = Milling.MillTool1.SpindleSpeed -- 20000
+          tool.ToolNumber    = Milling.MillTool1.ToolNumber   -- 1
+       -- tool.VBitAngle     = Carrier.MillTool.VBitAngle     -- 90.0 -- used for vbit only
+       -- tool.ClearStepover = tool_dia * 0.5                 -- used for vbit only
+ -- we will set home position and safe z relative to material block size
+    local mtl_block = MaterialBlock()
+    local mtl_box = mtl_block.MaterialBox
+    local mtl_box_blc = mtl_box.BLC
+   -- Create object used to set home position and safez gap above material surface
+    local pos_data = ToolpathPosData()
+          pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+          pos_data.SafeZGap = mtl_block.Thickness * 0.1
+  -- Create object used to pass profile options
+    local profile_data = ProfileParameterData()
+  -- start depth for toolpath
+    profile_data.StartDepth    = 0.0
+    profile_data.CutDepth      = PostCap.MaterialThickness -- cut depth for toolpath this is depth below start depth
+    profile_data.CutDirection  = ProfileParameterData.CLIMB_DIRECTION -- direction of cut - ProfileParameterData. CLIMB_DIRECTION or ProfileParameterData.CONVENTIONAL_DIRECTION
+
+    profile_data.ProfileSide = ProfileParameterData.PROFILE_OUTSIDE
+
+    profile_data.Allowance = 0.0 -- Allowance to leave on when machining
+    profile_data.KeepStartPoints = false -- true to preserve start point positions, false to reorder start points to minimise toolpath length
+    profile_data.CreateSquareCorners = false -- true if want to create 'square' external corners on toolpath
+    profile_data.CornerSharpen = false -- true to perform corner sharpening on internal corners (only with v-bits)
+    profile_data.UseTabs = false -- true to use tabs (position of tabs must already have been defined on vectors)
+    profile_data.TabLength = 0.5 -- length for tabs if being used
+    profile_data.TabThickness = 0.25
+    profile_data.Use3dTabs = true -- if true then create 3d tabs else 2d tabs
+    profile_data.ProjectToolpath = false -- if true in Aspire, project toolpath onto composite model
+    local ramping_data = RampingData() -- Create object used to control ramping
+    local lead_in_out_data = LeadInOutData() -- Create object used to control lead in/out
+    ramping_data.DoRamping = false -- if true we do ramping into toolpath
+    ramping_data.RampType = RampingData.RAMP_ZIG_ZAG -- type of ramping to perform RampingData.RAMP_LINEAR , RampingData.RAMP_ZIG_ZAG or RampingData.RAMP_SPIRAL
+    ramping_data.RampConstraint = RampingData.CONSTRAIN_ANGLE -- how ramp is contrained - either by angle or distance RampingData.CONSTRAIN_DISTANCE or RampingData.CONSTRAIN_ANGLE
+    ramping_data.RampDistance = 100.0 -- if we are constraining ramp by distance, distance to ramp over
+    ramping_data.RampAngle = 25.0 -- if we are contraining ramp by angle , angle to ramp in at (in degrees)
+    ramping_data.RampMaxAngleDist = 15 -- if we are contraining ramp by angle, max distance to travel before 'zig zaging' if zig zaging
+    ramping_data.RampOnLeadIn = false -- if true we restrict our ramping to lead in section of toolpath
+    lead_in_out_data.DoLeadIn = false -- if true we create lead ins on profiles (not for profile on)
+    lead_in_out_data.DoLeadOut = false -- if true we create lead outs on profiles (not for profile on)
+    lead_in_out_data.LeadType = LeadInOutData.CIRCULAR_LEAD -- type of leads to create LeadInOutData.LINEAR_LEAD or LeadInOutData.CIRCULAR_LEAD
+    lead_in_out_data.LeadLength = 5.0 -- length of lead to create
+    lead_in_out_data.LinearLeadAngle = 45 -- Angle for linear leads
+    lead_in_out_data.CirularLeadRadius = 5.0 -- Radius for circular arc leads
+    lead_in_out_data.OvercutDistance = 0.0 -- distance to 'overcut' (travel past start point) when profiling
+    local geometry_selector = GeometrySelector() -- Create object which can be used to automatically select geometry
+    local create_2d_previews = true -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+    local display_warnings =  false --true -- if this is true we will display errors and warning to the user
+    local toolpath_manager = ToolpathManager() -- Create our toolpath
+    local toolpath_id = toolpath_manager:CreateProfilingToolpath(name, tool, profile_data,
+                        ramping_data, lead_in_out_data, pos_data, geometry_selector, create_2d_previews, display_warnings)
+    if toolpath_id == nil then
+      DisplayMessageBox("Error creating toolpath")
+      return false
+    end
+  return true
+end
+-- =====================================================]]
+function CreateLayerFlutingToolpath(layer_name, name )
+    --[[ ----------------- CreateFlutingToolpath -----------------
+  |
+  | Create a drilling toolpath within the program for the currently selected vectors
+  | Parameters:
+  | name, -- Name for toolpath
+  | start_depth -- Start depth for toolpath below surface of material
+  | cut_depth -- cut depth for toolpath
+  | tool_dia -- diameter of tool to use
+  | tool_stepdown -- stepdown for tool
+  | tool_in_mm -- true if tool size and stepdown are in mm
+  |
+  | Return Values:
+  | true if toolpath created OK else false
+  |
+  ]]
+    -- Create tool we will use to machine vectors
+    local selection = PostCap.Job.Selection
+          selection:Clear()
+    local layer = PostCap.Job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      DisplayMessageBox("No layer found with name = " .. layer_name)
+    return false
+    end
+    if not SelectVectorsOnLayer(layer, selection, false, true, false) then
+      DisplayMessageBox("No vectors found on " .. layer_name .. " Layer")
+      return false
+    end
+    local tool = Tool(Milling.MillTool2.Name, Tool.BALL_NOSE) -- BALL_NOSE, END_MILL, VBIT, THROUGH_DRILL
+    tool.InMM         = Milling.MillTool2.InMM         -- tool_in_mm
+    tool.ToolDia      = Milling.MillTool2.ToolDia      -- tool_dia
+    tool.Stepdown     = Milling.MillTool2.Stepdown     -- tool_stepdown
+    tool.Stepover     = Milling.MillTool2.Stepover     -- tool_dia * 0.25
+    tool.RateUnits    = Milling.MillTool2.RateUnits    -- Tool.MM_SEC -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+    tool.FeedRate     = Milling.MillTool2.FeedRate     -- 30
+    tool.PlungeRate   = Milling.MillTool2.PlungeRate   -- 10
+    tool.SpindleSpeed = Milling.MillTool2.SpindleSpeed -- 20000
+    tool.ToolNumber   = Milling.MillTool1.ToolNumber   -- 1
+   -- tool.VBitAngle    = 90.0 -- used for vbit only
+   -- tool.ClearStepover = tool_dia * 0.5 -- used for vbit only
+  -- we will set home position and safe z relative to material block size
+    local mtl_block = MaterialBlock()
+    local mtl_box = mtl_block.MaterialBox
+    local mtl_box_blc = mtl_box.BLC
+   -- Create object used to set home position and safez gap above material surface
+    local pos_data = ToolpathPosData()
+          pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+          pos_data.SafeZGap = mtl_block.Thickness * 0.1
+    -- Create object used to pass fluting options
+    local fluting_data = FlutingParameterData()
+    -- start depth for toolpath
+    fluting_data.StartDepth = 0.0
+    -- cut depth for toolpath this is depth below start depth
+    fluting_data.CutDepth = PostCap.SlopAmount
+    -- type of fluting FULL_LENGTH, RAMP_START or RAMP_START_END
+    fluting_data.FluteType = FlutingParameterData.FULL_LENGTH
+    -- fluting_data.FluteType = FlutingParameterData.RAMP_START
+    -- fluting_data.FluteType = FlutingParameterData.RAMP_START_END
+    -- type of ramping RAMP_LINEAR, RAMP_SMOOTH
+    fluting_data.RampType = FlutingParameterData.RAMP_LINEAR
+    -- if true use ratio field for controling ramp length else absolute length value
+    fluting_data.UseRampRatio = false
+    -- length of ramp as ratio of flute length(range 0 - 1.0)
+    -- (for start and end - ratio is of half length)
+    fluting_data.RampRatio = 0.2
+    -- length to ramp over - if UseRampRatio == false
+    fluting_data.RampLength = 15
+    -- if true in Aspire, project toolpath onto composite model
+    fluting_data.ProjectToolpath = false
+    -- Create object which can be used to automatically select geometry
+    local geometry_selector = GeometrySelector()
+    -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+    local create_2d_previews = true
+    -- if this is true we will display errors and warning to the user
+    local display_warnings = true
+    -- Create our toolpath
+    local toolpath_manager = ToolpathManager()
+    local toolpath_id = toolpath_manager:CreateFlutingToolpath(name, tool, fluting_data, pos_data, geometry_selector, create_2d_previews, display_warnings)
+    if toolpath_id == nil then
+      DisplayMessageBox("Error creating toolpath")
+      return false
+    end
+    return true
+  end
+-- ===================================================]]
+function CreateLayerPocketingToolpath(layer_name, name)
+    local selection = PostCap.Job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = PostCap.Job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      DisplayMessageBox("No layer found with name = " .. layer_name)
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, false) then
+      DisplayMessageBox("No closed vectors found on layer " .. layer_name)
+      return false
+    end
+   -- Create tool we will use to machine vectors
+    local tool = Tool(Milling.MillTool3.Name, Tool.END_MILL)    -- BALL_NOSE, END_MILL, VBIT
+          tool.InMM         = Milling.MillTool3.InMM            -- tool_in_mm
+          tool.ToolDia      = Milling.MillTool3.ToolDia         -- tool_dia
+          tool.Stepdown     = Milling.MillTool3.Stepdown        -- tool_stepdown
+          tool.Stepover     = Milling.MillTool3.Stepover        -- tool_dia * (tool_stepover_percent / 100)
+          tool.RateUnits    = Milling.MillTool3.RateUnits       -- Tool.MM_SEC     -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+          tool.FeedRate     = Milling.MillTool3.FeedRate        -- 30
+          tool.PlungeRate   = Milling.MillTool3.PlungeRate      -- 10
+          tool.SpindleSpeed = Milling.MillTool3.SpindleSpeed    -- 20000
+          tool.ToolNumber   = Milling.MillTool3.ToolNumber      -- 1
+      --  tool.VBitAngle    = Milling.MillTool.VBitAngle          -- 90.0            -- used for vbit only
+      --  tool.ClearStepover = Milling.MillTool.ClearStepover   --  tool_dia * (tool_stepover_percent / 100)  -- used for vbit only
+   -- we will set home position and safe z relative to material block size
+    local mtl_block = MaterialBlock()
+    local mtl_box = mtl_block.MaterialBox
+    local mtl_box_blc = mtl_box.BLC
+   -- Create object used to set home position and safez gap above material surface
+    local pos_data = ToolpathPosData()
+          pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+          pos_data.SafeZGap = mtl_block.Thickness * 0.1
+   -- Create  object used to pass pocketing options
+    local pocket_data = PocketParameterData()
+          -- start depth for toolpath
+          pocket_data.StartDepth = 0.0
+          -- cut depth for toolpath this is depth below start depth
+          pocket_data.CutDepth = PostCap.SlopAmount
+          -- direction of cut for offet clearance - ProfileParameterData.CLIMB_DIRECTION or ProfileParameterData.CONVENTIONAL_DIRECTION - NOTE: enum from ProfileParameterData
+          pocket_data.CutDirection = ProfileParameterData.CLIMB_DIRECTION
+          -- Allowance to leave on when machining
+          pocket_data.Allowance = 0.0
+          -- if true use raster clearance strategy , else use offset area clearance
+          pocket_data.DoRasterClearance = false --true
+          -- angle for raster if using raster clearance
+          pocket_data.RasterAngle = 0
+          -- type of profile pass to perform  PocketParameterData.PROFILE_NONE , PocketParameterData.PROFILE_FIRST orPocketParameterData.PROFILE_LAST
+          pocket_data.ProfilePassType = PocketParameterData.PROFILE_LAST
+          -- if true we ramp into pockets (always zig-zag)
+          pocket_data.DoRamping = false
+          --  if ramping, distance to ramp over
+          pocket_data.RampDistance = 1.0
+          -- if true in Aspire, project toolpath onto composite model
+          pocket_data.ProjectToolpath = false
+   -- Create object which can used to automatically select geometry on layers etc
+    local geometry_selector = GeometrySelector()
+   -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+    local create_2d_previews = true
+   -- if this is true we will display errors and warning to the user
+    local display_warnings = false -- true
+   -- if we are doing two tool pocketing define tool to use for area clearance
+    local area_clear_tool = nil
+    if Milling.Clearning then
+   -- we just create a tool twice as large for testing here
+--   local jim = Milling.MillTool3
+    area_clear_tool = Tool(
+                          Milling.MillTool3.Name,
+                          Tool.END_MILL       -- BALL_NOSE, END_MILL, VBIT
+                          )
+     area_clear_tool.InMM         = Milling.MillTool3.InMM       -- tool_in_mm
+     area_clear_tool.ToolDia      = Milling.MillTool3.ToolDia    -- tool_dia * 2
+     area_clear_tool.Stepdown     = Milling.MillTool3.Stepdown   -- tool_stepdown * 2
+     area_clear_tool.Stepover     = Milling.MillTool3.Stepover   -- tool_dia * 2 *(tool_stepover_percent / 100)
+     area_clear_tool.RateUnits    = Milling.MillTool3.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+     area_clear_tool.FeedRate     = Milling.MillTool3.FeedRate      -- 30
+     area_clear_tool.PlungeRate   = Milling.MillTool3.PlungeRate    -- 10
+     area_clear_tool.SpindleSpeed = Milling.MillTool3.SpindleSpeed  -- 20000
+     area_clear_tool.ToolNumber   = Milling.MillTool3.ToolNumber    -- 1
+    end
+     -- area_clear_tool.VBitAngle     = Carrier.MillTool3.VBitAngle      -- 90.0 -- used for vbit only
+     -- area_clear_tool.ClearStepover = Carrier.MillTool3.ClearStepover  -- tool_dia * 2 * (tool_stepover_percent / 100)  -- used for vbit only
+   -- Create our toolpath
+    local toolpath_manager = ToolpathManager()
+    local toolpath_id = toolpath_manager:CreatePocketingToolpath(
+                                              name,
+                                              tool,
+                                              area_clear_tool,
+                                              pocket_data,
+                                              pos_data,
+                                              geometry_selector,
+                                              create_2d_previews,
+                                              display_warnings
+                                              )
+    if toolpath_id  == nil  then
+      DisplayMessageBox("Error creating toolpath")
+      return false
+    end
+  return true
+end
+-- ===================================================]]
+function Rounder(num, idp)                            -- reduce the size of the fraction to idp places
+	return tonumber(string.format("%." .. (idp or 0) .. "f", num))
+end
+-- ===================================================]]
+function PostCapMath()                                -- Look at what the User inputed.
+  if PostCap.CapSizeX == PostCap.CapSizeY then
+    PostCap.DropAmount = (PostCap.CapSizeY - PostCap.FlatAmount) * 0.5
+  else
+  if PostCap.CapSizeX > PostCap.CapSizeY then
+      PostCap.DropAmount = (PostCap.CapSizeY - PostCap.FlatAmount) * 0.5
+    else
+      PostCap.DropAmount = (PostCap.CapSizeX - PostCap.FlatAmount) * 0.5
+    end
+  end -- if end
+  PostCap.BottomCount = (PostCap.CapSizeX / Milling.MillTool2.Stepover) + 2
+  PostCap.SideCount   = (PostCap.CapSizeY / Milling.MillTool2.Stepover) + 2
+  return true
+end -- function end
+-- ===================================================]]
+function CheckDialogValues()                          -- Look at what the User inputed.
+  PostCap.DialogLoop = false
+ if Milling.MillTool1 == "No Tool Selected"  then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: No Profile Tool Selected")
+  elseif Milling.MillTool2 == "No Tool Selected"  then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: No Carving Tool Selected")
+  elseif Milling.MillTool3 == "No Tool Selected"  then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: No Clearing Tool Selected")
+  elseif PostCap.SlopAmount == 0.0 then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Slope Amount cannot be Zero")
+  elseif PostCap.SlopAmount >= PostCap.MaterialThickness then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Slope Amount cannot be more or equal to the Material Thickness")
+  elseif PostCap.FlatAmount >= PostCap.MaterialWidth then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Flat Amount cannot be more or equal to the Material Width")
+  elseif PostCap.FlatAmount < 0.0 then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Flat Amount cannot be less than zero")
+  elseif PostCap.FlatAmount >= PostCap.MaterialLength then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Flat Amount cannot be more or equal to the Material Length")
+  elseif PostCap.FlatAmount >= PostCap.MaterialLength then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Flat Amount cannot be more or equal to the Material Length")
+  elseif PostCap.CapSizeY == 0.0 then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Cap Size Y cannot be Zero")
+  elseif PostCap.CapSizeX == 0.0 then
+    PostCap.DialogLoop = true
+    DisplayMessageBox("Error: The Cap Size X cannot be Zero")
+  end
+  return true
+end -- function end
+-- ===================================================]]
+function HTML()
+  DialogWindow.Main = [[<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>PostCap Creator</title>
+<style>
+html {
+	overflow: hidden
+}
+.helpbutton {
+	background-color: #E1E1E1;
+	border: 1px solid #999;
+	border-right-color: #000;
+	border-bottom-color: #000;
+	border-top-color: #FFF;
+	border-left-color: #FFF;
+	padding: 2px 12px;
+	font-family: arial, helvetica, sans-serif;
+	text-align: center;
+	text-decoration: none;
+	font-size: 12px;
+	margin: 4px 2px;
+	color: #000
+}
+.helpbutton:active {
+	border-right-color: #FFF;
+	border-bottom-color: #FFF;
+	border-top-color: #000;
+	border-left-color: #000
+}
+.helpbutton:hover {
+	border-right-color: #000;
+	border-bottom-color: #000;
+	border-top-color: #FFF;
+	border-left-color: #FFF
+}
+.LuaButton {
+	font-weight: bold;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px
+}
+.DirectoryPicker {
+	font-weight: bold;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px
+}
+.ToolPicker {
+	font-weight: bold;
+	text-align: center;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	width: 50px
+}
+.ToolNameLabel {
+	font-family: arial, helvetica, sans-serif;
+	font-weight: bolder;
+	font-size: 12px;
+	text-align: left;
+	color: #FF0
+}
+.FormButton {
+	font-weight: bold;
+	width: 75px;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	white-space: nowrap
+}
+.h1-l {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	white-space: nowrap
+}
+.h2-l {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left
+}
+.h1-r {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-align: right;
+	white-space: nowrap
+}
+.h1-rP {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 4px
+}
+.h1-rPx {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 8px;
+	padding-left: 8px
+}
+.alert {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #00F;
+	text-align: center;
+	white-space: nowrap
+}
+.h1-c {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	white-space: nowrap
+}
+.header1-c {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap
+}
+.header2-c {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap
+}
+body {
+	background-color: #CCC;
+	overflow: hidden;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px
+}
+table {
+	width: 100%;
+	border: 0;
+}
+</style>
+</head>
+<body>
+<table>
+  <tr>
+    <td class="header2-c"><label id="PostCap.AppName">-</label></td>
+    <td class="h1-r" style="color: #999999"><label id="PostCap.Version">-</label></td>
+  </tr>
+  <tr>
+    <td>
+      <p class="h2-l">This gadget creates a single sided project to mill a Fence Post Cap.</p>
+      <p class="h2-l">The gadget assumes that the Materal Block is the size of the rough materal and is large enough to mill out the finshed Post Cap.</p>
+    </td>
+    <td><img id="PostCap" src="data:image/jpeg;base64,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Ztr8nki+Wq9nRakkTtcUMUdPCyGGNscUbQ1jGNs1oGQAHALlRFUEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQePWUdPtCklpKqJssEowvY7j+nnwXw7tLsCo7PbVkp5GO9neSaeUm+Nl+f2hlcfkQvvK8DauyaTbWz30dbHjidmCMnMdwc08Csaz1rGuV+fuC23Rdn2g7P1fZ2vNPUDFG7OGYCzZG/keY4fArrBouHOPRL34zxWgs8VoKCcV0+2HXmjZyZf5/su4Gq6Xa5vVt6MH4lWJXXjVULI1WmrbChYcuQLjPiCDk4BUaqclW6qiOWTqFXaqe8FBSuGPN5K5ToVxQ6lUch1UPFXiiCDinNTmqFBoKt1KgVaqB1WneFZ4qv8ACgnuoNCu82b2O7R7WDTR7HqnMdGJWySN7pjm5WIc6wOvAr23Zv8ARva84a7aG0KWjY6PFaMGV7XZbpG6OeYcdOKctTsfNlOC+77N/pF2do8Lqt1VXP7sNc2STAzFldwDbEaaFx146r2jZnZbYWxhEaDZVLDJFfBL3YdIL3vvm7uJGumS1MVPePztszsvt3bJiNBsqqmjlvgm7stjNr33zZvAjXXJe3bM/o9t2r7p9fU0tDG6+NuIyyM1tkN03y97Q+i+5orMRn3r5zsv+j2wqTun19TVV0jb424u6jfrbdG8LZe9qPRe0bO7G9nNkhpo9j0rXskErJJGd69rsrEOdcjTgV3yLUkZ7RERUEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB4G1dk0m2tnvoq2PHG7MEZOY7g5p4H+cV8X2/sCr7PVxp6gY43XMMwFmyN/I8xw+BX3deBtXZNJtqgfR1jMcbswRk5juDmngVjWOtY1x+f+K1wPku02/2fq+z20DT1IxRuzhmA3ZG/keY4fAnq+BXDnHo7LE4ldDtR1654+yAPku+5r1/aRvXy+Y1HQK5Zvx4oWmrLeKo0W4yvBY4hb4FYHjCg5OKo1KnFUcVRk6qe8qdVB4ikEebNKxDoVp53CtUkUk8jIYY3ySyODWMY3EXOOgA4lBOKi9p2b/TztTtMtdHsmWCMyYHPqiIsOm9hdvEZ6gFe27N/orUuwu2rteKO0m9HSxl+JmXvOtY6+6fXRWSp2PlAVHBfoTZv9LOy2zsLpKWWtkZJja+qlJ5buFtmkZaEHVe0UOytnbMMn+z6ClpO8tj9nhbHite17DPU/FWYT3fneh7Cdqdod53OxKpmC1/aAIdeWMtvpwXt1D/AEX2i8Se37WpYLWwezxulxc73w24c/1+zotTEZ969Fof6TdlqTvO+iqq3Fa3fzkYPLBh1630XtVFsXZWzpnTUOzaOllLcJfBA1hLeVwNMh8F2CK8Z7RERUEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREHgbV2TSba2e+jrGY43ZgjJzHcHNPAr4vt/YFX2erzT1AxRuzhmA3ZG/keY4fAr7svB2rsmk2zQPo61mON2YIycx3BzTwKxrHWs64+ADivW6wk1k1zffOq9223sebYO1pqCY48NnMkDS0PadCPw8wV6PUkOqpSCCC9xBHmuMnHa3rjGi0NFkaLyqLZ9btGUw0NJPVStbiLIInPIbzsOGY+K3GXjnwlZb4yvddnf0u7U7QAL6SKijdGHtfVSgcssLcTgc9CBova9mf0Vp2Fsm1NryyXj3o6WMMwvy9518Q190emivrantHyIalc9JS1FbO2npKeWonffDHEwuc6wubAdF+hdm/wBPey+zMLmbKinkDAxz6omXFpnhdug5agDivYqWkp6KnbT0lPFBCy+GOJgY1tzc2A63VmGfd+fdmf017U7TMTv9n+yQyX+kqnhmG1/E3xjT7PEcM17bsv8AotbupNrbX597DSR+dsL3eh8PMdV9cRa9YntXqGzP6adltm9047OFXLHf6SreZMV7+JngOv2eA45r2Si2dRbMhMFBR09LE52IsgiaxpdzsBrkPgvLRXjPRERUEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQdPt/s/SdoaA09QMMjbmGYDejd+Y5jj8CvRqP+i+zmmU7Q2vVTl1sHs8TYcOt73xX4cl9RRT1lWWvW6HsH2W2f3nc7EpXY7X9oBm0vpjJtrwXfwxR08LIYY2RxRtDWMY2zWgZAADQLlRVBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB/9k=" width="180" height="160" alt="Fence Post Cap"></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="3"><hr></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td class="h1-c"><input id = "InquiryToolClear" class="LuaButton" type = "button" value = "Clear"></td>
+  </tr>
+  <tr>
+    <td class="h1-rPx">Profile Tool:</td>
+    <td class="ToolNameLabel"><span id = "ToolNameLabel1">-</span></td>
+    <td class="h1-c"><input id = "ToolChooseButton1" class="ToolPicker" type = "button" value = "Tool"></td>
+  </tr>
+  <tr>
+    <td class="h1-rPx">Carving Tool:</td>
+    <td class="ToolNameLabel"><span id = "ToolNameLabel2">-</span></td>
+    <td class="h1-c"><input id = "ToolChooseButton2" class="ToolPicker" type = "button" value = "Tool"></td>
+  </tr>
+  <tr>
+    <td class="h1-rPx">Roughing Tool:</td>
+    <td class="ToolNameLabel"><span id = "ToolNameLabel3">-</span></td>
+    <td class="h1-c"><input id = "ToolChooseButton3" class="ToolPicker" type = "button" value = "Tool"></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4" class="h1-r"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-rP">Material Thickness</td>
+    <td><input name="PostCap.MaterialThickness" type="text" disabled id="PostCap.MaterialThickness" size="9" readonly></td>
+    <td class="h1-rP">Material Width</td>
+    <td class="h1-l"><input name="PostCap.MaterialLength" type="text" disabled id="PostCap.MaterialLength" size="9" readonly></td>
+  </tr>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-rP">Cap Size (X)</td>
+    <td class="h1-l"><input id="PostCap.CapSizeX" size="9" type="text"></td>
+    <td class="h1-rP">Cap Size (Y)</td>
+    <td class="h1-l"><input id="PostCap.CapSizeY" size="9" type="text"></td>
+  </tr>
+  <tr>
+    <td class="h1-rP">Slope Amount</td>
+    <td class="h1-l"><input id="PostCap.SlopAmount" size="9" type="text"></td>
+    <td class="h1-rP">Flat Amount</td>
+    <td class="h1-l"><input id="PostCap.FlatAmount" size="9" type="text"></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="3"><hr></td>
+  </tr>
+  <tr>
+    <td> <a href=]].. DialogWindow.MainHelp ..[[ target="_blank" class="helpbutton">Help</a></td>
+    <td class="FormButton"><span>
+      <input id = "ButtonOK"     class = "FormButton" name = "ButtonOK"     type = "button" value = "OK">
+      </span></td>
+    <td class="FormButton"><span>
+      <input id = "ButtonCancel" class = "FormButton" name = "ButtonCancel" type = "button" value = "Cancel">
+      </span></td>
+  </tr>
+</table>
+</body>
+</html>]]
+end -- function end
+-- ====================== End ========================]]

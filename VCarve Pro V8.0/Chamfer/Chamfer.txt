@@ -1,0 +1,3 @@
+Chamfer Gadget
+
+Creates a toolpath for efficient cutting of chamfers without a dedicated tool.

@@ -1,0 +1,3 @@
+Create VCarving toolpath.
+
+This will automatically create a VCarving toolpath of the selected vectors, without any other input from the user.

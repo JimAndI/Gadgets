@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Project Setup Form</title>
+<style>
+html {
+	overflow:hidden
+}
+.DirectoryPicker {
+	font-weight:bold;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px
+}
+.FormButton {
+	font-weight:bold;
+	width:75px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	white-space:nowrap;
+	background-color: #696969;
+	color: #FFFFFF
+}
+.LuaButton {
+	font-weight:bold;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	background-color:  #663300;
+	color: #FFFFFF
+}
+.ToolNameLabel {
+	font-family:Arial, Helvetica, sans-serif;
+	font-weight:bolder;
+	font-size:12px;
+	text-align:left;
+	color:#000
+}
+.ToolPicker {
+	font-weight:bold;
+	text-align:center;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:center;
+	width:50px;
+	background-color:  #663300;
+	color: #FFFFFF
+}
+.TableSizeMax {
+	border: 0;
+	width: 100%;
+}
+.TableSize600 {
+	width: 600px;
+	border: 0;
+}
+.PathTableSize600 {
+	width: 600px;
+	border: 0;
+}
+
+.PathColumn1 {
+	width: 50px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.PathColumn2 {
+	width: 300px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	color: #000000;
+}
+.PathColumn3 {
+	width: 30px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align: center;
+	white-space:nowrap;
+	color: #000000;
+}
+.FootTableSize600 {
+	width: 600px;
+	border: 0;
+}
+
+.FootColumn1 {
+	width: 45px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.FootColumn2 {
+	width: 300px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	color: #000000;
+}
+.FootColumn3 {
+	width: 25px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align: center;
+	white-space:nowrap;
+	color: #000000;
+}
+.FootColumn4 {
+	width: 25px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align: center;
+	white-space:nowrap;
+	color: #000000;
+}
+
+
+.Column1 {
+	width: 100px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	color: #000000;
+}
+.Column2 {
+	width: 200px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	color: #000000;
+}
+.Column3 {
+	width: 250px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align: center;
+	white-space:nowrap;
+	color: #000000;
+}
+.alert-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color: #FFFFFF;
+	text-align:center;
+	white-space:nowrap
+}
+.alert-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	text-shadow: 5px 5px 10px #FFF;
+	color:#FF0101;
+	text-align:left;
+	white-space:nowrap
+}
+.alert-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:#00F;
+	text-align:right;
+	white-space:nowrap
+}
+.error {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:18px;
+	font-weight:bold;
+	color:#FF0000;
+	text-align:left;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:10px;
+	padding-top:4px;
+	padding-bottom:4px;
+}
+.errorMessage {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color:#000;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:10px;
+	padding-top:4px;
+	padding-bottom:4px;
+}
+.errorTable {
+    background-color:#FFFFFF;
+	white-space:nowrap;
+}
+.p1-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:left;
+	color: #000000;
+}
+.p1-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:center;
+	color: #000000;
+}
+.p1-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:right;
+	color: #000000;
+}
+.ver-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	text-align:center;
+    white-space:nowrap;
+    color: #ffd9b3;
+}
+.h1-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-rP {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:4px;
+	color: #000000;
+}
+.h1-rPx {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	padding-right:8px;
+	padding-left:8px;
+	color: #000000;
+}
+.h2-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #663300;
+	text-align:left;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #000000;
+}
+.h2-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #663300;
+	text-align:center;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #000000;
+}
+.h2-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #000000;
+	text-align:right;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #8E8D8A;
+}
+.h3-bc {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.h3 {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.webLink-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	background-color: yellow;
+	text-align:center;
+	white-space:nowrap;
+}
+.jsbutton {
+	background-color: #663300;
+	border:2px solid #999;
+	border-right-color:#000;
+	border-bottom-color:#000;
+	border-top-color:#FFF;
+	border-left-color:#FFF;
+	font-family:Arial, Helvetica, sans-serif;
+	text-align:center;
+	text-decoration:none;
+	font-size:12px;
+	margin:1px 1px;
+	color:#FFFFFF;
+}
+.jsTag-no-vis {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	display:none;
+	text-align:center;
+	color:#00F;
+	visibility: hidden;
+}
+body {
+	background-color: #EAE7DC;
+	background-position: center;
+	overflow:hidden;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color: #8E8D8A;
+    background-image: url(]].. DialogWindow.myBackGround ..[[);
+}
+html {
+	overflow:hidden;
+}
+</style>
+</head>
+<body>
+
+<table class="TableSize600" id="ValuesTable">
+  <tr>
+    <td class="Column1">Job Name</td>
+    <td class="PathColumn2"><input name = "Project.ProjectName" type="text" id="Project.ProjectName" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="Column1">Job Number</td>
+    <td class="PathColumn2"><input name= "Project.ProjectContactName" type="text" id="Project.ProjectContactName" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="Column1">Client Name</td>
+    <td class="PathColumn2"><input name="Project.ProjectContactEmail" type="text" id="Project.ProjectContactEmail" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="Column1">Client Email</td>
+    <td class="PathColumn2"><input name="Project.ProjectContactPhoneNumber" type= "text"  id= "Project.ProjectContactPhoneNumber" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="Column1">Client Phone</td>
+    <td class ="PathColumn2"><input name ="Project.DrawerID" type="text" id="Project.DrawerID" size="50" maxlength="65" readonly /></td>
+  </tr>
+  <tr>
+    <td class="Column1">Street Address</td>
+    <td class="PathColumn2"><input name = "Project.ProjectName2" type="text" id="Project.ProjectName2" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="Column1">Project Start Date</td>
+    <td class="PathColumn2"><input name = "Project.ProjectName2" type="text" id="Project.ProjectName6" size="50" maxlength="65" /></td>
+  </tr>
+</table>
+<table width="76%" border="0" class="TableSize600">
+  <tr>
+    <td width="3%"><span class="h1-r">City</span></td>
+    <td width="17%"><input name = "Project.ProjectName3" type="text" id="Project.ProjectName3" size="20" maxlength="20" /></td>
+    <td width="14%"><span class="Column1">State</span></td>
+    <td width="21%"><input name = "Project.ProjectName4" type="text" id="Project.ProjectName4" size="20" maxlength="20" /></td>
+    <td width="14%"><span class="Column1">Zip Code</span></td>
+    <td width="31%"><input name = "Project.ProjectName5" type="text" id="Project.ProjectName5" size="10" maxlength="10" /></td>
+  </tr>
+</table>
+<table class="TableSize600" id="ButtonTable">
+  <tr>
+    <td colspan="4" class="h2"><hr></td>
+  </tr>
+  <tr>
+    <td class="FootColumn1" ><button class="FormButton" onClick="window.open(']].. DialogWindow.ProjectSDK .. [[');">Help</button></td>
+    <td class="FootColumn2" id="Gadget.Alert">.</td>
+    <td class="FootColumn3" ><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
+    <td class="FootColumn4" ><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>

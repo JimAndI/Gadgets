@@ -1,0 +1,68 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+	
+<html>
+<head>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<style type="text/css">
+body{font-family:"Gadugi","Corbel","Franklin Gothic Medium";color:#000;font-size:12px;overflow:hidden;}
+html{overflow: auto;}
+#main{margin:15px;width:230px}
+#TitleBox{background-color:#fff;width:220px;height:36px;border:1px #a0a0a0 solid;border-radius:2px;margin-bottom:10px;}
+#Title{font-weight:bold;float:left;position:relative;top:10px;left:20px;}
+#TitleIcon{width:35px;height:30px;float:left;background:url('favicon.png') 7px 7px no-repeat;}
+.OptionBox{background-color:#fff;width:210px;border:1px #a0a0a0 solid;border-radius:2px;margin-bottom:10px;padding:5px 5px 10px 5px;}
+.OptionBoxTitle{margin:0px 0px 0px 8px;font-weight:bold;}
+.OptionTitle{padding:11px 0px 0px 8px;}
+.OptionGroup{}
+#RunOptions{}
+#ButtonOK,#ButtonCancel{width:70px;height:20px;background-color:#e1e1e1;border:1px #a0a0a0 solid;}
+#ButtonCancel{margin-left:80px}
+#ButtonOK:hover,#ButtonCancel:hover{border-color:#0078d7;}
+.DT{display:inline;}
+/* End of styling for form, onto you runique element styles*/
+#NewLayer{margin-left:20px;display:inline;}
+#InnerRad{width:90px;margin-left:10px;}
+#OuterRad{width:90px;margin-left:9px;}
+#LayerName{margin-left:20px;width:100px;}
+#ReplaceSelected,#DisplayDialog{display:inline;margin-left:33px}
+</style>
+<title>Radius All Corners</title>
+</head>
+<body bgcolor="#d7e4f2">
+<div id="main">
+<div id="TitleBox"><div id="TitleIcon"></div><div id="Title" title="This Gadget has been designed to be ran in conjunction with the Gadget Shortcuts feature. Assign this Gadget to a shortcut and run without the form showing with your last used settings for ultimate efficiency">Radius All Corners</div></div>
+<div class="OptionBox">
+<div class="OptionBoxTitle">Radius Options</div>
+<div class="OptionGroup"><div class="OptionTitle DT" title="Enter a Value to wish to Radius all Interal Corners by">Internal Corners</div><input class="DT" name="textfield" type="text" size="13" maxlength="25" id="InnerRad"></div>
+<div class="OptionGroup"><div class="OptionTitle DT" title="Enter a Value to wish to Radius all External Corners by">External Corners</div><input class="DT" name="textfield" type="text" size="13" maxlength="25" id="OuterRad"></div>
+</div>
+<div class="OptionBox">
+<div class="OptionBoxTitle">Vector Options</div>
+<div class="OptionGroup"><div class="OptionTitle DT" title="This option will replace the currently selected vectors with Radiused Vectors">Replace Currently Selected?</div><INPUT type="checkbox" ID="ReplaceSelected"></div>
+</div>
+<div class="OptionBox">
+<div class="OptionBoxTitle">Layer Options</div>
+<div class="OptionGroup"><div class="OptionTitle DT" title="This option will create the Radiused Vectors on a new layer">Create Vectors on New Layer?</div><INPUT type="checkbox" checked ID="NewLayer"></div>
+<div class="OptionGroup"><div class="OptionTitle DT" title="With the option above selected this layer name will be the new layername, if nothing is entered the layer will be named Radiused Vectors">Layer Name</div><input class="DT" name="textfield" type="text" size="13" maxlength="25" id="LayerName"></div>
+</div>
+<div class="OptionBox">
+<div class="OptionBoxTitle">Gadget Run Options</div>
+<div class="OptionGroup"><div class="OptionTitle DT" title="This option will run the gadget next time with all the current options saved, without the form displaying options, You will need the Global Gadget Settings Gadget Installed to turn back on displaying the form ">Run Gadget & Show Form?</div><INPUT type="checkbox" ID="DisplayDialog"></div>
+</div>
+<div class="OptionBox">
+<div class="OptionBoxTitle" title="This Gadget has been designed to be ran in conjunction with the Gadget Shortcuts feature. Assign this Gadget to a shortcut and run without the form with your last used settings for ultimate efficiency">Gadget Tips</div>
+<div class="OptionTitle" title="Hover over the Gadget Title & Options to get more information of what each function will do.">Hover over the Gadget Title & Options to get more information of what each function will do.</div>
+</div>
+<div id="RunOptions">
+<input class="FormButton" type="button" id="ButtonOK" value="OK"><input class="FormButton" type="button" id="ButtonCancel" value="Cancel">
+</div>
+
+
+
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<title>Cabinet Maker and Tool-path Creator</title>
+<style type="text/css">
+html {
+	overflow: auto;
+}
+
+
+body {
+	background-color: #F0F0F0;
+}
+.ToolPicker {
+	width: 69px;
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #000;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.h1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+.h2 {
+	font-size: 10px;
+	font-weight: bold;
+}
+.ToolNameLabel {
+	color: #555;
+}
+</style>
+</head>
+
+<body>
+<table width="783" border="1" cellpadding="0">
+  <tr>
+    <th width="104" align="center" valign="middle" bgcolor="#FFFF00"><strong>Area</strong></th>
+    <th width="136" align="center" valign="middle" bgcolor="#FFFF00"><strong>Item</strong></th>
+    <th width="74" align="center" valign="middle" bgcolor="#FFFF00">Value</th>
+    <th width="71" align="center" valign="middle" bgcolor="#FFFF00"><strong>Default Value</strong></th>
+    <th width="374" align="center" valign="middle" bgcolor="#FFFF00"><strong>Information</strong></th>
+  </tr>
+  <tr>
+    <td  align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Width Clearance</td>
+    <td align="center" valign="middle"><input name="g_shelfWidthClearance" type="text" class="h2" id="g_shelfWidthClearance" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.25</td>
+    <td align="left" valign="middle">Amount Of Space For Shelf Frount To Back Clearance</td>
+  </tr>
+  <tr>
+    <td  align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Count </td>
+    <td align="center" valign="middle"><input name="g_lowerShelfCount" type="text" class="h2" id="g_lowerShelfCount" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Number of Shelves In The Cabinet. (0 = No Shelf)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf End Clarence</td>
+    <td align="center" valign="middle"><input name="g_lowerShelfClarence" type="text" class="h2" id="g_lowerShelfClarence" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.18</td>
+    <td align="left" valign="middle">Shelf End Clarence, To Clear The Pin Plate (amount applied to each end)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Top Shelf Overlap</td>
+    <td align="center" valign="middle"><input name="g_shelfOverlap" type="text" class="h2" id="g_shelfOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.0625</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Shelf</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Base Cabinet Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Face Frame Width</td>
+    <td align="center" valign="middle"><input name="g_lowerShelfFaceFrameWidth" type="text" class="h2" id="g_lowerShelfFaceFrameWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">1.5</td>
+    <td align="left" valign="middle">Shelf Face Frame Width</td>
+  </tr>
+  <tr>
+    <td colspan="5" align="center" valign="middle"><table border="0" width="82%">
+        <tr>
+          <td style="width: 20%">&nbsp;</td>
+          <td style="width: 20%"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+          <td style="width: 20%">&nbsp;</td>
+          <td style="width: 20%"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+          <td style="width: 20%">&nbsp;</td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+</body>
+</html>

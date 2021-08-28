@@ -1,0 +1,8 @@
+
+Code: Select all
+dialog:AddToolPicker("ToolChooseButton", "ToolNameField", options.default_toolname)
+
+
+and changing it to something like this
+Code: Select all
+   dialog:AddToolPicker("ToolChooseButton", "ToolNameField", ToolDBId())

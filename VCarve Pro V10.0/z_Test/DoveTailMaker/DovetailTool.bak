@@ -1,0 +1,95 @@
+#======================================
+# Easy Dovetale Maker
+# May 2020
+# By: Jim Anderson
+#======================================
+[Amana Tool 45814 Carbide Tipped Dovetail 14 Deg x 1.0 D x 1.0 CH x 0.5 SHK]
+Brand=Amana Tool
+PartNo=45814
+BitAngle=14
+ShankDia=0.5
+BitDia=1
+Flutes=2
+Type=Carbide Tipped
+BitLength=1.75
+CutDepth=1
+RPM=18000
+FeedRate=24
+PlungRate=12
+Notes=Test 1
+#======================================
+[Amana Tool 45812 Carbide Tipped Dovetail 12 Deg x 0.8 D x 0.5 CH x 0.5 SHK]
+Brand=Amana Tool
+PartNo=45812
+BitAngle=12
+ShankDia=0.500
+BitDia=1.0
+Flutes=2
+Type=Carbide Tipped
+BitLength=1.75
+CutDepth=1.125
+RPM=18000
+FeedRate=34
+PlungRate=13
+Notes=Test 2
+#======================================
+[Amana Tool 45817 Carbide Tipped Dovetail 14 Deg x 1.0 D x 1.0 CH x 0.5 SHK]
+Brand=Amana Tool
+PartNo=45817
+BitAngle=8
+ShankDia=0.5
+BitDia=1.2
+Flutes=2
+Type=Carbide Tipped
+BitLength=1.275
+CutDepth=1.2
+RPM=18000
+FeedRate=44
+PlungRate=32
+Notes=Test 3
+#======================================
+[Amana Tool 45819 Carbide Tipped Dovetail 7 Deg x 1.45 D x 1.45 CH x 0.5 SHK]
+Brand=Amana Tool
+PartNo=45819
+BitAngle=7
+ShankDia=0.500
+BitDia=1.0
+Flutes=4
+Type=Carbide Tipped
+BitLength=1.45
+CutDepth=1.45
+RPM=18000
+FeedRate=44
+PlungRate=14
+Notes=Test 4
+#======================================
+[Jim 54685 Carbide Tip Dovetail 12 Deg x 0.625 D x 0.675 CH x 0.5 SHK]
+Brand = Jim
+PartNo = 54685
+BitAngle = 12
+ShankDia = 0.5
+BitDia = 0.625
+Flutes = 2
+Type = Carbide Tip
+BitLength = 1.75
+CutDepth = 0.675
+RPM = 20000
+FeedRate = 35
+PlungRate = 15
+Notes = My Bit
+#======================================
+[Anderson 55845 Steel Dovetail 7.5 Deg x 0.75 D x 0.85 CH x 0.5 SHK] 
+Brand=Anderson
+PartNo=55845
+BitAngle=7.5
+ShankDia=0.5
+BitDia=0.75
+Flutes=3
+Type=Steel
+BitLength=2.25
+CutDepth=0.85
+RPM=20000
+FeedRate=30
+PlungRate=12.5
+Notes = Testing is good. 
+#====================================== 

@@ -1,0 +1,4 @@
+ID, Name, Count, Thick, Material, Width, Length
+SS1,Stair Stringer,TBD,TBD,Wood,11.5,95.002643901239     
+SR2,Stair Risers,8,0.75,Wood,13.1786,TBD     
+ST3,Stair Treads,7,1.25,Wood,6.25,TBD     

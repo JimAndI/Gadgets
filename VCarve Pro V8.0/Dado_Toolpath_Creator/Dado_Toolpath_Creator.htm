@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<title>Keyhole Toolpath Creator</title>
+<style type="text/css">
+html {
+	overflow: auto;
+}
+body {
+	background-color: #F0F0F0;
+}
+.ToolPicker {
+	width: 69px;
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.h1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+.h2 {
+	font-size: 12px;
+	font-weight: bold;
+}
+.ToolNameLabel {
+	color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<table border="0" width="100%">
+	<tr>
+		<td class="h1">Dado Toolpath Creator</td>
+		<td "width:20%" align="right" style="color: #999999">Version
+		<span id="GadgetVersion" style="color: #999999">0.0</span></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+		<p>This gadget creates dado (housing joint) toolpaths from pre-selected rectangular 
+		vectors.</p>
+		<p>It is often easier to draw a part using a rectangle to layout where a 
+		dado goes but, when it comes to cutting, it is more efficient to use the 
+		correct diameter bit and do a profile cut on a centre line.</p>
+		<p>This gadget automates the process of creating those centre lines and 
+		toolpaths for the selected tool size.</p>
+		<p>To use the gadget select one or more rectangular vectors. The gadget 
+		assumes that the dado will run in the direction of the longest side of the 
+		rectangle.</p>
+		<p>The Allowance is the amount you want the centre line to over or under shoot the rectangle. Typically
+		you would want the line to be longer than the rectangle by the tool diameter if you were cutting a full width
+		dado. If the allowance is left blank then it will default to the selected tool diameter.</p>
+		<p>If you want to use an existing toolpath template for the dadoes then uncheck the Create Toolpath
+		 check box and only the vectors will be created on the specified layer.</p>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2"><hr style="width: 100%"></td>
+	</tr>
+</table>
+<table border="0" width="100%">
+	<tr>
+		<td align="left" style="width: 20%">
+		<input id="ToolChooseButton" class="ToolPicker" name="ToolChooseButton" type="button" value="Tool..."></td>
+		<td align="left" class="ToolNameLabel">
+		<span id="ToolNameLabel" class="ToolNameLabel">Tool Name</span> </td>
+	</tr>
+	<tr>
+		<td>&nbsp;Tool Path</td>
+		<td><input id="ToolPathName" name="ToolPathName" size="50" type="text"></td>
+	</tr>
+	<tr>
+		<td>&nbsp;Dado Depth</td>
+		<td><input id="DadoDepth" name="DadoDepth" size="8" type="text"></td>
+	</tr>
+	<tr>
+		<td>&nbsp;Layer Name</td>
+		<td><input id="LayerName" name="LayerName" size="50" type="text"></td>
+	</tr>
+	<tr>
+		<td>&nbsp;Allowance</td>
+		<td><input id="Allowance" name="Allowance" size="8" type="text"></td>
+	</tr>
+
+	<tr>
+		<td>&nbsp;Create Toolpath?</td>
+		<td><input id="CreateToolPath" name="CreateToolPath" type="checkbox"></td>
+	</tr>
+	<tr>
+		<td colspan="2"><hr style="width: 100%"></td>
+	</tr>
+</table>
+<table border="0" width="100%">
+	<tr>
+		<td style="width: 20%">&nbsp;</td>
+		<td style="width: 20%">
+		<input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+		<td style="width: 20%">&nbsp;</td>
+		<td style="width: 20%">
+		<input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+		<td style="width: 20%">&nbsp;</td>
+	</tr>
+</table>
+
+</body>
+
+</html>

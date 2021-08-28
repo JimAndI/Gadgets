@@ -1,0 +1,3 @@
+Circle Resizer
+
+Resizes all selected circles of specified diameter.   

@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<title>Boxjoint Toolpath Creator</title>
+<style type="text/css">
+html {
+	overflow: auto;
+}
+body {
+	background-color: #F0F0F0;
+}
+.ToolPicker {
+	width: 69px;
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.h1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+.h2 {
+	font-size: 12px;
+	font-weight: bold;
+}
+.ToolNameLabel {
+	color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<table border="0" width="100%">
+	<tr>
+	  <td width="2%" class="h1">&nbsp;</td>
+	  <td width="5%" class="h1">&nbsp;</td>
+		<td width="80%" class="h1">Boxjoint Toolpath Creator</td>
+		<td width="13%"" align="right" style="color: #999999" "width:20%>Version
+		<span id="GadgetVersion" style="color: #999999">0.0</span></td>
+	</tr>
+	<tr>
+		<td colspan="3">
+		<p>This gadget creates a series of tool paths for a boxjoint from the material job setup settings.</p>
+		<p>This requires the material to be held in a vertical position so that the milling can be performed on the edge or end of the material to receive specified joinery.</p>
+		<p>The gadget assumes that the Boxjoint will run in the direction of the longest side of the material job and the material is a rectangle in shape. </p>
+		<p>Use the Top of material (top end of material) for the Z value. Set the materialthickness to the length of material.</p>
+		<p>For best results in cutting action, use &quot;up-cut&quot; spiral bits.</p></td>
+        
+		<td><img src="BoxJoint.jpg" width="200" height="204"></td>
+	</tr>
+	<tr>
+		<td colspan="4"><hr style="width: 100%"></td>
+	</tr>
+</table>
+<table border="0" width="100%">
+	<tr>
+		<td width="20%" align="left" style="width: 20%">
+		<input id="ToolChooseButton" class="ToolPicker" name="ToolChooseButton" type="button" value="Tool..."></td>
+		<td colspan="5" align="left" class="ToolNameLabel">
+		<span id="ToolNameLabel" class="ToolNameLabel">Tool Name</span> </td>
+	</tr>
+	<tr>
+	  <td align="right">&nbsp;Total Number of Fingers</td>
+	  <td colspan="2"><input id="NoFingers0" name="NoFingers0" size="8" type="text"></td>
+	  <td colspan="3" align="center"><a href="BoxjointMakerHelp.htm">Help Document</a></td>
+  </tr>
+	<tr>
+		<td align="right">&nbsp;Material Thickness</td>
+		<td width="13%"><input name="MaterialThickness" type="text" id="MaterialThickness" size="8" readonly></td>
+		<td width="20%" align="right">&nbsp;Material Length</td>
+		<td width="10%"><input name="MaterialLength" type="text" id="MaterialLength" size="8" readonly></td>
+		<td width="13%" align="right">Units =</td>
+		<td width="24%" colspan="4" align="left" class="DrawingUntsLabel">
+		<span id="DrawingUntsLabel" class="DrawingUntsLabel">Drawing Units</span> </td>
+	</tr>
+	<tr>
+		<td colspan="6"><hr style="width: 100%"></td>
+	</tr>
+</table>
+<table border="0" width="100%">
+	<tr>
+		<td style="width: 20%">&nbsp;</td>
+		<td style="width: 20%">
+		<input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+		<td style="width: 20%">&nbsp;</td>
+		<td style="width: 20%">
+		<input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+		<td style="width: 20%">&nbsp;</td>
+  </tr>
+</table>
+<p><a href="Box Joint Gadget.pdf"></a></p>
+
+</body>
+
+</html>

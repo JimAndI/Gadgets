@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<body BGCOLOR="#D9F691">
+<h1><p style="color:red;">Box Joints by the Old Geezer</p></h1>
+<font face="verdana" size="2">
+<i>Most of the controls below should be fairly intuitive, but for additional guidance please
+consult the documentation provided with the gadget.</i><br/><br/> 
+ 
+This gadget written by <b>Art Steburg</b> an Old Geezer with way too much time on his hands.
+If you really need to get in touch with me, send an email to <b>astebur@gmail.com</b>
+
+<font color="#D9F691">
+<label id="Script_Path"> script path</label>,
+</font>
+<hr />
+<b>Box Parameters</b>
+<table style="width: 63%">
+	<tr>
+		<td style="height: 20px">Layer Name</td>
+		<td style="width: 120px; height: 20px">
+        <input type="text" id="LayerName" size="12" maxlength="12"></td>
+			
+
+	</tr>
+	<tr>
+		<td style="height: 20px">Job Border</td>
+		<td style="height: 20px">
+		<input type="text" id="Border" size="5" maxlength="5"></td>
+		<td style="height: 20px">from bottom and left</td>
+	</tr>
+	<tr>
+		<td style="height: 20px">Box Height</td>
+		<td style="height: 20px">
+        <input type="text" id="BoxHeight" size="5" maxlength="5"></td>
+	</tr>
+	<tr>
+		<td style="height: 20px">Width: Front/Back</td>
+		<td style="height: 20px">
+		<input type="text" id="BoxWidth" size="5" maxlength="5"></td>
+		<td style="height: 20px">Ends</td>
+		<td style="height: 20px">
+        <input type="text" id="BoxDepth" size="5" maxlength="5"></td>
+	</tr>
+	<tr>
+		<td style="height: 20px">Number Pins</td>
+		<td style="height: 20px">
+        <input type="text" id="PinCount" size="5" maxlength="5"></td>
+	</tr>
+
+	<tr>
+		<td style="height: 20px">Fillet tool diameter</td>
+		<td style="height: 20px">
+        <input type="text" id="ToolDiameter" size="5" maxlength="5"></td>
+		<td style="height: 20px">(zero for no fillets)</td>
+	</tr>
+	
+	<tr>
+	<td style="height: 20px">Pin Allowance</td>
+		<td style="height: 20px">
+		<input type="text" id="BoxAllowance" size="5" maxlength="5"></td>
+	</tr>
+</table>
+
+<b>Bottom Style</b>
+<table style="width: 100%">
+	<tr>
+		<td style="height: 20px">
+        <input type="radio" name="BottomStyle" id="BottomStyle1">Flat bottom
+		<input type="radio" name="BottomStyle" id="BottomStyle2">Square legs
+		<input type="radio" name="BottomStyle" id="BottomStyle3">Single arch
+		<input type="radio" name="BottomStyle" id="BottomStyle4">Drapes
+		</td>
+		
+	</tr>
+</table>
+
+<table style="width: 63%">
+	<tr>
+		
+		<td style="height: 20px">Number drapes (style 4)</td>
+		<td style="height: 20px">
+        <input type="text" id="BottomPointCount" size="5" maxlength="5"></td>
+		<td style="height: 20px">Leg Height</td>
+		<td style="height: 20px">
+        <input type="text" id="LegSize" size="5" maxlength="5" style="width: 62px"></td>
+	</tr>
+</table>
+
+<b>Bottom Rails</b>
+<table style="width: 46%">
+	<td style="width: 240px; height: 20px">Bottom rail width</td>
+	<td style="width: 70px; height: 20px">
+	<input type="text" id="RailHeight" size="5" maxlength="5"></td>
+		<td style="width: 114px; height: 20px">(zero for no rails)</td>
+	</tr>
+</table>
+<b>Lid Style</b>
+<table style="width: 100%">
+	<tr>
+		<td style=" height: 20px">
+        <input type="radio" name="LidStyle" id="LidStyle1">Rectangular
+		<input type="radio" name="LidStyle" id="LidStyle2">Ears each end
+		<input type="radio" name="LidStyle" id="LidStyle3">Ear on front
+		</td>
+	</tr>
+</table>
+
+<table style="width: 100%; height: 62px;">
+    <tr>
+		<td colspan="5"><hr></td>
+	</tr>
+	<tr>
+		<td style="width: 20%"></td>
+		<td style="width: 20%">
+			<input width="100%" id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Build the Box">
+			
+		</td>	
+		<td style="width: 20%"></td>
+	</tr>
+</table>
+
+</body>
+
+</html>

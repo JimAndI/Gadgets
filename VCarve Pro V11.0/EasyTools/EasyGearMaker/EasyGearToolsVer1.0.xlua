@@ -1,0 +1,19 @@
+-- =====================================================]]
+function DisplayTest(words)
+  -- test a sub fuction
+    DisplayMessageBox(words)
+	return true
+end -- function end
+-- =====================================================]]
+function ValidJob()
+-- A better error message
+    Project.Job = VectricJob()
+    if not Project.Job.Exists then
+      DisplayMessageBox("Error: Cannot run Gadget, no drawing found \n" ..
+                        "Please create a new file (drawing) and \n" ..
+                        "specify the material dimensions \n")
+      return false
+    end  -- if end
+  end -- ValidJob end
+
+-- ==================== End ============================]]

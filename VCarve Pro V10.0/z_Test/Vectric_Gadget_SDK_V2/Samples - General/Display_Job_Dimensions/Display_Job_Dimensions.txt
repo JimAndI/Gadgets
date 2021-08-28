@@ -1,0 +1,3 @@
+Display Job Dimensions
+
+Brings up a text box with the job dimensions, then brings up another dialog box with more details

@@ -1,0 +1,5 @@
+Chamfer Gadget
+
+Creates a toolpath for efficient cutting of chamfers without a dedicated tool.
+
+Chamfer In & Out - is a modified version of the Vectric Chamfer Gadget v1.1

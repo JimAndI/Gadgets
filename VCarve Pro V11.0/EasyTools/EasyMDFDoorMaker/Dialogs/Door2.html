@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Main</title>
+]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table class="TableSize600">
+  <tr>
+    <td><span class="h1-c">
+      <select name="DoorStyle" id="DoorStyle">
+        <option value="StyleA">Door Style A</option>
+        <option value="StyleB">Door Style B</option>
+        <option value="StyleC">Door Style C</option>
+        <option value="StyleD">Door Style D</option>
+        <option value="StyleE">Door Style E</option>
+        <option value="StyleF">Door Style F</option>
+        <option value="StyleG">Door Style G</option>
+      </select>
+    </span></td>
+    <td><span class="h1-l"><span class="h1-c">
+      <input name="InquiryStyle" type="button" class="LuaButton" id="InquiryStyle" value="Edit Style">
+    </span></span></td>
+    <td><input id="InquiryAbout" class="LuaButton" name="InquiryAbout" type="button" value=" About "></td>
+    <td><span class="h1-r"><span class="h1-c"><span class="h2-r">
+      <input name="InquiryDefalt" type="button" class="LuaButton" id="InquiryDefalt" value="Default Settings">
+    </span></span></span></td>
+  </tr>
+  <tr><td  colspan="4"> <hr></td> </tr>
+  <tr><td  colspan="4" class="lable-l">Batch</td> </tr>
+  <tr>
+     <td colspan="3" nowrap class="h1-l">&nbsp;</td>
+    <td><span class="h1-l"><span class="h1-c">
+      <input name="FilePicker" type="button" class="FilePicker" id="FilePicker" value="CSV File">
+    </span></span></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600">
+  <tr>
+    <td colspan="6" nowrap><hr></td>
+  </tr>
+    <tr>
+    <td colspan="6" class="1abel-l">Single Door</td>
+  </tr>
+  <tr>
+    <td class="h1-c">X</td>
+    <td class="h1-c">Y</td>
+    <td class="h1-c">Count</td>
+    <td class="h1-c">Height</td>
+    <td class="h1-c">Width</td>
+    <td class="h1-c">&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="h1-c"><input type="text" id="Door.X" size="10" maxlength="10" /></td>
+    <td class="h1-c"><input type="text" id="Door.Y" size="10" maxlength="10" /></td>
+    <td class="h1-c"><input type="text" id="Door.Count" size="10" maxlength="10" /></td>
+    <td class="h1-c"><input type="text" id="Door.Height" size="10" maxlength="10" /></td>
+    <td class="h1-c"><input type="text" id="Door.Width" size="10" maxlength="10" /></td> 
+       <td ><span class="h2-r">
+      <input name="InquiryMakeDoor" type="button" class="LuaButton" id="InquiryMakeDoor" value="Draw Door">
+    </span></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="HelpMessageOKCancel">
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td class="FootColumn1" ><button class="FormButton" onClick="window.open(']].. DialogWindow.ProjectSDK .. [[');"> Help </button></td>
+    <td class="FootColumn2" id="Gadget.Alert2">.</td>
+    <td class="FootColumn3" ><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td class="FootColumn4" ><input id="ButtonCancel" class="FormButton" name="ButtonCancel2" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>

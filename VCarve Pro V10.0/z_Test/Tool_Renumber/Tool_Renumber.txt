@@ -1,0 +1,7 @@
+Tool_Renumber Gadget
+
+Renumbers all the tools in the toolpaths starting from 1. Tools with the same name will have the same tool number.
+You can optionally save a text file with the tool numbers and names.
+
+Created by Gary Singer (DVE2000 at forum.vectric.com)
+Text file save code provided by Dave (CNCDaveToo at forum.vectric.com)

@@ -1,0 +1,5 @@
+The documentation for the Box Joints gadget is in the "Box Joints.rtf" file.
+
+This gadget works both with Vcarve Pro and with Aspire. Simply add the included files in the apropriate gadgets folder and you're ready to go.
+
+Art Steburg - March, 2020

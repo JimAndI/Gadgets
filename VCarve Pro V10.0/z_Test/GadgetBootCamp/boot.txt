@@ -1,0 +1,27 @@
+https://www.thingiverse.com/thing:3562383
+
+Summary
+This project was inspired by Bob at I Like to Make Stuff. Bob has a YouTube channel where he makes a variety of projects. One project was the automation of a dust collection system using an Arduino to control servos that would open and close blast gates. The servo is mounted to the blast gates using custom brackets. I followed Bob's design to create a 3d printable version of these brackets. The original source for this project can be found here:
+
+https://iliketomakestuff.com
+
+https://iliketomakestuff.com/how-to-automate-a-dust-collection-system-arduino/
+
+The brackets include a left side mount, right side mount, and an actuator arm. These are designed to fit a 4" blast gate. These were designed in Fusion360. F3d and stl files are included.
+
+Print Settings
+Printer Brand:
+
+Creality
+
+Printer:
+
+Ender 3
+
+Rafts:
+
+Doesn't Matter
+
+Supports:
+
+No

@@ -1,0 +1,172 @@
+<! ===========================================================>
+<! Jim Anderson Standard HTML Header>
+<! ===========================================================>
+<html>
+    <head>
+    <title>Easy Stair Maker</title>
+    <style type="text/css">
+html {
+	overflow: hidden;
+}
+.LuaButton {
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.DirectoryPicker{
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.ToolPicker{
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.ToolNameLabel {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align:left;
+}
+.FormButton {
+	font-weight: bold;
+	width: 75px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.h1-l {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align:left;
+}
+
+.h1-r {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align:right;
+}
+.h1-c {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align:center;
+}
+body {
+	background-color: #CCC;
+	overflow:hidden;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+</style>
+    </head>
+    <body>
+<! ===========================================================>
+<table width="480" border="0">
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Stair Rise:</td>
+    <td width="111" nowrap="nowrap"><input name = "Stair.RiseDim" type = "text" id = "Stair.RiseDim" size = "10" /></td>
+    <td width="22" nowrap="nowrap">&nbsp;</td>
+    <td width="109" align="right" nowrap="nowrap">&nbsp;</td>
+    <td width="107" nowrap="nowrap">&nbsp;</td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Stair Run:</td>
+    <td width="111" nowrap="nowrap"><input name = "Stair.RunDim" type = "text" id = "Stair.RunDim" size = "10" /></td>
+    <td colspan="3" align="center" nowrap="nowrap"><span style="width: 20%">
+      <input id = "ButtonCalulate"                    
+          class = "LuaButton" 
+          name = "ButtonCalulate" 
+          type = "button" 
+          value = "Calulate"/>
+      </span></td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Tread Count:</td>
+    <td width="111" nowrap="nowrap"><input name = "Stair.StepCount" type = "text" id = "Stair.StepCount" size = "10" /></td>
+    <td align="center" nowrap="nowrap">&nbsp;</td>
+    <td align="center" nowrap="nowrap" class="h1-r">Decimals:</td>
+    <td align="left" nowrap="nowrap" class="h1-l"><input name = "Stair.Decimals" type = "text" id = "Stair.Decimals" value="4" size = "10" /></td>
+  </tr>
+      <tr>
+    <td colspan="5" align="right" nowrap="nowrap" class="h1-r"><hr></td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r"><span class="h1-c">Riser Higth</span>:</td>
+    <td width="111" nowrap="nowrap"><input name = "Stair.StepRise" type = "text" id = "Stair.StepRise" size = "10" readonly /></td>
+    <td width="22" align="center" nowrap="nowrap" class="h1-c">&nbsp;</td>
+    <td width="109" align="center" nowrap="nowrap" class="h1-r">Tread Width:</td>
+    <td width="107" nowrap="nowrap"><input name = "Stair.StepRun" type = "text" id = "Stair.StepRun" size = "10" readonly /></td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Riser Thickness:</td>
+    <td width="111" nowrap="nowrap"><input name = "Stair.RiserThickness" type = "text" id = "Stair.RiserThickness" size = "10" /></td>
+    <td width="22" nowrap="nowrap">&nbsp;</td>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Tread Thickness:</td>
+    <td width="107" nowrap="nowrap"><input name = "Stair.TreadThickness" type = "text" id = "Stair.TreadThickness" size = "10" /></td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Stringer Width:</td>
+    <td width="111" nowrap="nowrap"><input name = "Stair.StringerWidth" type = "text" id = "Stair.StringerWidth" size = "10" /></td>
+    <td width="22" nowrap="nowrap">&nbsp;</td>
+    <td width="109" align="center" nowrap="nowrap" class="h1-r">Noseing:</td>
+    <td width="107" nowrap="nowrap"><input name = "Stair.TreadNoseing" type = "text" id = "Stair.TreadNoseing" size = "10" /></td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Tread Layer:</td>
+    <td nowrap="nowrap"><input name = "Stair.TreadLayer" type = "text" id = "Stair.TreadLayer" size = "15" maxlength="25" /></td>
+    <td width="22" nowrap="nowrap">&nbsp;</td>
+    <td width="109" align="center" nowrap="nowrap" class="h1-r">Stringer Layer:</td>
+    <td width="107" nowrap="nowrap"><input name = "Stair.StringerLayer" type = "text" id = "Stair.StringerLayer" size = "15" maxlength="25" /></td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Riser Layer:</td>
+    <td nowrap="nowrap"><input name = "Stair.RiserLayer" type = "text" id = "Stair.RiserLayer" size = "15" maxlength="25" /></td>
+    <td width="22" nowrap="nowrap">&nbsp;</td>
+    <td width="109" align="center" nowrap="nowrap" class="h1-r">BOM:</td>
+    <td width="107" nowrap="nowrap"><input type="checkbox" name="Stair.WriteBOM" id="Stair.WriteBOM"></td>
+  </tr>
+      <tr>
+    <td width="109" align="right" nowrap="nowrap" class="h1-r">Stringer Layer:</td>
+    <td colspan="4" nowrap="nowrap">
+    <input name = "Stair.BOMWritePath" 
+           type = "text" 
+             id = "Stair.BOMWritePath" 
+           size = "52" readonly/>
+          <span style="width: 20%">
+          <input id = "ButtonBOMPath"                    
+                  class = "DirectoryPicker" 
+                  name = "ButtonBOMPath" 
+                  type = "button" 
+                  value = "Path"/>
+         </span>
+      </td>
+  </tr>
+  <tr>
+    <td colspan="4" nowrap="nowrap" class="ToolNameLabel">
+      <span id = "ToolNameLabel">Tool Name</span> 
+    </td>
+    <td align="center">
+      <input type = "button" 
+             name = "ToolChooseButton"  
+               id = "ToolChooseButton" 
+            value = "Select" 
+            class = "ToolPicker"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="5" nowrap="nowrap"><hr></td>
+  </tr>
+      <tr>
+    <td width="109" align="center" nowrap="nowrap"><strong><a href="https://www.youtube.com/channel/UCSM4fWwTIvVI91nTzIe554Q" target="_blank" class="h1-c">Video</a></strong></td>
+    <td width="111" align="right" nowrap="nowrap"><span class="h1-r">Show WPs'</span></td>
+    <td width="22" nowrap="nowrap"><input type="checkbox" name="Stair.DrawWorkPoints" id="Stair.DrawWorkPoints"></td>
+    <td width="109" align="center" nowrap="nowrap"><span style="width: 20%">
+      <input id = "ButtonCancel" class = "FormButton" name = "ButtonCancel" type = "button" value = "Cancel" />
+      </span></td>
+    <td width="107" align="center" nowrap="nowrap"><span style="width: 15%">
+      <input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK" />
+      </span></td>
+  </tr>
+    </table>
+<! ==============================================>
+</body>
+</html>

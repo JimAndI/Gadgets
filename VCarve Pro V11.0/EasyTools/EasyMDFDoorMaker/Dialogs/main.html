@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Main</title>
+<style>
+html {
+	overflow:hidden
+}
+.DirectoryPicker {
+	font-weight:bold;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px
+}
+.FormButton {
+	font-weight:bold;
+	width:75px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	white-space:nowrap;
+	background-color: #663300;
+	color: #FFFFFF
+}
+.LuaButton {
+	font-weight:bold;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	background-color:  #663300;
+	color: #FFFFFF
+}
+.ToolNameLabel {
+	font-family:Arial, Helvetica, sans-serif;
+	font-weight:bolder;
+	font-size:12px;
+	text-align:left;
+	color:#000
+}
+.ToolPicker {
+	font-weight:bold;
+	text-align:center;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:center;
+	width:50px;
+	background-color:  #663300;
+	color: #FFFFFF
+}
+.TableSizeMax {
+	border: 0;
+	width: 100%;
+}
+.TableSize600 {
+	width: 600px;
+	border: 0;
+}
+.FootTableSize600 {
+	width: 600px;
+	border: 0;
+}
+
+.FootColumn1 {
+	width: 45px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.FootColumn2 {
+	width: 350px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	color: #000000;
+}
+.FootColumn3 {
+	width: 15px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align: center;
+	white-space:nowrap;
+	color: #000000;
+}
+.FootColumn4 {
+	width: 15px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align: center;
+	white-space:nowrap;
+	color: #000000;
+}
+
+
+.Column1 {
+	width: 150px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	color: #000000;
+}
+.Column2 {
+	width: 175px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	color: #000000;
+}
+.Column3 {
+	width: 250px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align: center;
+	white-space:nowrap;
+	color: #000000;
+}
+.alert-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color: #FFFFFF;
+	text-align:center;
+	white-space:nowrap
+}
+.alert-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	text-shadow: 5px 5px 10px #FFF;
+	color:#FF0101;
+	text-align:left;
+	white-space:nowrap
+}
+.alert-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:#00F;
+	text-align:right;
+	white-space:nowrap
+}
+.error {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:18px;
+	font-weight:bold;
+	color:#FF0000;
+	text-align:left;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:10px;
+	padding-top:4px;
+	padding-bottom:4px;
+}
+.errorMessage {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color:#000;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:10px;
+	padding-top:4px;
+	padding-bottom:4px;
+}
+.errorTable {
+    background-color:#FFFFFF;
+	white-space:nowrap;
+}
+.p1-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:left;
+	color: #000000;
+}
+.p1-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:center;
+	color: #000000;
+}
+.p1-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:right;
+	color: #000000;
+}
+.label-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	font-style:oblique;
+	text-align:left;
+    white-space:nowrap;
+    color: #000000;
+}
+.label-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	font-style:oblique;
+	text-align:right;
+    white-space:nowrap;
+    color: #000000;
+}
+.label-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	font-style:oblique;
+	text-align:center;
+    white-space:nowrap;
+    color: #000000;
+}
+.ver-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	text-align:center;
+    white-space:nowrap;
+    color: #ffd9b3;
+}
+.h1-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-rP {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:4px;
+	color: #000000;
+}
+.h1-rPx {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	padding-right:8px;
+	padding-left:8px;
+	color: #000000;
+}
+.h2-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #663300;
+	text-align:left;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #000000;
+}
+.h2-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #663300;
+	text-align:center;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #000000;
+}
+.h2-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #000000;
+	text-align:right;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #8E8D8A;
+}
+.h3-bc {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.h3 {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.webLink-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	background-color: yellow;
+	text-align:center;
+	white-space:nowrap;
+}
+.jsbutton {
+	background-color: #663300;
+	border:2px solid #999;
+	border-right-color:#000;
+	border-bottom-color:#000;
+	border-top-color:#FFF;
+	border-left-color:#FFF;
+	font-family:Arial, Helvetica, sans-serif;
+	text-align:center;
+	text-decoration:none;
+	font-size:12px;
+	margin:1px 1px;
+	color:#FFFFFF;
+}
+.jsTag-no-vis {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	display:none;
+	text-align:center;
+	color:#00F;
+	visibility: hidden;
+}
+body {
+	background-color: #EAE7DC;
+	background-position: center;
+	overflow:hidden;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color: #8E8D8A;
+    background-image: url(]].. DialogWindow.myBackGround ..[[);
+}
+html {
+	overflow:hidden;
+}
+</style>
+</head>
+<body>
+<p><!--Input Table -->
+</p>
+<table class="TableSize600" id="NextAction">
+  <tr>
+    <td colspan="3" class="label-l">Room Selection</td>
+  </tr>
+  <tr>
+    <td class="h1-c" id="Gadget.Alert">Client:</td>
+    <td class="h1-c" id="Gadget.Alert">Project:</td>
+    <td class="h1-c" id="Gadget.Alert">Room:</td>
+
+  </tr>
+  <tr>
+    <td class="h1-c"><input name="ShowSelecter" type="button" class="LuaButton" id="ShowSelecter" value="Select Client"></td>
+    <td class="h1-c"><input name="ShowSelecter" type="button" class="LuaButton" id="ShowSelecter" value="Select Project"></td>
+    <td class="h1-c"><input name="ShowSelecter" type="button" class="LuaButton" id="ShowSelecter" value="Select Room"></td>
+
+  </tr>  
+</table>
+<p>&nbsp;</p>
+<table width="700" border="0" class="TableSize600">
+  <tr>
+    <td class="h1-r" id="Gadget.Name">Message: </td>
+    <td><select name="Clients2" id="Clients2">
+      <option>Clients 1</option>
+      <option>Clients 2</option>
+      <option>Clients 3</option>
+      <option selected>Clients 1</option>
+    </select></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="NextAction">
+  <tr>
+    <td colspan="3" class="label-l">Next Action</td>
+  </tr>
+  <tr>
+    <td class="h1-c"><input name="Gadget.New" type="button" class="LuaButton" id="Gadget.New" value="New Project"></td>
+    <td class="h1-c"><input name="Gadget.Open" type="button" class="LuaButton" id="Gadget.Open" value="Open Project"></td>
+    <td class="h1-c"><input name="Gadget.Clone" type="button" class="LuaButton" id="Gadget.Clone" value="Clone Project"></td>
+
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="NextAction5">
+  <tr>
+    <td colspan="2" class="label-l">Selected Client</td>
+  </tr>
+  <tr>
+    <td class="h1-l">Client Name:</td>
+    <td width="100%" class="h1-l" id="Gadget.ClientName">Selected Clients Name</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="NextAction6">
+  <tr>
+    <td colspan="2" class="label-l">New Project Name</td>
+  </tr>
+  <tr>
+    <td class="h1-l">Project Name:</td>
+    <td width="100%" class="h1-l">
+      <input name="Gadget.ClientName" type="text" id="Gadget.ClientName4" size="65" maxlength="65" />
+</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="NextAction4">
+  <tr>
+    <td colspan="3" class="label-l">Client Selection</td>
+  </tr>
+  <tr>
+    <td rowspan="9" class="h1-l"><select name="1232" size="12" id="1232">
+      <option selected>Client Name 1</option>
+      <option>Client Name 2</option>
+      <option>Client Name 3</option>
+      <option>Client Name 4</option>
+      <option>Client Name 5</option>
+      <option>Client Name 6</option>
+      <option>Client Name 7</option>
+      <option>Client Name 8</option>
+      <option>Client Name 9</option>
+      <option>Client Name 10</option>
+      <option>Client Name 11</option>
+      <option>Client Name 12</option>
+    </select></td>
+    <td class="h1-r">Name</td>
+    <td class="FootColumn2"><input name="Gadget.ClientName" type="text" id="Gadget.ClientName" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Contact</td>
+    <td class="FootColumn2"><input name="Gadget.ClientContact" type="text" id="Gadget.ClientContact" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Email</td>
+    <td class="FootColumn2"><input name="Gadget.ClientEmail" type="text" id="Gadget.ClientEmail" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Phone</td>
+    <td class="FootColumn2"><input name="Gadget.ClientPhone" type="text" id="Gadget.ClientPhone" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Address</td>
+    <td class="FootColumn2"><input name="Gadget.ClientAddress" type="text" id="Gadget.ClientAddress" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r">City</td>
+    <td class="FootColumn2"><input name="Gadget.ClientCity" type="text" id="Gadget.ClientCity2" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r">State</td>
+    <td class="FootColumn2"><input name="Gadget.ClientState" type="text" id="Gadget.ClientState" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Zip</td>
+    <td class="FootColumn2"><input name="Gadget.ClientZip" type="text" id="Gadget.ClientZip" size="50" maxlength="65" /></td>
+  </tr>
+  <tr>
+    <td class="FootColumn1">&nbsp;</td>
+    <td class="FootColumn2">&nbsp;</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="NextAction3">
+  <tr>
+    <td colspan="4" class="label-l">Client Action</td>
+  </tr>
+  <tr>
+      <td class="h1-c"><input name="Gadget.New3" type="button" class="LuaButton" id="Gadget.Select" value="Select Client"></td>
+    <td class="h1-c"><input name="Gadget.New3" type="button" class="LuaButton" id="Gadget.New" value="New Client"></td>
+    <td class="h1-c"><input name="Gadget.Open3" type="button" class="LuaButton" id="Gadget.Update" value="Update Data"></td>
+    <td class="h1-c"><input name="Gadget.Clone2" type="button" class="LuaButton" id="Gadget.Delete" value="Delete Client"></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="MyClients">
+  <tr>
+    <td colspan="3" class="label-l">My Clients</td>
+  </tr>
+  <tr>
+    <td class="h1-c"><input name="Gadget.New2" type="button" class="LuaButton" id="Gadget.New2" value="New Client"></td>
+    <td class="h1-c"><input name="Gadget.Open2" type="button" class="LuaButton" id="Gadget.Open2" value="Edit Client"></td>
+    <td class="h1-c"><input name="Gadget.Open2" type="button" class="LuaButton" id="Gadget.Open2" value="Delete Client"></td>
+   
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table class="TableSize600" id="TBD">
+  <tr>
+    <td class="Column1">&nbsp;</td>
+    <td class="Column2">&nbsp;</td>
+    <td class="Column3">&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="Column1">Z Equals</td>
+    <td class="Column2"> <select name="Gadget..Serface" id="Gadget..Serface">
+        <option>Serface</option>
+        <option selected>Center</option>
+      </select></td>
+    <td class="Column3"> <input name="Gadget.111" type="button" class="FormButton" id="Gadget.111" value="Gadget."></td>
+  </tr>
+  <tr>
+    <td class="Column1">Rap On</td>
+    <td class="Column2"> <select name="Spiral.RapOn" id="Spiral.RapOn">
+        <option selected>X Axis</option>
+        <option>Y Axis</option>
+      </select></td>
+    <td class="Column3" ><input name="Gadget.1112" type="button" class="FormButton" id="Gadget.1112" value="Gadget."></td>
+  </tr>
+  <tr>
+    <td class="Column1">Stock Diameter</td>
+    <td class="Column2"> <input id="Gadget.StockDia" name="Gadget.StockDia" size="10" type="text" /></td>
+    <td class="Column3"> <input name="1113" type="button" class="FormButton" id="Gadget.1113" value="Gadget."></td>
+  </tr>
+  <tr>
+    <td class="Column1">Finsh Diameter</td>
+    <td class="Column2"> <input id="Gadget.FinshDia" name="Gadget.FinshDia" size="10" type="text" /></td>
+    <td class="Column3"> <input name="Gadget.1114" type="button" class="FormButton" id="Gadget.1114" value="Gadget."></td> 
+  </tr>
+  <tr>
+    <td class="Column1">Finsh Length</td>
+    <td class="Column2"><input id="Spiral.Length" name="Gadget.Length" size="10" type="text" /></td>
+    <td class="Column3"><input name="Gadget.1115" type="button" class="FormButton" id="Gadget.1115" value="Gadget."></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table width="700" border="0" class="TableSize600">
+  <tr>
+    <td colspan="6" class="label-c"><hr></td>
+  </tr>
+  <tr>
+    <td colspan="2" class="label-c">Select Client</td>
+    <td colspan="2" class="label-c">Select Project</td>
+
+  </tr>
+  <tr class="h1-c">
+    <td><select name="Clients" id="Clients">
+        <option>Clients 1</option>
+        <option>Clients 2</option>
+        <option>Clients 3</option>
+        <option selected>Clients 1</option>
+    </select></td>
+    <td><input name="ClientsGo" type="button" class="LuaButton" id="ClientsGo" value="Go"></td>
+    <td><select name="Projects" id="Projects">
+        <option>Projects 1</option>
+        <option>Projects 2</option>
+        <option>Projects 3</option>        
+        <option selected>Projects 1</option>
+    </select></td>
+    <td><input name="ProjectsGo" type="button" class="LuaButton" id="ProjectsGo" value="Go"></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table width="700" border="0" class="TableSize600">
+  <tr>
+    <td colspan="6" class="label-c"><hr></td>
+  </tr>
+  <tr>
+    <td colspan="2" class="label-c">Select Client</td>
+    <td colspan="2" class="label-c">Select Project</td>
+    <td colspan="2" class="label-c">Select Room</td>
+  </tr>
+  <tr class="h1-c">
+    <td><select name="Clients" id="Clients">
+        <option>Clients 1</option>
+        <option>Clients 2</option>
+        <option>Clients 3</option>
+        <option selected>Clients 1</option>
+    </select></td>
+    <td><input name="ClientsGo" type="button" class="LuaButton" id="ClientsGo" value="Go"></td>
+    <td><select name="Projects" id="Projects">
+        <option>Projects 1</option>
+        <option>Projects 2</option>
+        <option>Projects 3</option>        
+        <option selected>Projects 1</option>
+    </select></td>
+    <td><input name="ProjectsGo" type="button" class="LuaButton" id="ProjectsGo" value="Go"></td>
+    <td><select name="Rooms" id="Rooms">
+        <option>Room 1</option>
+        <option>Room 2</option>
+        <option>Room 3</option>
+        <option selected>Room 1</option>
+    </select></td>
+    <td><input name="RoomGo" type="button" class="LuaButton" id="RoomGo" value="Go"></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<hr>
+<p><strong>Footers</strong></p>
+<hr>
+<table class="TableSize600" id="HelpMessageOKCancel2">
+  <tr>
+    <td colspan="3"><hr></td>
+  </tr>
+  <tr>
+    <td ><input name="Gadget.Open2" type="button" class="LuaButton" id="Gadget.Open2" value=" Previous "></td>
+    <td class="TableSizeMax" >&nbsp;</td>
+    <td ><input name="Gadget.Open2" type="button" class="LuaButton" id="Gadget.Open2" value="      Next      "></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+
+<table class="TableSize600" id="HelpMessageOKCancel">
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td class="FootColumn1" ><button class="FormButton" onClick="window.open(']].. DialogWindow.ProjectSDK .. [[');"> Help </button></td>
+    <td class="FootColumn2" id="Gadget.Alert">.</td>
+    <td class="FootColumn3" ><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
+    <td class="FootColumn4" ><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+
+<table class="TableSize600" id="HelpMessageCancel">
+  <tr>
+    <td colspan="3"><hr></td>
+  </tr>
+  <tr>
+    <td width="45" class="FootColumn1" ><button class="FormButton" onClick="window.open(']].. DialogWindow.ProjectSDK .. [[');"> Help </button></td>
+    <td width="444" class="FootColumn2" id="Gadget.Alert2">.</td>
+    <td width="95" class="FootColumn4" ><input id="ButtonCancel2" class="FormButton" name="ButtonCancel2" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,85 @@
+﻿<!DOCTYPE HTML>
+<html>
+<!-- 
+###############
+# B0XA (2019) #
+###############
+-->
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<title>TextWriter Plus</title>
+<style type="text/css">
+html {
+	overflow: auto;
+}
+body {
+	background-color: #F0F0F0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+div {
+	text-align: left;
+	padding-top: 3px;
+}
+.LuaButton {
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	display: inline-block;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="keyboard.css" />
+<script type="text/javascript" src="keyboard.js" charset="utf-8"></script>
+<script>
+setTimeout(HideUnhide, 1);
+function HideUnhide() {
+  var ca = document.getElementById("CheckAuto");
+  if (ca.checked) {
+    var x = document.getElementById("SizeInput");
+    x.disabled = true;
+    } else {
+    var x = document.getElementById("SizeInput");
+    x.disabled = false;
+  };
+  var cn = document.getElementById("CheckNum");
+  if (cn.checked) {
+    var x = document.getElementById("CountInput");
+    x.disabled = false;
+    } else {
+    var x = document.getElementById("CountInput");
+    x.disabled = true;
+  }
+}
+var defcol;
+function mouseIn() {
+  defcol = document.OKcolor.OK.style.color;
+  document.OKcolor.OK.style.color = "red";
+}
+function mouseOut() {
+  document.OKcolor.OK.style.color = defcol;
+}
+</script>
+</head>
+<body>
+<div>&nbsp;Text:</div>
+<input style="width: 85%" id="TextInput" class="keyboardInput" title="Basic text" maxlength="500" />
+<div title="Location text in contour">&nbsp;<label><input type="radio" checked name="Centr" title="Text in center contour" />in center contour</label>&nbsp;<label><input type="radio" name="Centr" title="Text in center bounds contour" />in center bounds contour</label></div>
+<div style="color: #555555">&nbsp;&nbsp;&nbsp;&nbsp;Size text:</div>
+<div style="color: #555555">&nbsp;&nbsp;&nbsp;<input id="SizeInput" title="Height text" size="7" maxlength="5" />&nbsp;&nbsp;&nbsp;<label><input type="checkbox" id="CheckAuto" onclick="HideUnhide()" title="On/Off" />autosize</label></div>
+<div style="color: #555555">&nbsp;&nbsp;&nbsp;&nbsp;Font type:</div>
+<div style="color: #555555" title="Font type of text">&nbsp;<label><input type="radio" checked name="Font" title="Regular font type" />normal</label>&nbsp;<label><input type="radio" name="Font" title="Smooth font type" />modern</label></div>
+<div style="color: #555555">&nbsp;&nbsp;&nbsp;&nbsp;Text spacing:</div>
+<div style="color: #555555" title="Spacing between text characters">&nbsp;<label><input type="radio" checked name="Interval" title="Normal interval" />single</label>&nbsp;<label><input type="radio" name="Interval" title="Double interval" />double</label>&nbsp;<label><input type="radio" name="Interval" title="Triple interval" />triple</label></div><br>
+<table>
+<tr><td>&nbsp;<label title="Add numbering"><input style="vertical-align: top" type="checkbox" checked id="CheckNum" onclick="HideUnhide()" title="On/Off" />Numbering</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="vertical-align: middle" id="CountInput" title="Initial number of numbering" size="7" maxlength="10" /></td></tr>
+<tr><td>&nbsp;<label title="Add size contour"><input type="checkbox" id="CheckSize" title="On/Off" />Size contour</label></td><td>&nbsp;<label title="Add name layer of contour"><input type="checkbox" id="CheckName" title="On/Off" />Name layer</label></td></tr>
+<tr><td>&nbsp;<label title="Add length contour"><input type="checkbox" id="CheckLength" title="On/Off" />Length contour</label></td><td>&nbsp;<label title="Add date DD/MM/YYYY"><input type="checkbox" id="CheckDate" title="On/Off" />Date</label></td></tr>
+<tr><td>&nbsp;<label title="Add area contour"><input type="checkbox" id="CheckArea" title="On/Off" />Area contour</label></td><td>&nbsp;<label title="Add time HH:MM"><input type="checkbox" id="CheckTime" title="On/Off" />Time</label></td></tr>
+<tr><td>&nbsp;<label title="Add number nodes of contour"><input type="checkbox" id="CheckNodes" title="On/Off" />Number nodes</label></td></tr>
+</table>
+<form name="OKcolor">
+<div style="text-align: center"> <button class="LuaButton" id="ButtonOK" name="OK" onMouseOver="mouseIn()" onMouseOut="mouseOut()" type="Button" style="width: 25%"> OK </button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="LuaButton" id="ButtonCancel" type="Button" style="width: 40%"> Cancel </button></div>
+<div style="width: 100%; font-size: 8px; text-align: right"><a href="http://cnc.userforum.ru/profile.php?id=8766" target="_blank">B0XA</a></div>
+</form>
+</body>
+</html>

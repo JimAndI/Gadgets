@@ -1,0 +1,90 @@
+#======================================
+# Easy Dovetail Maker
+# May 2020
+# By: Jim Anderson
+#======================================
+[Amana Tool 45804 Carbide Tipped Dovetail 14 Deg x 0.5 D x 0.5 CH x 0.25 SHK]
+Brand=Amana Tool
+PartNo=45804
+BitAngle=14
+ShankDia=0.25
+BitDia=0.5
+Flutes=2
+Type=Carbide Tipped
+BitLength=1.75
+CutDepth=0.5
+RPM=18000
+FeedRate=24
+PlungRate=12
+Units=inch
+Rates=inches/min
+Notes=Test 1
+#======================================
+[Amana Tool 45805 Carbide Tipped Dovetail 10 Deg x 0.5 D x 0.625 CH x 0.5 SHK]
+Brand=Amana Tool
+PartNo=45805
+BitAngle=10
+ShankDia=0.5
+BitDia=0.5
+Flutes=2
+Type=Carbide Tipped
+BitLength=2.625
+CutDepth=0.625
+RPM=18000
+FeedRate=24
+PlungRate=12
+Units=inch
+Rates=inches/min
+Notes=Test 1
+#======================================
+[Amana Tool 45810 Carbide Tipped Dovetail 7 Deg x 0.750 D x 0.875 CH x 0.500 SHK]
+Brand=Amana Tool
+PartNo=45810
+BitAngle=7
+ShankDia=0.5
+BitDia=0.75
+Flutes=2
+Type=Carbide Tipped
+BitLength=2.625
+CutDepth=0.875
+RPM=18000
+FeedRate=22
+PlungRate=22
+Units=inch
+Rates=inches/min
+Notes=Test 3
+#======================================
+[Amana Tool 45812 Carbide Tipped Dovetail 12 Deg x 0.8 D x 0.5 CH x 0.5 SHK]
+Brand=Amana Tool
+PartNo=45812
+BitAngle=12
+ShankDia=0.5
+BitDia=1
+Flutes=2
+Type=Carbide Tipped
+BitLength=1.75
+CutDepth=1.125
+RPM=18000
+FeedRate=34
+PlungRate=13
+Units=inch
+Rates=inches/min
+Notes=Test 2
+#======================================
+[MyBit 1234 Carbide Tipped Dovetail 8 Deg x 0.625 D x 0.8 CH x 0.5 SHK] 
+Brand=MyBit
+PartNo=1234
+BitAngle=8
+ShankDia=0.5
+BitDia=0.625
+Flutes=2
+Type=Carbide Tipped
+BitLength=3.25
+CutDepth=0.8
+RPM=15000
+FeedRate=18
+PlungRate=24
+Units=inch
+Rates=inches/min
+Notes = EBay - Dovetail Bit ($10.00) 
+#====================================== 

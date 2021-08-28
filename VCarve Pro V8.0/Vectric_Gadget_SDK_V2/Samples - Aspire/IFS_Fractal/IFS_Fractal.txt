@@ -1,0 +1,25 @@
+The fractals are generated using Iterated Function Systems.
+
+They work by taking an intial point (x,y) and computing the next point in the sequence (x_next, y_next) by applying a transformation of the form
+
+x_next = a * x + b * y + e
+y_next = c * x + d * y + f
+
+The point (x_next, y_next) is used to light up the Relief before setting
+
+x = x_next and
+y = y_next 
+
+and repeating the process for the desired number of iterations.
+
+The numbers a, b, c, d, e, f together with a probability p define a Function System.
+
+Each of the files in the Fractals directory defines and Iterated Function System.
+
+Each line in each file is of the format
+
+a b c d e f p
+
+Where a, b, c, d, e and f are used in the formulae above and p is the probability that the set of coefficients will be used in any given iteration.
+
+The probabilities within a file should sum to 1.0.

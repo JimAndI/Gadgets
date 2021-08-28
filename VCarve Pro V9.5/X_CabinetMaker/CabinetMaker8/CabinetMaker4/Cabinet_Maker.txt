@@ -1,0 +1,23 @@
+Cabinet Maker
+
+Creates cabinet vectors and toolpaths.
+
+Job setup
+	Open dialogue collect:
+		Project location path
+		Project name
+		Project Setup details
+			cut material thicknesses
+			cut material wedth
+			cut material lenth
+			origin point
+Write File
+
+Bottom cabinet maker
+Read file
+	Open dialogue collect
+Write File
+
+
+
+Upper cabinet maker

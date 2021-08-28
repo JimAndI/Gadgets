@@ -1,0 +1,6 @@
+Apply Template To All Sheets
+
+This gadget will apply a selected template to all the sheets in the current job. 
+The toolpaths for each sheet are prefixed with the sheet number and any toolpaths
+in the template which do not result in a calculated toolpath on a particular sheet are removed.
+The gadget can also optionally save all the toolpaths to a user specified folder.

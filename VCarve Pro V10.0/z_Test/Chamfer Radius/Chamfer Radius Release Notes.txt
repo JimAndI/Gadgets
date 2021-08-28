@@ -1,0 +1,19 @@
+
+Chamfer Radius is a new gadget that enables you to easily create a radiused edge on a closed contour. The gadget adds the capability to make a radius on either an inside contour or an outside contour. I've included a few preview examples for you to browse. I have also included a screen shot of the ball mill tool set up I used to create the examples. While I use it as an alternative for the regular angled chamfer for deburring metal, I think you will find many uses for it in wood working.
+
+--- ATTENTION ---
+-- Chamfer Radius is based on Chamfer In & Out
+-- Chamfer In & Out - is a modified version of the Vectric Chamfer Gadget v1.1 
+-- The various modifications were done by me - Jeff Elliott. If you would like to contact me I can be reached via the Vectric forum.
+-- In no event will the author be held liable for any damages arising from use of this gadget.
+
+I have attached the "Chamfer Radius" for your use. Works great for me, but your mileage may vary. Use caution until you have tested it in your environment. 
+
+To install the "Chamfer Radius", unzip then place a copy of the Chamfer Radius folder in the standard gadget location on your computer. On my computer it would be placed in the following directory:
+
+C:\Users\Public\Documents\Vectric Files\Gadgets\Aspire V4.5
+
+After placing it in the correct directory, restart your Vectric software and you will see the new "Chamfer Radius" entry in the gadget drop down menu.
+
+
+Jeff

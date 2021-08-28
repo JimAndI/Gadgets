@@ -1,0 +1,489 @@
+<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<title>Cabinet Maker and Tool-path Creator</title>
+<style type="text/css">
+html {
+	overflow: auto;
+}
+HoleFirstRowSpacing
+
+body {
+	background-color: #D7E4F2;
+}
+.ToolPicker {
+	width: 69px;
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #000;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.h1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+.h2 {
+	font-size: 10px;
+	font-weight: bold;
+}
+.ToolNameLabel {
+	color: #555;
+}
+</style>
+</head>
+
+<body>
+<table width="730" border="1" cellpadding="0">
+  <tr>
+    <th colspan="4" align="center" valign="middle" bgcolor="#FFFFFF" id="ProgramTitle">0.0</th>
+    <th align="right" valign="middle" bgcolor="#FFFFFF" id="codeBy"><strong>0.0</strong></th>
+  </tr>
+  <tr>
+    <th align="left" valign="middle" bgcolor="#FFFFFF" id="Message">Version</th>
+    <th align="center" valign="middle" bgcolor="#FFFFFF" id="ProgramVersion">0.0</th>
+    <th align="center" valign="middle" bgcolor="#FFFFFF" id="Year">0.0</th>
+    <th align="center" valign="middle" bgcolor="#FFFFFF" id="ProgramName">0.0</th>
+    <th align="right" valign="middle" bgcolor="#FFFFFF" id="Contact">0.0</th>
+  </tr>
+  <tr>
+    <th width="68" align="center" valign="middle" bgcolor="#FFFFFF"><strong>Object Name</strong></th>
+    <th width="129" align="center" valign="middle" bgcolor="#FFFFFF"><strong>Item</strong></th>
+    <th width="108" align="center" valign="middle" bgcolor="#FFFFFF">Value</th>
+    <th width="75" align="center" valign="middle" bgcolor="#FFFFFF"><strong>Default Value</strong></th>
+    <th width="326" align="center" valign="middle" bgcolor="#FFFFFF"><strong>Information</strong></th>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Milling</td>
+    <td align="center" valign="middle" nowrap><input id="ToolChooseButton" class="ToolPicker" name="ToolChooseButton" type="button" value="Tool..."></td>
+    <td colspan="3" align="left" class="ToolNameLabel"><span id="ToolNameLabel" class="ToolNameLabel">Tool Name</span></td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Milling</td>
+    <td align="right" valign="middle">Rabbit Clearnace</td>
+    <td align="center" valign="middle"><input name="RabbitClearnace" type="text" class="h2" id="RabbitClearnace" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.05</td>
+    <td align="left" valign="middle">Milling Offset Amount To Mill Over The Edge of Material</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Milling</td>
+    <td align="right" valign="middle">Mill Clearance</td>
+    <td align="center" valign="middle"><input name="MillClearnace" type="text" class="h2" id="MillClearnace" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.01</td>
+    <td align="left" valign="middle">Amount To Mill Dato Clearnace</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Milling</td>
+    <td align="right" valign="middle">Tool Size Dia</td>
+    <td align="center" valign="middle"><input name="ToolSizeDia" type="text" class="h2" id="ToolSizeDia" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.25</td>
+    <td align="left" valign="middle">Amount To Mill over for Dato</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Milling</td>
+    <td align="right" valign="middle">Tool Size Radus</td>
+    <td align="center" valign="middle"><input name="Tool Size Radus" type="text" class="h2" id="ToolSizeRadus" size="10" maxlength="10" readonly></td>
+    <td align="center" valign="middle">0.125</td>
+    <td align="left" valign="middle">Amount To Mill over for Dato</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Material Thickness</td>
+    <td align="center" valign="middle"><input name="Thickness" type="text" class="h2" id="Thickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Material Thickness for Cabinet Sides</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Material Thickness Back</td>
+    <td align="center" valign="middle"><input name="ThicknessBack" type="text" class="h2" id="ThicknessBack" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.5</td>
+    <td align="left" valign="middle">Material Thickness Used On The Back</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#D7E4F2">Wall</td>
+    <td align="right" valign="middle" nowrap bgcolor="#D7E4F2">Wall Cabinet Length</td>
+    <td align="center" valign="middle" bgcolor="#D7E4F2"><input name="CabLength" type="text" class="h2" id="CabLength" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#D7E4F2">36</td>
+    <td align="left" valign="middle" bgcolor="#D7E4F2">Wall Cabinet Length (wide / left to right)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#D7E4F2">Wall</td>
+    <td align="right" valign="middle" nowrap bgcolor="#D7E4F2">Wall Cabinet Height</td>
+    <td align="center" valign="middle" bgcolor="#D7E4F2"><input name="CabHeight" type="text" class="h2" id="CabHeight" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#D7E4F2">28</td>
+    <td align="left" valign="middle" bgcolor="#D7E4F2">Wall Cabinet Height (floor to ceiling)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle" bgcolor="#D7E4F2">Wall</td>
+    <td align="right" valign="middle" nowrap bgcolor="#D7E4F2">Wall Cabinet Depth</td>
+    <td align="center" valign="middle" bgcolor="#D7E4F2"><input name="CabDepth" type="text" class="h2" id="CabDepth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle" bgcolor="#D7E4F2">12</td>
+    <td align="left" valign="middle" bgcolor="#D7E4F2">Wall Cabinet Depth (from wall out)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Add Center Panel</td>
+    <td align="center" valign="middle"><input type="checkbox" name="AddCenterPanel" id="AddCenterPanel"></td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Center Frame Panel In The Opening</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Add Center Face Frame</td>
+    <td align="center" valign="middle"><input type="checkbox" name="AddCenterFaceFrame" id="AddCenterFaceFrame"></td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Center Face Frame In The Opening</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Add Shelfs</td>
+    <td align="center" valign="middle"><input type="checkbox" name="AddShelf" id="AddShelf"></td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Center Frame Panel In The Opening</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Add Face Frame</td>
+    <td align="center" valign="middle"><input type="checkbox" name="AddFaceFrame" id="AddFaceFrame">
+      <label for="xxxx"></label></td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Face Frame</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Add Back Nailer</td>
+    <td align="center" valign="middle"><input type="checkbox" name="AddBackNailer" id="AddBackNailer">
+      <label for="xxxx5"></label></td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Center Face Frame In The Opening</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Nailer Thickness</td>
+    <td align="center" valign="middle"><input name="NailerThickness" type="text" class="h2" id="NailerThickness" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Cabinet Has A Nailer Thickness</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Nailer Width</td>
+    <td align="center" valign="middle"><input name="NailerWidth" type="text" class="h2" id="NailerWidth" size="10" maxlength="1"></td>
+    <td align="center" valign="middle">3</td>
+    <td align="left" valign="middle">Cabinet Has A Center Frame Panel In The Opening</td>
+  </tr>
+  <tr>
+    <td  align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Dato Type</td>
+    <td align="center" valign="middle"><select name="DatoType" id="DatoType">
+      <option value="1">Through</option>
+      <option value="2">Half</option>
+      <option value="3">Full</option>
+    </select></td>
+    <td align="center" valign="middle">0.25</td>
+    <td align="left" valign="middle">Type Of Dato To Cut</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Dato Deep</td>
+    <td align="center" valign="middle"><input name="DatoDeep" type="text" class="h2" id="DatoDeep" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">1.375</td>
+    <td align="left" valign="middle">Amount To Cut Dato Depth</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Wall</td>
+    <td align="right" valign="middle" nowrap>Dato Setback</td>
+    <td align="center" valign="middle"><input name="DatoSetback" type="text" class="h2" id="DatoSetback" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">1.375</td>
+    <td align="left" valign="middle">Amount Setback For Blind And Full Dato</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>New Standard Cabinet</td>
+    <td align="center" valign="middle"><input name="New" type="checkbox" id="New"></td>
+    <td align="center" valign="middle">Not Checked</td>
+    <td align="left" valign="middle">Make This A Standard Cabinet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Face Frame Drawing</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawFaceFrame" id="DrawFaceFrame">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Draw Cabinet Face Frame</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Back Drawing</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawBack" id="DrawBack">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A DrawBack</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Right Side Panel</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawSideR" id="DrawSideR">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A DrawSideR</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Left Side Panel</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawSideL" id="DrawSideL">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Face DrawSideL</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Top Part</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawTop" id="DrawTop">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A FaceDrawTop</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Bottom Part</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawBottom" id="DrawBottom">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A FaceDrawBottom</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Center Panel</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawCenter" id="DrawCenter">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Face DrawCenter</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Notes Sheet</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawNotes" id="DrawNotes">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Face DrawNotes</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Drawing</td>
+    <td align="right" valign="middle" nowrap>Draw Shelfs Drawing</td>
+    <td align="center" valign="middle"><input type="checkbox" name="DrawShelf" id="DrawShelf">
+      </td>
+    <td align="center" valign="middle">Checked</td>
+    <td align="left" valign="middle">Cabinet Has A Face DrawNotes</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle" nowrap>Side Reveal</td>
+    <td align="center" valign="middle"><input name="FFReveal" type="text" class="h2" id="FFReveal" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.25</td>
+    <td align="left" valign="middle">Amount Face Frame Extends The Face Frame Passed The Cabinet Side</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle" nowrap>Face Frame Stile Width</td>
+    <td align="center" valign="middle"><input name="StileWidth" type="text" class="h2" id="StileWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Face Frame Stile Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle" nowrap> Bottom Rail Width</td>
+    <td align="center" valign="middle"><input name="BottomRailWidth" type="text" class="h2" id="BottomRailWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Face Frame Bottom Rail Face Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle" nowrap>Face Frame Thickness</td>
+    <td align="center" valign="middle"><input name="FFThickness" type="text" class="h2" id="FFThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Face Frame Thickness</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle" nowrap>Top Face Frame Width</td>
+    <td align="center" valign="middle"><input name="TopRailWidth" type="text" class="h2" id="TopRailWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.75</td>
+    <td align="left" valign="middle">Top Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle" nowrap>Center Stile Width</td>
+    <td align="center" valign="middle"><input name="CenterStileWidth" type="text" class="h2" id="CenterStileWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2.25</td>
+    <td align="left" valign="middle">Center Face Frame Width</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle">Bottom Rail Reveal</td>
+    <td align="center" valign="middle"><input name="BottomFFReveal" type="text" class="h2" id="BottomFFReveal" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.0625</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Bottom Of The Cabinet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle">Top Frame Overlap</td>
+    <td align="center" valign="middle"><input name="TopOverlap" type="text" class="h2" id="TopOverlap" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Amount Face Frame Is Lowered Below The Inside Cabinet Top</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle">Stile Length</td>
+    <td align="center" valign="middle"><input name="StileLength" type="text" class="h2" id="StileLength" size="10" maxlength="10" readonly></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Length Of Stile</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle">Rail Length</td>
+    <td align="center" valign="middle"><input name="RailLength" type="text" class="h2" id="RailLength" size="10" maxlength="10" readonly></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Length Of Rail</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">FaceFrame</td>
+    <td align="right" valign="middle">Center Stile Length</td>
+    <td align="center" valign="middle"><input name="CenterStileLength" type="text" class="h2" id="CenterStileLength" size="10" maxlength="10" readonly></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Amount Face Frame Is Lowered Below The Inside Cabinet Top</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Count</td>
+    <td align="center" valign="middle"><input name="Count" type="text" class="h2" id="Count" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Number of Shelves In The Cabnet</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Pin Outer Percent</td>
+    <td align="center" valign="middle"><input name="PinOuter" type="text" class="h2" id="PinOuter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.7</td>
+    <td align="left" valign="middle">Shelf Pin Outer Hole Offset</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Pin Inter Percent</td>
+    <td align="center" valign="middle"><input name="PinInter" type="text" class="h2" id="PinInter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.16</td>
+    <td align="left" valign="middle">Shelf Pin Inter Hole Offset </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Width Clearance</td>
+    <td align="center" valign="middle"><input name="WidthClearance" type="text" class="h2" id="WidthClearance" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.18</td>
+    <td align="left" valign="middle">Shelf Face Clarence.</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf End Clarence</td>
+    <td align="center" valign="middle"><input name="EndClarence" type="text" class="h2" id="EndClarence" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.18</td>
+    <td align="left" valign="middle">Shelf End Clarence, To Clear The Pin Plate (amount applied to each end)</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle">Shelf Hole Spacing</td>
+    <td align="center" valign="middle"><input name="HoleSpacing" type="text" class="h2" id="HoleSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">2</td>
+    <td align="left" valign="middle">Distance Of Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>First Row Spacing For Hole</td>
+    <td align="center" valign="middle"><input name="HoleFirstRowSpacing" type="text" class="h2" id="HoleFirstRowSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">4</td>
+    <td align="left" valign="middle">Amount Offset Befor First Row Hole Spacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle">Top Hole Row Spacing</td>
+    <td align="center" valign="middle"><input name="HoleLastRowSpacing" type="text" class="h2" id="HoleLastRowSpacing" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">3</td>
+    <td align="left" valign="middle">Amount g_holeLastRowSpacing</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>ShelfFaceFrameReveal</td>
+    <td align="center" valign="middle"><input name="FaceFrameReveal" type="text" class="h2" id="FaceFrameReveal" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.0625</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Shelf</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Part Length</td>
+    <td align="center" valign="middle"><input name="PartLength" type="text" class="h2" id="PartLength" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">32</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Shelf</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Part Depth</td>
+    <td align="center" valign="middle"><input name="PartDepth" type="text" class="h2" id="PartDepth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">12</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Shelf</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Part Thickness</td>
+    <td align="center" valign="middle"><input name="PartThickness" type="text" class="h2" id="PartThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">12</td>
+    <td align="left" valign="middle">Amount Face Frame Is Raised Above The Shelf</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Pin Diameter</td>
+    <td align="center" valign="middle"><input name="PinDiameter" type="text" class="h2" id="PinDiameter" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.194</td>
+    <td align="left" valign="middle">Sheilf Pin Diameter</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Pin Radus</td>
+    <td align="center" valign="middle"><input name="PinRadus" type="text" class="h2" id="PinRadus" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.0164</td>
+    <td align="left" valign="middle">Sheilf Pin Radius</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Face Frame Thickness</td>
+    <td align="center" valign="middle"><input name="FaceFrameThickness" type="text" class="h2" id="FaceFrameThickness" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">0.75</td>
+    <td align="left" valign="middle">Face Frame Thickness</td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">Shelf</td>
+    <td align="right" valign="middle" nowrap>Shelf Face Frame Width</td>
+    <td align="center" valign="middle"><input name="FaceFrameWidth" type="text" class="h2" id="FaceFrameWidth" size="10" maxlength="10"></td>
+    <td align="center" valign="middle">1.5</td>
+    <td align="left" valign="middle">Shelf Face Frame Width</td>
+  </tr>
+  <tr>
+    <td colspan="5" align="center" valign="middle"><table border="0" width="82%">
+        <tr>
+          <td style="width: 20%">&nbsp;</td>
+          <td style="width: 20%"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+          <td style="width: 20%">&nbsp;</td>
+          <td style="width: 20%"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+          <td style="width: 20%">&nbsp;</td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+</body>
+</html>
