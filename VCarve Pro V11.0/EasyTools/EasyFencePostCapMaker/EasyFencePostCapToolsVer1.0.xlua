@@ -12,39 +12,42 @@ function RegistryReader()                                 -- Reads data from the
   PostCap.CapSizeX                          = RegistryRead:GetDouble("PostCap.CapSizeX",                        5.000)
   PostCap.FlatAmount                        = RegistryRead:GetDouble("PostCap.FlatAmount",                      1.000)
   PostCap.SlopAmount                        = RegistryRead:GetDouble("PostCap.SlopAmount",                      0.500)
+
+  Milling.MillTool1.BitType                 = RegistryRead:GetString("Milling.MillTool1.BitType",               "END_MILL") -- BALL_NOSE, END_MILL, VBIT
   Milling.MillTool1.FeedRate                = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",              30.000)
   Milling.MillTool1.InMM                    = RegistryRead:GetBool("Milling.MillTool1.InMM",                    false)
   Milling.MillTool1.Name                    = RegistryRead:GetString("Milling.MillTool1.Name",                  "No Tool Selected")
-  Milling.MillTool1.BitType                 = RegistryRead:GetString("Milling.MillTool1.BitType",               "END_MILL") -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool1.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",            15.000)
   Milling.MillTool1.RateUnits               = RegistryRead:GetInt("Milling.MillTool1.RateUnits",                4)
   Milling.MillTool1.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool1.SpindleSpeed",             20000)
-  Milling.MillTool1.ToolNumber              = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",               1)
   Milling.MillTool1.Stepdown                = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",              0.2000)
   Milling.MillTool1.Stepover                = RegistryRead:GetDouble("Milling.MillTool1.Stepover",              0.0825)
   Milling.MillTool1.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",               0.1250)
-  Milling.MillTool1.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",            15.000)
+  Milling.MillTool1.ToolNumber              = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",               1)
+
+  Milling.MillTool2.BitType                 = RegistryRead:GetString("Milling.MillTool2.BitType",               "BALL_NOSE") -- BALL_NOSE, END_MILL, VBIT
   Milling.MillTool2.FeedRate                = RegistryRead:GetDouble("Milling.MillTool2.FeedRate",              30.000)
   Milling.MillTool2.InMM                    = RegistryRead:GetBool("Milling.MillTool2.InMM",                    false)
   Milling.MillTool2.Name                    = RegistryRead:GetString("Milling.MillTool2.Name",                  "No Tool Selected")
-  Milling.MillTool2.BitType                 = RegistryRead:GetString("Milling.MillTool2.BitType",               "BALL_NOSE") -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool2.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool2.PlungeRate",            15.000)
   Milling.MillTool2.RateUnits               = RegistryRead:GetInt("Milling.MillTool2.RateUnits",                4)
   Milling.MillTool2.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool2.SpindleSpeed",             20000)
-  Milling.MillTool2.ToolNumber              = RegistryRead:GetInt("Milling.MillTool2.ToolNumber",               2)
   Milling.MillTool2.Stepdown                = RegistryRead:GetDouble("Milling.MillTool2.Stepdown",              0.2000)
   Milling.MillTool2.Stepover                = RegistryRead:GetDouble("Milling.MillTool2.Stepover",              0.0825)
   Milling.MillTool2.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool2.ToolDia",               0.1250)
-  Milling.MillTool2.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool2.PlungeRate",            15.000)
+  Milling.MillTool2.ToolNumber              = RegistryRead:GetInt("Milling.MillTool2.ToolNumber",               2)
+
+  Milling.MillTool3.BitType                 = RegistryRead:GetString("Milling.MillTool3.BitType",               "END_MILL")  -- BALL_NOSE, END_MILL, VBIT
   Milling.MillTool3.FeedRate                = RegistryRead:GetDouble("Milling.MillTool3.FeedRate",              30.000)
   Milling.MillTool3.InMM                    = RegistryRead:GetBool("Milling.MillTool3.InMM",                    false)
   Milling.MillTool3.Name                    = RegistryRead:GetString("Milling.MillTool3.Name",                  "No Tool Selected")
-  Milling.MillTool3.BitType                 = RegistryRead:GetString("Milling.MillTool3.BitType",               "END_MILL")  -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool3.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool3.PlungeRate",            15.000)
   Milling.MillTool3.RateUnits               = RegistryRead:GetInt("Milling.MillTool3.RateUnits",                4)
   Milling.MillTool3.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool3.SpindleSpeed",             20000)
-  Milling.MillTool3.ToolNumber              = RegistryRead:GetInt("Milling.MillTool3.ToolNumber",               3)
   Milling.MillTool3.Stepdown                = RegistryRead:GetDouble("Milling.MillTool3.Stepdown",              0.2000)
   Milling.MillTool3.Stepover                = RegistryRead:GetDouble("Milling.MillTool3.Stepover",              0.0825)
   Milling.MillTool3.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool3.ToolDia",               0.5000)
-  Milling.MillTool3.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool3.PlungeRate",            15.000)
+  Milling.MillTool3.ToolNumber              = RegistryRead:GetInt("Milling.MillTool3.ToolNumber",               3)
   return true
 end -- function end
 -- ===================================================]]

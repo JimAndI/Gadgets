@@ -42,7 +42,7 @@ Tool_ID3:LoadDefaults("My Toolpath3", "")
 Tool_ID4:LoadDefaults("My Toolpath4", "")
 Tool_ID5:LoadDefaults("My Toolpath5", "")
 Tool_ID6:LoadDefaults("My Toolpath6", "")
-Project.ProgramVersion = 3.4
+Project.ProgramVersion = 3.5
 DialogWindow.ProgramName = "Easy Drawer Maker"
 DialogWindow.MillHelp    = "https://www.jimandi.com/EasyGadgets/EasyDrawerMaker/Help/DrawerMilling.html"
 DialogWindow.ProjectHelp = "https://www.jimandi.com/EasyGadgets/EasyDrawerMaker/Help/DrawerProject.html"
