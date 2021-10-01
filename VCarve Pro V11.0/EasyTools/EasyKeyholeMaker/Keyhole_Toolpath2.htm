@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Keyhole Toolpath Creator</title>
+<style type="text/css">
+body {
+	background-color: #F0F0F0;
+}
+.style1 {
+	font-family: Arial, Helvetica, sans-serif
+}
+body, td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.FormButton {
+	font-weight: bold;
+	width: 100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.TitleText {
+	font-size: 14px;
+}
+.ToolNameLabel {
+	color: #555;
+}
+.h1-l {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: left;
+	white-space: nowrap;
+}
+.h1-r {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+}
+.h1-rP {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 4px;
+}
+.h1-rPx {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 8px;
+	padding-left: 8px;
+}
+html {
+	overflow: hidden
+}
+table {
+	width: 100%;
+	border: 0;
+}
+</style>
+</head>
+<body>
+<table>
+  <tr>
+    <td colspan="4"><table>
+        <tr>
+          <td class="TitleText"><strong>Keyhole Toolpath Creator</strong></td>
+          <td width="20%" align="right" valign="top" style="color:#999999">Version <span id="GadgetVersion" color="#ff0000">0.0</span></td>
+        </tr>
+      </table></td>
+  </tr>
+  <tr>
+    <td width="98"><img src="KeyholeIcon.png" width="100" height="137"></td>
+    <td width="381" colspan="3"><p>This gadget creates 'Keyhole' slot toolpaths. </p>
+      <p>These toolpaths plunge at the entry point, move along at the slot depth and then move back to the entry point before retracting. </p>
+      <p>To use the gadget select one or more vectors, the centers of which represents the entry point of the keyhole</p></td>
+  </tr>
+  <tr>
+    <td colspan="4"><hr size="1" width="100%" /></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="5"><hr></td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Slot Orientation</strong></td>
+    <td colspan="3"><strong>Slot Dimensions</strong></td>
+  </tr>
+  <tr>
+    <td><img src="KeyholeBottomTop.png" width="32" height="32" align="absmiddle"></td>
+    <td><input type="radio" name="HoleOrientation" id="HoleOrientation" value="HoleOrientation">
+      <span class="h1-l"> Vertical (90.0) - Bottom to Top </span></td>
+    <td rowspan="3"><img src="KeyholeLength.png" alt="" width="79" height="100"></td>
+    <td class="h1-rP">Depth of Slot</td>
+    <td><input name="SlotDepth" type="text" id="SlotDepth" size="8"></td>
+  </tr>
+  <tr>
+    <td><img src="KeyholeTopBottom.png" width="32" height="32" align="absmiddle"></td>
+    <td><input type="radio" name="HoleOrientation" id="HoleOrientation3" value="HoleOrientation">
+      <span class="h1-l">Vertical (270.0) - Top to Bottom </span></td>
+    <td class="h1-rP">Length (L) of slot toolpath</td>
+    <td><input name="SlotLength" type="text" id="SlotLength" size="8"></td>
+  </tr>
+  <tr>
+    <td><img src="KeyholeLeftRight.png" width="32" height="32" align="absmiddle"></td>
+    <td><input type="radio" name="HoleOrientation" id="HoleOrientation4" value="HoleOrientation">
+      <span class="h1-l"> Horizontal  (0.0) - Left to Right </span></td>
+    <td class="h1-rP">Slope Down Amount</td>
+    <td><input name="SlopeDownAmount" type="text" id="SlopeDownAmount" size="8"></td>
+  </tr>
+  <tr>
+    <td><img src="KeyholeRightLeft.png" width="32" height="32" align="absmiddle"></td>
+    <td><input type="radio" name="HoleOrientation" id="HoleOrientation2" value="HoleOrientation">
+      <span class="h1-l">Horizontal  (180.0) - Right to Left </span></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td><input name="SlotAngle" type="text" id="SlotAngle" size="8"></td>
+    <td><input type="radio" name="HoleOrientation" id="HoleOrientation5" value="HoleAngle">
+      <span class="h1-l"> User Rotation Angle</span></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="5"><br>
+      <label>
+        <input type="checkbox" name="CreatePreviewCheck" id="CreatePreviewCheck">
+        <strong>Create Preview Vectors for outline on surface</strong></label></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="h1-rP">Entry Hole Diameter</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td><input name="EntryHoleDia" type="text" id="EntryHoleDia" size="8"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="h1-rP">Slot Diameter</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td><input name="SlotDiameter" type="text" id="SlotDiameter" size="8"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="h1-rP">Preview Layer Name</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td><input name="PreviewLayerName" type="text" id="PreviewLayerName" size="30"></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="2"><hr size="1" width="100%" />
+      <strong>
+      Tool: </strong></td>
+  </tr>
+  <tr>
+    <td height="30" colspan="1" align="left" class="ToolNameLabel" >&nbsp;&nbsp; <span id="ToolNameLabel"">Tool Name</span></td>
+    <td  align="right" width="10%" ><input type="button" name="ToolChooseButton"  id="ToolChooseButton" value="Select ..." CLASS="ToolPicker"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><b>Toolpath Name</b>&nbsp;&nbsp;&nbsp;&nbsp;
+      <input name="ToolpathName" type="text" id="ToolpathName" size="30">
+      <br>
+      <br></td>
+  </tr>
+  <tr>
+    <td colspan="2"><hr size="1" width="100%" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><table width="100%" border="0">
+        <tr>
+          <td width="20%">&nbsp;</td>
+          <td width="20%"><input name="ButtonOK" type="button" class="FormButton" id="ButtonOK" value="OK"></td>
+          <td width="20%">&nbsp;</td>
+          <td width="20%"><input name="ButtonCancel" type="button" class="FormButton" id="ButtonCancel" value="Cancel"></td>
+          <td width="20%">&nbsp;</td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+</body>
+</html>

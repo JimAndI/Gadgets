@@ -1,10 +1,10 @@
 -- VECTRIC LUA SCRIPT
--- Gadgets are an entirely optional add-in to Vectric's core software products. 
+-- Gadgets are an entirely optional add-in to Vectric's core software products.
 -- They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.
 -- In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.
 
--- Permission is granted to anyone to use this software for any purpose, 
--- including commercial applications, and to alter it and redistribute it freely, 
+-- Permission is granted to anyone to use this software for any purpose,
+-- including commercial applications, and to alter it and redistribute it freely,
 -- subject to the following restrictions:
 
 -- 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
@@ -20,7 +20,6 @@
 ]]
 
 require "strict"
-
 -- Global default values - overwritten with last values used if any
 g_version = "1.1 by Ryan Patterson"
 g_NoTeeth = 20
@@ -28,341 +27,252 @@ g_DiaPitch = 5
 g_PressureAngle = 14.5
 g_Bore = 0.5
 g_LineRes = 20
-
 g_XY_OriginIndex = 0
 g_OriginX  = 0
-g_OriginY  = 0		
+g_OriginY  = 0
 g_ShowData = false
-
+-- ==================
 function UpdateOptionsFromDialog(dialog)
-
 	g_NoTeeth        = dialog:GetIntegerField("txtNoTeeth")
 	g_DiaPitch       = dialog:GetDoubleField("txtDiaPitch")
 	g_PressureAngle  = dialog:GetDoubleField("txtPressureAngle")
 	g_Bore           = dialog:GetDoubleField("txtBore")
 	g_LineRes        = dialog:GetIntegerField("txtLineRes")
-
 	g_XY_OriginIndex = dialog:GetRadioIndex("DrawingOrigin")
 	g_OriginX        = dialog:GetDoubleField("OriginX")
 	g_OriginY        = dialog:GetDoubleField("OriginY")
-
-
-return true
-
-
-
-end
-
+  return true
+end -- function end
+-- ==================
 function SaveOptionsToObject(object)
-    object:SetInt("luaGM_GearMakerOptionsVersion", 1)
+  object:SetInt("luaGM_GearMakerOptionsVersion", 1)
 	object:SetInt("luaGM_txtNoTeeth", g_NoTeeth)
 	object:SetDouble("luaGM_txtDiaPitch", g_DiaPitch)
 	object:SetDouble("luaGM_txtPressureAngle", g_PressureAngle)
 	object:SetDouble("luaGM_txtBore", g_Bore)
 	object:SetInt("luaGM_txtLineRes", g_LineRes)
-
 	object:SetInt("luaGM_DrawingOrigin", g_XY_OriginIndex)
 	object:SetDouble("luaGM_OriginX", g_OriginX)
 	object:SetDouble("luaGM_OriginY", g_OriginY)
-	
-    return true
-end
-
+  return true
+end -- function end
+-- ==================
 function LoadOptionsFromObject(object)
-    if object == nil then
-	   return false
-	end
-	
+  if object == nil then
+    return false
+	end -- if end
 	-- check this object had the settings we want ....
 	if not object:ParameterExists("luaGM_GearMakerOptionsVersion", ParameterObject.UTP_INT) then
-       return false
-	end  
-	
-	g_NoTeeth	     = object:GetInt("luaGM_txtNoTeeth", g_NoTeeth, false)
+    return false
+	end -- if end
+	g_NoTeeth	       = object:GetInt("luaGM_txtNoTeeth", g_NoTeeth, false)
 	g_DiaPitch	     = object:GetDouble("luaGM_txtDiaPitch", g_DiaPitch, false)
 	g_PressureAngle  = object:GetDouble("luaGM_txtPressureAngle", g_PressureAngle, false)
 	g_Bore	         = object:GetDouble("luaGM_txtBore", g_Bore, false)
-	g_LineRes	     = object:GetInt("luaGM_txtLineRes", g_LineRes, false)
-
+	g_LineRes	       = object:GetInt("luaGM_txtLineRes", g_LineRes, false)
 	g_XY_OriginIndex = object:GetInt("luaGM_DrawingOrigin", g_XY_OriginIndex, false)
-	g_OriginX	     = object:GetDouble("luaGM_OriginX", g_OriginX, false)
-	g_OriginY	     = object:GetDouble("luaGM_OriginY", g_OriginY, false)
-	
-    return true
-	
-end
-
+	g_OriginX	       = object:GetDouble("luaGM_OriginX", g_OriginX, false)
+	g_OriginY	       = object:GetDouble("luaGM_OriginY", g_OriginY, false)
+  return true
+end -- function end
+-- ==================
 function LoadOptionsFromSelection(selection)
-
--- Check the selection isn't empty
+  -- Check the selection isn't empty
 	if selection.IsEmpty then
 		return false
-	end
-
+	end -- if end
 	-- Get the first item in the selection
 	local pos = selection:GetHeadPosition()
 	local firstItem = selection:GetAt(pos)
-
-    return LoadOptionsFromObject(firstItem)
-	
-end
-
-
+  return LoadOptionsFromObject(firstItem)
+end -- function end
+-- ==================
 function OnLuaButton_CreateGear(dialog)
-
 	-- Get the current job
 	local job = VectricJob()
 	if not job.Exists then
 		return true
-	end
-
+	end -- if end
 	-- Update the options from the dialog
 	if not UpdateOptionsFromDialog(dialog) then
 		return true
-	end
-	
+	end -- if end
 	-- Create the cross section
 	SetCircles(job)
 	job:Refresh2DView()
-	
-	
 	return true
-end
-
+end -- function end
+-- ==================
 function main(script_path)
-
 	local job = VectricJob()
 	if not job.Exists then
 		DisplayMessageBox("No Job Loaded")
 		return false;
 	end
-	--------------------
-
 	local registry = Registry("GearMaker")
-	
 	-- load default values fromm last time gadget was run
 	g_NoTeeth = registry:GetInt("NoTeeth", g_NoTeeth)
-	g_DiaPitch = registry:GetDouble("DiaPitch", g_DiaPitch) 
+	g_DiaPitch = registry:GetDouble("DiaPitch", g_DiaPitch)
 	g_PressureAngle = registry:GetDouble("PressureAngle", g_PressureAngle)
 	g_Bore = registry:GetDouble("Bore", g_Bore)
 	g_LineRes = registry:GetInt("LineRes", g_LineRes)
-	
 	g_XY_OriginIndex = registry:GetInt("xy_origin_index", g_XY_OriginIndex)
 	g_OriginX = registry:GetDouble("OriginX", g_OriginX)
 	g_OriginY = registry:GetDouble("OriginY", g_OriginY)
-	
 	-- if user is running gadget with a previously selected gear, pick settings up from that
 	LoadOptionsFromSelection(job.Selection)
-
 	local html_path = "file:" .. script_path .. "\\Gear_Maker\\Gear_Maker.htm"
-
 	local frmMain = HTML_Dialog(true, g_DialogHtml, 490, 550, "Gear Maker")
-
 	-- set default values fromm last time gadget was run
 	frmMain:AddIntegerField("txtNoTeeth", g_NoTeeth)
 	frmMain:AddDoubleField("txtDiaPitch", g_DiaPitch)
 	frmMain:AddDoubleField("txtPressureAngle", g_PressureAngle)
 	frmMain:AddDoubleField("txtBore", g_Bore)
 	frmMain:AddIntegerField("txtLineRes", g_LineRes)
-
 	frmMain:AddRadioGroup("DrawingOrigin", g_XY_OriginIndex)
 	frmMain:AddDoubleField("OriginX", g_OriginX)
 	frmMain:AddDoubleField("OriginY", g_OriginY)
 	frmMain:AddLabelField("GadgetVersion", g_version)
-
-    -- Display dialog, we create a gear every time the user presses the 'Create Gear' button
-	frmMain:ShowDialog() 
-	
-
-    -- Save current values as defaults for next time
+  -- Display dialog, we create a gear every time the user presses the 'Create Gear' button
+	frmMain:ShowDialog()
+  -- Save current values as defaults for next time
 	registry:SetInt("NoTeeth", g_NoTeeth)
 	registry:SetDouble("DiaPitch", g_DiaPitch)
 	registry:SetDouble("PressureAngle", g_PressureAngle)
 	registry:SetDouble("Bore", g_Bore)
 	registry:SetInt("LineRes", g_LineRes)
-	
 	registry:SetDouble("OriginX", g_OriginX)
 	registry:SetDouble("OriginY", g_OriginY)
 	registry:SetInt("xy_origin_index", g_XY_OriginIndex)
-	
-
-	return true; 
-end 
-
+	return true;
+end -- function end
+-- ==================
 function SetCircles(job)
-	local Radians 
-	local Dpitch 
-	local PAngle 
-	
-	local Pitch_Diameter 
-	local Pitch_RadiUS 
-	local Base_Circle_Dia 
-	local Base_Circle_Rad 
-	local Addendum 
-	local Dedendum 
-	local Outside_Diameter 
-	local Outside_RadiUS 
-	local Root_Diameter 
-	local Root_RadiUS 
-	local Base_Circle_Cir 
-	local FCB 
-	local NCB 
-	local ACB 
-	local Gear_T_Spacing 
-	local MetriC =1
-
+	local Radians, Dpitch, PAngle, Pitch_Diameter, Pitch_RadiUS, Base_Circle_Dia, Base_Circle_Rad, Addendum, Dedendum
+	local Outside_Diameter, Outside_RadiUS, Root_Diameter, Root_RadiUS,	Base_Circle_Cir, FCB, NCB, ACB, Gear_T_Spacing
+	local MetriC = 1
 	Dpitch = g_DiaPitch
 	PAngle = g_PressureAngle
-	
 	if job.InMM == true then
 		MetriC =25.4
-	end
-	
+	end -- if end
 	Pitch_Diameter = g_NoTeeth / Dpitch * MetriC
 	Pitch_RadiUS = Pitch_Diameter / 2
-	
 	Radians = (PAngle * math.pi) / 180
-	Base_Circle_Dia = Pitch_Diameter * math.cos(Radians) 
+	Base_Circle_Dia = Pitch_Diameter * math.cos(Radians)
 	Base_Circle_Rad = Base_Circle_Dia / 2
-	
 	Addendum = (1 * MetriC) / Dpitch
-	
 	Dedendum = (1.157 * MetriC) / Dpitch --This changed based on presure angle
-	
-	Outside_Diameter = Pitch_Diameter + 2 * Addendum 
-	Outside_RadiUS = Outside_Diameter / 2 
-	
-	Root_Diameter = Pitch_Diameter - 2 * Dedendum 
-	Root_RadiUS = Root_Diameter / 2 
-	
-	Base_Circle_Cir = Base_Circle_Dia * math.pi 
-
-	FCB = Base_Circle_Rad / g_LineRes 
+	Outside_Diameter = Pitch_Diameter + 2 * Addendum
+	Outside_RadiUS = Outside_Diameter / 2
+	Root_Diameter = Pitch_Diameter - 2 * Dedendum
+	Root_RadiUS = Root_Diameter / 2
+	Base_Circle_Cir = Base_Circle_Dia * math.pi
+	FCB = Base_Circle_Rad / g_LineRes
 	NCB = Base_Circle_Cir / FCB
 	ACB = 360 / NCB
-	Gear_T_Spacing = 360 / g_NoTeeth 
-	
-    local origin_off = Point2D(0,0)
-	if g_XY_OriginIndex == 1 then --"TLC 
+	Gear_T_Spacing = 360 / g_NoTeeth
+  local origin_off = Point2D(0,0)
+	if g_XY_OriginIndex == 1 then --"TLC
 		origin_off.x = g_OriginX + (Outside_Diameter / 2)
 		origin_off.y = g_OriginY - (Outside_Diameter / 2)
-   	elseif g_XY_OriginIndex == 2 then  --TRC 
+ 	elseif g_XY_OriginIndex == 2 then  --TRC
 		origin_off.x = g_OriginX  - Outside_Diameter + (Outside_Diameter/2)
 		origin_off.y = g_OriginY - Outside_Diameter + (Outside_Diameter/2)
-   	elseif g_XY_OriginIndex == 3 then --CENTRE 
+ 	elseif g_XY_OriginIndex == 3 then --CENTRE
 		origin_off.x = g_OriginX --- (Outside_Diameter / 2)
 		origin_off.y = g_OriginY --- (Outside_Diameter/ 2)
-   	elseif g_XY_OriginIndex == 4 then --BLC  
+ 	elseif g_XY_OriginIndex == 4 then --BLC
 		origin_off.x = g_OriginX + (Outside_Diameter / 2)
 		origin_off.y = g_OriginY + (Outside_Diameter / 2)
-   	elseif g_XY_OriginIndex == 5 then --BRC 
+ 	elseif g_XY_OriginIndex == 5 then --BRC
 		origin_off.x = g_OriginX  - Outside_Diameter + (Outside_Diameter/2)
 		origin_off.y = g_OriginY + (Outside_Diameter / 2)
-  	end
-	
+ 	end -- if end
 	--DrawCircle(job,Root_Diameter/2,Point2D(origin_off.x,origin_off.y),"Root_Diameter")
 	--DrawCircle(job,Base_Circle_Dia/2,Point2D(0,0),"Base_Circle_Dia")
 	DrawCircle(job, Pitch_Diameter/2, Point2D(origin_off.x,origin_off.y), "Pitch_Diameter")
 	--DrawCircle(job,Outside_Diameter/2,Point2D(0,0),"Outside_Diameter")
 	DrawCircle(job, g_Bore/2, Point2D(origin_off.x,origin_off.y), "Gear")
-	
 	if g_ShowData then
-	
-		MessageBox ("Root_Diameter " .. Root_Diameter .. "\nBase_Circle_Dia " .. Base_Circle_Dia .. "\nPitch_Diameter " .. Pitch_Diameter .. 
-				"\nOutside_Diameter " .. Outside_Diameter .. "\nAddendum " .. Addendum ..
-				"\nDedendum " .. Dedendum .. "\nGear_T_Spacing " .. Gear_T_Spacing)
-
-	end
----------------------------------------------------------------------------------------------------------------------------------
-
-		local NewX --= 0
-        local NewY -- = 0
-        local Deg-- = 0
-        local NewAcb-- = 0
-        local i-- = 0
-
-        local cenX--  = 0
-        local cenY-- = 0
-        local Xoff-- = 0
-        local Yoff-- = 0
-
-        local x1 = {} 
-        local y1 = {}
-        local z1 = {}
-        local Spr = 0
-        local desPoints-- = 0
-		local desPoints2-- = 0
-        local NoInsecPoints-- = 0
-        local insecX1-- = 0 
-        local insexY1-- = 0 
-        local insecX2-- = 0 
-        local insexY2-- = 0 
-        local Mirrorangle-- = 0 
-
-        Mirrorangle = 9999
-        Spr = 1000
-        NewAcb = ACB
-		
-		for i=0,Spr,1 do
-            Deg = 180 / NewAcb
-            NewAcb = ACB + NewAcb
-            NewX, NewY = RotatePoint(Deg, Base_Circle_Rad)
-            Xoff, Yoff = Perpendicular(0, 0, NewX, NewY, FCB * i, true, "OUT", cenX, cenY)
-			x1[i + 1] = NewX - Xoff
-            y1[i + 1] = NewY - Yoff
-            z1[i] = 0
-			--MessageBox ("Xoff " .. Xoff .. " Yoff " .. Yoff)
-            desPoints = Distance2Points(0, 0, x1[i + 1], y1[i + 1])
-			
-            if desPoints > Outside_RadiUS then
-                NoInsecPoints,insecX1, insexY1, insecX2, insexY2 = FindLineCircleIntersections(0, 0, Outside_RadiUS, x1[i], y1[i], x1[i + 1], y1[i + 1])
-                x1[i + 1] = insecX1
-                y1[i + 1] = insexY1
-                break
-            end
-            desPoints = Distance2Points(0, 0, x1[i + 1], y1[i + 1])
-            if desPoints > Pitch_RadiUS and Mirrorangle == 9999.0 then
-                NoInsecPoints,insecX1, insexY1, insecX2, insexY2 = FindLineCircleIntersections(0, 0, Pitch_RadiUS, x1[i], y1[i], x1[i + 1], y1[i + 1])
-                Mirrorangle = GetAngle2(insecX1, insexY1, 0, 0) - 90
-				
-            end
-			
-        end
+		MessageBox ("Root_Diameter " .. Root_Diameter .. "\nBase_Circle_Dia " .. Base_Circle_Dia .. "\nPitch_Diameter " .. Pitch_Diameter ..
+                "\nOutside_Diameter " .. Outside_Diameter .. "\nAddendum " .. Addendum ..
+                "\nDedendum " .. Dedendum .. "\nGear_T_Spacing " .. Gear_T_Spacing
+               )
+	end -- if end
+	local NewX --= 0
+  local NewY -- = 0
+  local Deg-- = 0
+  local NewAcb-- = 0
+  local i-- = 0
+  local cenX--  = 0
+  local cenY-- = 0
+  local Xoff-- = 0
+  local Yoff-- = 0
+  local x1 = {}
+  local y1 = {}
+  local z1 = {}
+  local Spr = 0
+  local desPoints-- = 0
+  local desPoints2-- = 0
+  local NoInsecPoints-- = 0
+  local insecX1-- = 0
+  local insexY1-- = 0
+  local insecX2-- = 0
+  local insexY2-- = 0
+  local Mirrorangle-- = 0
+  Mirrorangle = 9999
+  Spr = 1000
+  NewAcb = ACB
+	for i=0,Spr,1 do
+    Deg = 180 / NewAcb
+    NewAcb = ACB + NewAcb
+    NewX, NewY = RotatePoint(Deg, Base_Circle_Rad)
+    Xoff, Yoff = Perpendicular(0, 0, NewX, NewY, FCB * i, true, "OUT", cenX, cenY)
+    x1[i + 1] = NewX - Xoff
+    y1[i + 1] = NewY - Yoff
+    z1[i] = 0
+		--MessageBox ("Xoff " .. Xoff .. " Yoff " .. Yoff)
+    desPoints = Distance2Points(0, 0, x1[i + 1], y1[i + 1])
+    if desPoints > Outside_RadiUS then
+      NoInsecPoints,insecX1, insexY1, insecX2, insexY2 = FindLineCircleIntersections(0, 0, Outside_RadiUS, x1[i], y1[i], x1[i + 1], y1[i + 1])
+      x1[i + 1] = insecX1
+      y1[i + 1] = insexY1
+      break
+    end -- if end
+    desPoints = Distance2Points(0, 0, x1[i + 1], y1[i + 1])
+    if desPoints > Pitch_RadiUS and Mirrorangle == 9999.0 then
+      NoInsecPoints,insecX1, insexY1, insecX2, insexY2 = FindLineCircleIntersections(0, 0, Pitch_RadiUS, x1[i], y1[i], x1[i + 1], y1[i + 1])
+      Mirrorangle = GetAngle2(insecX1, insexY1, 0, 0) - 90
+    end -- if end
+	end -- for end
 
 		NoInsecPoints,insecX1, insexY1, insecX2, insexY2 = FindLineCircleIntersections(0, 0, Root_RadiUS, 0, 0, x1[1], y1[1])
-		
+
 		desPoints = Distance2Points(0, 0, insecX1, insexY1)
 		desPoints2 = Distance2Points(0, 0, x1[1], y1[1])
         if desPoints > desPoints2 then
 			NoInsecPoints,insecX1, insexY1, insecX2, insexY2 = FindLineCircleIntersections(0, 0, desPoints2  , 0, 0, x1[1], y1[1])
-		end 
+		end
 		x1[0] = insecX1
-		y1[0] = insexY1		
-	
+		y1[0] = insexY1
 		local MyContour = Draw_Line(job,x1, y1,origin_off)
-		
 		local MyMirrorContour =   MyContour:Clone()
 		local ArcSpan  = Contour(0.0)
-		local Tooth  = Contour(0.0) 
+		local Tooth  = Contour(0.0)
 		local ctr_pos = MyContour:GetTailPosition()
 		local span2
 		span2, ctr_pos = MyContour:GetNext(ctr_pos)
-
 		--Mirroring the tooth profile
         Deg = 180 / ((Gear_T_Spacing / 4) + Mirrorangle)
         NewX, NewY = RotatePoint(Deg, Pitch_RadiUS)
 		local Angle = GetAngle2(NewX, NewY, 0, 0) - 90
 		local Angle2 = GetAngle2(x1[0], y1[0], 0, 0) - 90
 		Angle = (Angle - Angle2) * 2
-		
 		MyMirrorContour = Mirror (job, MyMirrorContour, Point2D(origin_off.x,origin_off.y),Angle)
-		
-		
 		local ctr_pos = MyMirrorContour:GetTailPosition()
 		local span
 		span, ctr_pos = MyMirrorContour:GetNext(ctr_pos)
-		
-		
 		ArcSpan = DrawArC(job, span.EndPoint2D, span2.EndPoint2D, Point2D(origin_off.x,origin_off.y), "Gear")
 		local test
 		test = MyMirrorContour:AppendContour(ArcSpan)
@@ -371,7 +281,7 @@ function SetCircles(job)
 		test = MyMirrorContour:Reverse ()
 		if test == false then
 			MessageBox (" Arc Span Is nil ")
-		end
+		end -- if end
 		local Rotation =  360/g_NoTeeth
 		local Teeth = {}
 		local TeethA = {}
@@ -383,7 +293,7 @@ function SetCircles(job)
 			Rotate (job, Teeth[i], Point2D(origin_off.x,origin_off.y), Rotation)
 			Rotation = (360/g_NoTeeth) * i
 			--Refresh (job,Teeth[i],"Tooth")
-		end
+		end -- for end
 		for i=0, #Teeth-2 do
 			TeethA[i] = DrawArC(job, Point2D(Teeth[i+2].StartPoint2D.x, Teeth[i+2].StartPoint2D.y), Point2D(Teeth[i+1].EndPoint2D.x,Teeth[i+1].EndPoint2D.y), Point2D(origin_off.x,origin_off.y), "Tooth")
 			test = TeethA[i]:Reverse ()
@@ -392,118 +302,103 @@ function SetCircles(job)
 		TeethA[#TeethA+1] = DrawArC(job, Point2D(Teeth[1].StartPoint2D.x, Teeth[1].StartPoint2D.y), Point2D(Teeth[#Teeth].EndPoint2D.x,Teeth[#Teeth].EndPoint2D.y),Point2D(origin_off.x,origin_off.y), "Tooth")
 		test = TeethA[#TeethA]:Reverse ()
 		--Refresh (job,TeethA[table.getn(TeethA)],"Tooth")
-		
 		for i=1,#Teeth do
 			test = Teeth[i]:AppendContour(TeethA[i-1])
 			--Refresh (job,Teeth[i],"Tooth")
-		end
+		end -- for end
 		local FinishedGear = Contour(0.0)
 		for i=1,#Teeth do
 			test = FinishedGear:AppendContour(Teeth[i])
-			
-		end		
+		end -- for end
 		Refresh (job,FinishedGear,"Gear")
 		--Refresh (job,MyMirrorContour,"Tooth")
 		--DrawArC(job                       ,STPoint            ,EPPoint        ,PTCenter    ,LayerName)
 		--job:Refresh2DView()
-------------------------------------------------------------------------------------------------------------------------------------
 	return true
-end
-
+end -- function end
+-- =================
 function Rotate (job, MyContour, CenterM, Angle)
 	local rotate_90_xform = RotationMatrix2D(CenterM, Angle)
-    MyContour:Transform(rotate_90_xform)
-	return MyContour; 
-end
-
+  MyContour:Transform(rotate_90_xform)
+	return MyContour;
+end -- function end
+-- =================
 function Mirror (job, MyContour, CenterM, Angle)
-
-  	local mirror_X_xform = ScalingMatrix2D (CenterM, Vector2D(1.0, -1.0))
+  local mirror_X_xform = ScalingMatrix2D (CenterM, Vector2D(1.0, -1.0))
 	MyContour:Transform(mirror_X_xform)
-	
 	local rotate_90_xform = RotationMatrix2D(CenterM, Angle)
-    MyContour:Transform(rotate_90_xform)
-
-	
+  MyContour:Transform(rotate_90_xform)
 	--local cad_object = CreateCadContour(MyContour)
 	--local cur_layer = job.LayerManager:GetActiveLayer()
 	--local layer = job.LayerManager:GetLayerWithName("Tooth")-- and add our object to it - on active sheet
 	--layer:AddObject(cad_object, true)
-	--layer.Colour = 0 
-	--layer.Visible = true 
+	--layer.Colour = 0
+	--layer.Visible = true
 	--job.LayerManager:SetActiveLayer(cur_layer)
-	
-	
 	--job:Refresh2DView()
-	
-	
-	return MyContour; 
-end
-
-function Draw_Line(job,X,Y,Origin)
-
-	local MyContour = Contour(0.0)
-
-	local p1 = Point2D(X[0] + Origin.x,Y[0] + Origin.y)
-	local Angle
-
-   
-   	MyContour:AppendPoint(p1)
+	return MyContour;
+end -- function end
+-- =================
+function Draw_Line(job, X, Y, Origin)
+	local p1 = Point2D(0,0)
+  local p2 = Point2D(0,0)
+  local Angle = 0.0
+  local rotate_90_xform = 0.0
+  local MyContour = Contour(0.0)
+	p1 = Point2D(X[0] + Origin.x,Y[0] + Origin.y)
+ 	MyContour:AppendPoint(p1)
 	for i=1, #X do
-		local p2 = Point2D(X[i] + Origin.x,Y[i] + Origin.y)
+		p2 = Point2D(X[i] + Origin.x,Y[i] + Origin.y)
 		MyContour:LineTo(p2)
 	end
-	
 	Angle = GetAngle2(X[0]+ Origin.x, Y[0] + Origin.y, Origin.x, Origin.y) - 90
-   	local rotate_90_xform = RotationMatrix2D(Origin,-1 * Angle)
-    MyContour:Transform(rotate_90_xform)
-	--MessageBox("Angle " .. Angle)
-	
-	--local cad_object = CreateCadContour(MyContour)
-	--local cur_layer = job.LayerManager:GetActiveLayer()
-	--local layer = job.LayerManager:GetLayerWithName("Tooth")-- and add our object to it - on active sheet
-	--layer:AddObject(cad_object, true)
-	--layer.Colour = 0 
-	--layer.Visible = true 
-	--job.LayerManager:SetActiveLayer(cur_layer)
-	
-	--job:Refresh2DView()
-	
-	return MyContour; 
-end
+  rotate_90_xform = RotationMatrix2D(Origin,-1 * Angle)
+  MyContour:Transform(rotate_90_xform)
 
+	-- MessageBox("Angle " .. Angle)
+	-- local cad_object = CreateCadContour(MyContour)
+	-- local cur_layer = job.LayerManager:GetActiveLayer()
+	-- local layer = job.LayerManager:GetLayerWithName("Tooth")-- and add our object to it - on active sheet
+	-- layer:AddObject(cad_object, true)
+	-- layer.Colour = 0
+	-- layer.Visible = true
+	-- job.LayerManager:SetActiveLayer(cur_layer)
+	-- job:Refresh2DView()
+	return MyContour;
+end -- function end
+-- =================
 function DrawCircle(job,RadiUS,PTCenter,LayerName)
 	local MyContour = Contour(0.0)
 	--local p1 = Point2D(RadiUS + PTCenter.x,0)
 	--local p2 = Point2D((-1*RadiUS) + PTCenter.x,0)
-	
+
 	local p1 = Point2D(RadiUS + PTCenter.x, PTCenter.y)
 	local p2 = Point2D(PTCenter.x, (-1*RadiUS) + PTCenter.y)
 	local p3 = Point2D((-1*RadiUS) + PTCenter.x, PTCenter.y)
 	local p4 = Point2D(PTCenter.x, RadiUS + PTCenter.y)
 
-	
-	--MessageBox("Radius = " .. RadiUS .. " Center Point =  " .. PTCenter.x .. "," .. PTCenter.y) 
+
+	--MessageBox("Radius = " .. RadiUS .. " Center Point =  " .. PTCenter.x .. "," .. PTCenter.y)
 	MyContour:AppendPoint(p1)
 	MyContour:ArcTo(p2,PTCenter, false)
 	MyContour:ArcTo(p3,PTCenter, false)
 	MyContour:ArcTo(p4,PTCenter, false)
 	MyContour:ArcTo(p1,PTCenter, false)
-	
+
 	--------------------------------------------------------
 	local cad_object = CreateCadContour(MyContour)
 	SaveOptionsToObject(cad_object)
 	local cur_layer = job.LayerManager:GetActiveLayer()
 	local layer = job.LayerManager:GetLayerWithName(LayerName)-- and add our object to it - on active sheet
 	layer:AddObject(cad_object, true)
-	layer.Colour = 0 
-	layer.Visible = true 
+	layer.Colour = 0
+	layer.Visible = true
 	job.LayerManager:SetActiveLayer(cur_layer)
-	job:Refresh2DView()	
-	
-	return true
-end
+	job:Refresh2DView()
 
+	return true
+end -- function end
+-- =================
 function DrawArC(job,STPoint,EPPoint,PTCenter,LayerName)
 	local MyContour = Contour(0.0)
 	--local p1 = Point2D(STPoint.x,STPoint.y)
@@ -516,40 +411,30 @@ function DrawArC(job,STPoint,EPPoint,PTCenter,LayerName)
 	--local cur_layer = job.LayerManager:GetActiveLayer()
 	--local layer = job.LayerManager:GetLayerWithName(LayerName)-- and add our object to it - on active sheet
 	--layer:AddObject(cad_object, true)
-	--layer.Colour = 0 
-	--layer.Visible = true 
+	--layer.Colour = 0
+	--layer.Visible = true
 	--job.LayerManager:SetActiveLayer(cur_layer)
-	--job:Refresh2DView()	
-	
-	return MyContour
-end
+	--job:Refresh2DView()
 
--------------------------------------------------------------
+	return MyContour
+end -- function end
+-- =================
 function RotatePoint(Deg, Rad)
-	local theta
-	local dtheta 
-	local cx 
-	local cy 
-	
-	cx = Rad
+	local theta, dtheta, cx, cy
+	local cenX, cenY, Xoff, Yoff
+  cx = Rad
 	cy = 0
 	theta = 0
-	dtheta = math.pi / Deg 
+	dtheta = math.pi / Deg
 	theta = theta + dtheta
 	local New_X = math.cos(theta) * cx - math.sin(theta) * cy
 	local New_Y = math.sin(theta) * cx + math.cos(theta) * cy
-	
-	local cenX 
-	local cenY 
-	local Xoff 
-	local Yoff 
-	
+
 	Xoff, Yoff = Perpendicular(0, 0, New_X, New_Y, 2, true, "OUT", cenX, cenY)
 	--Console.WriteLine(Xoff & "," & Yoff)
 	return  New_X,New_Y
-end 
-	
-	
+end -- function end
+-- =================
 function Perpendicular( X1  ,  Y1  ,  X2  ,  Y2  ,  BitRad  ,  DirC  ,  Profile  ,  CenX  ,  CenY  )
 	local RUN
 	local angle
@@ -557,62 +442,61 @@ function Perpendicular( X1  ,  Y1  ,  X2  ,  Y2  ,  BitRad  ,  DirC  ,  Profile 
 	local points1 = {}
 	local points2 = {}
 	local Center = {}
-	local First 
-	local Second 
-	local Quad 
+	local First
+	local Second
+	local Quad
 	local Amid = {}
-	local Rad 
-	
+	local Rad
+
 	points1[0] = X2
 	points1[1] = Y2
-	
 	points2[0] = X1
 	points2[1] = Y1
-	
+
 	if Profile == "InSide" then
 		if points1[0] > points2[0] and points1[1] < points2[1] then
-			Quad = "BL" 
+			Quad = "BL"
 		elseif points1[0] > points2[0] and points1[1] > points2[1] then
 			Quad = "BR"
 		elseif points1[0] < points2[0] and points1[1] > points2[1] then
-			Quad = "TR" 
+			Quad = "TR"
 		elseif points1[0] < points2[0] and points1[1] < points2[1] then
-			Quad = "TL" 
-		end 
+			Quad = "TL"
+		end
 	elseif Profile == "OUT" then
 		if points1[0] > points2[0] and points1[1] < points2[1] then
-			Quad = "BL" 
+			Quad = "BL"
 		elseif points1[0] > points2[0] and points1[1] > points2[1] then
 			Quad = "BR"
-			
+
 		elseif points1[0] < points2[0] and points1[1] > points2[1] then
-			Quad = "TR" 
+			Quad = "TR"
 		elseif points1[0] < points2[0] and points1[1] < points2[1] then
-			Quad = "TL" 
-		end 
-	end 
-	
-	
+			Quad = "TL"
+		end -- if end
+	end -- if end
+
+
 	angle = (GetAngle(points1, points2) - 180) * (math.pi / 180)
 	RUN = math.cos(angle) * BitRad
 	Raise = math.sin(angle) * BitRad
-	
-	
-	
+
+
+
 	--top right of circle
 	if RUN < 0 and Raise > 0 then
 		if Quad == "BL" then
 			RUN = math.abs(RUN)
 		else
 			Raise = -1 * Raise
-		end 
+		end -- if end
 	--Top Left of circle
 	elseif RUN > 0 and Raise > 0 then
 		if Quad == "BR" then
 			RUN = -1 * RUN
 		else
 			Raise = -1 * Raise
-		end 
+		end -- if end
 	--Bttom Left of circle
 	elseif RUN > 0 and Raise < 0 then
 		if Quad == "TR" then
@@ -620,7 +504,7 @@ function Perpendicular( X1  ,  Y1  ,  X2  ,  Y2  ,  BitRad  ,  DirC  ,  Profile 
 		else
 			--Raise = Abs(Raise)
 			--RUN = -1 * RUN 'I added the run = for DC Cabinets may not be right
-		end 
+		end -- if end
 	--Bttom right of circle
 	elseif RUN < 0 and Raise < 0 then
 		if Quad == "TL" then
@@ -628,7 +512,7 @@ function Perpendicular( X1  ,  Y1  ,  X2  ,  Y2  ,  BitRad  ,  DirC  ,  Profile 
 		else
 			Raise = math.abs(Raise)
 			--MessageBox ("Raise " .. Raise )
-		end 
+		end -- if end
 
 	elseif Raise == 0 and RUN > 0 and Profile == "InSide" and DirC == true then
 		RUN = -1 * RUN
@@ -649,30 +533,26 @@ function Perpendicular( X1  ,  Y1  ,  X2  ,  Y2  ,  BitRad  ,  DirC  ,  Profile 
 	--ElseIf RUN > 0 And Raise > 0 And Profile = "OUT" And DirC = True Then 'I added hoping it would help May screw somthing else up
 	--    Raise = -1 * Raise
 	--    RUN = -1 * RUN
-	end 
-	
+	end -- if end
+
 	local Xoff = RUN
 	local Yoff = Raise
 	--MessageBox ("Run " .. RUN .. " Raise " .. Raise)
 	return Xoff,Yoff
-end
-
-function GetAngle2( X1  ,  Y1  ,  X2  ,  Y2  )  
-   local a 
-   a = MyTan(X2 - X1, Y1 - Y2)
+end -- function end
+-- ==================
+function GetAngle2( X1  ,  Y1  ,  X2  ,  Y2  )
+   local a = MyTan(X2 - X1, Y1 - Y2)
    return a * (180 / math.pi) - 90
-end
-	
-	
-function GetAngle(points1 , points2)  
-	local a  
-	a = MyTan(points2[0] - points1[0], points2[1] - points1[1])
+end -- function end
+-- ==================
+function GetAngle(points1 , points2)
+	local a = MyTan(points2[0] - points1[0], points2[1] - points1[1])
 	return a * (180 / math.pi) - 90
-end 
-
-function MyTan(d1,d2)  
-	
-	if  d2 < 0 then
+end -- function end
+-- ==================
+function MyTan(d1, d2)
+	if d2 < 0 then
 		return (math.pi / 2) + math.atan(d1 / d2)
 	elseif d2 > 0 then
 		return (math.pi * 1.5) + math.atan(d1 / d2)
@@ -684,21 +564,21 @@ function MyTan(d1,d2)
 		end
 	end
 	return false
-end 	
-	
+end -- function end
+-- ==================
 function Distance2Points(X1 , Y1 , X2 ,  Y2 )
     return math.sqrt(((X1 - X2) * (X1 - X2)) + ((Y1 - Y2) * (Y1 - Y2)))
-end 
-	
-function FindLineCircleIntersections( cx   ,  cy  ,  radiUS  ,  x1  ,  y1  ,  x2  ,  y2)  
---ix1,iy1,ix2,iy2    
+end
+-- ==================
+function FindLineCircleIntersections( cx   ,  cy  ,  radiUS  ,  x1  ,  y1  ,  x2  ,  y2)
+--ix1,iy1,ix2,iy2
    local dx
-   local dy  
-   local A   
-   local B  
-   local C  
-   local det  
-   local t 
+   local dy
+   local A
+   local B
+   local C
+   local det
+   local t
    local ix1
    local iy1
    local ix2
@@ -731,10 +611,9 @@ function FindLineCircleIntersections( cx   ,  cy  ,  radiUS  ,  x1  ,  y1  ,  x2
        ix2 = x1 + t * dx
        iy2 = y1 + t * dy
        return 2,ix1,iy1,ix2,iy2
-   end 
-end 	
-	
-	
+   end -- if end
+end
+-- ==================
 function Refresh (job,Contour,LayerName)
 
 	local cad_object = CreateCadContour(Contour)
@@ -742,16 +621,16 @@ function Refresh (job,Contour,LayerName)
 	local cur_layer = job.LayerManager:GetActiveLayer()
 	local layer = job.LayerManager:GetLayerWithName(LayerName)-- and add our object to it - on active sheet
 	layer:AddObject(cad_object, true)
-	layer.Colour = 0 
-	layer.Visible = true 
+	layer.Colour = 0
+	layer.Visible = true
 	job.LayerManager:SetActiveLayer(cur_layer)
-	
+
 	job:Refresh2DView()
 end
 
 -- =========== HTML for Dialog ============================================
 g_DialogHtml = [[
-	
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -892,7 +771,7 @@ body, td, th {
 		<td style="width: 20%"></td>
 		<td style="width: 20%">
 			<input width="100%" id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Close">
-		</td>	
+		</td>
 		<td style="width: 20%"></td>
 	</tr>
 	<tr><td><br></td></tr>
@@ -907,9 +786,8 @@ body, td, th {
 
 </html>
 
-	
+
 ]]
-	
-	
-	
-	
+
+
+

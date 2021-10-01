@@ -1,122 +1,115 @@
 -- =====================================================]]
-function DisplayTest(words)
-  -- test a sub fuction
-    DisplayMessageBox(words)
+function GearMath()
+    Gear.ToothAngle       = (360.0 / Gear.ToothCountNum)
+    Gear.PitchChord       = (Gear.ToothTickness * Gear.ToothCountNum)
+    Gear.PitchRadius      = (Gear.ToothTickness / 2.0) * (math.sin( 180.0 / Gear.ToothCountNum))
+    Gear.PitchDiameter    = (Gear.PitchRadius * 2.0)
 	return true
+end -- function end
+-- =====================================================]]
+function RegistryRead(RegName)                                 -- Read from Registry values
+  local RegistryRead = Registry(RegName)
+  --[[
+  local Yes_No    = RegistryRead:GetBool("BaseDim.Yes_No", ture)
+  local CabHeight = RegistryRead:GetDouble("BaseDim.CabHeight", 35.500)
+  local CabCount  = RegistryRead:GetInt("BaseDim.CabCount", 36)
+  local Name      = RegistryRead:GetString("BaseDim.Name", "Words")
+  ]]
+
+  Gear.ToothCount                 = RegistryRead:GetString("Gear.ToothCount",               "20")
+  Gear.ShowLines                  = RegistryRead:GetString("Gear.ShowLines",                "Yes")
+  Gear.Addendum                   = RegistryRead:GetDouble("Gear.Addendum",                 0.5000)
+  Gear.Dedendum                   = RegistryRead:GetDouble("Gear.Dedendum",                 0.5000)
+  Gear.AddendumDiameter           = RegistryRead:GetDouble("Gear.AddendumDiameter",         6.0000)
+  Gear.DedendumDiameter           = RegistryRead:GetDouble("Gear.DedendumDiameter",         5.5000)
+  Gear.ToothTickness              = RegistryRead:GetDouble("Gear.ToothTickness",            0.5000)
+  Gear.Slotwidth                  = RegistryRead:GetDouble("Gear.Slotwidth",                0.5000)
+  Gear.ToothAngle                 = RegistryRead:GetDouble("Gear.ToothAngle",               5.5000)
+  Gear.PitchDiameter              = RegistryRead:GetDouble("Gear.PitchDiameter",            15.5000)
+  Gear.FilletRadius               = RegistryRead:GetDouble("Gear.FilletRadius",             0.0500)
+  Gear.ToplandAmount              = RegistryRead:GetDouble("Gear.ToplandAmount",            0.5000)
+  Gear.FaceFlankRadius            = RegistryRead:GetDouble("Gear.FaceFlankRadius",          0.1250)
+  Gear.PitchChord                 = RegistryRead:GetDouble("Gear.PitchChord",               1.0000)
+  Gear.PitchRadius                = RegistryRead:GetDouble("Gear.PitchRadius",              5.5000)
+  Milling.MillTool1.FeedRate      = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",    30.000)
+  Milling.MillTool1.InMM          = RegistryRead:GetBool("Milling.MillTool1.InMM ",         false)
+  Milling.MillTool1.Name          = RegistryRead:GetString("Milling.MillTool1.Name",        "No Tool Selected")
+  Milling.MillTool1.BitType       = RegistryRead:GetString("Milling.MillTool1.BitType",     "END_MILL") -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool1.RateUnits     = RegistryRead:GetInt("Milling.MillTool1.RateUnits",      4)
+  Milling.MillTool1.SpindleSpeed  = RegistryRead:GetInt("Milling.MillTool1.SpindleSpeed",   20000)
+  Milling.MillTool1.ToolNumber    = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",     1)
+  Milling.MillTool1.Stepdown      = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",    0.2000)
+  Milling.MillTool1.Stepover      = RegistryRead:GetDouble("Milling.MillTool1.Stepover",    0.0825)
+  Milling.MillTool1.ToolDia       = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",     0.1250)
+  Milling.MillTool1.PlungeRate    = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",  15.000)
+  return true
+end -- function end
+-- =====================================================]]
+function GetUnits()
+  local mtl_block = MaterialBlock()
+  if mtl_block.InMM then
+    DialogWindow.Units  = "Drawing Units: mm"
+    DialogWindow.Unit = true
+    DialogWindow.Cal = 25.4
+  else
+    DialogWindow.Units  = "Drawing Units: inches"
+    DialogWindow.Unit = false
+    DialogWindow.Cal = 1.0
+  end
+  DialogWindow.UnitDisplay  = "Note: Units: (" .. DialogWindow.Units ..")"
+  return true
+end -- end function
+-- =====================================================]]
+function RegistryWrite(RegName)                                -- Write to Registry values
+  local RegistryWrite = Registry(RegName)
+  local RegValue
+  --[[
+  RegValue = RegistryWrite:SetBool("ProjectQuestion.CabinetName",      true)
+  RegValue = RegistryWrite:SetDouble("BaseDim.CabDepth",               23.0000)
+  RegValue = RegistryWrite:SetInt("BaseDim.CabHeight",                 35)
+  RegValue = RegistryWrite:SetString("BaseDim.CabLength",              "Words")
+  ]]
+
+  RegValue = RegistryWrite:SetString("Gear.ToothCount",                 Gear.ToothCount)
+  RegValue = RegistryWrite:SetString("Gear.ShowLines",                  Gear.ShowLines)
+  RegValue = RegistryWrite:SetDouble("Gear.Addendum",                   Gear.Addendum)
+  RegValue = RegistryWrite:SetDouble("Gear.Dedendum",                   Gear.Dedendum)
+  RegValue = RegistryWrite:SetDouble("Gear.AddendumDiameter",           Gear.AddendumDiameter)
+  RegValue = RegistryWrite:SetDouble("Gear.DedendumDiameter",           Gear.DedendumDiameter)
+  RegValue = RegistryWrite:SetDouble("Gear.ToothTickness",              Gear.ToothTickness)
+  RegValue = RegistryWrite:SetDouble("Gear.Slotwidth",                  Gear.Slotwidth)
+  RegValue = RegistryWrite:SetDouble("Gear.ToothAngle",                 Gear.ToothAngle)
+  RegValue = RegistryWrite:SetDouble("Gear.PitchDiameter",              Gear.PitchDiameter)
+  RegValue = RegistryWrite:SetDouble("Gear.FilletRadius",               Gear.FilletRadius)
+  RegValue = RegistryWrite:SetDouble("Gear.ToplandAmount",              Gear.ToplandAmount)
+  RegValue = RegistryWrite:SetDouble("Gear.FaceFlankRadius",            Gear.FaceFlankRadius)
+  RegValue = RegistryWrite:SetDouble("Gear.PitchChord",                 Gear.PitchChord)
+  RegValue = RegistryWrite:SetDouble("Gear.PitchRadius",                Gear.PitchRadius)
+  RegValue = RegistryWrite:SetString("DialogWindow.InquiryMainXY",      DialogWindow.InquiryMainXY)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.FeedRate",      Milling.MillTool1.FeedRate)
+  RegValue = RegistryWrite:SetBool("Milling.MillTool1.InMM",            Milling.MillTool1.InMM)
+  RegValue = RegistryWrite:SetString("Milling.MillTool1.Name",          Milling.MillTool1.Name)
+  RegValue = RegistryWrite:SetString("Milling.MillTool1.BitType",       Milling.MillTool1.BitType)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.PlungeRate",    Milling.MillTool1.PlungeRate)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.RateUnits",        Milling.MillTool1.RateUnits)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.SpindleSpeed",     Milling.MillTool1.SpindleSpeed)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepdown",      Milling.MillTool1.Stepdown)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepover",      Milling.MillTool1.Stepover)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.ToolDia",       Milling.MillTool1.ToolDia)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.ToolNumber",       Milling.MillTool1.ToolNumber)
+  return true
 end -- function end
 -- =====================================================]]
 function ValidJob()
 -- A better error message
-    Project.Job = VectricJob()
-    if not Project.Job.Exists then
-      DisplayMessageBox("Error: Cannot run Gadget, no drawing found \n" ..
+    Milling.Job = VectricJob()
+    if not Milling.Job.Exists then
+      DisplayMessageBox("Error: Cannot run the Gadget, no drawing found \n" ..
                         "Please create a new file (drawing) and \n" ..
                         "specify the material dimensions \n")
       return false
+    else
+      return true
     end  -- if end
   end -- ValidJob end
-
-function HTML()
- DialogWindow.Gear = [[<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Easy Gear Maker</title>
-<link href="EasyDialog.css" rel="stylesheet" type="text/css">
-</head>
-
-<body>
-<table>
-  <tr>
-    <td class="h1-c"><img src="../Images/Gears.jpg" width="450" height="197"></td>
-  </tr>
-</table>
-<table>
-  <tr>
-    <td colspan="4" class="h2"><hr></td>
-  </tr>
-  <tr>
-    <td class="h1-rP"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp ..[[#Top');">Profile Bit:</label></td>
-    <td bgcolor="#FFFFFF" class="ToolNameLabel"><span id="ToolNameLabel2">-</span></td>
-    <td class="h1-c"><input id = "ToolChooseButton1" class="ToolPicker" type = "button" value = "Tool"></td>
-    <td class="h1-c"><input id = "InquiryToolClear" class="LuaButton" type = "button" value = "Clear"></td>
-  </tr>
-</table>
-<table>
-  <tr>
-    <td colspan="4" class="h2"><hr></td>
-  </tr>
-  <tr>
-    <td class="h1-rP"><label id="Milling.LabelE" class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');"> Tooth Count</label></td>
-    <td class="h1-l"><select id="BaseQuestion.TextE">
-        <option selected>20</option><option>8</option><option>9</option>
-        <option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option>
-        <option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option>
-        <option>30</option><option>31</option><option>32</option><option>33</option><option>34</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option>
-        <option>40</option><option>41</option><option>42</option><option>43</option><option>44</option><option>45</option><option>36</option><option>47</option><option>48</option><option>49</option>
-        <option>50</option><option>51</option><option>52</option><option>53</option><option>54</option><option>55</option><option>36</option><option>57</option><option>58</option><option>59</option>
-        <option>60</option><option>61</option><option>62</option><option>63</option><option>64</option><option>65</option><option>36</option><option>67</option><option>68</option><option>69</option>
-        <option>70</option><option>71</option><option>72</option><option>73</option><option>74</option><option>75</option><option>36</option><option>77</option><option>78</option><option>79</option>
-        <option>80</option><option>81</option><option>82</option><option>83</option><option>84</option><option>85</option><option>86</option><option>87</option><option>88</option><option>89</option>
-        <option>90</option><option>91</option><option>92</option><option>93</option><option>94</option><option>95</option><option>96</option><option>97</option><option>98</option><option>99</option>
-      </select></td>
-    <td class="h1-r"><label id="Milling.LabelF" class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Draw Refance Lines</label></td>
-    <td class="h1-l"><select id="BaseQuestion.TextF">
-      <option selected>Yes</option>
-               <option>No</option>
-      </select></td>
-  </tr>
-    <tr>
-    <td class="h1-rP"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Addendum</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.Addendum" size="10" maxlength="10" /></td>
-    <td class="h1-rP"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Dedendum</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.Dedendum" size="10" maxlength="10" /></td>
-  </tr>
-  <tr>
-    <td class="h1-rP"><label id="Milling.LabelD" class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Addendum Diameter</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.AddendumDiameter" size="10" maxlength="10" /></td>
-    <td class="h1-rP"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Dedendum Diameter</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.DedendumDiameter" size="10" maxlength="10" /></td>
-  </tr>
-    <tr>
-    <td class="h1-rP"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Tooth Thickness</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.ToothTickness" size="10" maxlength="10" /></td>
-    <td class="h1-rP"><label id="Milling.LabelD" class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Slot Width</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.Slotwidth" size="10" maxlength="10" /></td>
-  </tr>
-  <tr>
-    <td class="h1-rP"><label id="Milling.LabelD" class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Pitch Angle</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.PitchAmount" size="10" maxlength="10" /></td>
-    <td class="h1-rP"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Clearance Amount</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.ClearanceAmount" size="10" maxlength="10" /></td>
-  </tr>
-  <tr>
-    <td class="h1-rP"><label id="Milling.LabelD" class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Fillet Radius</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.FilletRadius" size="10" maxlength="10" /></td>
-    <td class="h1-rP"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Topland Amount</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.ToplandAmount" size="10" maxlength="10" /></td>
-  </tr>
-  <tr>
-    <td class="h1-rP"><label id="Milling.LabelD" class="helplabel-r" onClick="window.open(']] .. DialogWindow.GearHelp .. [[#Top');">Face-Flank Radius</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.FaceFlankRadius" size="10" maxlength="10" /></td>
-    <td class="h1-rP"></td>
-    <td class="h1-l"></td>
-  </tr>
-  <tr>
-    <td colspan="4" class="h1-c"><input id = "InquiryGearCalulate" class="LuaButton" type = "button" value = "Calulate Gear"></td>
-  </tr>
-</table>
-<table class="mytable" id="OkayButtonTable">
-  <tr>
-    <td colspan="4" class="h2"><hr></td>
-  </tr>
-  <tr>
-    <td class="help_But"><button class="FormButton" onClick="window.open(']].. DialogWindow.MainHelp .. [[');"><span class="icon">Help</span></button></td>
-    <td class="alert-l" id="GadgetName.Alert">.</td>
-    <td class="h1-cOk"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
-    <td class="h1-cOk"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
-  </tr>
-</table>
-</body>
-</html>]]
-end -- function end
 -- ==================== End ============================]]
