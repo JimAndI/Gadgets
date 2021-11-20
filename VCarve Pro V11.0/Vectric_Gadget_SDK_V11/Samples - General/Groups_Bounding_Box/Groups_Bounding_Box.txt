@@ -1,0 +1,3 @@
+Groups Bounding Box
+
+Gives the dimensions for the bounding box of layers and selected layers.

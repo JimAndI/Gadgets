@@ -1,0 +1,3 @@
+Create Simple toolpath.
+
+This will automatically create a Simple toolpath of the selected vectors, without any other input from the user.
