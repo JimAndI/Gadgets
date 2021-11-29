@@ -449,6 +449,9 @@ function Base_Math()  --  All the math for Wall Cabinet
   BaseDim.FaceFrameRailLength  = BaseDim.CabLength - ( BaseDim.FaceFrameStileWidth * 2.0)
   BaseDim.ShelfWidth           = BaseDim.CabDepth - (BaseDim.ThicknessBack + BaseDim.FaceFrameThickness + BaseDim.ShelfFrontClearance)
   BaseDim.ToeKickCoverHeight   = ((BaseDim.ToeKickHeight + BaseDim.FaceFrameBottomRailWidth) - (BaseDim.FaceFrameBottomReveal + BaseDim.MaterialThickness + BaseDim.ToeKickBottomOffsetHeight ))
+  BaseDim.FaceFrameStileLength = BaseDim.CabHeight
+  BaseDim.FaceFrameRailLength = BaseDim.CabLength - (BaseDim.FaceFrameStileWidth * 2.0)
+ -- BaseDim.FaceFrameCenterStileLength = BaseDim.CabHeight - (BaseDim.FaceFrameBottomRailWidth + BaseDim.FaceFrameTopRailWidth)
   if BaseQuestion.AddCenterPanel then
     BaseDim.ShelfLength              = (BaseDim.CabLength - ((BaseDim.FaceFrameSideReveal * 2.0) + (BaseDim.MaterialThickness  * 3.0) + (BaseDim.ShelfEndClarence * 4.0)))* 0.5
     BaseDim.ShelfNoseLength          = BaseDim.ShelfLength

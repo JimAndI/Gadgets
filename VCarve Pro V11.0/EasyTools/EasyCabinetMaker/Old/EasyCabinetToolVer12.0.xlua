@@ -1,19 +1,16 @@
 -- =====================================================]]
-function Holer(pt, ang, dst, dia, lay)
-    local group = ContourGroup(true)
-    group:AddTail(CreateCircle(pt.x, pt.y, dia, 0.0, 0.0))
-    pt = Polar2D(pt, ang, dst)
-    group:AddTail(CreateCircle(pt.x, pt.y, dia, 0.0, 0.0))
-    AddGroupToJob(group, lay)
-  return true
-end  --  function end
--- =====================================================]]
 function DebugMarkPoint(Note, Pt, Size, LayerName)
 --[[-- ==MarkPoint==
 | Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
 | Draws mark on the drawing
 | call = DebugMarkPoint("Note: Hi", Pt1, 3, "Jim")
 ]]
+if Size == nil then
+  Size = 3
+end
+if LayerName == nil then
+  LayerName = "Debug"
+end
   local function DrawCircle(job, Cpt, CircleRadius, LayerName)  -- Draws a circle
 -- | draws a circle based on user inputs
 -- | job - current validated job unique ID
@@ -165,55 +162,8 @@ function GetMaterialSettings()
   return true
 end -- end function
 -- =====================================================]]
-function Base_Mathx()  --  All the math for Wall Cabinet
-  BaseDim.BackPanelWidth       = BaseDim.CabHeight
-  BaseDim.SidePanelWidth       = BaseDim.CabDepth - BaseDim.FaceFrameThickness
-  BaseDim.SidePanelLength      = BaseDim.CabHeight
-  BaseDim.TopBottomPanelWidth  = (BaseDim.CabDepth - BaseDim.FaceFrameThickness) - Milling.DadoBackHeight
-  BaseDim.BackPanelLength      = BaseDim.CabLength - ( (Milling.DadoHeight  + BaseDim.FaceFrameSideReveal) * 2.0)
-  BaseDim.TopBottomPanelLength = BaseDim.BackPanelLength
-  BaseDim.FaceFrameStileLength = BaseDim.CabHeight  - BaseDim.ToeKickHeight
-  BaseDim.FaceFrameRailLength  = BaseDim.CabLength - ( BaseDim.FaceFrameStileWidth * 2.0)
-  BaseDim.ShelfWidth           = BaseDim.CabDepth - (BaseDim.ThicknessBack + BaseDim.FaceFrameThickness + BaseDim.ShelfFrontClearance )
-  BaseDim.ToeKickCoverHeight   = ((BaseDim.ToeKickHeight + BaseDim.FaceFrameBottomRailWidth) - (BaseDim.FaceFrameBottomReveal + BaseDim.MaterialThickness + BaseDim.ToeKickBottomOffsetHeight ))
-  Project.DrawerID             = StartDate()
-
-  if BaseQuestion.DrawerRowCount > 3 then
-    BaseQuestion.DrawerRowCount = 3
-  end
-  if BaseQuestion.AddCenterPanel then
-    BaseDim.ShelfLength              = (BaseDim.CabLength - ((BaseDim.FaceFrameSideReveal * 2.0) + (BaseDim.MaterialThickness  * 3.0) + (BaseDim.ShelfEndClarence * 4.0)))* 0.5
-    BaseDim.ShelfNoseLength          = BaseDim.ShelfLength
-    BaseQuestion.NumberDrawersPerRow = 2
-    BaseQuestion.AddCenterFaceFrame  = true
-    BaseQuestion.AddStrecherPocket   = false
-  else
-    BaseDim.ShelfLength = (BaseDim.CabLength - (((BaseDim.MaterialThickness  + BaseDim.FaceFrameSideReveal) * 2.0) + (BaseDim.ShelfEndClarence * 2.0)))
-    BaseDim.ShelfNoseLength  = BaseDim.ShelfLength
-    BaseQuestion.NumberDrawersPerRow = 1
-    BaseQuestion.AddCenterFaceFrame = false
-    BaseQuestion.AddStrecherPocket = true
-  end
-  if BaseQuestion.DrawerRowCount == 3 then
-    BaseDim.HoleDrop = BaseDim.ShelfHoleFirstRowSpacing + BaseDim.FaceFrameTopRailWidth + BaseDim.FaceFrameDrawerHeight1 + BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight2 + BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight3 + BaseDim.FaceFrameMidRailWidth
-
-  elseif BaseQuestion.DrawerRowCount == 2 then
-    BaseDim.HoleDrop = BaseDim.ShelfHoleFirstRowSpacing + BaseDim.FaceFrameTopRailWidth + BaseDim.FaceFrameDrawerHeight1 + BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight2 + BaseDim.FaceFrameMidRailWidth
-  elseif BaseQuestion.DrawerRowCount == 1 then
-    BaseDim.HoleDrop = BaseDim.ShelfHoleFirstRowSpacing + BaseDim.FaceFrameTopRailWidth + BaseDim.FaceFrameDrawerHeight1 + BaseDim.FaceFrameMidRailWidth
-  else
-    BaseDim.HoleDrop = BaseDim.ShelfHoleFirstRowSpacing + BaseDim.FaceFrameTopRailWidth + BaseDim.FaceFrameMidRailWidth
-  end
-  BaseDim.HoleSpace = BaseDim.SidePanelWidth - (BaseDim.ThicknessBack + BaseDim.ShelfPinHoleFront + BaseDim.ShelfPinHoleBack)
-  BaseDim.HoleRows = ((BaseDim.CabDepth - (BaseDim.ShelfHoleFirstRowSpacing + BaseDim.ShelfHoleLastRowSpacing + (BaseDim.MaterialThickness * 2.0))) / BaseDim.ShelfHoleSpacing)
-  BaseDim.CenterPanelLength = (BaseDim.SidePanelLength + Milling.DadoHeight) - (BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight + (BaseDim.MaterialThickness * 2.0))
-  BaseDim.CenterPanelWidth =  BaseDim.TopBottomPanelWidth
-  return true
-end
--- =====================================================]]
-function Mill_Math()  --  All the math for Wall Cabinet
+function Mill_Math()   -- All the math for Wall Cabinet
   if Milling.MillTool1.Name == "No Tool Selected" then
-
     Milling.ProfileToolRadius = Milling.ProfileToolDia * 0.500
   else
     Milling.ProfileToolRadius = Milling.MillTool1.ToolDia * 0.500
@@ -231,19 +181,28 @@ end
 function MillingValidater()
   local MyTrue = false
   if Milling.ProfileToolDia == 0 then
-    MessageBox("Error: Milling Profile Default Tool Dia cannot be 0")
+    MessageBox("Error: Milling Profile Default Tool Dia value cannot be 0")
     OnLuaButton_InquiryMilling()
   elseif Milling.PocketToolDia == 0 then
-    MessageBox("Error: Milling Pocket Default Tool Dia cannot be 0")
+    MessageBox("Error: Milling Pocket Default Tool Dia value cannot be 0")
     OnLuaButton_InquiryMilling()
   elseif Milling.DadoBackHeight == 0 then
-    MessageBox("Error: Milling Dado Back Height cannot be 0")
+    MessageBox("Error: Milling Dado Back Height value cannot be 0")
     OnLuaButton_InquiryMilling()
   elseif Milling.DadoHeight == 0 then
-    MessageBox("Error: Milling Dado Height cannot be 0")
+    MessageBox("Error: Milling Dado Height value cannot be 0")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.AssemblyHoleStartEnd == 0 then
+    MessageBox("Error: Milling Assembly Hole Start and End value cannot be 0")
+    OnLuaButton_InquiryMilling()
+   elseif Milling.AssemblyHoleMaxSpace  == 0 then
+    MessageBox("Error: Milling Assembly Hole Max Space value cannot be 0")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.AssemblyHoleMinSpace  == 0 then
+    MessageBox("Error: Milling Assembly Hole Min Space value cannot be 0")
     OnLuaButton_InquiryMilling()
   elseif Milling.ShelfPinLen == 0 then
-    MessageBox("Error: Milling Shelf Pin Length cannot be 0")
+    MessageBox("Error: Milling Shelf Pin Length value cannot be 0")
     OnLuaButton_InquiryMilling()
   else
     MyTrue = true
@@ -251,115 +210,34 @@ function MillingValidater()
   return MyTrue
 end -- if end
 -- =====================================================]]
-function Wall_Mathx()  --  All the math for Wall Cabinet
-  WallQuestion.AddFaceFrame = true
-  WallDim.BackPanelWidth = WallDim.CabHeight - Milling.DadoHeight
-  WallDim.FaceFrameTopOverlap = WallDim.FaceFrameTopRailWidth - WallDim.FaceFrameTopReveal-WallDim.MaterialThickness
-  WallDim.BackPanelLength = WallDim.CabLength - ( (Milling.DadoHeight * 2.0) + (WallDim.FaceFrameSideReveal * 2.0))
-  WallDim.SidePanelWidth  = WallDim.CabDepth - WallDim.FaceFrameThickness
-  WallDim.SidePanelLength =  WallDim.CabHeight - WallDim.FaceFrameTopOverlap
-  WallDim.TopBottomPanelWidth = WallDim.CabDepth - WallDim.FaceFrameThickness
-  WallDim.TopBottomPanelLength =  WallDim.CabLength - ( (Milling.DadoHeight * 2.0) + (WallDim.FaceFrameSideReveal * 2.0))
-  WallDim.FaceFrameStileLength = WallDim.CabHeight
-  Project.DrawerID = StartDate()
-  WallDim.FaceFrameRailLength = WallDim.CabLength - ( WallDim.FaceFrameStileWidth * 2.0)
-  WallDim.ShelfWidth =  WallDim.CabDepth - (WallDim.ThicknessBack + WallDim.FaceFrameThickness + WallDim.ShelfFrontClearance + WallDim.ShelfFaceFrameThickness)
-  if WallQuestion.AddCenterPanel then
-    WallDim.ShelfLength =  (((WallDim.CabLength  - ((WallDim.MaterialThickness * 3.0) +  (WallDim.FaceFrameSideReveal * 2.0) ))*0.5000) -(WallDim.ShelfEndClarence * 2.0) )
-    WallDim.ShelfNoseLength  = WallDim.ShelfLength
-  else
-    WallDim.ShelfLength = (WallDim.CabLength  - ((WallDim.MaterialThickness * 2.0)  + (WallDim.FaceFrameSideReveal * 2.0) + (WallDim.ShelfEndClarence * 2)) )
-    WallDim.ShelfNoseLength  = WallDim.ShelfLength
-  end
-  WallDim.HoleSpace = WallDim.SidePanelWidth - (WallDim.ThicknessBack + WallDim.ShelfPinHoleFront + WallDim.ShelfPinHoleBack)
-  WallDim.HoleRows = ((WallDim.CabHeight - (WallDim.ShelfHoleFirstRowSpacing + WallDim.ShelfHoleLastRowSpacing + (WallDim.MaterialThickness * 2.0))) / WallDim.ShelfHoleSpacing)
-  WallDim.CenterPanelLength = WallDim.SidePanelLength - (WallDim.FaceFrameBottomRailWidth + (Milling.DadoHeight * 2.0))
-  WallDim.CenterPanelWidth =  WallDim.CabDepth - (Milling.DadoBackHeight + WallDim.FaceFrameThickness )
-  REG_UpdateRegistry()
-  return true
-end
--- =====================================================]]
-function GetDistance(objA, objB)
-  local xDist = objB.x - objA.x
-  local yDist = objB.y - objA.y
-  return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
-end --  function end
--- =====================================================]]
-function StartDate(LongShort)
---[[
---  |   %a  abbreviated weekday name (e.g., Wed)
---  |    %A  full weekday name (e.g., Wednesday)
---  |    %b  abbreviated month name (e.g., Sep)
---  |    %B  full month name (e.g., September)
---  |    %c  date and time (e.g., 09/16/98 23:48:10)
---  |    %d  day of the month (16) [01-31]
---  |    %H  hour, using a 24-hour clock (23) [00-23]
---  |    %I  hour, using a 12-hour clock (11) [01-12]
---  |    %M  minute (48) [00-59]
---  |    %m  month (09) [01-12]
---  |    %p  either "am" or "pm" (pm)
---  |    %S  second (10) [00-61]
---  |    %w  weekday (3) [0-6 = Sunday-Saturday]
---  |    %x  date (e.g., 09/16/98)
---  |    %X  time (e.g., 23:48:10)
---  |    %Y  full year (1998)
---  |    %y  two-digit year (98) [00-99]
---  |    %%  the character `%´
-]]
-  if LongShort then
-    return os.date("%b %d, %Y") .. " - " ..os.date("%I") .. ":" ..os.date("%m")..os.date("%p")
-  else
-    return os.date("%Y%m%d%H%M")
-  end
-end
--- =====================================================]]
-  function StartDateTime(LongShort)
---[[ Date Value Codes
---  |   %a  abbreviated weekday name (e.g., Wed)
---  |    %A  full weekday name (e.g., Wednesday)
---  |    %b  abbreviated month name (e.g., Sep)
---  |    %B  full month name (e.g., September)
---  |    %c  date and time (e.g., 09/16/98 23:48:10)
---  |    %d  day of the month (16) [01-31]
---  |    %H  hour, using a 24-hour clock (23) [00-23]
---  |    %I  hour, using a 12-hour clock (11) [01-12]
---  |    %M  minute (48) [00-59]
---  |    %m  month (09) [01-12]
---  |    %p  either "am" or "pm" (pm)
---  |    %S  second (10) [00-61]
---  |    %w  weekday (3) [0-6 = Sunday-Saturday]
---  |    %x  date (e.g., 09/16/98)
---  |    %X  time (e.g., 23:48:10)
---  |    %Y  full year (e.g., 1998)
---  |    %y  two-digit year (98) [00-99]
---  |    %%  the character `%´ ]]
-    if LongShort then
-      return os.date("%b %d, %Y") .. " - " ..os.date("%I") .. ":" ..os.date("%m")..os.date("%p")
-    else
-      return os.date("%Y%m%d%H%M")
-    end
-  end
--- =====================================================]]
 function MillingTools()
-  if Milling.MillTool1.Name == "Not Selected"  then
+
+  if Milling.MillTool1.Name == "No Tool Selected"  then
     Milling.Profile = false
   else
     Milling.Profile = true
   end  -- if end
-  if Milling.MillTool2.Name == "Not Selected"  then
+  if Milling.MillTool2.Name == "No Tool Selected"  then
     Milling.Pocket = false
   else
     Milling.Pocket = true
   end  -- if end
-  if Milling.MillTool3.Name == "Not Selected"  then
+  if Milling.MillTool3.Name == "No Tool Selected"  then
     Milling.Clearning = false
   else
     Milling.Clearning = true
   end  -- if end
-  if Milling.MillTool4.Name == "Not Selected"  then
+  if Milling.MillTool4.Name == "No Tool Selected"  then
     Milling.Drilling = false
   else
     Milling.Drilling = true
+  end  -- if end
+  if Milling.MillTool5.Name == "No Tool Selected"  then
+    --Milling.AddAssemblyHolesBase = false
+    --Milling.AddAssemblyHolesWall = false
+    Milling.AddAssemblyHolesToolpath = false
+  else
+    Milling.AddAssemblyHolesToolpath = true
   end  -- if end
   Milling.Toolpath_Mgr = ToolpathManager()
   if Milling.Toolpath_Mgr.Count >0 then
@@ -390,101 +268,83 @@ function NewSheet()
   end -- if end
 end
 -- =====================================================]]
-function ExD2S(d)
-  return string.format("%.8f", d)
-end -- function end
--- =====================================================]]
-function D2S(d)
-  return string.format("%.4f", d)
-end -- function end
--- =====================================================]]
-function padder(s)
-  local tt = ""
-  if string.sub(s, 2,2) == "." then
-    tt = " " .. s
-  else
-    tt = s
-  end -- if end
-  return tt
-end -- function end
--- =====================================================]]
 function CutListfileWriterHeader(Cab)
   local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID.. ".dat", "w")
-  file:write("================================================================================================== \n")
-  file:write("======================================  Cabinet Cut-list  ======================================== \n")
+  file:write("============================================================================================================ \n")
+  file:write("============================================  Cabinet Cut-list  ============================================ \n")
   file:write("  Project Run Date ID: ".. StartDate() .."\n")
   file:write("  Cabinet Project Name: ".. Project.ProgramName .."\n")
+  file:write("  Cabinet Name: ".. Project.CabinetName   .."\n")
   file:write("  " .. Milling.Units .. " \n")
-  file:write("================================================================================================== \n")
+  file:write("============================================================================================================ \n")
   if Cab == "Both" then
-    file:write("  Base Cabinet size\n")
-    file:write("  Cabinet Finsh  = ".. BOM.BaseCabinetFinsh   .."\n")
-    file:write("  Cabinet Height = ".. D2S(BaseDim.CabHeight) .."\n")
-    file:write("  Cabinet Length = ".. D2S(BaseDim.CabLength) .."\n")
-    file:write("  Cabinet Depth  = ".. D2S(BaseDim.CabDepth)  .."\n")
+    file:write("  Base Cabinet Size\n")
+    file:write("  Cabinet Finish      = ".. BOM.BaseCabinetFinish   .."\n")
+    file:write("  Face Frame Finish   = ".. BOM.BaseFaceFrameFinish .."\n")
+    file:write("  Cabinet Height      = ".. D2S(BaseDim.CabHeight) .."\n")
+    file:write("  Cabinet Length      = ".. D2S(BaseDim.CabLength) .."\n")
+    file:write("  Cabinet Depth       = ".. D2S(BaseDim.CabDepth)  .."\n")
     file:write("  Face Frame Diagonal = ".. math.sqrt (BaseDim.CabHeight^2 + BaseDim.CabLength^2) .."\n")
-    file:write("================================================================================================== \n")
-    file:write("  Wall Cabinet size\n")
-    file:write("  Cabinet Finsh  = ".. BOM.WallCabinetFinsh   .."\n")
-    file:write("  Cabinet Height = ".. D2S(WallDim.CabHeight) .."\n")
-    file:write("  Cabinet Length = ".. D2S(WallDim.CabLength) .."\n")
-    file:write("  Cabinet Depth  = ".. D2S(WallDim.CabDepth)  .."\n")
+    file:write("============================================================================================================ \n")
+    file:write("  Wall Cabinet Size\n")
+    file:write("  Cabinet Finish      = ".. BOM.WallCabinetFinish   .."\n")
+    file:write("  Face Frame Finish   = ".. BOM.WallFaceFrameFinish .."\n")
+    file:write("  Cabinet Height      = ".. D2S(WallDim.CabHeight) .."\n")
+    file:write("  Cabinet Length      = ".. D2S(WallDim.CabLength) .."\n")
+    file:write("  Cabinet Depth       = ".. D2S(WallDim.CabDepth)  .."\n")
     file:write("  Face Frame Diagonal = ".. math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2) .."\n")
   elseif Cab == "Wall" then
-    file:write("  Wall Cabinet size\n")
-    file:write("  Cabinet Finsh  = ".. BOM.WallCabinetFinsh   .."\n")
-    file:write("  Cabinet Height = ".. D2S(WallDim.CabHeight) .."\n")
-    file:write("  Cabinet Length = ".. D2S(WallDim.CabLength) .."\n")
-    file:write("  Cabinet Depth  = ".. D2S(WallDim.CabDepth)  .."\n")
+    file:write("  Wall Cabinet Size\n")
+    file:write("  Cabinet Finish      = ".. BOM.WallCabinetFinish   .."\n")
+    file:write("  Face Frame Finish   = ".. BOM.BaseFaceFrameFinish .."\n")
+    file:write("  Cabinet Height      = ".. D2S(WallDim.CabHeight) .."\n")
+    file:write("  Cabinet Length      = ".. D2S(WallDim.CabLength) .."\n")
+    file:write("  Cabinet Depth       = ".. D2S(WallDim.CabDepth)  .."\n")
     file:write("  Face Frame Diagonal = ".. math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2) .."\n")
   else
-    file:write("  Base Cabinet size\n")
-    file:write("  Cabinet Finsh  = ".. BOM.BaseCabinetFinsh   .."\n")
-    file:write("  Cabinet Height = ".. D2S(BaseDim.CabHeight) .."\n")
-    file:write("  Cabinet Length = ".. D2S(BaseDim.CabLength) .."\n")
-    file:write("  Cabinet Depth  = ".. D2S(BaseDim.CabDepth)  .."\n")
+    file:write("  Base Cabinet Size\n")
+    file:write("  Cabinet Finish      = ".. BOM.BaseCabinetFinish   .."\n")
+    file:write("  Face Frame Finish   = ".. BOM.WallFaceFrameFinish .."\n")
+    file:write("  Cabinet Height      = ".. D2S(BaseDim.CabHeight) .."\n")
+    file:write("  Cabinet Length      = ".. D2S(BaseDim.CabLength) .."\n")
+    file:write("  Cabinet Depth       = ".. D2S(BaseDim.CabDepth)  .."\n")
     file:write("  Face Frame Diagonal = ".. math.sqrt (BaseDim.CabHeight^2 + BaseDim.CabLength^2) .."\n")
   end -- if Both
-  file:write("================================================================================================== \n")
-  file:write(" ID  | Part Name               | Cabinet | Count | Thickness | Material        | Width   | Length\n")
-  file:write("================================================================================================== \n")
+  file:write("============================================================================================================ \n")
+  file:write("  ID | Part Name                    | Cabinet   | Count   | Thickness | Material        | Width   | Length\n")
+  file:write("============================================================================================================ \n")
   file:close()
   file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .."-".. Project.DrawerID..  ".csv", "w")
-  file:write("ID, Name, Count, Thick, Material, Width, Length\n")
+  file:write("Cabinet, ID, Part Name, Count, Thick, Material, Finish, Width, Length\n")
   file:close()
 end
 -- =====================================================]]
-function CutListfileWriterItem(ID, Name, Cab, Count, Thick, Material, Width, Length)
+function CutListfileWriterItem(ID, Name, Cab, Count, Thick, Material, Finish, Width, Length)
   if string.len(ID) == 2 then ID = " " .. ID end
   local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID.. ".dat", "a")
   local sID = " " .. ID .. " "
-  local sName     = string.sub("| ".. Name .. "                                     ",1, 26)
-  local sCab      = string.sub("|  ".. Cab  .. "                                    ",1, 10)
-  local sCount    = string.sub("|   ".. Count .."                                   ",1, 8)
-  local sThick    = string.sub("|  ".. D2S(Thick) .."                               ",1, 12)
-  local sMaterial = string.sub("| ".. Material .."                                  ",1, 18)
-  local sWidth    = string.sub("| ".. padder(D2S(Width)) .."                        ",1, 10)
-  local sLength   = string.sub("| ".. padder(D2S(Length)).."                        ",1, 9)
+  local sCabName  = string.sub("| ".. Project.CabinetName .. "                                              ",1, 31)
+  local sName     = string.sub("| ".. Name .. "                                              ",1, 31)
+  local sCab      = string.sub("| ".. Cab  .. "                                              ",1, 12)
+  local sCount    = string.sub("| ".. Count .."                                              ",1, 10)
+  local sThick    = string.sub("| ".. D2S(Thick) .."                                         ",1, 12)
+  local sMaterial = string.sub("| ".. Material .."                                           ",1, 18)
+  local sWidth    = string.sub("| ".. Padder(D2S(Width)) .."                                 ",1, 10)
+  local sLength   = string.sub("| ".. Padder(D2S(Length)).."                                 ",1,  9)
   file:write(sID .. sName .. sCab .. sCount .. sThick .. sMaterial .. sWidth .. sLength .. "\n")
   file:close()
   file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-".. Project.DrawerID.. ".csv", "a")
-  file:write(ID .. "," .. Name .. "," .. Count .. "," .. Thick .. "," .. Material .. "," .. Width .. "," .. Length  .. "  \n")
+  file:write(Project.CabinetName .. "," .. ID .. "," .. Name .. "," .. Count .. "," .. Thick .. "," .. Material .. "," .. Finish .. "," .. Width .. "," .. Length  .. "  \n")
   file:close()
 end
 -- =====================================================]]
 function CutListfileWriterFooter()
   local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID.. ".dat", "a")
-  file:write("================================================================================================== \n")
+  file:write("============================================================================================================ \n")
   file:write("EOF \n")
   file:close()
   file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-".. Project.DrawerID.. ".csv", "a")
   file:write("\n")
-  file:write("\n")file:write("\n")
-  file:write("\n")
-  file:write("\n")
-  file:write("\n")
-  file:write("\n")
-  file:write("[SETTINGS]\n")
   file:close()
   return true
 end
@@ -547,7 +407,9 @@ function Importer(xFile)
   DialogWindow.WallCabinetXY = GetIniValue(xFile, xGroup, "DialogWindow.WallCabinetXY", "S")
   DialogWindow.ImportSettings = GetIniValue(xFile, xGroup, "DialogWindow.ImportSettings", "S")
   DialogWindow.ExportSettings = GetIniValue(xFile, xGroup, "DialogWindow.ExportSettings", "S")
-  Milling.AddJointNotes = GetIniValue(xFile, xGroup, "Milling.AddJointNotes ", "B")
+  Milling.AddAssemblyHolesBase = GetIniValue(xFile, xGroup, "Milling.AddAssemblyHolesBase", "B")
+  Milling.AddAssemblyHolesWall = GetIniValue(xFile, xGroup, "Milling.AddAssemblyHolesWall", "B")
+  Milling.AddJointNotes = GetIniValue(xFile, xGroup, "Milling.AddJointNotes", "B")
   Milling.DadoClearance = GetIniValue(xFile, xGroup, "Milling.DadoClearance", "D")
   Milling.DadoHeight = GetIniValue(xFile, xGroup, "Milling.DadoHeight", "D")
   Milling.LNBackPocket = GetIniValue(xFile, xGroup, "Milling.LNBackPocket", "S")
@@ -572,12 +434,17 @@ function Importer(xFile)
   Milling.LNSideProfileColor = GetIniValue(xFile, xGroup, "Milling.LNSideProfileColor", "S")
   Milling.LNSideShelfPinDrill = GetIniValue(xFile, xGroup, "Milling.LNSideShelfPinDrill", "S")
   Milling.LNSideShelfPinDrillColor = GetIniValue(xFile, xGroup, "Milling.LNSideShelfPinDrillColor", "S")
+  Milling.LNAssemblyHole = GetIniValue(xFile, xGroup, "Milling.LNAssemblyHole", "S")
+  Milling.LNAssemblyHoleColor = GetIniValue(xFile, xGroup, "Milling.LNAssemblyHoleColor", "S")
   Milling.LNStretcherRailProfile = GetIniValue(xFile, xGroup, "Milling.LNStretcherRailProfile", "S")
   Milling.LNStretcherRailProfileColor = GetIniValue(xFile, xGroup, "Milling.LNStretcherRailProfileColor", "S")
   Milling.LNTopBottomPocket = GetIniValue(xFile, xGroup, "Milling.LNTopBottomPocket", "S")
   Milling.LNTopBottomPocketColor = GetIniValue(xFile, xGroup, "Milling.LNTopBottomPocketColor", "S")
   Milling.LNTopBottomProfile = GetIniValue(xFile, xGroup, "Milling.LNTopBottomProfile", "S")
   Milling.LNTopBottomProfileColor = GetIniValue(xFile, xGroup, "Milling.LNTopBottomProfileColor", "S")
+  Milling.AssemblyHoleMaxSpace = GetIniValue(xFile, xGroup, "Milling.AssemblyHoleMaxSpace", "D")
+  Milling.AssemblyHoleMinSpace = GetIniValue(xFile, xGroup, "Milling.AssemblyHoleMinSpace", "D")
+  Milling.AssemblyHoleStartEnd = GetIniValue(xFile, xGroup, "Milling.AssemblyHoleStartEnd", "D")
   Milling.MillTool1.FeedRate = GetIniValue(xFile, xGroup, "Milling.MillTool1.FeedRate", "D")
   Milling.MillTool1.InMM = GetIniValue(xFile, xGroup, "Milling.MillTool1.InMM", "B")
   Milling.MillTool1.Name = GetIniValue(xFile, xGroup, "Milling.MillTool1.Name", "S")
@@ -618,11 +485,20 @@ function Importer(xFile)
   Milling.MillTool4.Stepover = GetIniValue(xFile, xGroup, "Milling.MillTool4.Stepover", "D")
   Milling.MillTool4.ToolDia = GetIniValue(xFile, xGroup, "Milling.MillTool4.ToolDia", "D")
   Milling.MillTool4.ToolNumber = GetIniValue(xFile, xGroup, "Milling.MillTool4.ToolNumber", "I")
+  Milling.MillTool5.FeedRate = GetIniValue(xFile, xGroup, "Milling.MillTool5.FeedRate", "D")
+  Milling.MillTool5.InMM = GetIniValue(xFile, xGroup, "Milling.MillTool5.InMM", "B")
+  Milling.MillTool5.Name = GetIniValue(xFile, xGroup, "Milling.MillTool5.Name", "S")
+  Milling.MillTool5.PlungeRate = GetIniValue(xFile, xGroup, "Milling.MillTool5.PlungeRate", "D")
+  Milling.MillTool5.RateUnits = GetIniValue(xFile, xGroup, "Milling.MillTool5.RateUnits", "I")
+  Milling.MillTool5.SpindleSpeed = GetIniValue(xFile, xGroup, "Milling.MillTool5.SpindleSpeed", "I")
+  Milling.MillTool5.Stepdown = GetIniValue(xFile, xGroup, "Milling.MillTool5.Stepdown", "D")
+  Milling.MillTool5.Stepover = GetIniValue(xFile, xGroup, "Milling.MillTool5.Stepover", "D")
+  Milling.MillTool5.ToolDia = GetIniValue(xFile, xGroup, "Milling.MillTool5.ToolDia", "D")
+  Milling.MillTool5.ToolNumber = GetIniValue(xFile, xGroup, "Milling.MillTool5.ToolNumber", "I")
   Milling.PartGap = GetIniValue(xFile, xGroup, "Milling.PartGap", "D")
   Milling.ProfileToolDia = GetIniValue(xFile, xGroup, "Milling.ProfileToolDia", "D")
   Milling.PocketToolDia = GetIniValue(xFile, xGroup, "Milling.PocketToolDia", "D")
   Milling.ProfileToolRadius = GetIniValue(xFile, xGroup, "Milling.ProfileToolRadius", "D")
-  Milling.RabbitClearance = GetIniValue(xFile, xGroup, "Milling.RabbitClearance", "D")
   Milling.ShelfNosingThickness = GetIniValue(xFile, xGroup, "Milling.ShelfNosingThickness", "D")
   Milling.ShelfNosingWidth = GetIniValue(xFile, xGroup, "Milling.ShelfNosingWidth", "D")
   Milling.ShelfPinDiameter = GetIniValue(xFile, xGroup, "Milling.ShelfPinDiameter", "D")
@@ -631,6 +507,7 @@ function Importer(xFile)
   Project.CabinetName = GetIniValue(xFile, xGroup, "Project.CabinetName", "S")
   Project.Drawing = GetIniValue(xFile, xGroup, "Project.Drawing", "S")
   Project.NewSheet = GetIniValue(xFile, xGroup, "Project.NewSheet", "S")
+  Project.CabinetStyle = GetIniValue(xFile, xGroup, "Project.CabinetStyle", "S")
   Project.ProgramCodeBy = GetIniValue(xFile, xGroup, "Project.ProgramCodeBy", "S")
   Project.ProgramName = GetIniValue(xFile, xGroup, "Project.ProgramName", "S")
   Project.ProgramVersion = GetIniValue(xFile, xGroup, "Project.ProgramVersion", "S")
@@ -692,10 +569,12 @@ function Importer(xFile)
   WallQuestion.DrawSidePanels = GetIniValue(xFile, xGroup, "WallQuestion.DrawSidePanels", "B")
   BOM.WallCabinetMateralType = GetIniValue(xFile, xGroup, "BOM.WallCabinetMateralType", "S")
   BOM.WallFaceFrameMateralType = GetIniValue(xFile, xGroup, "BOM.WallFaceFrameMateralType", "S")
-  BOM.WallCabinetFinsh = GetIniValue(xFile, xGroup, "BOM.WallCabinetFinsh", "S")
+  BOM.WallCabinetFinish = GetIniValue(xFile, xGroup, "BOM.WallCabinetFinish", "S")
   BOM.BaseCabinetMateralType = GetIniValue(xFile, xGroup, "BOM.BaseCabinetMateralType", "S")
   BOM.BaseFaceFrameMateralType = GetIniValue(xFile, xGroup, "BOM.BaseFaceFrameMateralType", "S")
-  BOM.BaseCabinetFinsh = GetIniValue(xFile, xGroup, "BOM.BaseCabinetFinsh", "S")
+  BOM.BaseCabinetFinish = GetIniValue(xFile, xGroup, "BOM.BaseCabinetFinish", "S")
+  BOM.BaseFaceFrameFinish = GetIniValue(xFile, xGroup, "BOM.BaseFaceFrameFinish", "S")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "BOM.WallFaceFrameFinish", "S")
   return true
 end -- Function end
 -- =====================================================]]
@@ -760,6 +639,8 @@ function ExportWriter(xFile)
   fileW:write("DialogWindow.WallCabinetXY = " .. DialogWindow.WallCabinetXY .. "\n")
   fileW:write("DialogWindow.ImportSettings = " .. DialogWindow.ImportSettings .. "\n")
   fileW:write("DialogWindow.ExportSettings = " .. DialogWindow.ExportSettings .. "\n")
+  fileW:write("Milling.AddAssemblyHolesBase  = " .. bool2S(Milling.AddAssemblyHolesBase) .. "\n")
+  fileW:write("Milling.AddAssemblyHolesWall = " .. bool2S(Milling.AddAssemblyHolesWall) .. "\n")
   fileW:write("Milling.AddJointNotes = " .. bool2S(Milling.AddJointNotes) .. "\n")
   fileW:write("Milling.DadoClearance = " .. ExD2S(Milling.DadoClearance) .. "\n")
   fileW:write("Milling.DadoHeight = " .. ExD2S(Milling.DadoHeight) .. "\n")
@@ -771,6 +652,8 @@ function ExportWriter(xFile)
   fileW:write("Milling.LNCenterPanelProfileColor = " .. Milling.LNCenterPanelProfileColor .. "\n")
   fileW:write("Milling.LNCenterPanelShelfPinDrill = " .. Milling.LNCenterPanelShelfPinDrill .. "\n")
   fileW:write("Milling.LNCenterPanelShelfPinDrillColor = " .. Milling.LNCenterPanelShelfPinDrillColor .. "\n")
+  fileW:write("Milling.LNAssemblyHole = " .. Milling.LNAssemblyHole .. "\n")
+  fileW:write("Milling.LNAssemblyHoleColor = " .. Milling.LNAssemblyHoleColor .. "\n")
   fileW:write("Milling.LNDrawFaceFrame = " .. Milling.LNDrawFaceFrame .. "\n")
   fileW:write("Milling.LNDrawFaceFrameColor = " .. Milling.LNDrawFaceFrameColor .. "\n")
   fileW:write("Milling.LNDrawNotes = " .. Milling.LNDrawNotes .. "\n")
@@ -791,6 +674,9 @@ function ExportWriter(xFile)
   fileW:write("Milling.LNTopBottomPocketColor = " .. Milling.LNTopBottomPocketColor .. "\n")
   fileW:write("Milling.LNTopBottomProfile = " .. Milling.LNTopBottomProfile .. "\n")
   fileW:write("Milling.LNTopBottomProfileColor = " .. Milling.LNTopBottomProfileColor .. "\n")
+  fileW:write("Milling.AssemblyHoleMaxSpace  = " .. ExD2S(Milling.AssemblyHoleMaxSpace ) .. "\n")
+  fileW:write("Milling.AssemblyHoleMinSpace  = " .. ExD2S(Milling.AssemblyHoleMaxSpace ) .. "\n")
+  fileW:write("Milling.AssemblyHoleStartEnd  = " .. ExD2S(Milling.AssemblyHoleStartEnd ) .. "\n")
   fileW:write("Milling.MillTool1.FeedRate = " .. ExD2S(Milling.MillTool1.FeedRate) .. "\n")
   fileW:write("Milling.MillTool1.InMM = " .. bool2S(Milling.MillTool1.InMM) .. "\n")
   fileW:write("Milling.MillTool1.Name = " .. Milling.MillTool1.Name .. "\n")
@@ -831,11 +717,20 @@ function ExportWriter(xFile)
   fileW:write("Milling.MillTool4.Stepover = " .. ExD2S(Milling.MillTool4.Stepover) .. "\n")
   fileW:write("Milling.MillTool4.ToolDia = " .. ExD2S(Milling.MillTool4.ToolDia) .. "\n")
   fileW:write("Milling.MillTool4.ToolNumber = " .. tostring(Milling.MillTool4.ToolNumber) .. "\n")
+  fileW:write("Milling.MillTool5.FeedRate = " .. ExD2S(Milling.MillTool5.FeedRate) .. "\n")
+  fileW:write("Milling.MillTool5.InMM = " .. bool2S(Milling.MillTool5.InMM) .. "\n")
+  fileW:write("Milling.MillTool5.Name = " .. Milling.MillTool5.Name .. "\n")
+  fileW:write("Milling.MillTool5.PlungeRate = " .. ExD2S(Milling.MillTool5.PlungeRate) .. "\n")
+  fileW:write("Milling.MillTool5.RateUnits = " .. tostring(Milling.MillTool5.RateUnits) .. "\n")
+  fileW:write("Milling.MillTool5.SpindleSpeed = " .. tostring(Milling.MillTool5.SpindleSpeed) .. "\n")
+  fileW:write("Milling.MillTool5.Stepdown = " .. ExD2S(Milling.MillTool5.Stepdown) .. "\n")
+  fileW:write("Milling.MillTool5.Stepover = " .. ExD2S(Milling.MillTool5.Stepover) .. "\n")
+  fileW:write("Milling.MillTool5.ToolDia = " .. ExD2S(Milling.MillTool5.ToolDia) .. "\n")
+  fileW:write("Milling.MillTool5.ToolNumber = " .. tostring(Milling.MillTool5.ToolNumber) .. "\n")
   fileW:write("Milling.PartGap = " .. ExD2S(Milling.PartGap) .. "\n")
   fileW:write("Milling.ProfileToolDia = " .. ExD2S(Milling.ProfileToolDia) .. "\n")
   fileW:write("Milling.PocketToolDia = " .. ExD2S(Milling.PocketToolDia) .. "\n")
   fileW:write("Milling.ProfileToolRadius = " .. ExD2S(Milling.ProfileToolRadius) .. "\n")
-  fileW:write("Milling.RabbitClearance = " .. ExD2S(Milling.RabbitClearance) .. "\n")
   fileW:write("Milling.ShelfNosingThickness = " .. ExD2S(Milling.ShelfNosingThickness) .. "\n")
   fileW:write("Milling.ShelfNosingWidth = " .. ExD2S(Milling.ShelfNosingWidth) .. "\n")
   fileW:write("Milling.ShelfPinDiameter = " .. ExD2S(Milling.ShelfPinDiameter) .. "\n")
@@ -844,6 +739,7 @@ function ExportWriter(xFile)
   fileW:write("Project.CabinetName = " .. Project.CabinetName .. "\n")
   fileW:write("Project.Drawing = " .. Project.Drawing .. "\n")
   fileW:write("Project.NewSheet = " .. Project.NewSheet .. "\n")
+  fileW:write("Project.CabinetStyle = " .. Project.CabinetStyle .. "\n")
   fileW:write("Project.ProgramCodeBy = " .. Project.ProgramCodeBy .. "\n")
   fileW:write("Project.ProgramName = " .. Project.ProgramName .. "\n")
   fileW:write("Project.ProgramVersion = " .. Project.ProgramVersion .. "\n")
@@ -905,16 +801,41 @@ function ExportWriter(xFile)
   fileW:write("WallQuestion.DrawSidePanels = " .. bool2S(WallQuestion.DrawSidePanels) .. "\n")
   fileW:write("BOM.WallCabinetMateralType = " .. BOM.WallCabinetMateralType .. "\n")
   fileW:write("BOM.WallFaceFrameMateralType = " .. BOM.WallFaceFrameMateralType .. "\n")
-  fileW:write("BOM.WallCabinetFinsh = " .. BOM.WallCabinetFinsh .. "\n")
+  fileW:write("BOM.WallCabinetFinish = " .. BOM.WallCabinetFinish .. "\n")
   fileW:write("BOM.BaseCabinetMateralType = " .. BOM.BaseCabinetMateralType .. "\n")
   fileW:write("BOM.BaseFaceFrameMateralType = " .. BOM.BaseFaceFrameMateralType .. "\n")
-  fileW:write("BOM.BaseCabinetFinsh = " .. BOM.BaseCabinetFinsh .. "\n")
+  fileW:write("BOM.BaseCabinetFinish = " .. BOM.BaseCabinetFinish .. "\n")
+  fileW:write("BOM.BaseFaceFrameFinish = " .. BOM.BaseFaceFrameFinish .. "\n")
+  fileW:write("BOM.WallFaceFrameFinish = " .. BOM.WallFaceFrameFinish .. "\n")
   fileW:write("EOF\n")
   fileW:close()
   return true
 end -- function end
 -- =====================================================]]
-function RegistryRead()  --  Read from Registry values
+function FaceFrameManiagement()
+  if Project.CabinetStyle == "Face Frame" then
+    BaseDim.FaceFrameBottomReveal     = 0.0625
+    BaseDim.FaceFrameSideReveal       = 0.2500
+    BaseDim.FaceFrameThickness        = 0.7500
+    BaseDim.FaceFrameBottomRailWidth  = 1.5000
+    WallDim.FaceFrameBottomReveal     = 0.0625
+    WallDim.FaceFrameSideReveal       = 0.0625
+    WallDim.FaceFrameThickness        = 0.7500
+    WallQuestion.DrawFaceFrame        = true
+    BaseQuestion.DrawFaceFrame        = true
+  else
+    BaseDim.FaceFrameBottomReveal     = 0.000
+    BaseDim.FaceFrameSideReveal       = 0.000
+    BaseDim.FaceFrameBottomRailWidth  = BaseDim.MaterialThickness + BaseDim.ToeKickBottomOffsetHeight
+    BaseDim.FaceFrameThickness        = 0.000
+    WallDim.FaceFrameBottomReveal     = 0.000
+    WallDim.FaceFrameSideReveal       = 0.000
+    WallDim.FaceFrameThickness        = 0.000
+    WallQuestion.DrawFaceFrame        = false
+    BaseQuestion.DrawFaceFrame        = false
+  end
+end -- function end
+function RegistryRead()  -- Read from Registry values
   local RegistryRead                        = Registry(RegName)
   BaseDim.CabDepth                          = RegistryRead:GetDouble("BaseDim.CabDepth",                        23.000)
   BaseDim.CabHeight                         = RegistryRead:GetDouble("BaseDim.CabHeight",                       35.500)
@@ -973,39 +894,45 @@ function RegistryRead()  --  Read from Registry values
   DialogWindow.WallCabinetXY                = RegistryRead:GetString("DialogWindow.WallCabinetXY",              "0")
   DialogWindow.ExportSettings               = RegistryRead:GetString("DialogWindow.ExportSettings",             "0")
   DialogWindow.ImportSettings               = RegistryRead:GetString("DialogWindow.ImportSettings",             "0")
+  Milling.AddAssemblyHolesBase              = RegistryRead:GetBool("Milling.AddAssemblyHolesBase",              true)
+  Milling.AddAssemblyHolesWall              = RegistryRead:GetBool("Milling.AddAssemblyHolesWall",              true)
   Milling.AddJointNotes                     = RegistryRead:GetBool("Milling.AddJointNotes",                     true)
   Milling.DadoBackHeight                    = RegistryRead:GetDouble("Milling.DadoBackHeight",                  0.2500)
   Milling.DadoClearance                     = RegistryRead:GetDouble("Milling.DadoClearance",                   0.0100)
   Milling.DadoHeight                        = RegistryRead:GetDouble("Milling.DadoHeight",                      0.3750)
-  Milling.LNBackPocket                      = RegistryRead:GetString("Milling.LNBackPocket",                    "BackPocketProfile")
+  Milling.LNBackPocket                      = RegistryRead:GetString("Milling.LNBackPocket",                    "BackPanelPocket")
   Milling.LNBackPocketColor                 = RegistryRead:GetString("Milling.LNBackPocketColor",               "Red")
   Milling.LNBackProfile                     = RegistryRead:GetString("Milling.LNBackProfile",                   "BackPanelProfile")
   Milling.LNBackProfileColor                = RegistryRead:GetString("Milling.LNBackProfileColor",              "Black")
   Milling.LNCenterPanelProfile              = RegistryRead:GetString("Milling.LNCenterPanelProfile",            "CenterPanelProfile")
   Milling.LNCenterPanelProfileColor         = RegistryRead:GetString("Milling.LNCenterPanelProfileColor",       "Cyan")
-  Milling.LNCenterPanelShelfPinDrill        = RegistryRead:GetString("Milling.LNCenterPanelShelfPinDrill",      "PinHoles")
+  Milling.LNCenterPanelShelfPinDrill        = RegistryRead:GetString("Milling.LNCenterPanelShelfPinDrill",      "CenterPanelShelfPinDrill")
   Milling.LNCenterPanelShelfPinDrillColor   = RegistryRead:GetString("Milling.LNCenterPanelShelfPinDrillColor", "Black")
   Milling.LNDrawFaceFrame                   = RegistryRead:GetString("Milling.LNDrawFaceFrame",                 "FaceFrameProfile")
   Milling.LNDrawFaceFrameColor              = RegistryRead:GetString("Milling.LNDrawFaceFrameColor",            "Black")
-  Milling.LNDrawNotes                       = RegistryRead:GetString("Milling.LNDrawNotes",                     "NotesProfile")
+  Milling.LNDrawNotes                       = RegistryRead:GetString("Milling.LNDrawNotes",                     "CAD-Notes")
   Milling.LNDrawNotesColor                  = RegistryRead:GetString("Milling.LNDrawNotesColor",                "Blue")
   Milling.LNPartLabels                      = RegistryRead:GetString("Milling.LNPartLabels",                    "PartLabels")
   Milling.LNPartLabelsColor                 = RegistryRead:GetString("Milling.LNPartLabelsColor",               "Green")
-  Milling.LNShelfProfile                    = RegistryRead:GetString("Milling.LNShelfProfile",                  "ShelfPanelProfile")
+  Milling.LNShelfProfile                    = RegistryRead:GetString("Milling.LNShelfProfile",                  "ShelfProfile")
   Milling.LNShelfProfileColor               = RegistryRead:GetString("Milling.LNShelfProfileColor",             "Black")
   Milling.LNSidePocket                      = RegistryRead:GetString("Milling.LNSidePocket",                    "SidePanelPocket")
   Milling.LNSidePocketColor                 = RegistryRead:GetString("Milling.LNSidePocketColor",               "Cyan")
   Milling.LNSideProfile                     = RegistryRead:GetString("Milling.LNSideProfile",                   "SidePanelProfile")
   Milling.LNSideProfileColor                = RegistryRead:GetString("Milling.LNSideProfileColor",              "Black")
-  Milling.LNSideShelfPinDrill               = RegistryRead:GetString("Milling.LNSideShelfPinDrill",             "DrillShelfPinProfile")
+  Milling.LNSideShelfPinDrill               = RegistryRead:GetString("Milling.LNSideShelfPinDrill",             "SidePanelShelfPinDrill")
+  Milling.LNAssemblyHole                    = RegistryRead:GetString("Milling.LNAssemblyHole",                  "AssemblyHoles")
+  Milling.LNAssemblyHoleColor               = RegistryRead:GetString("Milling.LNAssemblyHoleColor",             "Black")
   Milling.LNSideShelfPinDrillColor          = RegistryRead:GetString("Milling.LNSideShelfPinDrillColor",        "Red")
   Milling.LNStretcherRailProfile            = RegistryRead:GetString("Milling.LNStretcherRailProfile",          "StretcherProfile")
   Milling.LNStretcherRailProfileColor       = RegistryRead:GetString("Milling.LNStretcherRailProfileColor",     "Black")
-  Milling.LNTopBottomPocket                 = RegistryRead:GetString("Milling.LNTopBottomPocket",               "TopBottomPocket")
+  Milling.LNTopBottomPocket                 = RegistryRead:GetString("Milling.LNTopBottomPocket",               "Top-BottomPanelPocket")
   Milling.LNTopBottomPocketColor            = RegistryRead:GetString("Milling.LNTopBottomPocketColor",          "Blue")
-  Milling.LNTopBottomProfile                = RegistryRead:GetString("Milling.LNTopBottomProfile",              "TopBottomPanelProfile")
+  Milling.LNTopBottomProfile                = RegistryRead:GetString("Milling.LNTopBottomProfile",              "Top-BottomPanelProfile")
   Milling.LNTopBottomProfileColor           = RegistryRead:GetString("Milling.LNTopBottomProfileColor",         "Green")
-
+  Milling.AssemblyHoleMaxSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMaxSpace",            12.000)
+  Milling.AssemblyHoleMinSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMinSpace",            2.000)
+  Milling.AssemblyHoleStartEnd              = RegistryRead:GetDouble("Milling.AssemblyHoleStartEnd",            1.000)
   Milling.MillTool1.FeedRate                = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",              30.000)
   Milling.MillTool1.InMM                    = RegistryRead:GetBool("Milling.MillTool1.InMM ",                   false)
   Milling.MillTool1.Name                    = RegistryRead:GetString("Milling.MillTool1.Name",                  "No Tool Selected")
@@ -1016,7 +943,6 @@ function RegistryRead()  --  Read from Registry values
   Milling.MillTool1.Stepover                = RegistryRead:GetDouble("Milling.MillTool1.Stepover",              0.0825)
   Milling.MillTool1.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",               0.1250)
   Milling.MillTool1.ToolNumber              = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",               1)
-
   Milling.MillTool2.FeedRate                = RegistryRead:GetDouble("Milling.MillTool2.FeedRate",              60.000)
   Milling.MillTool2.InMM                    = RegistryRead:GetBool("Milling.MillTool2.InMM ",                   false)
   Milling.MillTool2.Name                    = RegistryRead:GetString("Milling.MillTool2.Name",                  "No Tool Selected")
@@ -1027,9 +953,8 @@ function RegistryRead()  --  Read from Registry values
   Milling.MillTool2.Stepover                = RegistryRead:GetDouble("Milling.MillTool2.Stepover",              0.0825)
   Milling.MillTool2.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool2.ToolDia",               0.1250)
   Milling.MillTool2.ToolNumber              = RegistryRead:GetInt("Milling.MillTool2.ToolNumber",               2)
-
   Milling.MillTool3.FeedRate                = RegistryRead:GetDouble("Milling.MillTool3.FeedRate",              30.000)
-  Milling.MillTool3.InMM                    = RegistryRead:GetBool("Milling.MillTool3.InMM",                   false)
+  Milling.MillTool3.InMM                    = RegistryRead:GetBool("Milling.MillTool3.InMM",                    false)
   Milling.MillTool3.Name                    = RegistryRead:GetString("Milling.MillTool3.Name",                  "No Tool Selected")
   Milling.MillTool3.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool3.PlungeRate",            15.000)
   Milling.MillTool3.RateUnits               = RegistryRead:GetInt("Milling.MillTool3.RateUnits",                4)
@@ -1038,7 +963,6 @@ function RegistryRead()  --  Read from Registry values
   Milling.MillTool3.Stepover                = RegistryRead:GetDouble("Milling.MillTool3.Stepover",              0.0825)
   Milling.MillTool3.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool3.ToolDia",               0.1250)
   Milling.MillTool3.ToolNumber              = RegistryRead:GetInt("Milling.MillTool3.ToolNumber",               4)
-
   Milling.MillTool4.FeedRate                = RegistryRead:GetDouble("Milling.MillTool4.FeedRate",              30.000)
   Milling.MillTool4.InMM                    = RegistryRead:GetBool("Milling.MillTool4.InMM ",                   false)
   Milling.MillTool4.Name                    = RegistryRead:GetString("Milling.MillTool4.Name",                  "No Tool Selected")
@@ -1049,20 +973,28 @@ function RegistryRead()  --  Read from Registry values
   Milling.MillTool4.Stepover                = RegistryRead:GetDouble("Milling.MillTool4.Stepover",              0.0825)
   Milling.MillTool4.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool4.ToolDia",               0.1250)
   Milling.MillTool4.ToolNumber              = RegistryRead:GetInt("Milling.MillTool4.ToolNumber",               5)
-
+  Milling.MillTool5.FeedRate                = RegistryRead:GetDouble("Milling.MillTool5.FeedRate",              30.000)
+  Milling.MillTool5.InMM                    = RegistryRead:GetBool("Milling.MillTool5.InMM ",                   false)
+  Milling.MillTool5.Name                    = RegistryRead:GetString("Milling.MillTool5.Name",                  "No Tool Selected")
+  Milling.MillTool5.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool5.PlungeRate",            15.000)
+  Milling.MillTool5.RateUnits               = RegistryRead:GetInt("Milling.MillTool5.RateUnits",                4)
+  Milling.MillTool5.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool5.SpindleSpeed",             20000)
+  Milling.MillTool5.Stepdown                = RegistryRead:GetDouble("Milling.MillTool5.Stepdown",              0.2000)
+  Milling.MillTool5.Stepover                = RegistryRead:GetDouble("Milling.MillTool5.Stepover",              0.0825)
+  Milling.MillTool5.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool5.ToolDia",               0.1250)
+  Milling.MillTool5.ToolNumber              = RegistryRead:GetInt("Milling.MillTool5.ToolNumber",               6)
   Milling.PartGap                           = RegistryRead:GetDouble("Milling.PartGap",                         0.5000)
   Milling.PocketToolDia                     = RegistryRead:GetDouble("Milling.PocketToolDia",                   0.2500)
   Milling.ProfileToolDia                    = RegistryRead:GetDouble("Milling.ProfileToolDia",                  0.2500)
   Milling.ProfileToolRadius                 = RegistryRead:GetDouble("Milling.ProfileToolRadius",               0.1250)
-  Milling.RabbitClearance                   = RegistryRead:GetDouble("Milling.RabbitClearance",                 0.0500)
   Milling.ShelfNosingThickness              = RegistryRead:GetDouble("Milling.ShelfNosingThickness",            0.7500)
   Milling.ShelfNosingWidth                  = RegistryRead:GetDouble("Milling.ShelfNosingWidth",                1.2500)
   Milling.ShelfPinDiameter                  = RegistryRead:GetDouble("Milling.ShelfPinDiameter",                0.1940)
   Milling.ShelfPinLen                       = RegistryRead:GetDouble("Milling.ShelfPinLen",                     0.5000)
   Milling.ShelfPinRadius                    = RegistryRead:GetDouble("Milling.ShelfPinRadius",                  0.0970)
-
   Project.CabinetName                       = RegistryRead:GetString("Project.CabinetName",                     "Default")
   Project.NewSheet                          = RegistryRead:GetString("Project.NewSheet",                        "Yes")
+  Project.CabinetStyle                      = RegistryRead:GetString("Project.CabinetStyle",                    "Face Frame") -- No Face Frame
   Project.Drawing                           = RegistryRead:GetString("Project.Drawing",                         "Both")
   Project.ProgramCodeBy                     = RegistryRead:GetString("Project.ProgramCodeBy",                   "JimAndi Gadgets")
   Project.ProgramName                       = RegistryRead:GetString("Project.ProgramName",                     "Easy Cabinet Maker")
@@ -1112,14 +1044,17 @@ function RegistryRead()  --  Read from Registry values
   WallQuestion.DrawSidePanels               = RegistryRead:GetBool("WallQuestion.DrawSidePanels",               true)
   BOM.WallCabinetMateralType                = RegistryRead:GetString("BOM.WallCabinetMateralType",              "Plywood")
   BOM.WallFaceFrameMateralType              = RegistryRead:GetString("BOM.WallFaceFrameMateralType",            "Hardwood")
-  BOM.WallCabinetFinsh                      = RegistryRead:GetString("BOM.WallCabinetFinsh",                    "None")
+  BOM.WallCabinetFinish                     = RegistryRead:GetString("BOM.WallCabinetFinish",                    "None")
+  BOM.WallFaceFrameFinish                   = RegistryRead:GetString("BOM.WallFaceFrameFinish",                  "None")
   BOM.BaseCabinetMateralType                = RegistryRead:GetString("BOM.BaseCabinetMateralType",              "Plywood")
   BOM.BaseFaceFrameMateralType              = RegistryRead:GetString("BOM.BaseFaceFrameMateralType",            "Hardwood")
-  BOM.BaseCabinetFinsh                      = RegistryRead:GetString("BOM.BaseCabinetFinsh",                    "None")
+  BOM.BaseCabinetFinish                     = RegistryRead:GetString("BOM.BaseCabinetFinish",                    "None")
+  BOM.BaseFaceFrameFinish                   = RegistryRead:GetString("BOM.BaseFaceFrameFinish",                  "None")
+
   return true
 end
 -- =====================================================]]
-function RegistryWrite() --  Write to Registry values
+function RegistryWrite() -- Write to Registry values
   local RegistryWrite = Registry(RegName)
   local
   RegValue = RegistryWrite:SetDouble("BaseDim.CabDepth",                          BaseDim.CabDepth)
@@ -1178,6 +1113,8 @@ function RegistryWrite() --  Write to Registry values
   RegValue = RegistryWrite:SetString("DialogWindow.WallCabinetXY",                DialogWindow.WallCabinetXY)
   RegValue = RegistryWrite:SetString("DialogWindow.ImportSettings",               DialogWindow.ImportSettings)
   RegValue = RegistryWrite:SetString("DialogWindow.ExportSettings",               DialogWindow.ExportSettings)
+  RegValue = RegistryWrite:SetBool("Milling.AddAssemblyHolesBase",                Milling.AddAssemblyHolesBase)
+  RegValue = RegistryWrite:SetBool("Milling.AddAssemblyHolesWall",                Milling.AddAssemblyHolesWall)
   RegValue = RegistryWrite:SetBool("Milling.AddJointNotes",                       Milling.AddJointNotes )
   RegValue = RegistryWrite:SetDouble("Milling.DadoClearance",                     Milling.DadoClearance)
   RegValue = RegistryWrite:SetDouble("Milling.DadoHeight",                        Milling.DadoHeight)
@@ -1203,12 +1140,17 @@ function RegistryWrite() --  Write to Registry values
   RegValue = RegistryWrite:SetString("Milling.LNSideProfileColor",                Milling.LNSideProfileColor)
   RegValue = RegistryWrite:SetString("Milling.LNSideShelfPinDrill",               Milling.LNSideShelfPinDrill)
   RegValue = RegistryWrite:SetString("Milling.LNSideShelfPinDrillColor",          Milling.LNSideShelfPinDrillColor)
+  RegValue = RegistryWrite:SetString("Milling.LNAssemblyHole",                    Milling.LNAssemblyHole)
+  RegValue = RegistryWrite:SetString("Milling.LNAssemblyHoleColor",               Milling.LNAssemblyHoleColor)
   RegValue = RegistryWrite:SetString("Milling.LNStretcherRailProfile",            Milling.LNStretcherRailProfile)
   RegValue = RegistryWrite:SetString("Milling.LNStretcherRailProfileColor",       Milling.LNStretcherRailProfileColor)
   RegValue = RegistryWrite:SetString("Milling.LNTopBottomPocket",                 Milling.LNTopBottomPocket)
   RegValue = RegistryWrite:SetString("Milling.LNTopBottomPocketColor",            Milling.LNTopBottomPocketColor)
   RegValue = RegistryWrite:SetString("Milling.LNTopBottomProfile",                Milling.LNTopBottomProfile)
   RegValue = RegistryWrite:SetString("Milling.LNTopBottomProfileColor",           Milling.LNTopBottomProfileColor)
+  RegValue = RegistryWrite:SetDouble("Milling.AssemblyHoleMaxSpace" ,             Milling.AssemblyHoleMaxSpace)
+  RegValue = RegistryWrite:SetDouble("Milling.AssemblyHoleMinSpace" ,             Milling.AssemblyHoleMinSpace)
+  RegValue = RegistryWrite:SetDouble("Milling.AssemblyHoleStartEnd" ,             Milling.AssemblyHoleStartEnd)
   RegValue = RegistryWrite:SetDouble("Milling.MillTool1.FeedRate" ,               Milling.MillTool1.FeedRate)
   RegValue = RegistryWrite:SetBool("Milling.MillTool1.InMM",                      Milling.MillTool1.InMM)
   RegValue = RegistryWrite:SetString("Milling.MillTool1.Name",                    Milling.MillTool1.Name)
@@ -1249,11 +1191,20 @@ function RegistryWrite() --  Write to Registry values
   RegValue = RegistryWrite:SetDouble("Milling.MillTool4.Stepover" ,               Milling.MillTool4.Stepover)
   RegValue = RegistryWrite:SetDouble("Milling.MillTool4.ToolDia" ,                Milling.MillTool4.ToolDia)
   RegValue = RegistryWrite:SetInt("Milling.MillTool4.ToolNumber",                 Milling.MillTool4.ToolNumber)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool5.FeedRate" ,               Milling.MillTool5.FeedRate)
+  RegValue = RegistryWrite:SetBool("Milling.MillTool5.InMM",                      Milling.MillTool5.InMM)
+  RegValue = RegistryWrite:SetString("Milling.MillTool5.Name",                    Milling.MillTool5.Name)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool5.PlungeRate" ,             Milling.MillTool5.PlungeRate)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool5.RateUnits",                  Milling.MillTool5.RateUnits)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool5.SpindleSpeed",               Milling.MillTool5.SpindleSpeed)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool5.Stepdown" ,               Milling.MillTool5.Stepdown)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool5.Stepover" ,               Milling.MillTool5.Stepover)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool5.ToolDia" ,                Milling.MillTool5.ToolDia)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool5.ToolNumber",                 Milling.MillTool5.ToolNumber)
   RegValue = RegistryWrite:SetDouble("Milling.PartGap",                           Milling.PartGap)
   RegValue = RegistryWrite:SetDouble("Milling.ProfileToolDia",                    Milling.ProfileToolDia)
   RegValue = RegistryWrite:SetDouble("Milling.PocketToolDia",                     Milling.PocketToolDia)
   RegValue = RegistryWrite:SetDouble("Milling.ProfileToolRadius",                 Milling.ProfileToolRadius)
-  RegValue = RegistryWrite:SetDouble("Milling.RabbitClearance",                   Milling.RabbitClearance)
   RegValue = RegistryWrite:SetDouble("Milling.ShelfNosingThickness",              Milling.ShelfNosingThickness)
   RegValue = RegistryWrite:SetDouble("Milling.ShelfNosingWidth",                  Milling.ShelfNosingWidth)
   RegValue = RegistryWrite:SetDouble("Milling.ShelfPinDiameter",                  Milling.ShelfPinDiameter)
@@ -1262,6 +1213,7 @@ function RegistryWrite() --  Write to Registry values
   RegValue = RegistryWrite:SetString("Project.CabinetName",                       Project.CabinetName)
   RegValue = RegistryWrite:SetString("Project.Drawing",                           Project.Drawing)
   RegValue = RegistryWrite:SetString("Project.NewSheet",                          Project.NewSheet)
+  RegValue = RegistryWrite:SetString("Project.CabinetStyle",                      Project.CabinetStyle)
   RegValue = RegistryWrite:SetString("Project.ProgramCodeBy",                     Project.ProgramCodeBy)
   RegValue = RegistryWrite:SetString("Project.ProgramName",                       Project.ProgramName)
   RegValue = RegistryWrite:SetString("Project.ProgramVersion",                    Project.ProgramVersion)
@@ -1323,15 +1275,12 @@ function RegistryWrite() --  Write to Registry values
   RegValue = RegistryWrite:SetBool("WallQuestion.DrawSidePanels",                 WallQuestion.DrawSidePanels)
   RegValue = RegistryWrite:SetString("BOM.WallCabinetMateralType",                BOM.WallCabinetMateralType)
   RegValue = RegistryWrite:SetString("BOM.WallFaceFrameMateralType",              BOM.WallFaceFrameMateralType)
-  RegValue = RegistryWrite:SetString("BOM.WallCabinetFinsh",                      BOM.WallCabinetFinsh)
+  RegValue = RegistryWrite:SetString("BOM.WallCabinetFinish",                     BOM.WallCabinetFinish)
+  RegValue = RegistryWrite:SetString("BOM.WallFaceFrameFinish",                   BOM.WallFaceFrameFinish)
   RegValue = RegistryWrite:SetString("BOM.BaseCabinetMateralType",                BOM.BaseCabinetMateralType)
   RegValue = RegistryWrite:SetString("BOM.BaseFaceFrameMateralType",              BOM.BaseFaceFrameMateralType)
-  RegValue = RegistryWrite:SetString("BOM.BaseCabinetFinsh",                      BOM.BaseCabinetFinsh)
-end
--- =====================================================]]
-function Polar2D(pt, ang, dis)
-  local ang1 = ang + Material.Direction
-  return Point2D((pt.X + dis * math.cos(math.rad(ang1))), (pt.Y + dis * math.sin(math.rad(ang1))))
+  RegValue = RegistryWrite:SetString("BOM.BaseCabinetFinish",                     BOM.BaseCabinetFinish)
+  RegValue = RegistryWrite:SetString("BOM.BaseFaceFrameFinish",                   BOM.BaseFaceFrameFinish)
 end
 -- =====================================================]]
 function NextSheet()
@@ -1340,431 +1289,6 @@ function NextSheet()
   end
   return true
 end --  function end
--- =====================================================]]
-function DrawWriter(what, where, size, lay, ang)
-  local group
---[[ How to use:
-|    local TextMessage = "Your Text Here"
-|    local TextPt = Point2D(3.5,3.8)
-|    local TextHight = 0.5
-|    local TextLayer = "Jim Anderson"
-|    local TextAng = 20.0
-|    DrawTextWriter(TextMessage ,local TextPt , TextHight , TextLayer,TextAng )
-|    -- ==Draw Writer==
-|    -- Utilizing a provided string of text, the program walks the string and reproduces each letter (parametrically) on the drawing using vectors.
-function main()
-    -- create a layer with passed name if it doesn't already exist
-  local job = VectricJob()
-  if not job.Exists then
-       DisplayMessageBox("No job loaded")
-       return false;
-  end
-  local TextMessage = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 1 2 3 4 5 6 7 8 9 0 ! @ # $ % & * ( ) { } [ ] ? , . : ; '' ' _ - + = ~ ^ < > |"
-  local TextPt = Point2D(0.1, 2.0)
-  local TextHight = 0.25
-  local TextLayer = "Gadget Text"
-  local TextAng = 10.0
-  DrawTextWriter(TextMessage, TextPt, TextHight, TextLayer, TextAng)
-	job:Refresh2DView()
-  return true
-end
--- -----------------------------------------------------]]
-ang = ang + Material.Direction
--- ==============================================================================
-local function Polar2D(pt, ang, dis)
-  return Point2D((pt.X + dis * math.cos(math.rad(ang))), (pt.Y + dis * math.sin(math.rad(ang))))
-end
--- ==============================================================================
-local function MonoFont(job, pt, letter, scl, lay, ang)
-  scl = (scl * 0.5) ;
-  local pA0 = pt ;
-  local pA1 = Polar2D(pt, ang + 90.0000, (0.2500 * scl)) ;  local pA2 = Polar2D(pt, ang + 90.0000, (0.5000 * scl)) ;
-  local pA3 = Polar2D(pt, ang + 90.0000, (0.7500 * scl)) ;  local pA4 = Polar2D(pt, ang + 90.0000, (1.0000 * scl)) ;
-  local pA5 = Polar2D(pt, ang + 90.0000, (1.2500 * scl)) ;  local pA6 = Polar2D(pt, ang + 90.0000, (1.5000 * scl)) ;
-  local pA7 = Polar2D(pt, ang + 90.0000, (1.7500 * scl)) ;  local pA8 = Polar2D(pt, ang + 90.0000, (2.0000 * scl)) ;
-  local pA9 = Polar2D(pt, ang + 90.0000, (2.2500 * scl)) ;  local pA10 = Polar2D(pt, ang + 90.0000, (2.5000 * scl)) ;
-  local pB0 = Polar2D(pt, ang +  0.0000, (0.2500 * scl)) ;  local pB1 = Polar2D(pt, ang + 45.0000, (0.3536 * scl)) ;
-  local pB2 = Polar2D(pt, ang + 63.4352, (0.5590 * scl)) ;  local pB3 = Polar2D(pt, ang + 71.5651, (0.7906 * scl)) ;
-  local pB4 = Polar2D(pt, ang + 75.9638, (1.0308 * scl)) ;  local pB5 = Polar2D(pt, ang + 78.6901, (1.2748 * scl)) ;
-  local pB6 = Polar2D(pt, ang + 80.5376, (1.5207 * scl)) ;  local pB7 = Polar2D(pt, ang + 81.8699, (1.7678 * scl)) ;
-  local pB8 = Polar2D(pt, ang + 82.8750, (2.0156 * scl)) ;  local pB10 = Polar2D(pt, ang + 84.2894, (2.5125 * scl)) ;
-  local pC0 = Polar2D(pt, ang +  0.0000, (0.5000 * scl)) ;  local pC1 = Polar2D(pt, ang + 26.5650, (0.5590 * scl)) ;
-  local pC2 = Polar2D(pt, ang + 45.0000, (0.7071 * scl)) ;  local pC3 = Polar2D(pt, ang + 56.3099, (0.9014 * scl)) ;
-  local pC4 = Polar2D(pt, ang + 63.4342, (1.1180 * scl)) ;  local pC5 = Polar2D(pt, ang + 68.1993, (1.3463 * scl)) ;
-  local pC6 = Polar2D(pt, ang + 71.5650, (1.5811 * scl)) ;  local pC7 = Polar2D(pt, ang + 63.4342, (1.1180 * scl)) ;
-  local pC8 = Polar2D(pt, ang + 75.9640, (2.0616 * scl)) ;  local pC10 = Polar2D(pt, ang + 78.6899, (2.5495 * scl)) ;
-  local pD0 = Polar2D(pt, ang +  0.0000, (0.6250 * scl)) ;  local pD1 = Polar2D(pt, ang + 21.8014, (0.6731 * scl)) ;
-  local pD2 = Polar2D(pt, ang + 33.6901, (0.9014 * scl)) ;  local pD4 = Polar2D(pt, ang + 57.9946, (1.1792 * scl)) ;
-  local pD7 = Polar2D(pt, ang + 70.3462, (1.8583 * scl)) ;  local pD8 = Polar2D(pt, ang + 72.6460, (2.0954 * scl)) ;
-  local pE0 = Polar2D(pt, ang +  0.0000, (0.7500 * scl)) ;  local pE1 = Polar2D(pt, ang + 18.4346, (0.7906 * scl)) ;
-  local pE2 = Polar2D(pt, ang + 33.6901, (0.9014 * scl)) ;  local pE3 = Polar2D(pt, ang + 45.0000, (1.0607 * scl)) ;
-  local pE5 = Polar2D(pt, ang + 59.0371, (1.4578 * scl)) ;  local pE6 = Polar2D(pt, ang + 63.4349, (1.6771 * scl)) ;
-  local pE7 = Polar2D(pt, ang + 66.4349, (1.9039 * scl)) ;  local pE8 = Polar2D(pt, ang + 69.4440, (2.1360 * scl)) ;
-  local pF0 = Polar2D(pt, ang +  0.0000, (1.0000 * scl)) ;  local pF1 = Polar2D(pt, ang + 14.0360, (1.0308 * scl)) ;
-  local pF2 = Polar2D(pt, ang + 26.5651, (1.1180 * scl)) ;  local pF3 = Polar2D(pt, ang + 36.8699, (1.2500 * scl)) ;
-  local pF4 = Polar2D(pt, ang + 45.0000, (1.4142 * scl)) ;  local pF5 = Polar2D(pt, ang + 51.3425, (1.6006 * scl)) ;
-  local pF6 = Polar2D(pt, ang + 56.3099, (1.8025 * scl)) ;  local pF7 = Polar2D(pt, ang + 60.2551, (2.0156 * scl)) ;
-  local pF8 = Polar2D(pt, ang + 63.4349, (2.2361 * scl)) ;  local pG0 = Polar2D(pt, ang +  0.0000, (1.2500 * scl)) ;
-  local pG1 = Polar2D(pt, ang + 11.3099, (1.2748 * scl)) ;  local pG2 = Polar2D(pt, ang + 21.8014, (1.3463 * scl)) ;
-  local pG3 = Polar2D(pt, ang + 30.9638, (1.4577 * scl)) ;  local pG4 = Polar2D(pt, ang + 38.6598, (1.6008 * scl)) ;
-  local pG5 = Polar2D(pt, ang + 45.0000, (1.7678 * scl)) ;  local pG6 = Polar2D(pt, ang + 50.1944, (1.9526 * scl)) ;
-  local pG7 = Polar2D(pt, ang + 54.4623, (2.1506 * scl)) ;  local pG8 = Polar2D(pt, ang + 57.9946, (2.3585 * scl)) ;
-  local pG10 = Polar2D(pt,59.0362, (2.9155 * scl))       ;  local pH0 = Polar2D(pt, ang +  0.0000, (1.5000 * scl)) ;
-  local pH10 = Polar2D(pt,63.4349, (2.7951 * scl))       ;  local layer = job.LayerManager:GetLayerWithName(lay) ;
-  local line = Contour(0.0) ;
- -- ------------------------------------------------------------------
-  if letter == 32 then
-    pH0 = pH0 ;
-  end ;
-  if letter == 33 then ;  line:AppendPoint(pB0) ;  line:LineTo(pE0) ;  line:LineTo(pE2) ;  line:LineTo(pB2) ;  line:LineTo(pB0) ;  group:AddTail(line) ;
-    line = Contour(0.0) line:AppendPoint(pB3) ;  line:LineTo(pE3) ;  line:LineTo(pE8) ;  line:LineTo(pB8) ;  line:LineTo(pB3) ;  group:AddTail(line) ;
-  end ;
-  if letter == 34 then ;  line:AppendPoint(pA7) ;  line:LineTo(pB10) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB7) ;  line:LineTo(pC10) ;
-    group:AddTail(line) ;  pH0 = pE0 ;
-  end ;
-  if letter == 35 then ;  line:AppendPoint(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6) ;
-    line:LineTo(pG6) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB0) ;  line:LineTo(pB8) ;  group:AddTail(line) ;
-    line = Contour(0.0) ;  line:AppendPoint(pF0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 36 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;
-    line:LineTo(pB4) ;  line:LineTo(pA5) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  group:AddTail(line) ;
-    line = Contour(0.0) ;  line:AppendPoint(pC0) ;  line:LineTo(pE0) ;  line:LineTo(pE8) ;  line:LineTo(pC8) ;  line:LineTo(pC0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 37 then ;  line:AppendPoint(pC6) ;  line:LineTo(pC8) ;  line:LineTo(pA8) ;  line:LineTo(pA6) ;  line:LineTo(pE6) ;  line:LineTo(pG8) ;
-    line:LineTo(pA0) ;  line:LineTo(pC2) ;  line:LineTo(pG2) ;  line:LineTo(pG0) ;  line:LineTo(pE0) ;  line:LineTo(pE2) ;  group:AddTail(line) ;
-  end ;
-  if letter == 38 then ;  line:AppendPoint(pG2) ;  line:LineTo(pG1) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  line:LineTo(pA3) ;
-    line:LineTo(pE6) ;  line:LineTo(pE7) ;  line:LineTo(pD8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA6) ;  line:LineTo(pG0) ;
-    group:AddTail(line) ;
-  end ;
-  if letter == 39 then ;  line:AppendPoint(pA7) ;  line:LineTo(pB10) ;  group:AddTail(line) ;  pH0 = pC0 ;
-  end ;
-  if letter == 40 then ;  line:AppendPoint(pB8) ;  line:LineTo(pA5) ;  line:LineTo(pA3) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
-  if letter == 41 then ;  line:AppendPoint(pA8) ;  line:LineTo(pB5) ;  line:LineTo(pB3) ;  line:LineTo(pA0) ;  group:AddTail(line) ;  pH0 = pG0 ;
-  end ;
-  if letter == 42 then ;  line:AppendPoint(pA2) ;  line:LineTo(pG6) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6) ;  line:LineTo(pG2) ;
-    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD7) ;
-    line:LineTo(pD1) ;  group:AddTail(line) ;
-  end ;
-  if letter == 43 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD1) ;  line:LineTo(pD7) ;
-    group:AddTail(line) ;
-  end ;
-  if letter == 44 then ;  line:AppendPoint(pC0) ;  line:LineTo(pE2) ;  line:LineTo(pC2) ;  line:LineTo(pC4) ;  line:LineTo(pF4) ;  line:LineTo(pF2) ;
-    line:LineTo(pD0) ;  line:LineTo(pC0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 45 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 46 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  line:LineTo(pA0) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
-  if letter == 47 then ;  line:AppendPoint(pA0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  pH0 = pG0 ;
-  end ;
-  if letter == 48 then ;  line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6) ;
-    line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG8) ;  line:LineTo(pA0) ;
-    group:AddTail(line) ;
-  end ;
-  if letter == 49 then ;  line:AppendPoint(pA6) ;  line:LineTo(pD8) ;  line:LineTo(pD0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA0) ;
-    line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 50 then ;  line:AppendPoint(pA6) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;
-    line:LineTo(pA2) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 51 then ;  line:AppendPoint(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4) ;
-    line:LineTo(pG3) ;  line:LineTo(pG1) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  line = Contour(0.0) ;
-    line:AppendPoint(pF4) ;  line:LineTo(pB4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 52 then ;  line:AppendPoint(pF0) ;  line:LineTo(pF8) ;  line:LineTo(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;
-  end ;
-  if letter == 53 then ;  line:AppendPoint(pG8) ;  line:LineTo(pA8) ;  line:LineTo(pA5) ;  line:LineTo(pF4) ;  line:LineTo(pG3) ;  line:LineTo(pG1) ;
-    line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  line:LineTo(pA2) ;  group:AddTail(line) ;
-  end ;
-  if letter == 54 then ;  line:AppendPoint(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA1) ;  line:LineTo(pB0) ;
-    line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;  line:LineTo(pB4) ;  line:LineTo(pA2) ;  group:AddTail(line) ;
-  end ;
-  if letter == 55 then ;  line:AppendPoint(pB0) ;  line:LineTo(pG8) ;  line:LineTo(pA8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 56 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;
-    line:LineTo(pG5) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA5) ;  line:LineTo(pB4) ;
-    line:LineTo(pA3) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB4) ;  line:LineTo(pF4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 57 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG3) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;
-    line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA5) ;  line:LineTo(pB4) ;  line:LineTo(pF4) ;  line:LineTo(pG5) ;  group:AddTail(line) ;
-  end ;
-  if letter == 58 then ;  line:AppendPoint(pB8) ;  line:LineTo(pA8) ;  line:LineTo(pA7) ;  line:LineTo(pB7) ;  line:LineTo(pB8) ;  line:LineTo(pA8) ;
-    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  line:LineTo(pA0) ;  line:LineTo(pA1) ;
-    group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
-  if letter == 59 then ;  line:AppendPoint(pB8) ;  line:LineTo(pA8) ;  line:LineTo(pA7) ;  line:LineTo(pB7) ;  line:LineTo(pB8) ;  line:LineTo(pA8) ;
-    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB3) ;  line:LineTo(pB4) ;  line:LineTo(pA4) ;  line:LineTo(pA3) ;  line:LineTo(pB3) ;
-    line:LineTo(pA0) ;  group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
-  if letter == 60 then ;  line:AppendPoint(pF8) ;  line:LineTo(pA4) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 61 then ;  line:AppendPoint(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6) ;
-    line:LineTo(pG6) ;  group:AddTail(line) ;
-  end ;
-  if letter == 62 then ;  line:AppendPoint(pA8) ;  line:LineTo(pF4) ;  line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 63 then ;  line:AppendPoint(pB5) ;  line:LineTo(pA6) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pE8) ;  line:LineTo(pF7) ;
-    line:LineTo(pF5) ;  line:LineTo(pC3) ;  line:LineTo(pC2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB0) ;  line:LineTo(pE0) ;
-    line:LineTo(pE1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 64 then ;  line:AppendPoint(pG0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;
-    line:LineTo(pG6) ;  line:LineTo(pG3) ;  line:LineTo(pE2) ;  line:LineTo(pB2) ;  line:LineTo(pB5) ;  line:LineTo(pE5) ;  line:LineTo(pE2) ;
-    group:AddTail(line) ;
-  end ;
-  if letter == 65 then ;  line:AppendPoint(pA0) ;  line:LineTo(pD8) ;  line:LineTo(pG0) ;  line:LineTo(pF3) ;  line:LineTo(pB3) ;
-    line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 66 then ;  line:AppendPoint(pA4) ;  line:LineTo(pF4) ;  line:LineTo(pG5) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pA8) ;
-    line:LineTo(pA0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 67 then ;  line:AppendPoint(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;
-    line:LineTo(pF8) ;  line:LineTo(pG6) ;  group:AddTail(line) ;
-  end ;
-  if letter == 68 then ;  line:AppendPoint(pA0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG6) ;  line:LineTo(pF8) ;  line:LineTo(pA8) ;
-    line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 69 then ;  line:AppendPoint(pG0) ;  line:LineTo(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  line = Contour(0.0) ;
-    line:AppendPoint(pA4) ;  line:LineTo(pD4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 70 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;
-    line:LineTo(pF4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 71 then ;  line:AppendPoint(pG6) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA6) ;  line:LineTo(pA2) ;
-    line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG3) ;  line:LineTo(pE3) ;  line:LineTo(pE2) ;  group:AddTail(line) ;
-  end ;
-  if letter == 72 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG0) ;  line:LineTo(pG8) ;
-    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 73 then ;  line:AppendPoint(pB0) ;  line:LineTo(pB8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA0) ;  line:LineTo(pC0) ;
-    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA8) ;  line:LineTo(pC8) ;  group:AddTail(line) ;  pH0 = pE0 ;
-  end ;
-  if letter == 74 then ;  line:AppendPoint(pA2) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG8) ;  line:LineTo(pC8) ;
-    group:AddTail(line) ;
-  end ;
-  if letter == 75 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA2) ;  line:LineTo(pG7) ;
-    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD4) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 76 then ;  line:AppendPoint(pA8) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 77 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pD4) ;  line:LineTo(pG8) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 78 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  pH0 = pG0 ;
-  end ;
-  if letter == 79 then ;  line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6) ;
-    line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 80 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4) ;
-    line:LineTo(pA4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 81 then ;  line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6) ;
-    line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG0) ;  line:LineTo(pD4) ;
-    group:AddTail(line) ;
-  end ;
-  if letter == 82 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4) ;
-    line:LineTo(pA4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD4) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 83 then ;  line:AppendPoint(pG5) ;  line:LineTo(pG6) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA6) ;  line:LineTo(pA5) ;
-    line:LineTo(pG3) ;  line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA3) ;  group:AddTail(line) ;
-  end ;
-  if letter == 84 then ;  line:AppendPoint(pA8) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD8) ;
-    line:LineTo(pD0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 85 then ;  line:AppendPoint(pA8) ;  line:LineTo(pA2) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG8) ;
-    group:AddTail(line) ;
-  end ;
-  if letter == 86 then ;  line:AppendPoint(pA8) ;  line:LineTo(pD0) ;  line:LineTo(pG8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 87 then ;  line:AppendPoint(pA8) ;  line:LineTo(pB0) ;  line:LineTo(pD4) ;  line:LineTo(pF0) ;  line:LineTo(pG8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 88 then ;  line:AppendPoint(pA0) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA8) ;
-    line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 89 then ;  line:AppendPoint(pA8) ;  line:LineTo(pD4) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD0) ;
-    line:LineTo(pD4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 90 then ;  line:AppendPoint(pA8) ;  line:LineTo(pG8) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 91 then ;  line:AppendPoint(pC0) ;  line:LineTo(pB0) ;  line:LineTo(pB8) ;  line:LineTo(pC8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 92 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 93 then ;  line:AppendPoint(pE0) ;  line:LineTo(pF0) ;  line:LineTo(pF8) ;  line:LineTo(pE8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 94 then ;  line:AppendPoint(pD8) ;  line:LineTo(pG6) ;  line:LineTo(pG5) ;  line:LineTo(pD7) ;  line:LineTo(pA5) ;  line:LineTo(pA6) ;
-    line:LineTo(pD8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 95 then ;  line:AppendPoint(pA0) ;  line:LineTo(pF0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 96 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
-  if letter == 123 then ;  line:AppendPoint(pD0) ;  line:LineTo(pC0) ;  line:LineTo(pB1) ;  line:LineTo(pB2) ;  line:LineTo(pC3) ;  line:LineTo(pA4) ;
-    line:LineTo(pC5) ;  line:LineTo(pB6) ;  line:LineTo(pB7) ;  line:LineTo(pC8) ;  line:LineTo(pD8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 124 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA10) ;  line:LineTo(pC10) ;  line:LineTo(pC0) ;  line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
-  if letter == 125 then ;  line:AppendPoint(pD0) ;  line:LineTo(pE0) ;  line:LineTo(pF1) ;  line:LineTo(pF2) ;  line:LineTo(pE3) ;  line:LineTo(pG4) ;
-    line:LineTo(pE5) ;  line:LineTo(pF6) ;  line:LineTo(pF7) ;  line:LineTo(pE8) ;  line:LineTo(pD8) ;  group:AddTail(line) ;
-  end ;
-  if letter == 126 then ;  line:AppendPoint(pA2) ;  line:LineTo(pA3) ;  line:LineTo(pB5) ;  line:LineTo(pF3) ;  line:LineTo(pG5) ;
-    line:LineTo(pG4) ;  line:LineTo(pF2) ;  line:LineTo(pB4) ;  line:LineTo(pA2) ;  group:AddTail(line) ;
-  end ;
-  return pH0
-end ; -- function end ;
--- =========================================================================
-local function AddGroupToJob(job, group, layer_name)
-   --  create a CadObject to represent the  group
-  local cad_object = CreateCadGroup(group);
-   -- create a layer with passed name if it doesnt already exist
-  local layer = job.LayerManager:GetLayerWithName(layer_name)
-   -- and add our object to it
-  layer:AddObject(cad_object, true)
-  return cad_object
-end
--- =========================================================================
-  local job = VectricJob()
-  if not job.Exists then
-    DisplayMessageBox("Error: Not finding a job loaded")
-    return false
-  end ;
-  local strlen = string.len(what)
-  local strup = string.upper(what)
-  local x = strlen
-  local i = 1
-  local y = ""
-  local ptx = where
-  group = ContourGroup(true)
-  while i <=  x do
-    y = string.byte(string.sub(strup, i, i))
-    ptx = MonoFont(job, ptx, y, size, lay, ang)
-    i = i + 1
-  end -- while end;
-  AddGroupToJob(job, group, lay)
-  job:Refresh2DView()
-  return true ;
-end ; -- function end ;
---  ====================================================]]
-function MarkPoint(Note, Pt, Size, LayerName)
-  --[[
-     | Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
-     | Draws mark on the drawing
-     | call = MarkPoint("Note: Hi", Pt1, 3, "Jim")
-   ]]
-      local layer = Milling.job.LayerManager:GetLayerWithName(LayerName)
-      local marker1 = CadMarker(Note, Pt, Size)
-      layer:AddObject(marker1, true)
-      DrawCircle(Pt, 0.25, LayerName)
-  return true
-  end -- function end
--- =====================================================]]
-function DrawCircle(Cpt, CircleRadius, LayerName)  -- Draws a circle
-  -- | draws a circle based on user inputs
-  -- | job - current validated job unique ID
-  -- | Cpt - (2Dpoint) center of the circle
-  -- | CircleRadius - radius of the circle
-  -- | Layer - layer name to draw circle (make layer if not exist)
-  local pa = Polar2D(Cpt, 180.0, CircleRadius)
-  local pb = Polar2D(Cpt,   0.0, CircleRadius)
-  local line = Contour(0.0)
-  line:AppendPoint(pa)
-  line:ArcTo(pb,1)
-  line:ArcTo(pa,1)
-  local layer = Milling.job.LayerManager:GetLayerWithName(LayerName)
-  layer:AddObject(CreateCadContour(line), true)
-  return true
-end -- function end
--- =====================================================]]
-function WorkingPath(Header, Quest, DefaltPath)
---[[
-    Number Box for user input with default value
-    Caller: local X = InquiryPathBox("Select Path", "Where is the file location?", "C:\\")
-    Dialog Header = "Tool Name"
-    User Question = "Path name?"
-    Default Value = "C:\\"
-    Returns = String
-  ]]
-  local myHtml = [[ <html> <head> <title>Easy Tools</title> <style type = "text/css">  html {overflow: hidden; } body {
-             background-color: #EBEBEB; overflow:hidden; font-family: Arial, Helvetica, sans-serif; font-size: 12px; } body, td,
-             th {font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; color: #000 ; } .FormButton {font-weight: bold ;
-             width: 100% ; font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; } body { background-color: #EBEBEB; }
-             </style> </head> <body bgcolor = "#EBEBEB" text = "#000000"> <table width = "470" border = "0" cellpadding = "0">
-             <tr> <th align = "left" valign = "top" bgcolor = "#EBEBEB" id = "QuestionID"><strong>Message Here</strong></th>
-             <th align = "left" valign = "middle" bgcolor = "#EBEBEB"> </th> </tr> <tr>
-             <th width = "381" align = "right" valign = "middle" bgcolor = "#EBEBEB" id = "QuestionID">
-             <input name = "DInput" type = "text" id = "DInput" size = "60"></th>
-             <th width = "83" align = "center" valign = "middle" bgcolor = "#EBEBEB"> <span style="width: 15%">
-             <input id = "DirectoryPicker" class = "DirectoryPicker" name = "DirectoryPicker" type = "button" value = "Path">
-             </span></th> </tr> <tr> <td colspan = "2" align = "center" valign = "middle" bgcolor = "#EBEBEB">
-             <table border = "0" width = "100%"> <tr align = "right"> <td style = "width: 20%"> </td>
-             <td style = "width: 20%"></td> <td style = "width: 25%"></td> <td style = "width: 15%">
-             <input id = "ButtonCancel" class = "FormButton" name = "ButtonCancel" type = "button" value = "Cancel"> </td>
-             <td style = "width: 15%"> <input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK">
-             </td> </tr> </table> </td> </tr> </table> </body>  </html>]]
-  -- =============================================
-  local dialog = HTML_Dialog(true, myHtml, 505, 150, Header)
-    dialog:AddLabelField("QuestionID", Quest)
-    dialog:AddTextField("DInput", DefaltPath )
-    dialog:AddDirectoryPicker("DirectoryPicker",  "DInput",  true)
-    if not dialog:ShowDialog() then
-      return ""
-    else
-      return dialog:GetTextField("DInput")
-    end -- if end
- end -- function end
--- =====================================================]]
-function SelectVectorsOnLayer(layer, selection, select_closed, select_open, select_groups)
-  -- Please Note: SelectVectorsOnLayer is provided by Vectric and can be found in the SDK and Sample Gadget files.
-  --[[  ---------------- SelectVectorsOnLayer ----------------
-  -- |   SelectVectorsOnLayer("Stringer Profile", selection, true, falus, falus)
-  -- |   Add all the vectors on the layer to the selection
-  -- |     layer,            -- layer we are selecting vectors on
-  -- |     selection         -- selection object
-  -- |     select_closed     -- if true  select closed objects
-  -- |     select_open       -- if true  select open objects
-  -- |     select_groups     -- if true select grouped vectors (irrespective of open / closed state of member objects)
-  -- |  Return Values:
-  -- |     true if selected one or more vectors|
-  --]]
-  local objects_selected = false
-  local warning_displayed = false
-  local pos = layer:GetHeadPosition()
-  while pos ~= nil do
-    local object
-    object, pos = layer:GetNext(pos)
-    local contour = object:GetContour()
-    if contour == nil then
-      if (object.ClassName == "vcCadObjectGroup") and select_groups then
-        selection:Add(object, true, true)
-        objects_selected = true
-      else
-        if not warning_displayed then
-          local message = "Object(s) without contour information found on layer - ignoring"
-          if not select_groups then
-            message = message ..  "\r\n\r\n" ..
-            "If layer contains grouped vectors these must be ungrouped for this script"
-          end -- if end
-          DisplayMessageBox(message)
-          warning_displayed = true
-        end -- if end
-      end -- if end
-    else  -- contour was NOT nil, test if Open or Closed
-      if contour.IsOpen and select_open then
-        selection:Add(object, true, true)
-        objects_selected = true
-      elseif select_closed then
-        selection:Add(object, true, true)
-        objects_selected = true
-      end -- if end
-    end -- if end
-  end -- while end
-  -- to avoid excessive redrawing etc we added vectors to the selection in 'batch' mode
-  -- tell selection we have now finished updating
-  if objects_selected then
-    selection:GroupSelectionFinished()
-  end -- if end
-  return objects_selected
-end -- function end
 -- =====================================================]]
 function CreateLayerDrillingToolpath(layer_name, name, start_depth, cut_depth, retract_gap)
   if Milling.Drilling then
@@ -1840,6 +1364,80 @@ function CreateLayerDrillingToolpath(layer_name, name, start_depth, cut_depth, r
 
    return true
 
+end
+-- =====================================================]]
+function CreateLayerPilotHoleToolpath(layer_name, name, start_depth, cut_depth, retract_gap)
+  if Milling.AddAssemblyHolesBase or Milling.AddAssemblyHolesWall then
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      DisplayMessageBox("No Drilling layer found with name = " .. layer_name)
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      DisplayMessageBox("No closed Drilling vectors found on layer " .. layer_name)
+      return false
+    end
+     -- Create tool we will use to machine vectors
+      local tool = Tool(Milling.MillTool5.Name, Tool.THROUGH_DRILL)       -- BALL_NOSE, END_MILL, VBIT, THROUGH_DRILL
+
+      tool.InMM = Milling.MillTool5.InMM -- tool_in_mm
+      tool.ToolDia = Milling.MillTool5.ToolDia -- tool_dia
+      tool.Stepdown = Milling.MillTool5.Stepdown -- tool_stepdown
+      tool.Stepover = Milling.MillTool5.ToolDia * 0.25
+      tool.RateUnits = Milling.MillTool5.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+      tool.FeedRate = Milling.MillTool5.FeedRate  -- 30
+      tool.PlungeRate = Milling.MillTool5.PlungeRate   -- 10
+      tool.SpindleSpeed = Milling.MillTool5.SpindleSpeed    -- 20000
+      tool.ToolNumber = Milling.MillTool5.ToolNumber       -- 1
+  --    tool.VBitAngle = 90.0                -- used for vbit only
+  --    tool.ClearStepover = tool_dia * 0.5  -- used for vbit only
+      -- we will set home position and safe z relative to material block size
+      local mtl_block = MaterialBlock()
+      local mtl_box = mtl_block.MaterialBox
+      local mtl_box_blc = mtl_box.BLC
+      -- Create object used to set home position and safez gap above material surface
+      local pos_data = ToolpathPosData()
+      pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+      pos_data.SafeZGap = mtl_block.Thickness * 0.1
+      -- Create  object used to pass drilling options
+      local drill_data = DrillParameterData()
+      -- start depth for toolpath
+      drill_data.StartDepth = start_depth
+      -- cut depth for toolpath this is depth below start depth
+      drill_data.CutDepth = cut_depth
+      -- if true perform peck drilling
+      drill_data.DoPeckDrill = retract_gap > 0.0
+      -- distance to retract above surface when peck drilling
+      drill_data.PeckRetractGap = retract_gap
+      -- if true in Aspire, project toolpath onto composite model
+      drill_data.ProjectToolpath = false
+      -- Create object which can used to automatically select geometry on layers etc
+      local geometry_selector = GeometrySelector()
+      -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+      local create_2d_previews = true
+      -- if this is true we will display errors and warning to the user
+      local display_warnings = false -- = true
+      -- Create our toolpath
+      local toolpath_manager = ToolpathManager()
+      local toolpath_id = toolpath_manager:CreateDrillingToolpath(
+                                              name,
+                                              tool,
+                                              drill_data,
+                                              pos_data,
+                                              geometry_selector,
+                                              create_2d_previews,
+                                              display_warnings
+                                              )
+      if toolpath_id  == nil  then
+        DisplayMessageBox("Error creating toolpath")
+        return false
+      end
+     end
+   return true
 end
 -- =====================================================]]
 function CreateLayerProfileToolpath(layer_name, name, start_depth, cut_depth, InOrOut, UseTab)
@@ -2032,49 +1630,6 @@ function CreateLayerPocketingToolpath(name, layer_name, start_depth, cut_depth)
   return true
 end
 -- =====================================================]]
-function All_Trim(s)                                    -- Trims spaces off both ends of a string
-  return s:match( "^%s*(.-)%s*$" )
-end -- function end
--- =====================================================]]
-function InquiryPathBox(Header, Quest, DefaultPath)
---[[
-    Number Box for user input with default value
-    Caller: local X = InquiryPathBox("Select Path", "Where is the file location?", "C:\\")
-    Dialog Header = "Tool Name"
-    User Question = "Path name?"
-    Default Value = "C:\\"
-    Returns = String
-  ]]
-  local myHtml = [[ <html> <head> <title>Easy Tools</title> <style type = "text/css"> html {overflow: hidden; } body {
-             background-color: #EBEBEB; overflow:hidden; font-family: Arial, Helvetica, sans-serif; font-size: 12px; } body, td,
-             th {font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; color: #000 ; } .FormButton {font-weight: bold ;
-             width: 100% ; font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; } body { background-color: #EBEBEB; }
-             </style></head><body bgcolor = "#EBEBEB" text = "#000000"><table width = "470" border = "0" cellpadding = "0">
-             <tr><th align = "left" valign = "top" bgcolor = "#EBEBEB" id = "QuestionID"><strong>Message Here</strong></th>
-             <th align = "left" valign = "middle" bgcolor = "#EBEBEB"></th></tr><tr>
-             <th width = "381" align = "right" valign = "middle" bgcolor = "#EBEBEB" id = "QuestionID">
-             <input name = "DInput" type = "text" id = "DInput" size = "60"></th>
-             <th width = "83" align = "center" valign = "middle" bgcolor = "#EBEBEB"><span style="width: 15%">
-             <input id = "DirectoryPicker" class = "DirectoryPicker" name = "DirectoryPicker" type = "button" value = "Path">
-             </span></th></tr><tr><td colspan = "2" align = "center" valign = "middle" bgcolor = "#EBEBEB">
-             <table border = "0" width = "100%"><tr align = "right"><td style = "width: 20%"></td>
-             <td style = "width: 20%"></td><td style = "width: 25%"></td><td style = "width: 15%">
-             <input id = "ButtonCancel" class = "FormButton" name = "ButtonCancel" type = "button" value = "Cancel"></td>
-             <td style = "width: 15%"><input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK">
-             </td></tr></table></td></tr></table></body></html>]]
-  -- =============================================
-  local dialog = HTML_Dialog(true, myHtml, 505, 150, Header)
-    dialog:AddLabelField("QuestionID", Quest)
-    dialog:AddTextField("DInput", DefaultPath )
-    dialog:AddDirectoryPicker("DirectoryPicker",  "DInput",  true)
-    if not dialog:ShowDialog() then
-      return ""
-    else
-      return dialog:GetTextField("DInput")
-    end -- if end
- end -- function end
-
--- =====================================================]]
 function MakeLayers(What)
   local Red, Green, Blue = 0, 0, 0
   -- What = the Cabinet type ("", Wall, or Bass)
@@ -2131,6 +1686,9 @@ function MakeLayers(What)
           layer:SetColor (Red, Green, Blue)
           layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideShelfPinDrill .. What)
           Red, Green, Blue = GetColor(Milling.LNSideShelfPinDrillColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNAssemblyHole .. What)
+          Red, Green, Blue = GetColor(Milling.LNAssemblyHoleColor)
           layer:SetColor (Red, Green, Blue)
           layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomProfile .. What)
           Red, Green, Blue = GetColor(Milling.LNTopBottomProfileColor)
@@ -2311,7 +1869,6 @@ function HTML()
 .h2-l {
 	font-size: 14px;
 	font-weight: bold;
-	color: #663300;
 	text-align: left;
 	white-space: nowrap;
 	text-shadow: 2px 2px white;
@@ -2319,10 +1876,18 @@ function HTML()
 .h2-r {
 	font-size: 14px;
 	font-weight: bold;
-	color: #663300;
 	text-align: right;
 	white-space: nowrap;
 	text-shadow: 2px 2px white;
+}
+.h2-rPx {
+	font-size:   14px;
+	font-weight: bold;
+	text-align:  right;
+  white-space: nowrap;
+	padding-right: 10px;
+	padding-left:  10px;
+  text-shadow: 2px 2px white;
 }
 .h3-bc {
 	font-size: 16px;
@@ -2465,7 +2030,7 @@ table {
     <td><input type="checkbox" id="WallQuestion.DrawBottomTopPanel"></td>
   </tr>
     <tr>
-    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Bottom Panel</label></td>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Top & Bottom Panel</label></td>
     <td><input type="checkbox" id="BaseQuestion.DrawBottomPanel"></td>
     <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Center Panel</label></td>
     <td><input type="checkbox" id="WallQuestion.DrawCenterPanel"></td>
@@ -2586,9 +2151,14 @@ table {
             <td class="h1-c"><input id = "ToolChooseButton3" class="ToolPicker" name = "ToolChooseButton3" type = "button" value = "Tool"></td>
         </tr>
         <tr>
-            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp ..[[#Top');">Drilling Bit:</label></td>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp ..[[#Top');">Shilf Pins:</label></td>
             <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel4">-</span></td>
             <td class="hl-c"><input id = "ToolChooseButton4" class="ToolPicker" name = "ToolChooseButton4" type = "button" value = "Tool"></td>
+        </tr>
+        <tr>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp ..[[#Top');">Assembly Pilot Holes:</label></td>
+            <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel5">-</span></td>
+            <td class="hl-c"><input id = "ToolChooseButton5" class="ToolPicker" name = "ToolChooseButton5" type = "button" value = "Tool"></td>
         </tr>
     </table>
     <table>
@@ -2630,7 +2200,7 @@ table {
 <body>
 <table>
   <tr>
-    <th><strong>Select ini File to Import Settings</strong></th>
+    <th class="h2-l"><strong>Select ini File to Import Settings</strong></th>
     <th>&nbsp;</th>
   </tr>
   <tr>
@@ -2875,14 +2445,16 @@ table {
 <head>
     <title>Layer Names</title>
     ]] .. DialogWindow.Style ..[[
-</head>
-
-<body>
+</head><body>
 <table>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Back Panel Profile</label></td>
+    <td class="h2-rPx">Item</td>
+    <td class="h2-l">Layer Name</td>
+    <td class="h2-l">Color</td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Back Panel Pocket</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNBackPocket" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select name="Milling.LNBackPocketColor" id="Milling.LNBackPocketColor">
       <option>Black</option>
       <option selected>Red</option>
@@ -2895,9 +2467,8 @@ table {
   </tr>
 
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">BackPanel Pocket (Dado)</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Back Panel Profile (Dado)</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNBackProfile" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNBackProfileColor">
         <option selected="selected">Black</option>
         <option>Red</option>
@@ -2912,7 +2483,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Center Panel Profile</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNCenterPanelProfile" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNCenterPanelProfileColor">
         <option>Black</option>
         <option>Red</option>
@@ -2927,7 +2497,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Center Panel - Shelf Pin Drilling</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNCenterPanelShelfPinDrill" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNCenterPanelShelfPinDrillColor">
         <option selected="selected">Black</option>
         <option>Red</option>
@@ -2942,7 +2511,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Face Frame Drawing</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNDrawFaceFrame" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNDrawFaceFrameColor">
         <option selected="selected">Black</option>
         <option>Red</option>
@@ -2957,7 +2525,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Shelfing Profile</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNShelfProfile" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNShelfProfileColor">
         <option selected>Black</option>
         <option>Red</option>
@@ -2972,7 +2539,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Side Profile</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNSideProfile" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNSideProfileColor">
         <option>Black</option>
         <option>Red</option>
@@ -2987,7 +2553,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Side Pocket (Dado and Rabbet)</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNSidePocket" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNSidePocketColor">
         <option>Black</option>
         <option>Red</option>
@@ -3002,7 +2567,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Cabinet Side - Shelf Pin Drilling</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNSideShelfPinDrill" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNSideShelfPinDrillColor">
         <option>Black</option>
         <option selected>Red</option>
@@ -3017,7 +2581,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Top and Bottom Profile</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNTopBottomProfile" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNTopBottomProfileColor">
         <option>Black</option>
         <option>Red</option>
@@ -3032,7 +2595,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Top and Bottom Pocket</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNTopBottomPocket" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNTopBottomPocketColor">
         <option>Black</option>
         <option>Red</option>
@@ -3047,7 +2609,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Stretcher and Rail Profile</label></td>
     <td><input  type="text" class="h1-l" id="Milling.LNStretcherRailProfile" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNStretcherRailProfileColor">
         <option selected="selected">Black</option>
         <option>Red</option>
@@ -3062,7 +2623,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Draw Notes</label></td>
     <td><input class="h1-l" id="Milling.LNDrawNotes" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNDrawNotesColor">
         <option>Black</option>
         <option>Red</option>
@@ -3077,7 +2637,6 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Part Labels</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNPartLabels" size="30" maxlength="50" /></td>
-    <td class="h1-r">Color</td>
     <td><select id="Milling.LNPartLabelsColor">
         <option>Black</option>
         <option>Red</option>
@@ -3119,8 +2678,8 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Clearance</label></td>
     <td><input name="Milling.DadoClearance" type="text" class="h2" id="Milling.DadoClearance" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Rabbit Clearance</label></td>
-    <td><input name="Milling.RabbitClearance" type="text" class="h2" id="Milling.RabbitClearance" size="10" maxlength="10" /></td>
+    <td class="h1-r">Shelf Pin Length</td>
+    <td><input name="Milling.ShelfPinLen" type="text" class="h2" id="Milling.ShelfPinLen" size="10" maxlength="10" /></td>
   </tr>
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Part Gap</label></td>
@@ -3134,9 +2693,28 @@ table {
         <option selected>Yes</option>
         <option>No</option>
       </select></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Shelf Pin Length</label></td>
-    <td><input name="Milling.ShelfPinLen" type="text" class="h2" id="Milling.ShelfPinLen" size="10" maxlength="10" /></td>
+    <td class="h1-r">Assembly Hole Start and End Space</td>
+    <td><input name="Milling.AssemblyHoleStartEnd" type="text" class="h2" id="Milling.AssemblyHoleStartEnd" size="10" maxlength="10" /></td>
   </tr>
+   <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Base Assembly Holes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesBase">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Wall Assembly Holes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesWall">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+  </tr>
+   <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Max Space</label></td>
+    <td><input type="text" class="h2" id="Milling.AssemblyHoleMaxSpace" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Min Space</label></td>
+    <td><input type="text" class="h2" id="Milling.AssemblyHoleMinSpace" size="10" maxlength="10" /></td>
+  </tr>
+
     <tr>
     <td colspan="4" class="h1-r"><hr></td>
   </tr>
@@ -3159,7 +2737,8 @@ table {
   </tr>
 </table>
 </body>
-</html>]]
+</html>
+]]
 -- =====================================================]] -- Project Setup
   DialogWindow.myHtml2 = [[<html>
 <head>
@@ -3202,6 +2781,17 @@ table {
   <tr>
     <td colspan="4"><hr></td>
   </tr>
+    <td class="h1-r">Cabinet Style</td>
+    <td class="h1-l">
+      <select id="Project.CabinetStyle">
+        <option selected>Face Frame</option>
+        <option>No Face Frame</option>
+    </select></td>
+    <td>&nbsp;</tr>
+    <td>&nbsp;</tr>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
   <tr>
     <td class="h1-r">Wall Cabinet Mat Type</td>
     <td class="h1-l">
@@ -3229,16 +2819,23 @@ table {
     </select></td>
   </tr>
   <tr>
-    <td class="h1-r">Wall Cabinet Finsh</td>
+    <td class="h1-r">Wall Cabinet Finish</td>
     <td class="h1-l">
-      <select  id="BOM.WallCabinetFinsh">
+      <select  id="BOM.WallCabinetFinish">
         <option>None</option>
         <option selected>Paint</option>
         <option>Stain</option>
       </select>
     </td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td class="h1-r">Wall Fasce Frame Finish</td>
+    <td class="h1-l">
+      <select id="BOM.WallFaceFrameFinish">
+        <option>None</option>
+        <option selected>Paint</option>
+        <option>Prime Only</option>
+        <option>Stain</option>
+      </select>
+    </td>
   </tr>
   <tr>
     <td colspan="4"><hr></td>
@@ -3272,16 +2869,23 @@ table {
     </td>
   </tr>
   <tr>
-    <td class="h1-r">Base Cabinet Finsh</td>
+    <td class="h1-r">Base Cabinet Finish</td>
     <td class="h1-l">
-      <select id="BOM.BaseCabinetFinsh">
+      <select id="BOM.BaseCabinetFinish">
         <option>None</option>
         <option selected>Paint</option>
         <option>Stain</option>
       </select>
     </td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td class="h1-r">Base Fasce Frame Finish</td>
+    <td class="h1-l">
+      <select id="BOM.BaseFaceFrameFinish">
+        <option>None</option>
+        <option selected>Paint</option>
+        <option>Prime Only</option>
+        <option>Stain</option>
+      </select>
+    </td>
   </tr>
 </table>
 <table>

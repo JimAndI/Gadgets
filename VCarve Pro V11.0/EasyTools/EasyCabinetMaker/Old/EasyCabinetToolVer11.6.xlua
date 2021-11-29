@@ -111,7 +111,7 @@ function GetMaterialSettings()
     Milling.Unit = false
     Milling.Cal = 1.0
   end
-  Milling.UnitDisplay  = Milling.Units
+  Milling.UnitDisplay  = "Note: Units: (" .. Milling.Units ..")"
   --local units
 	if MaterialBlock.Width > MaterialBlock.Height then
     Material.Orantation = "H" -- Horizontal
@@ -2599,7 +2599,7 @@ table {
         </tr>
         <tr>
             <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp ..[[#Top');">New Sheet</label></td>
-            <td class="h1-l"><select ]] .. DialogWindow.Sheets .. [[ id = "Project.NewSheet"><option>Yes</option><option selected>No</option></select></td>
+            <td class="h1-l"><select id = "Project.NewSheet"><option selected>Yes</option><option>No</option></select></td>
             <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp ..[[#Top');">Draw Cabinet </label></td>
             <td class="h1-l"><select name = "Project.Drawing" id = "Project.Drawing"><option selected>Wall</option><option>Base</option><option>Both</option></select></td>
             <td class="h1-c"><input id = "InquiryPartDrawing" class="LuaButton" type = "button" value = "Part Selecter"></td>

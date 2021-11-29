@@ -24,6 +24,7 @@ Easy Base Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
 -- Version 11.4   - Aug 27, 2021 - Added grouping to test
 -- Version 11.6   - Nov 19, 2021 - Added Inport and Export Setting
 -- Version 11.7   - Nov 19, 2021 - Added Error Trapping
+-- Version 11.8   - Nov 22, 2021 - Added Drill Holes for Screws
 -- =====================================================]]
 -- require("mobdebug").start()
 require "strict"
@@ -31,7 +32,7 @@ require "strict"
 -- Global variables
 local Tooler1, Tooler2, Tooler3, Tooler4
 YearNumber = "2021"
-VerNumber = "11.7"
+VerNumber = "11.8"
 AppName = "Easy Base Cabinet Maker"
 RegName = "EasyBaseCabinetMaker" .. VerNumber
 --  Table Names
@@ -59,10 +60,12 @@ Tool_ID1 = ToolDBId()
 Tool_ID2 = ToolDBId()
 Tool_ID3 = ToolDBId()
 Tool_ID4 = ToolDBId()
+Tool_ID5 = ToolDBId()
 Tool_ID1:LoadDefaults("My Toolpath1", "")
 Tool_ID2:LoadDefaults("My Toolpath2", "")
 Tool_ID3:LoadDefaults("My Toolpath3", "")
 Tool_ID4:LoadDefaults("My Toolpath4", "")
+Tool_ID5:LoadDefaults("My Toolpath5", "")
 
 Material.BaseCabinetBackWidth    = 0.0
 Material.BaseCabinetBottomLength = 0.0
@@ -84,14 +87,15 @@ BOM.WallShelfBOM = true
 BOM.BaseShelfBOM = true
 BOM.PID = 10
 --  Table Values --
-Milling.MillTool1 = {}
-Milling.MillTool2 = {}
-Milling.MillTool3 = {}
-Milling.MillTool4 = {}
-Milling.Tabs = false           --  User to setup Tabs
+Milling.MillTool1 = {} -- Profile Bit
+Milling.MillTool2 = {} -- Pocketing Bit
+Milling.MillTool3 = {} -- Pocketing Clearing Bit
+Milling.MillTool4 = {} -- Shelf Pins Drilling
+Milling.MillTool5 = {} -- Assembly pilot holes
+Milling.Tabs = false   -- User to setup Tabs
 -- =====================================================]]
 function InquiryWallOrBase(Header)
-  local dialog = HTML_Dialog(true, DialogWindow.myHtml7, 530, 490,  Header .. "  " .. Milling.UnitDisplay)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml7, 530, 520,  Header .. "  " .. Milling.UnitDisplay)
   dialog:AddDropDownList("Project.Drawing",  Project.Drawing)
   if DialogWindow.Sheets == "" then
     dialog:AddDropDownList("Project.NewSheet", "Yes")
@@ -122,6 +126,10 @@ function InquiryWallOrBase(Header)
   dialog:AddToolPicker("ToolChooseButton4", "ToolNameLabel4", Tool_ID4)
   dialog:AddToolPickerValidToolType("ToolChooseButton4",      Tool.THROUGH_DRILL)
 
+  dialog:AddLabelField("ToolNameLabel5",                      Milling.MillTool5.Name)
+  dialog:AddToolPicker("ToolChooseButton5", "ToolNameLabel5", Tool_ID5)
+  dialog:AddToolPickerValidToolType("ToolChooseButton5",      Tool.THROUGH_DRILL)
+
   if dialog:ShowDialog() then
     WallDim.CabHeight   = dialog:GetDoubleField("WallDim.CabHeight")
     WallDim.CabDepth    = dialog:GetDoubleField("WallDim.CabDepth")
@@ -143,6 +151,9 @@ function InquiryWallOrBase(Header)
     end
     if dialog:GetTool("ToolChooseButton4") then
       Milling.MillTool4 = dialog:GetTool("ToolChooseButton4")  -- Drilling
+    end
+    if dialog:GetTool("ToolChooseButton5") then
+      Milling.MillTool5 = dialog:GetTool("ToolChooseButton5")  -- Assembly Hole
     end
     DialogWindow.InquiryWallOrBaseXY  = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
     RegistryWrite()
@@ -354,7 +365,7 @@ function OnLuaButton_InquiryLayers( )
 end -- function end
 -- =====================================================]]
 function OnLuaButton_InquiryMilling()
-  local dialog = HTML_Dialog(true, DialogWindow.myHtml3 , 560, 272, "Milling Setting ")
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml3 , 560, 355, "Milling Setting ")
   dialog:AddDoubleField("Milling.ShelfPinDiameter", Milling.ShelfPinDiameter)
   dialog:AddDoubleField("Milling.ShelfPinLen",      Milling.ShelfPinLen)
   dialog:AddDoubleField("Milling.DadoClearance",    Milling.DadoClearance)
@@ -363,8 +374,13 @@ function OnLuaButton_InquiryMilling()
   dialog:AddDoubleField("Milling.DadoBackHeight",   Milling.DadoBackHeight)
   dialog:AddDoubleField("Milling.PartGap",          Milling.PartGap)
   dialog:AddDropDownList("Milling.AddJointNotes",   ifT(Milling.AddJointNotes))
-  dialog:AddDoubleField("Milling.ProfileToolDia",   Milling.ProfileToolDia)
-  dialog:AddDoubleField("Milling.PocketToolDia",    Milling.PocketToolDia)
+  dialog:AddDropDownList("Milling.AddAssemblyHolesBase",   ifT(Milling.AddAssemblyHolesBase))
+  dialog:AddDropDownList("Milling.AddAssemblyHolesWall",   ifT(Milling.AddAssemblyHolesWall))
+  dialog:AddDoubleField("Milling.AssemblyHoleMaxSpace",    Milling.AssemblyHoleMaxSpace)
+  dialog:AddDoubleField("Milling.AssemblyHoleMinSpace",    Milling.AssemblyHoleMinSpace)
+  dialog:AddDoubleField("Milling.AssemblyHoleStartEnd",    Milling.AssemblyHoleStartEnd)
+  dialog:AddDoubleField("Milling.ProfileToolDia",          Milling.ProfileToolDia)
+  dialog:AddDoubleField("Milling.PocketToolDia",           Milling.PocketToolDia)
 
   if dialog:ShowDialog() then
     Milling.ShelfPinDiameter = math.abs(dialog:GetDoubleField("Milling.ShelfPinDiameter"))
@@ -374,6 +390,13 @@ function OnLuaButton_InquiryMilling()
     Milling.PartGap          = math.abs(dialog:GetDoubleField("Milling.PartGap"))
     Milling.RabbitClearance  = dialog:GetDoubleField("Milling.RabbitClearance")
     Milling.AddJointNotes    = ifY(dialog:GetDropDownListValue("Milling.AddJointNotes"))
+
+    Milling.AddAssemblyHolesBase   = ifY(dialog:GetDropDownListValue("Milling.AddAssemblyHolesBase"))
+    Milling.AddAssemblyHolesWall   = ifY(dialog:GetDropDownListValue("Milling.AddAssemblyHolesWall"))
+    Milling.AssemblyHoleMaxSpace   = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleMaxSpace"))
+    Milling.AssemblyHoleMinSpace   = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleMinSpace"))
+    Milling.AssemblyHoleStartEnd   = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleStartEnd"))
+
     Milling.ProfileToolDia   = math.abs(dialog:GetDoubleField("Milling.ProfileToolDia"))
     Milling.PocketToolDia    = math.abs(dialog:GetDoubleField("Milling.PocketToolDia"))
     DialogWindow.MillingXY   = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
@@ -512,10 +535,10 @@ function OnLuaButton_InquiryWallQuestion()
 end -- function end
 -- =====================================================]]
 function OnLuaButton_InquiryToolClear(dialog)
-  Milling.MillTool1.Name = "Not Selected"
-  Milling.MillTool2.Name = "Not Selected"
-  Milling.MillTool3.Name = "Not Selected"
-  Milling.MillTool4.Name = "Not Selected"
+  Milling.MillTool1.Name = "No Tool Selected"
+  Milling.MillTool2.Name = "No Tool Selected"
+  Milling.MillTool3.Name = "No Tool Selected"
+  Milling.MillTool4.Name = "No Tool Selected"
   dialog:UpdateLabelField("ToolNameLabel1", Milling.MillTool1.Name)
   dialog:UpdateLabelField("ToolNameLabel2", Milling.MillTool2.Name)
   dialog:UpdateLabelField("ToolNameLabel3", Milling.MillTool3.Name)
@@ -766,6 +789,9 @@ function main(script_path)
       -- ====
       CutListfileWriterFooter()
       end
+  end -- if end
+  if Milling.AddAssemblyHolesBase or Milling.AddAssemblyHolesWall then
+    CreateLayerPilotHoleToolpath(Milling.LNAssemblyHole, "Assembly Holes", 0.0, Milling.MaterialBlockThickness, Milling.MaterialBlockThickness * 0.35)
   end -- if end
   Milling.job:Refresh2DView()
   return true

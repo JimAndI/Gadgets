@@ -1,0 +1,136 @@
+function NameStrip(str, var) -- convert string to the correct data type
+-- Local Words = NameStrip("KPSDFKSPSK - 34598923", "-") -- returns "KPSDFKSPSK"
+    if "" == str then
+      DisplayMessageBox("Error in string")
+    else
+      if string.find(str, var) then
+        local j = assert(string.find(str, var) - 1)
+        return All_Trim(string.sub(str, 1, j)) ;
+      else
+        return str
+      end
+    end
+  end -- function end
+  -- =====================================================]]
+  function StrIniValue(str, ty)
+-- Convert string to the correct data type
+    if nil == str then
+      DisplayMessageBox("Error in Ini file - looking for a " .. ty .. " value")
+    else
+      if "" == All_Trim(str) then
+        DisplayMessageBox("Error in Ini file - looking for a " .. ty .. " value")
+      else
+        local j = (string.find(str, "=") + 1)
+        if ty == "D" then -- Double
+          return tonumber(string.sub(str, j))
+        end -- if end
+        if ty == "I" then  -- Intiger
+          return tonumber(string.sub(str, j))
+        end -- if end
+        if ty == "S" then  -- String
+          return All_Trim(string.sub(str, j))
+        end -- if end
+        if ty == "B" then  -- Bool
+          if "TRUE" == All_Trim(string.upper(string.sub(str, j))) then
+            return true
+          else
+            return false
+          end -- if end
+        end -- if end
+      end -- if end
+    end -- if end
+    return nil
+  end -- function end
+-- =====================================================]]
+  function GetIniValue(FileName, GroupName, ItemName, ValueType)
+    -- ==GetIniValue(FileName, GroupName, ItemName, ValueType)==
+-- Returns a value from a file, group, and Item
+-- Usage: XX.YY = GetIniValue(FileName, GroupName, "XX.YY", "N")
+    local file = io.open(FileName, "r")
+    local dat = "."
+    local ItemNameLen = string.len(ItemName)
+    while (dat ~= "EOF") do
+      dat = string.upper(All_Trim(file:read()))
+      if dat == "[" .. string.upper(GroupName) .. "]" then
+        break
+      end -- if end
+    end -- while end
+    while (dat ~= "EOF") do
+      dat = All_Trim(file:read())
+      if ItemName == string.sub(dat, 1, ItemNameLen)  then
+        break
+      else
+        if dat == "EOF" then
+          MessageBox("Error - " .. ItemName .. " item under Group [" .. GroupName .. "] not found")
+          break
+        end -- if end
+      end -- if end
+    end -- while end
+    file:close()-- closes the open file
+    local XX = StrIniValue(dat, ValueType)
+    return XX
+  end -- function end
+-- =====================================================]]
+  function GetIniValueOLD(FileName, GroupName, ItemName, ValueType)
+    -- ==GetIniValue(FileName, GroupName, ItemName, ValueType)==
+-- Returns a value from a file, group, and Item
+-- Usage: XX.YY = GetIniValue(FileName, GroupName, "XX.YY", "N")
+    local FL = LengthOfFile(FileName)
+    local file = io.open(FileName, "r")
+    local dat = "."
+    local ItemNameLen = string.len(ItemName)
+ --[[
+    while (FL >= 1) do
+      dat = All_Trim(file:read())
+      if dat == "[" .. string.upper(GroupName) .. "]" then
+        break
+      else
+        FL = FL - 1
+      end -- if end
+    end -- while end
+    ]]
+    while (FL >= 1) do
+      dat = All_Trim(file:read())
+      if ItemName == string.sub(dat, 1, ItemNameLen)  then
+        break
+      else
+        FL = FL - 1
+        if FL == 0 then
+          dat = "Error - item not  found"
+          break
+        end -- if end
+      end -- if end
+    end -- while end
+    file:close()-- closes the open file
+    local XX = StrIniValue(dat, ValueType)
+    return XX
+  end -- function end
+-- =====================================================]]
+  function LengthOfFile(filename)-- Returns file line count
+--[[
+Counts the lines in a file
+Returns: number
+]]
+    local len = 0
+    if FileExists(filename) then
+      local file = io.open(filename)
+      for Line in file:lines() do
+        len = len + 1
+      end
+      file:close() ;
+    end
+    return len
+  end -- function end
+-- =====================================================]]
+  function FileExists(name)
+-- FileExists(name
+-- DisplayMessageBox(name)
+    local f=io.open(name,"r")
+    if f~=nil then
+      io.close(f)
+      return true
+    else
+      return false
+    end
+  end -- Function end
+-- =====================================================]]

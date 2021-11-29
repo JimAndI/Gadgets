@@ -23,7 +23,6 @@ Easy Base Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
 -- Version 11.1   - Aug 10, 2021 - Added code and fixed issues
 -- Version 11.4   - Aug 27, 2021 - Added grouping to test
 -- Version 11.6   - Nov 19, 2021 - Added Inport and Export Setting
--- Version 11.7   - Nov 19, 2021 - Added Error Trapping
 -- =====================================================]]
 -- require("mobdebug").start()
 require "strict"
@@ -31,7 +30,7 @@ require "strict"
 -- Global variables
 local Tooler1, Tooler2, Tooler3, Tooler4
 YearNumber = "2021"
-VerNumber = "11.7"
+VerNumber = "11.6"
 AppName = "Easy Base Cabinet Maker"
 RegName = "EasyBaseCabinetMaker" .. VerNumber
 --  Table Names
@@ -92,12 +91,8 @@ Milling.Tabs = false           --  User to setup Tabs
 -- =====================================================]]
 function InquiryWallOrBase(Header)
   local dialog = HTML_Dialog(true, DialogWindow.myHtml7, 530, 490,  Header .. "  " .. Milling.UnitDisplay)
-  dialog:AddDropDownList("Project.Drawing",  Project.Drawing)
-  if DialogWindow.Sheets == "" then
-    dialog:AddDropDownList("Project.NewSheet", "Yes")
-  else
-    dialog:AddDropDownList("Project.NewSheet", "No")
-  end -- if end
+  dialog:AddDropDownList("Project.Drawing",              Project.Drawing)
+  dialog:AddDropDownList("Project.NewSheet", "Yes")
   dialog:AddDoubleField("WallDim.CabHeight", WallDim.CabHeight)
   dialog:AddDoubleField("WallDim.CabDepth",  WallDim.CabDepth)
   dialog:AddDoubleField("WallDim.CabLength", WallDim.CabLength)
@@ -153,55 +148,38 @@ function InquiryWallOrBase(Header)
 end
 -- =====================================================]]
 function OnLuaButton_ImportSettings(dialog)
-  local Test = true
   local dialogx = HTML_Dialog(true, DialogWindow.myHtml0, 725, 160, "Import Settings")
-  local Mystrlen = string.len(Project.ProjectPath .. "\\")
   dialogx:AddTextField("ReadFile", Project.ProjectPath .. "\\")
   dialogx:AddFilePicker(true, "FilePickerButton", "ReadFile", true)
-  local DTest = dialogx:ShowDialog()
+  dialogx:ShowDialog()
   DialogWindow.ImportSettings = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+ -- RegistryWrite()
+  Importer(dialogx:GetTextField("ReadFile"))
   RegistryWrite()
-  local fName = dialogx:GetTextField("ReadFile")
-  local strlen = string.len(fName)
-  if not DTest then
-    Test = false
-  elseif string.sub(fName, strlen - 3) ~= ".ini" then
-    MessageBox("Error: You must select a .ini file")
-  elseif string.len(Project.ProjectPath .. "\\") < strlen then
-    Importer(dialogx:GetTextField("ReadFile"))
-    RegistryWrite()
-    dialog:UpdateDoubleField("BaseDim.CabDepth", BaseDim.CabDepth)
-    dialog:UpdateDoubleField("WallDim.CabDepth", WallDim.CabDepth)
-    dialog:UpdateDoubleField("BaseDim.CabLength", BaseDim.CabLength)
-    dialog:UpdateDoubleField("WallDim.CabLength", WallDim.CabLength)
-    dialog:UpdateDoubleField("BaseDim.CabHeight", BaseDim.CabHeight)
-    dialog:UpdateDoubleField("WallDim.CabHeight", WallDim.CabHeight)
-    dialog:UpdateLabelField("ToolNameLabel1", Milling.MillTool1.Name)
-    dialog:UpdateLabelField("ToolNameLabel2", Milling.MillTool2.Name)
-    dialog:UpdateLabelField("ToolNameLabel3", Milling.MillTool3.Name)
-    dialog:UpdateLabelField("ToolNameLabel4", Milling.MillTool4.Name)
-  end -- if end
+
+  dialog:UpdateDoubleField("BaseDim.CabDepth", BaseDim.CabDepth)
+  dialog:UpdateDoubleField("WallDim.CabDepth", WallDim.CabDepth)
+  dialog:UpdateDoubleField("BaseDim.CabLength", BaseDim.CabLength)
+  dialog:UpdateDoubleField("WallDim.CabLength", WallDim.CabLength)
+  dialog:UpdateDoubleField("BaseDim.CabHeight", BaseDim.CabHeight)
+  dialog:UpdateDoubleField("WallDim.CabHeight", WallDim.CabHeight)
+  dialog:UpdateLabelField("ToolNameLabel1", Milling.MillTool1.Name)
+  dialog:UpdateLabelField("ToolNameLabel2", Milling.MillTool2.Name)
+  dialog:UpdateLabelField("ToolNameLabel3", Milling.MillTool3.Name)
+  dialog:UpdateLabelField("ToolNameLabel4", Milling.MillTool4.Name)
   return  true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_ExportSettings()
-  local MyOk = true
   local dialog = HTML_Dialog(true, DialogWindow.myHtml9, 407, 126, "Export Settings")
   dialog:AddTextField("Project.ExportName", Project.CabinetName)
-  if dialog:ShowDialog() then
-    Project.ExportName = All_Trim(dialog:GetTextField("Project.ExportName"))
-    if Project.ExportName ~= "" then
-      DialogWindow.ExportSettings = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
-      RegistryWrite()
-      if NameValidater(Project.ExportName) then
-        ExportWriter(Project.ExportName)
-      else
-        MessageBox("Error: The File Name is Incorrect.")
-      end -- if end
-    end -- if end
-  end -- if end
+  dialog:ShowDialog()
+  Project.ExportName = All_Trim(dialog:GetTextField("Project.ExportName"))
+  DialogWindow.ExportSettings = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+  RegistryWrite()
+  ExportWriter(Project.ExportName)
   return true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_InquiryAbout()
   local dialog = HTML_Dialog(true, DialogWindow.myHtml6, 720, 487, "About")
@@ -211,7 +189,7 @@ function OnLuaButton_InquiryAbout()
   DialogWindow.AboutXY = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
   RegistryWrite()
   return  true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_InquiryBaseQuestion()
   local dialog = HTML_Dialog(true, DialogWindow.myHtml5, 716, 579, "Base Cabinet Setup")
@@ -286,7 +264,7 @@ function OnLuaButton_InquiryBaseQuestion()
   Base_Math()
   RegistryWrite()
   return  true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_InquiryLayers( )
   local dialog = HTML_Dialog(true, DialogWindow.myHtml4, 653, 488, "Layer Setup")
@@ -351,7 +329,7 @@ function OnLuaButton_InquiryLayers( )
     RegistryWrite()
   end
   return  true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_InquiryMilling()
   local dialog = HTML_Dialog(true, DialogWindow.myHtml3 , 560, 272, "Milling Setting ")
@@ -379,8 +357,8 @@ function OnLuaButton_InquiryMilling()
     DialogWindow.MillingXY   = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
     RegistryWrite()
   end
-  return true
-end -- function end
+  return  true
+end
 -- =====================================================]]
 function OnLuaButton_InquiryPartDrawing()
   local dialog = HTML_Dialog(true, DialogWindow.myHtml8 , 408, 303, "Part Selection")
@@ -416,7 +394,7 @@ function OnLuaButton_InquiryPartDrawing()
     RegistryWrite()
   end
   return  true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_InquiryProjectInfo( )
   local dialog = HTML_Dialog(true, DialogWindow.myHtml2, 651, 431, "Project Setup")
@@ -452,7 +430,7 @@ function OnLuaButton_InquiryProjectInfo( )
     RegistryWrite()
   end
   return  true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_InquiryWallQuestion()
   local dialog = HTML_Dialog(true,  DialogWindow.myHtml1, 635, 438, "Wall Cabinet Setup")
@@ -509,7 +487,7 @@ function OnLuaButton_InquiryWallQuestion()
     RegistryWrite()
   end
   return  true
-end -- function end
+end
 -- =====================================================]]
 function OnLuaButton_InquiryToolClear(dialog)
   Milling.MillTool1.Name = "Not Selected"
@@ -522,18 +500,12 @@ function OnLuaButton_InquiryToolClear(dialog)
   dialog:UpdateLabelField("ToolNameLabel4", Milling.MillTool4.Name)
   RegistryWrite()
   return true
-end -- function end
+end
 -- =====================================================]]
 function main(script_path)
   local CabLoop = true
   local Drawing = false
   Milling.job = VectricJob()
-  if GetAppVersion() >= 11.0 then
-    DialogWindow.Sheets = "disabled"
-  else
-    DialogWindow.Sheets = ""
-  end -- if end
-
   if not Milling.job.Exists then
     DisplayMessageBox("Error: The Gadget cannot run without a job being setup.\n" ..
                       "Select: 'Create a new file' under 'Startup Tasks' and \n" ..
