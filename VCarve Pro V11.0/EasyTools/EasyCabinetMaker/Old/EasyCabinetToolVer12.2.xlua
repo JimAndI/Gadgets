@@ -34,6 +34,38 @@ end
   return true
 end -- function end
 -- =====================================================]]
+function DMark(Note, Pt)
+--[[-- ==MarkPoint==
+| Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
+| Draws mark on the drawing
+| call = DebugMarkPoint("Note: Hi", Pt1)
+]]
+  local function DrawCircle(job, Cpt, CircleRadius, LayerName)  -- Draws a circle
+-- | draws a circle based on user inputs
+-- | job - current validated job unique ID
+-- | Cpt - (2Dpoint) center of the circle
+-- | CircleRadius - radius of the circle
+-- | Layer - layer name to draw circle (make layer if not exist)
+    local pa = Polar2D(Cpt, 180.0, CircleRadius)
+    local pb = Polar2D(Cpt,   0.0, CircleRadius)
+    local line = Contour(0.0)
+    line:AppendPoint(pa); line:ArcTo(pb,1);   line:ArcTo(pa,1)
+    local layer = job.LayerManager:GetLayerWithName(LayerName)
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+  end -- function end
+-- ====]]
+  local job = VectricJob()
+  --local layer = job.LayerManager:GetLayerWithName(LayerName)
+  --local marker1 = CadMarker(Note, Pt, 3)
+  local where = Polar2D(Pt, 45.0, 0.125)
+  DrawLine(Pt, where, "Debug")
+  DrawWriter(Note, where, 0.125, "Debug", 0.0)
+  --layer:AddObject(marker1, true)
+  DrawCircle(job, Pt, 0.0125, "Debug")
+  return true
+end -- function end
+-- =====================================================]]
 function DrawBox(p1, p2, p3, p4, Layer)
     local line = Contour(0.0)
     local layer = Milling.job.LayerManager:GetLayerWithName(Layer)
@@ -166,11 +198,13 @@ function Mill_Math()   -- All the math for Wall Cabinet
   if Milling.MillTool1.Name == "No Tool Selected" then
     Milling.ProfileToolRadius = Milling.ProfileToolDia * 0.500
   else
+    Milling.ProfileToolDia    = Milling.MillTool1.ToolDia
     Milling.ProfileToolRadius = Milling.MillTool1.ToolDia * 0.500
   end
   if Milling.MillTool2.Name == "No Tool Selected" then
     Milling.PocketToolRadius  = Milling.PocketToolDia * 0.500
   else
+    Milling.PocketToolDia     = Milling.MillTool2.ToolDia
     Milling.PocketToolRadius  = Milling.MillTool2.ToolDia * 0.500
   end
   Milling.ShelfPinRadius    = Milling.ShelfPinDiameter * 0.500
@@ -387,7 +421,6 @@ function Importer(xFile)
   BaseDim.TopFrameWidth = GetIniValue(xFile, xGroup, "BaseDim.TopFrameWidth", "D")
   BaseQuestion.AddCenterFaceFrame = GetIniValue(xFile, xGroup, "BaseQuestion.AddCenterFaceFrame", "B")
   BaseQuestion.AddCenterPanel = GetIniValue(xFile, xGroup, "BaseQuestion.AddCenterPanel", "B")
-  BaseQuestion.DadoStyle = GetIniValue(xFile, xGroup, "BaseQuestion.DadoStyle", "S")
   BaseQuestion.DrawerRowCount = GetIniValue(xFile, xGroup, "BaseQuestion.DrawerRowCount", "I")
   BaseQuestion.ShelfCount = GetIniValue(xFile, xGroup, "BaseQuestion.ShelfCount", "I")
   BaseQuestion.DrawBackPanel = GetIniValue(xFile, xGroup, "BaseQuestion.DrawBackPanel", "B")
@@ -407,6 +440,9 @@ function Importer(xFile)
   DialogWindow.WallCabinetXY = GetIniValue(xFile, xGroup, "DialogWindow.WallCabinetXY", "S")
   DialogWindow.ImportSettings = GetIniValue(xFile, xGroup, "DialogWindow.ImportSettings", "S")
   DialogWindow.ExportSettings = GetIniValue(xFile, xGroup, "DialogWindow.ExportSettings", "S")
+  Milling.DadoBlindAmount = GetIniValue(xFile, xGroup, "Milling.DadoBlindAmount", "D")
+  Milling.PinsOn32mm = GetIniValue(xFile, xGroup, "Milling.PinsOn32mm", "B")
+  Milling.DadoType = GetIniValue(xFile, xGroup, "Milling.DadoType", "S")
   Milling.AddAssemblyHolesBase = GetIniValue(xFile, xGroup, "Milling.AddAssemblyHolesBase", "B")
   Milling.AddAssemblyHolesWall = GetIniValue(xFile, xGroup, "Milling.AddAssemblyHolesWall", "B")
   Milling.AddJointNotes = GetIniValue(xFile, xGroup, "Milling.AddJointNotes", "B")
@@ -559,7 +595,6 @@ function Importer(xFile)
   WallQuestion.AddCenterFaceFrame = GetIniValue(xFile, xGroup, "WallQuestion.AddCenterFaceFrame", "B")
   WallQuestion.AddCenterPanel = GetIniValue(xFile, xGroup, "WallQuestion.AddCenterPanel", "B")
   WallQuestion.DadoBackPanelForCenterPanel = GetIniValue(xFile, xGroup, "WallQuestion.DadoBackPanelForCenterPanel", "B")
-  WallQuestion.DadoStyle = GetIniValue(xFile, xGroup, "WallQuestion.DadoStyle", "S")
   WallQuestion.ShelfCount = GetIniValue(xFile, xGroup, "WallQuestion.ShelfCount", "I")
   WallQuestion.DrawBackPanel = GetIniValue(xFile, xGroup, "WallQuestion.DrawBackPanel", "B")
   WallQuestion.DrawBottomTopPanel = GetIniValue(xFile, xGroup, "WallQuestion.DrawBottomTopPanel", "B")
@@ -619,7 +654,6 @@ function ExportWriter(xFile)
   fileW:write("BaseDim.TopFrameWidth = " .. ExD2S(BaseDim.TopFrameWidth) .. "\n")
   fileW:write("BaseQuestion.AddCenterFaceFrame = " .. bool2S(BaseQuestion.AddCenterFaceFrame) .. "\n")
   fileW:write("BaseQuestion.AddCenterPanel = " .. bool2S(BaseQuestion.AddCenterPanel) .. "\n")
-  fileW:write("BaseQuestion.DadoStyle = " .. BaseQuestion.DadoStyle .. "\n")
   fileW:write("BaseQuestion.DrawerRowCount = " .. tostring(BaseQuestion.DrawerRowCount) .. "\n")
   fileW:write("BaseQuestion.ShelfCount = " .. tostring(BaseQuestion.ShelfCount) .. "\n")
   fileW:write("BaseQuestion.DrawBackPanel = " .. bool2S(BaseQuestion.DrawBackPanel) .. "\n")
@@ -639,6 +673,11 @@ function ExportWriter(xFile)
   fileW:write("DialogWindow.WallCabinetXY = " .. DialogWindow.WallCabinetXY .. "\n")
   fileW:write("DialogWindow.ImportSettings = " .. DialogWindow.ImportSettings .. "\n")
   fileW:write("DialogWindow.ExportSettings = " .. DialogWindow.ExportSettings .. "\n")
+
+  fileW:write("Milling.PinsOn32mm  = " .. bool2S(Milling.PinsOn32mm) .. "\n")
+  fileW:write("Milling.DadoType = " .. Milling.DadoType .. "\n")
+  fileW:write("Milling.DadoBlindAmount = " .. ExD2S(Milling.DadoBlindAmount) .. "\n")
+
   fileW:write("Milling.AddAssemblyHolesBase  = " .. bool2S(Milling.AddAssemblyHolesBase) .. "\n")
   fileW:write("Milling.AddAssemblyHolesWall = " .. bool2S(Milling.AddAssemblyHolesWall) .. "\n")
   fileW:write("Milling.AddJointNotes = " .. bool2S(Milling.AddJointNotes) .. "\n")
@@ -791,7 +830,6 @@ function ExportWriter(xFile)
   fileW:write("WallQuestion.AddCenterFaceFrame = " .. bool2S(WallQuestion.AddCenterFaceFrame) .. "\n")
   fileW:write("WallQuestion.AddCenterPanel = " .. bool2S(WallQuestion.AddCenterPanel) .. "\n")
   fileW:write("WallQuestion.DadoBackPanelForCenterPanel = " .. bool2S(WallQuestion.DadoBackPanelForCenterPanel) .. "\n")
-  fileW:write("WallQuestion.DadoStyle = " .. WallQuestion.DadoStyle .. "\n")
   fileW:write("WallQuestion.ShelfCount = " .. tostring(WallQuestion.ShelfCount) .. "\n")
   fileW:write("WallQuestion.DrawBackPanel = " .. bool2S(WallQuestion.DrawBackPanel) .. "\n")
   fileW:write("WallQuestion.DrawBottomTopPanel = " .. bool2S(WallQuestion.DrawBottomTopPanel) .. "\n")
@@ -879,23 +917,27 @@ function RegistryRead()  -- Read from Registry values
   BaseQuestion.DrawBackPanel                = RegistryRead:GetBool("BaseQuestion.DrawBackPanel",                true)
   BaseQuestion.DrawBottomPanel              = RegistryRead:GetBool("BaseQuestion.DrawBottomPanel",              true)
   BaseQuestion.DrawCenterPanel              = RegistryRead:GetBool("BaseQuestion.DrawCenterPanel",              true)
-  BaseQuestion.DadoStyle                    = RegistryRead:GetString("BaseQuestion.DadoStyle",                  "Through")
   BaseQuestion.DrawerRowCount               = RegistryRead:GetInt("BaseQuestion.DrawerRowCount",                1)
   BaseQuestion.DrawFaceFrame                = RegistryRead:GetBool("BaseQuestion.DrawFaceFrame",                true)
   BaseQuestion.ShelfCount                   = RegistryRead:GetInt("BaseQuestion.ShelfCount",                    2)
   BaseQuestion.DrawShelfPanel               = RegistryRead:GetBool("BaseQuestion.DrawShelfPanel",               true)
   BaseQuestion.DrawSidePanels               = RegistryRead:GetBool("BaseQuestion.DrawSidePanels",               true)
   BaseQuestion.DrawTopToe                   = RegistryRead:GetBool("BaseQuestion.DrawTopToe",                   true)
-  DialogWindow.AboutXY                      = RegistryRead:GetString("DialogWindow.AboutXY",                    "0")
-  DialogWindow.BaseCabinetXY                = RegistryRead:GetString("DialogWindow.BaseCabinetXY",              "0")
-  DialogWindow.InquiryWallOrBaseXY          = RegistryRead:GetString("DialogWindow.InquiryWallOrBaseXY",        "0")
-  DialogWindow.LayerXY                      = RegistryRead:GetString("DialogWindow.LayerXY",                    "0")
-  DialogWindow.MillingXY                    = RegistryRead:GetString("DialogWindow.MillingXY",                  "0")
-  DialogWindow.PartDrawingXY                = RegistryRead:GetString("DialogWindow.PartDrawingXY",              "0")
-  DialogWindow.ProjectXY                    = RegistryRead:GetString("DialogWindow.ProjectXY",                  "0")
-  DialogWindow.WallCabinetXY                = RegistryRead:GetString("DialogWindow.WallCabinetXY",              "0")
-  DialogWindow.ExportSettings               = RegistryRead:GetString("DialogWindow.ExportSettings",             "0")
-  DialogWindow.ImportSettings               = RegistryRead:GetString("DialogWindow.ImportSettings",             "0")
+  DialogWindow.AboutXY                      = RegistryRead:GetString("DialogWindow.AboutXY",                    "720 X 487")
+  DialogWindow.BaseCabinetXY                = RegistryRead:GetString("DialogWindow.BaseCabinetXY",              "716 X 579")
+  DialogWindow.InquiryWallOrBaseXY          = RegistryRead:GetString("DialogWindow.InquiryWallOrBaseXY",        "530 X 520")
+  DialogWindow.LayerXY                      = RegistryRead:GetString("DialogWindow.LayerXY",                    "653 X 512")
+  DialogWindow.MillingXY                    = RegistryRead:GetString("DialogWindow.MillingXY",                  "620 X 403")
+  DialogWindow.PartDrawingXY                = RegistryRead:GetString("DialogWindow.PartDrawingXY",              "408 X 303")
+  DialogWindow.ProjectXY                    = RegistryRead:GetString("DialogWindow.ProjectXY",                  "651 X 493")
+  DialogWindow.WallCabinetXY                = RegistryRead:GetString("DialogWindow.WallCabinetXY",              "635 X 438")
+  DialogWindow.ExportSettings               = RegistryRead:GetString("DialogWindow.ExportSettings",             "407 X 126")
+  DialogWindow.ImportSettings               = RegistryRead:GetString("DialogWindow.ImportSettings",             "725 X 160")
+
+  Milling.PinsOn32mm                        = RegistryRead:GetBool("Milling.PinsOn32mm",                        true)
+  Milling.DadoType                          = RegistryRead:GetString("Milling.DadoType",                        "Through")
+  Milling.DadoBlindAmount                   = RegistryRead:GetDouble("Milling.DadoBlindAmount",                 0.7500)
+
   Milling.AddAssemblyHolesBase              = RegistryRead:GetBool("Milling.AddAssemblyHolesBase",              true)
   Milling.AddAssemblyHolesWall              = RegistryRead:GetBool("Milling.AddAssemblyHolesWall",              true)
   Milling.AddJointNotes                     = RegistryRead:GetBool("Milling.AddJointNotes",                     true)
@@ -1045,7 +1087,6 @@ function RegistryRead()  -- Read from Registry values
   WallQuestion.DrawBottomTopPanel           = RegistryRead:GetBool("WallQuestion.DrawBottomTopPanel",           true)
   WallQuestion.DrawCenterPanel              = RegistryRead:GetBool("WallQuestion.DrawCenterPanel",              true)
   WallQuestion.DadoBackPanelForCenterPanel  = RegistryRead:GetBool("WallQuestion.DadoBackPanelForCenterPanel",  true)
-  WallQuestion.DadoStyle                    = RegistryRead:GetString("WallQuestion.DadoStyle",                  "Through")
   WallQuestion.DrawFaceFrame                = RegistryRead:GetBool("WallQuestion.DrawFaceFrame",                true)
   WallQuestion.ShelfCount                   = RegistryRead:GetInt("WallQuestion.ShelfCount",                    2.0000)
   WallQuestion.DrawShelfPanel               = RegistryRead:GetBool("WallQuestion.DrawShelfPanel",               true)
@@ -1101,7 +1142,6 @@ function RegistryWrite() -- Write to Registry values
   RegValue = RegistryWrite:SetDouble("BaseDim.TopFrameWidth",                     BaseDim.TopFrameWidth)
   RegValue = RegistryWrite:SetBool("BaseQuestion.AddCenterFaceFrame",             BaseQuestion.AddCenterFaceFrame)
   RegValue = RegistryWrite:SetBool("BaseQuestion.AddCenterPanel",                 BaseQuestion.AddCenterPanel)
-  RegValue = RegistryWrite:SetString("BaseQuestion.DadoStyle",                    BaseQuestion.DadoStyle)
   RegValue = RegistryWrite:SetInt("BaseQuestion.DrawerRowCount",                  BaseQuestion.DrawerRowCount)
   RegValue = RegistryWrite:SetInt("BaseQuestion.ShelfCount",                      BaseQuestion.ShelfCount)
   RegValue = RegistryWrite:SetBool("BaseQuestion.DrawBackPanel",                  BaseQuestion.DrawBackPanel)
@@ -1121,6 +1161,11 @@ function RegistryWrite() -- Write to Registry values
   RegValue = RegistryWrite:SetString("DialogWindow.WallCabinetXY",                DialogWindow.WallCabinetXY)
   RegValue = RegistryWrite:SetString("DialogWindow.ImportSettings",               DialogWindow.ImportSettings)
   RegValue = RegistryWrite:SetString("DialogWindow.ExportSettings",               DialogWindow.ExportSettings)
+
+  RegValue = RegistryWrite:SetBool("Milling.PinsOn32mm",                          Milling.PinsOn32mm)
+  RegValue = RegistryWrite:SetString("Milling.DadoType",                          Milling.DadoType)
+  RegValue = RegistryWrite:SetDouble("Milling.DadoBlindAmount",                   Milling.DadoBlindAmount)
+
   RegValue = RegistryWrite:SetBool("Milling.AddAssemblyHolesBase",                Milling.AddAssemblyHolesBase)
   RegValue = RegistryWrite:SetBool("Milling.AddAssemblyHolesWall",                Milling.AddAssemblyHolesWall)
   RegValue = RegistryWrite:SetBool("Milling.AddJointNotes",                       Milling.AddJointNotes )
@@ -1273,7 +1318,6 @@ function RegistryWrite() -- Write to Registry values
   RegValue = RegistryWrite:SetBool("WallQuestion.AddCenterFaceFrame",             WallQuestion.AddCenterFaceFrame)
   RegValue = RegistryWrite:SetBool("WallQuestion.AddCenterPanel",                 WallQuestion.AddCenterPanel)
   RegValue = RegistryWrite:SetBool("WallQuestion.DadoBackPanelForCenterPanel",    WallQuestion.DadoBackPanelForCenterPanel)
-  RegValue = RegistryWrite:SetString("WallQuestion.DadoStyle",                    WallQuestion.DadoStyle)
   RegValue = RegistryWrite:SetInt("WallQuestion.ShelfCount",                      WallQuestion.ShelfCount)
   RegValue = RegistryWrite:SetBool("WallQuestion.DrawBackPanel",                  WallQuestion.DrawBackPanel)
   RegValue = RegistryWrite:SetBool("WallQuestion.DrawBottomTopPanel",             WallQuestion.DrawBottomTopPanel)
@@ -2719,6 +2763,105 @@ table {
    <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Max Space</label></td>
     <td><input type="text" class="h2" id="Milling.AssemblyHoleMaxSpace" size="10" maxlength="10" /></td>
+
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Min Space</label></td>
+    <td><input type="text" class="h2" id="Milling.AssemblyHoleMinSpace" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td colspan="4" class="h1-r"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Use 32mm pin Spacing</label></td>
+    <td class="h1-l"><select size="1" id="Milling.PinsOn32mm">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado and Rabbit Types</label></td>
+    <td class="h1-l"><select size="1" id="Milling.DadoType">
+        <option selected>Through</option>
+        <option>Half Blind</option>
+      </select></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Blind Amount</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="Milling.DadoBlindAmount" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td colspan="4" class="h1-r"><hr></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Defalut Profile Bit Dia</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="Milling.ProfileToolDia" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Default Pocket Bit Dit</label></td>
+    <td><input type="text" class="h2" id="Milling.PocketToolDia" size="10" maxlength="10" /></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td><button class="FormButton-Help" onClick="window.open(']].. DialogWindow.MillingHelp .. [[');"><span class="icon">     Help </span></button></td>
+    <td class="alert-l" id="GadgetName.Alert">.</td>
+    <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>
+]]
+-- =====================================================]] -- Hardware Information
+  DialogWindow.myHtml10 = [[<html>
+<head>
+    <title>Hardwere Information</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Back Dado Height</label></td>
+    <td><input name="Milling.DadoBackHeight" type="text" class="h2" id="Milling.DadoBackHeight" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Height</label></td>
+    <td><input name="Milling.DadoHeight" type="text" class="h2" id="Milling.DadoHeight" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Clearance</label></td>
+    <td><input name="Milling.DadoClearance" type="text" class="h2" id="Milling.DadoClearance" size="10" maxlength="10" /></td>
+    <td class="h1-r">Shelf Pin Length</td>
+    <td><input name="Milling.ShelfPinLen" type="text" class="h2" id="Milling.ShelfPinLen" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Part Gap</label></td>
+    <td><input name="Milling.PartGap" type="text" class="h2" id="Milling.PartGap" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Shelf Pin Diameter</label></td>
+    <td><input name="Milling.ShelfPinDiameter" type="text" class="h2" id="Milling.ShelfPinDiameter" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Add Joint Notes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddJointNotes">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r">Assembly Hole Start and End Space</td>
+    <td><input name="Milling.AssemblyHoleStartEnd" type="text" class="h2" id="Milling.AssemblyHoleStartEnd" size="10" maxlength="10" /></td>
+  </tr>
+   <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Base Assembly Holes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesBase">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Wall Assembly Holes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesWall">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+  </tr>
+   <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Max Space</label></td>
+    <td><input type="text" class="h2" id="Milling.AssemblyHoleMaxSpace" size="10" maxlength="10" /></td>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Min Space</label></td>
     <td><input type="text" class="h2" id="Milling.AssemblyHoleMinSpace" size="10" maxlength="10" /></td>
   </tr>
@@ -2747,6 +2890,7 @@ table {
 </body>
 </html>
 ]]
+
 -- =====================================================]] -- Project Setup
   DialogWindow.myHtml2 = [[<html>
 <head>

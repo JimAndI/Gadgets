@@ -1,0 +1,1254 @@
+-- ====================================================]]
+function CreateLayerProfileToolpath(layer_name, name, start_depth, cut_depth, InOrOut, UseTab)
+  if Milling.Profile then
+  --  Please Note: CreateLayerProfileToolpath is provided by Vectric and can be found in the SDK and Sample Gadget files.
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      DisplayMessageBox("No layer found with name = " .. layer_name)
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      DisplayMessageBox("No closed vectors found on layer " .. layer_name)
+      return false
+    end
+  -- Create tool we will use to machine vectors
+    local tool               = Tool(Milling.MillTool1.Name, Tool.END_MILL) -- BALL_NOSE, END_MILL, VBIT
+          tool.InMM          = Milling.MillTool1.InMM         -- tool_in_mm
+          tool.ToolDia       = Milling.MillTool1.ToolDia      -- tool_dia
+          tool.Stepdown      = Milling.MillTool1.Stepdown     -- tool_stepdown
+          tool.Stepover      = Milling.MillTool1.Stepover     -- tool_dia * 0.25
+          tool.RateUnits     = Milling.MillTool1.RateUnits    -- Tool.MM_SEC -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC ...
+          tool.FeedRate      = Milling.MillTool1.FeedRate     -- 30
+          tool.PlungeRate    = Milling.MillTool1.PlungeRate   -- 10
+          tool.SpindleSpeed  = Milling.MillTool1.SpindleSpeed -- 20000
+          tool.ToolNumber    = Milling.MillTool1.ToolNumber   -- 1
+       -- tool.VBitAngle     = Carrier.MillTool.VBitAngle     -- 90.0 -- used for vbit only
+       -- tool.ClearStepover = tool_dia * 0.5                 -- used for vbit only
+  -- Create object used to set home position and safez gap above material surface
+    local pos_data = ToolpathPosData()
+          pos_data:SetHomePosition(0, 0, 5.0)
+          pos_data.SafeZGap    = 5.0
+  -- Create object used to pass profile options
+    local profile_data = ProfileParameterData()
+  -- start depth for toolpath
+    profile_data.StartDepth    = start_depth
+    profile_data.CutDepth      = cut_depth -- cut depth for toolpath this is depth below start depth
+    profile_data.CutDirection  = ProfileParameterData.CLIMB_DIRECTION -- direction of cut - ProfileParameterData. CLIMB_DIRECTION or ProfileParameterData.CONVENTIONAL_DIRECTION
+    if InOrOut == "IN" then
+      profile_data.ProfileSide = ProfileParameterData.PROFILE_INSIDE
+    elseif InOrOut == "OUT" then
+      profile_data.ProfileSide = ProfileParameterData.PROFILE_OUTSIDE
+    else  -- InOrOut == "ON"
+      profile_data.ProfileSide = ProfileParameterData.PROFILE_ON
+    end
+    profile_data.Allowance = 0.0 -- Allowance to leave on when machining
+    profile_data.KeepStartPoints = false -- true to preserve start point positions, false to reorder start points to minimise toolpath length
+    profile_data.CreateSquareCorners = false -- true if want to create 'square' external corners on toolpath
+    profile_data.CornerSharpen = false -- true to perform corner sharpening on internal corners (only with v-bits)
+    profile_data.UseTabs = UseTab -- true to use tabs (position of tabs must already have been defined on vectors)
+    profile_data.TabLength = 0.5 -- length for tabs if being used
+    profile_data.TabThickness = 0.25
+    profile_data.Use3dTabs = true -- if true then create 3d tabs else 2d tabs
+    profile_data.ProjectToolpath = false -- if true in Aspire, project toolpath onto composite model
+    local ramping_data = RampingData() -- Create object used to control ramping
+    local lead_in_out_data = LeadInOutData()
+    ramping_data.DoRamping = false -- if true we do ramping into toolpath
+    ramping_data.RampType = RampingData.RAMP_ZIG_ZAG -- type of ramping to perform RampingData.RAMP_LINEAR , RampingData.RAMP_ZIG_ZAG or RampingData.RAMP_SPIRAL
+    ramping_data.RampConstraint = RampingData.CONSTRAIN_ANGLE -- how ramp is contrained - either by angle or distance RampingData.CONSTRAIN_DISTANCE or RampingData.CONSTRAIN_ANGLE
+    ramping_data.RampDistance = 100.0 -- if we are constraining ramp by distance, distance to ramp over
+    ramping_data.RampAngle = 25.0 -- if we are contraining ramp by angle , angle to ramp in at (in degrees)
+    ramping_data.RampMaxAngleDist = 15 -- if we are contraining ramp by angle, max distance to travel before 'zig zaging' if zig zaging
+    ramping_data.RampOnLeadIn = false -- if true we restrict our ramping to lead in section of toolpath
+    lead_in_out_data.DoLeadIn = false -- if true we create lead ins on profiles (not for profile on)
+    lead_in_out_data.DoLeadOut = false -- if true we create lead outs on profiles (not for profile on)
+    lead_in_out_data.LeadType = LeadInOutData.CIRCULAR_LEAD -- type of leads to create LeadInOutData.LINEAR_LEAD or LeadInOutData.CIRCULAR_LEAD
+    lead_in_out_data.LeadLength = 5.0 -- length of lead to create
+    lead_in_out_data.LinearLeadAngle = 45 -- Angle for linear leads
+    lead_in_out_data.CirularLeadRadius = 5.0 -- Radius for circular arc leads
+    lead_in_out_data.OvercutDistance = 0.0 -- distance to 'overcut' (travel past start point) when profiling
+    local geometry_selector = GeometrySelector() -- Create object which can be used to automatically select geometry
+    local create_2d_previews = true -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+    local display_warnings =  false --true -- if this is true we will display errors and warning to the user
+    local toolpath_manager = ToolpathManager() -- Create our toolpath
+    local toolpath_id = toolpath_manager:CreateProfilingToolpath(name, tool, profile_data,
+                        ramping_data, lead_in_out_data, pos_data, geometry_selector, create_2d_previews, display_warnings)
+    if toolpath_id == nil then
+      DisplayMessageBox("Error creating toolpath")
+      return false
+    end
+  end
+  return true
+end
+-- ====================================================]]
+function CreateLayerPocketingToolpath(name, layer_name, start_depth, cut_depth)
+  if Milling.Pocket then
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      DisplayMessageBox("No layer found with name = " .. layer_name)
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      DisplayMessageBox("No closed vectors found on layer " .. layer_name)
+      return false
+    end
+   -- Create tool we will use to machine vectors
+    local tool = Tool(Milling.MillTool2.Name, Tool.END_MILL)    -- BALL_NOSE, END_MILL, VBIT
+          tool.InMM         = Milling.MillTool2.InMM            -- tool_in_mm
+          tool.ToolDia      = Milling.MillTool2.ToolDia         -- tool_dia
+          tool.Stepdown     = Milling.MillTool2.Stepdown        -- tool_stepdown
+          tool.Stepover     = Milling.MillTool2.Stepover        -- tool_dia * (tool_stepover_percent / 100)
+          tool.RateUnits    = Milling.MillTool2.RateUnits       -- Tool.MM_SEC     -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+          tool.FeedRate     = Milling.MillTool2.FeedRate        -- 30
+          tool.PlungeRate   = Milling.MillTool2.PlungeRate      -- 10
+          tool.SpindleSpeed = Milling.MillTool2.SpindleSpeed    -- 20000
+          tool.ToolNumber   = Milling.MillTool2.ToolNumber      -- 1
+      --  tool.VBitAngle    = Milling.MillTool.VBitAngle          -- 90.0            -- used for vbit only
+      --  tool.ClearStepover = Milling.MillTool.ClearStepover   --  tool_dia * (tool_stepover_percent / 100)  -- used for vbit only
+   -- we will set home position and safe z relative to material block size
+    local mtl_block = MaterialBlock()
+    local mtl_box = mtl_block.MaterialBox
+    local mtl_box_blc = mtl_box.BLC
+   -- Create object used to set home position and safez gap above material surface
+    local pos_data = ToolpathPosData()
+          pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+          pos_data.SafeZGap = mtl_block.Thickness * 0.1
+   -- Create  object used to pass pocketing options
+    local pocket_data = PocketParameterData()
+          -- start depth for toolpath
+          pocket_data.StartDepth = start_depth
+          -- cut depth for toolpath this is depth below start depth
+          pocket_data.CutDepth = cut_depth
+          -- direction of cut for offet clearance - ProfileParameterData.CLIMB_DIRECTION or ProfileParameterData.CONVENTIONAL_DIRECTION - NOTE: enum from ProfileParameterData
+          pocket_data.CutDirection = ProfileParameterData.CLIMB_DIRECTION
+          -- Allowance to leave on when machining
+          pocket_data.Allowance = 0.0
+          -- if true use raster clearance strategy , else use offset area clearance
+          pocket_data.DoRasterClearance = false --true
+          -- angle for raster if using raster clearance
+          pocket_data.RasterAngle = 0
+          -- type of profile pass to perform  PocketParameterData.PROFILE_NONE , PocketParameterData.PROFILE_FIRST orPocketParameterData.PROFILE_LAST
+          pocket_data.ProfilePassType = PocketParameterData.PROFILE_LAST
+          -- if true we ramp into pockets (always zig-zag)
+          pocket_data.DoRamping = false
+          --  if ramping, distance to ramp over
+          pocket_data.RampDistance = 1.0
+          -- if true in Aspire, project toolpath onto composite model
+          pocket_data.ProjectToolpath = false
+   -- Create object which can used to automatically select geometry on layers etc
+    local geometry_selector = GeometrySelector()
+   -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+    local create_2d_previews = true
+   -- if this is true we will display errors and warning to the user
+    local display_warnings = false -- true
+   -- if we are doing two tool pocketing define tool to use for area clearance
+    local area_clear_tool = nil
+    if type(Milling.MillTool3) == "userdata" then
+   -- we just create a tool twice as large for testing here
+   local jim = Milling.MillTool3
+    area_clear_tool = Tool(
+                          Milling.MillTool3.Name,
+                          Tool.END_MILL       -- BALL_NOSE, END_MILL, VBIT
+                          )
+     area_clear_tool.InMM         = Milling.MillTool3.InMM       -- tool_in_mm
+     area_clear_tool.ToolDia      = Milling.MillTool3.ToolDia    -- tool_dia * 2
+     area_clear_tool.Stepdown     = Milling.MillTool3.Stepdown   -- tool_stepdown * 2
+     area_clear_tool.Stepover     = Milling.MillTool3.Stepover   -- tool_dia * 2 *(tool_stepover_percent / 100)
+     area_clear_tool.RateUnits    = Milling.MillTool3.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+     area_clear_tool.FeedRate     = Milling.MillTool3.FeedRate      -- 30
+     area_clear_tool.PlungeRate   = Milling.MillTool3.PlungeRate    -- 10
+     area_clear_tool.SpindleSpeed = Milling.MillTool3.SpindleSpeed  -- 20000
+     area_clear_tool.ToolNumber   = Milling.MillTool3.ToolNumber    -- 1
+    end
+     -- area_clear_tool.VBitAngle     = Carrier.MillTool3.VBitAngle      -- 90.0 -- used for vbit only
+     -- area_clear_tool.ClearStepover = Carrier.MillTool3.ClearStepover  -- tool_dia * 2 * (tool_stepover_percent / 100)  -- used for vbit only
+   -- Create our toolpath
+    local toolpath_manager = ToolpathManager()
+    local toolpath_id = toolpath_manager:CreatePocketingToolpath(
+                                              name,
+                                              tool,
+                                              area_clear_tool,
+                                              pocket_data,
+                                              pos_data,
+                                              geometry_selector,
+                                              create_2d_previews,
+                                              display_warnings
+                                              )
+    if toolpath_id  == nil  then
+      DisplayMessageBox("Error creating toolpath")
+      return false
+    end
+  end
+  return true
+end
+-- ====================================================]]
+function CreateLayerDrillingToolpath(layer_name, name, start_depth, cut_depth, retract_gap)
+  if Milling.Drilling then
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      DisplayMessageBox("No Drilling layer found with name = " .. layer_name)
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      DisplayMessageBox("No closed Drilling vectors found on layer " .. layer_name)
+      return false
+    end
+     -- Create tool we will use to machine vectors
+      local tool = Tool(Milling.MillTool4.Name, Tool.THROUGH_DRILL)       -- BALL_NOSE, END_MILL, VBIT, THROUGH_DRILL
+
+      tool.InMM = Milling.MillTool4.InMM -- tool_in_mm
+      tool.ToolDia = Milling.MillTool4.ToolDia -- tool_dia
+      tool.Stepdown = Milling.MillTool4.Stepdown -- tool_stepdown
+      tool.Stepover = Milling.MillTool4.ToolDia * 0.25
+      tool.RateUnits = Milling.MillTool4.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+      tool.FeedRate = Milling.MillTool4.FeedRate  -- 30
+      tool.PlungeRate = Milling.MillTool4.PlungeRate   -- 10
+      tool.SpindleSpeed = Milling.MillTool4.SpindleSpeed    -- 20000
+      tool.ToolNumber = Milling.MillTool4.ToolNumber       -- 1
+  --    tool.VBitAngle = 90.0                -- used for vbit only
+  --    tool.ClearStepover = tool_dia * 0.5  -- used for vbit only
+      -- we will set home position and safe z relative to material block size
+      local mtl_block = MaterialBlock()
+      local mtl_box = mtl_block.MaterialBox
+      local mtl_box_blc = mtl_box.BLC
+      -- Create object used to set home position and safez gap above material surface
+      local pos_data = ToolpathPosData()
+      pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+      pos_data.SafeZGap = mtl_block.Thickness * 0.1
+      -- Create  object used to pass drilling options
+      local drill_data = DrillParameterData()
+      -- start depth for toolpath
+      drill_data.StartDepth = start_depth
+      -- cut depth for toolpath this is depth below start depth
+      drill_data.CutDepth = cut_depth
+      -- if true perform peck drilling
+      drill_data.DoPeckDrill = retract_gap > 0.0
+      -- distance to retract above surface when peck drilling
+      drill_data.PeckRetractGap = retract_gap
+      -- if true in Aspire, project toolpath onto composite model
+      drill_data.ProjectToolpath = false
+      -- Create object which can used to automatically select geometry on layers etc
+      local geometry_selector = GeometrySelector()
+      -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+      local create_2d_previews = true
+      -- if this is true we will display errors and warning to the user
+      local display_warnings = false -- = true
+      -- Create our toolpath
+      local toolpath_manager = ToolpathManager()
+      local toolpath_id = toolpath_manager:CreateDrillingToolpath(
+                                              name,
+                                              tool,
+                                              drill_data,
+                                              pos_data,
+                                              geometry_selector,
+                                              create_2d_previews,
+                                              display_warnings
+                                              )
+      if toolpath_id  == nil  then
+        DisplayMessageBox("Error creating toolpath")
+        return false
+      end
+     end
+
+   return true
+
+end
+-- ====================================================]]
+function SelectVectorsOnLayer(layer, selection, select_closed, select_open, select_groups)
+  -- Please Note: SelectVectorsOnLayer is provided by Vectric and can be found in the SDK and Sample Gadget files.
+  --[[  ---------------- SelectVectorsOnLayer ----------------
+  -- |   SelectVectorsOnLayer("Stringer Profile", selection, true, falus, falus)
+  -- |   Add all the vectors on the layer to the selection
+  -- |     layer,            -- layer we are selecting vectors on
+  -- |     selection         -- selection object
+  -- |     select_closed     -- if true  select closed objects
+  -- |     select_open       -- if true  select open objects
+  -- |     select_groups     -- if true select grouped vectors (irrespective of open / closed state of member objects)
+  -- |  Return Values:
+  -- |     true if selected one or more vectors|
+  --]]
+  local objects_selected = false
+  local warning_displayed = false
+  local pos = layer:GetHeadPosition()
+  while pos ~= nil do
+    local object
+    object, pos = layer:GetNext(pos)
+    local contour = object:GetContour()
+    if contour == nil then
+      if (object.ClassName == "vcCadObjectGroup") and select_groups then
+        selection:Add(object, true, true)
+        objects_selected = true
+      else
+        if not warning_displayed then
+          local message = "Object(s) without contour information found on layer - ignoring"
+          if not select_groups then
+            message = message ..  "\r\n\r\n" ..
+            "If layer contains grouped vectors these must be ungrouped for this script"
+          end -- if end
+          DisplayMessageBox(message)
+          warning_displayed = true
+        end -- if end
+      end -- if end
+    else  -- contour was NOT nil, test if Open or Closed
+      if contour.IsOpen and select_open then
+        selection:Add(object, true, true)
+        objects_selected = true
+      elseif select_closed then
+        selection:Add(object, true, true)
+        objects_selected = true
+      end -- if end
+    end -- if end
+  end -- while end
+  -- to avoid excessive redrawing etc we added vectors to the selection in 'batch' mode
+  -- tell selection we have now finished updating
+  if objects_selected then
+    selection:GroupSelectionFinished()
+  end -- if end
+  return objects_selected
+end -- function end
+-- ====================================================]]
+function StartDate(LongShort)
+--[[
+--  |   %a  abbreviated weekday name (e.g., Wed)
+--  |    %A  full weekday name (e.g., Wednesday)
+--  |    %b  abbreviated month name (e.g., Sep)
+--  |    %B  full month name (e.g., September)
+--  |    %c  date and time (e.g., 09/16/98 23:48:10)
+--  |    %d  day of the month (16) [01-31]
+--  |    %H  hour, using a 24-hour clock (23) [00-23]
+--  |    %I  hour, using a 12-hour clock (11) [01-12]
+--  |    %M  minute (48) [00-59]
+--  |    %m  month (09) [01-12]
+--  |    %p  either "am" or "pm" (pm)
+--  |    %S  second (10) [00-61]
+--  |    %w  weekday (3) [0-6 = Sunday-Saturday]
+--  |    %x  date (e.g., 09/16/98)
+--  |    %X  time (e.g., 23:48:10)
+--  |    %Y  full year (1998)
+--  |    %y  two-digit year (98) [00-99]
+--  |    %%  the character `%´
+]]
+  if LongShort then
+    return os.date("%b %d, %Y") .. " - " ..os.date("%I") .. ":" ..os.date("%m")..os.date("%p")
+  else
+    return os.date("%Y%m%d%H%M")
+  end
+end
+-- ====================================================]]
+function Polar2D(pt, ang, dis)
+  return Point2D((pt.X + dis * math.cos(math.rad(ang))), (pt.Y + dis * math.sin(math.rad(ang))))
+end
+-- ====================================================]]
+function NewSheet()
+  local layer_manager = Milling.job.LayerManager
+  --  get current sheet count - note sheet 0 the default sheet counts as one sheet
+  -- local orig_num_sheets = layer_manager.NumberOfSheets
+  --  get current active sheet index
+  -- local orig_active_sheet_index = layer_manager.ActiveSheetIndex
+  --  set active sheet to last sheet
+  local num_sheets = layer_manager.NumberOfSheets
+  layer_manager.ActiveSheetIndex = num_sheets - 1
+  Milling.job:Refresh2DView()
+  --  Add a new sheet
+  layer_manager:AddNewSheet()
+  --  set active sheet to last sheet we just added
+  num_sheets = layer_manager.NumberOfSheets
+  layer_manager.ActiveSheetIndex = num_sheets - 1
+  Milling.job:Refresh2DView()
+end
+-- ====================================================]]
+function DrawBox(p1, p2, p3, p4, Layer)
+    local line = Contour(0.0)
+    local layer = Milling.job.LayerManager:GetLayerWithName(Layer)
+    line:AppendPoint(p1) ;
+    line:LineTo(p2);
+    line:LineTo(p3) ;
+    line:LineTo(p4);
+    line:LineTo(p1);
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+  end -- function end
+-- ====================================================]]
+function Holer(pt, ang, dst, dia, lay)
+  local group = ContourGroup(true)
+  group:AddTail(CreateCircle(pt.x,pt.y,dia,0.0,0.0))
+  pt = Polar2D(pt, ang, dst)
+  group:AddTail(CreateCircle(pt.x,pt.y,dia,0.0,0.0))
+  AddGroupToJob(group, lay)
+  return true
+end  --  function end
+-- ====================================================]]
+function DrawLine(Pt1, Pt2, Layer)
+    local line = Contour(0.0)
+    local layer = Milling.job.LayerManager:GetLayerWithName(Layer)
+    line:AppendPoint(Pt1) ;
+    line:LineTo(Pt2) ;
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+  end
+-- ====================================================]]
+function AddGroupToJob(group, layer_name)
+  local cad_object = CreateCadGroup(group)
+  local layer = Milling.job.LayerManager:GetLayerWithName(layer_name)
+  layer:AddObject(cad_object, true)
+  return cad_object
+end
+-- ====================================================]]
+function ifT(x) --  Converts True and False to Yes or No
+  if x then
+    return "Yes"
+  else
+    return "No"
+  end
+end
+-- ====================================================]]
+function ifY(x) --  Converts Yes and No to True or False
+  if x == "Yes" then
+    return true
+  else
+    return false
+  end
+end
+-- ====================================================]]
+function MarkPoint(Note, Pt, Size, LayerName)
+  --[[
+     | Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
+     | Draws mark on the drawing
+     | call = MarkPoint("Note: Hi", Pt1, 3, "Jim")
+   ]]
+      local layer = Milling.job.LayerManager:GetLayerWithName(LayerName)
+      local marker1 = CadMarker(Note, Pt, Size)
+      layer:AddObject(marker1, true)
+      DrawCircle(Pt, 0.25, LayerName)
+  return true
+  end -- function end
+-- ====================================================]]
+function DrawCircle(Cpt, CircleRadius, LayerName)  -- Draws a circle
+  -- | draws a circle based on user inputs
+  -- | job - current validated job unique ID
+  -- | Cpt - (2Dpoint) center of the circle
+  -- | CircleRadius - radius of the circle
+  -- | Layer - layer name to draw circle (make layer if not exist)
+  local pa = Polar2D(Cpt, 180.0, CircleRadius)
+  local pb = Polar2D(Cpt,   0.0, CircleRadius)
+  local line = Contour(0.0)
+  line:AppendPoint(pa)
+  line:ArcTo(pb,1)
+  line:ArcTo(pa,1)
+  local layer = Milling.job.LayerManager:GetLayerWithName(LayerName)
+  layer:AddObject(CreateCadContour(line), true)
+  return true
+end -- function end
+-- ====================================================]]
+function MakeLayers(What)
+  local Red, Green, Blue = 0, 0, 0
+  -- What = the Cabinet type ("", Wall, or Bass)
+  local function GetColor(str) -- returns color value for a Color Name
+    local sx = str
+    local Red, Green, Blue = 0
+    local Colors = {}
+    Colors.Black = "0,0,0"; Colors.Red = "255,0,0"; Colors.Blue = "0,0,255"; Colors.Yellow = "255,255,0"; Colors.Cyan = "0,255,255"; Colors.Magenta = "255,0,255"; Colors.Green = "0,128,0";
+    if "" == str then
+      DisplayMessageBox("Error: Empty string passed")
+    else
+      str = Colors[str]
+      if "string" == type(str) then
+        if string.find(str, ",") then
+          Red   = tonumber(string.sub(str, 1, assert(string.find(str, ",") - 1)))
+          str  = string.sub(str, assert(string.find(str, ",") + 1))
+          Green = tonumber(string.sub(str, 1, assert(string.find(str, ",") - 1)))
+          Blue  = tonumber(string.sub(str, assert(string.find(str, ",") + 1)))
+        end
+      else
+        DisplayMessageBox("Error: Color " .. sx .. " not Found" )
+        Red = 0
+        Green = 0
+        Blue = 0
+      end
+    end
+    return Red, Green, Blue
+  end
+  if #What > 0 then
+    local layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackPocket .. What)
+          Red, Green, Blue = GetColor(Milling.LNBackPocketColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNBackProfileColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNBackProfileColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelShelfPinDrill .. What)
+          Red, Green, Blue = GetColor(Milling.LNCenterPanelProfileColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawFaceFrame .. What)
+          Red, Green, Blue = GetColor(Milling.LNDrawFaceFrameColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNShelfProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNShelfProfileColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNSideProfileColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket .. What)
+          Red, Green, Blue = GetColor(Milling.LNSideProfileColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideShelfPinDrill .. What)
+          Red, Green, Blue = GetColor(Milling.LNSideShelfPinDrillColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNTopBottomProfileColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomPocket .. What)
+          Red, Green, Blue = GetColor(Milling.LNTopBottomPocketColor)
+          layer:SetColor (Red, Green, Blue)
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNStretcherRailProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNStretcherRailProfileColor)
+          layer:SetColor (Red, Green, Blue)
+  else -- "" For all Cabinet types
+    local layerx = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawNotes)
+          Red, Green, Blue = GetColor(Milling.LNDrawNotesColor)
+          layerx:SetColor (Red, Green, Blue)
+          layerx = Milling.job.LayerManager:GetLayerWithName(Milling.LNPartLabels)
+          Red, Green, Blue = GetColor(Milling.LNPartLabelsColor)
+          layerx:SetColor (Red, Green, Blue)
+  end -- if end
+  return true
+end
+-- ====================================================]]
+function DrawWriter(what, where, size, lay, ang)
+--  [[
+--  How to use:
+--  local TextMessage = "Your Text Here"
+--  local TextPt = Point2D(3.5,3.8)
+--  local TextHight = 0.5
+--  local TextLayer = "Jim Anderson"
+--  local TextAng = 20.0
+--  DrawWriter(TextMessage, TextPt, TextHight, TextLayer, TextAng )
+  local function DrawCADLeters(pt, letter, scl, lay, ang)
+    scl = (scl * 0.5)
+    local pA0 = pt
+    local pA1 = Polar2D(pt, ang + 90.0000, (0.2500 * scl))
+    local pA2 = Polar2D(pt, ang + 90.0000, (0.5000 * scl))
+    local pA3 = Polar2D(pt, ang + 90.0000, (0.7500 * scl))
+    local pA4 = Polar2D(pt, ang + 90.0000, (1.0000 * scl))
+    local pA5 = Polar2D(pt, ang + 90.0000, (1.2500 * scl))
+    local pA6 = Polar2D(pt, ang + 90.0000, (1.5000 * scl))
+    local pA7 = Polar2D(pt, ang + 90.0000, (1.7500 * scl))
+    local pA8 = Polar2D(pt, ang + 90.0000, (2.0000 * scl))
+    local pB0 = Polar2D(pt, ang +  0.0000, (0.2500 * scl))
+    local pB1 = Polar2D(pt, ang + 45.0000, (0.3536 * scl))
+    local pB3 = Polar2D(pt, ang + 71.5651, (0.7906 * scl))
+    local pB4 = Polar2D(pt, ang + 75.9638, (1.0308 * scl))
+    local pB5 = Polar2D(pt, ang + 78.6901, (1.2748 * scl))
+    local pB7 = Polar2D(pt, ang + 81.8699, (1.7678 * scl))
+    local pB8 = Polar2D(pt, ang + 82.8750, (2.0156 * scl))
+    local pB10 = Polar2D(pt, ang + 84.2894, (2.5125 * scl))
+    local pC0 = Polar2D(pt, ang +  0.0000, (0.5000 * scl))
+    -- local pC2 = Polar2D(pt, ang + 45.0000, (0.7071 * scl))
+    local pC8 = Polar2D(pt, ang + 75.9638, (2.0616 * scl))
+    local pC10 = Polar2D(pt,78.6901, (2.5125 * scl))
+    local pD0 = Polar2D(pt, ang +  0.0000, (0.6250 * scl))
+    local pD1 = Polar2D(pt, ang + 21.8014, (0.6731 * scl))
+    local pD4 = Polar2D(pt, ang + 57.9946, (1.1792 * scl))
+    local pD7 = Polar2D(pt, ang + 70.3462, (1.8583 * scl))
+    local pD8 = Polar2D(pt, ang + 72.6460, (2.0954 * scl))
+    local pE0 = Polar2D(pt, ang +  0.0000, (0.7500 * scl))
+    local pE2 = Polar2D(pt, ang + 33.6901, (0.9014 * scl))
+    local pE3 = Polar2D(pt, ang + 45.0000, (1.0607 * scl))
+    -- local pE8 = Polar2D(pt, ang + 69.4440, (2.1360 * scl))
+    local pF0 = Polar2D(pt, ang +  0.0000, (1.0000 * scl))
+    local pF3 = Polar2D(pt, ang + 36.8699, (1.2500 * scl))
+    local pF4 = Polar2D(pt, ang + 45.0000, (1.4142 * scl))
+    -- local pF7 = Polar2D(pt, ang + 60.2551, (2.0156 * scl))
+    local pF8 = Polar2D(pt, ang + 63.4349, (2.2361 * scl))
+    -- local pF10 = Polar2D(pt,59.0362, (2.9155 * scl))
+    local pG0 = Polar2D(pt, ang +  0.0000, (1.2500 * scl))
+    local pG1 = Polar2D(pt, ang + 11.3099, (1.2748 * scl))
+    local pG2 = Polar2D(pt, ang + 21.8014, (1.3463 * scl))
+    local pG3 = Polar2D(pt, ang + 30.9638, (1.4577 * scl))
+    local pG4 = Polar2D(pt, ang + 38.6598, (1.6008 * scl))
+    local pG5 = Polar2D(pt, ang + 45.0000, (1.7678 * scl))
+    local pG6 = Polar2D(pt, ang + 50.1944, (1.9526 * scl))
+    local pG7 = Polar2D(pt, ang + 54.4623, (2.1506 * scl))
+    local pG8 = Polar2D(pt, ang + 57.9946, (2.3585 * scl))
+    local pH0 = Polar2D(pt, ang +  0.0000, (1.5000 * scl))
+    -- local pH10 = Polar2D(pt,63.4349, (2.7951 * scl))
+    -- local group = ContourGroup(true)
+    local layer = Milling.job.LayerManager:GetLayerWithName(lay)
+    local line = Contour(0.0)
+    if letter  == 65 then
+      line:AppendPoint(pA0)
+      line:LineTo(pD8)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pB3)
+      line:LineTo(pF3)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 66 then
+      line:AppendPoint(pA0)
+      line:LineTo(pF0)
+      line:LineTo(pG1)
+      line:LineTo(pG3)
+      line:LineTo(pF4)
+      line:LineTo(pG5)
+      line:LineTo(pG7)
+      line:LineTo(pF8)
+      line:LineTo(pA8)
+      line:LineTo(pA0)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pF4)
+      line:LineTo(pA4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 67 then
+      line:AppendPoint(pG2)
+      line:LineTo(pF0)
+      line:LineTo(pB0)
+      line:LineTo(pA2)
+      line:LineTo(pA6)
+      line:LineTo(pB8)
+      line:LineTo(pF8)
+      line:LineTo(pG6)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 68 then
+      line:AppendPoint(pA0)
+      line:LineTo(pF0)
+      line:LineTo(pG2)
+      line:LineTo(pG6)
+      line:LineTo(pF8)
+      line:LineTo(pA8)
+      line:LineTo(pA0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 69 then
+      line:AppendPoint(pG0)
+      line:LineTo(pA0)
+      line:LineTo(pA8)
+      line:LineTo(pF8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA4)
+      line:LineTo(pD4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 70 then
+      line:AppendPoint(pA0)
+      line:LineTo(pA8)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA4)
+      line:LineTo(pF4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 71 then
+      line:AppendPoint(pG6)
+      line:LineTo(pG7)
+      line:LineTo(pF8)
+      line:LineTo(pB8)
+      line:LineTo(pA6)
+      line:LineTo(pA2)
+      line:LineTo(pB0)
+      line:LineTo(pF0)
+      line:LineTo(pG2)
+      line:LineTo(pG3)
+      line:LineTo(pE3)
+      line:LineTo(pE2)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 72 then
+      line:AppendPoint(pA0)
+      line:LineTo(pA8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pG0)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 73 then
+      line:AppendPoint(pB0)
+      line:LineTo(pB8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA0)
+      line:LineTo(pC0)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA8)
+      line:LineTo(pC8)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pE0
+    end
+    if letter  == 74 then
+      line:AppendPoint(pA2)
+      line:LineTo(pB0)
+      line:LineTo(pF0)
+      line:LineTo(pG2)
+      line:LineTo(pG8)
+      line:LineTo(pC8)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 75 then
+      line:AppendPoint(pA0)
+      line:LineTo(pA8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA2)
+      line:LineTo(pG7)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pD4)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 76 then
+      line:AppendPoint(pA8)
+      line:LineTo(pA0)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 77 then
+      line:AppendPoint(pA0)
+      line:LineTo(pA8)
+      line:LineTo(pD4)
+      line:LineTo(pG8)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 78 then
+      line:AppendPoint(pA0)
+      line:LineTo(pA8)
+      line:LineTo(pF0)
+      line:LineTo(pF8)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pG0
+    end
+    if letter  == 79 then
+      line:AppendPoint(pB0)
+      line:LineTo(pA2)
+      line:LineTo(pA6)
+      line:LineTo(pB8)
+      line:LineTo(pF8)
+      line:LineTo(pG6)
+      line:LineTo(pG2)
+      line:LineTo(pF0)
+      line:LineTo(pB0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 80 then
+      line:AppendPoint(pA0)
+      line:LineTo(pA8)
+      line:LineTo(pF8)
+      line:LineTo(pG7)
+      line:LineTo(pG5)
+      line:LineTo(pF4)
+      line:LineTo(pA4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 81 then
+      line:AppendPoint(pB0)
+      line:LineTo(pA2)
+      line:LineTo(pA6)
+      line:LineTo(pB8)
+      line:LineTo(pF8)
+      line:LineTo(pG6)
+      line:LineTo(pG2)
+      line:LineTo(pF0)
+      line:LineTo(pB0)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pG0)
+      line:LineTo(pD4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 82 then
+      line:AppendPoint(pA0)
+      line:LineTo(pA8)
+      line:LineTo(pF8)
+      line:LineTo(pG7)
+      line:LineTo(pG5)
+      line:LineTo(pF4)
+      line:LineTo(pA4)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pD4)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 83 then
+      line:AppendPoint(pG5)
+      line:LineTo(pG6)
+      line:LineTo(pF8)
+      line:LineTo(pB8)
+      line:LineTo(pA6)
+      line:LineTo(pA5)
+      line:LineTo(pG3)
+      line:LineTo(pG2)
+      line:LineTo(pF0)
+      line:LineTo(pB0)
+      line:LineTo(pA2)
+      line:LineTo(pA3)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 84 then
+      line:AppendPoint(pA8)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pD8)
+      line:LineTo(pD0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 85 then
+      line:AppendPoint(pA8)
+      line:LineTo(pA2)
+      line:LineTo(pB0)
+      line:LineTo(pF0)
+      line:LineTo(pG2)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 86 then
+      line:AppendPoint(pA8)
+      line:LineTo(pD0)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 87 then
+      line:AppendPoint(pA8)
+      line:LineTo(pB0)
+      line:LineTo(pD4)
+      line:LineTo(pF0)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 88 then
+      line:AppendPoint(pA0)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA8)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 89 then
+      line:AppendPoint(pA8)
+      line:LineTo(pD4)
+      line:LineTo(pG8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pD0)
+      line:LineTo(pD4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 90 then
+      line:AppendPoint(pA8)
+      line:LineTo(pG8)
+      line:LineTo(pA0)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 48 then
+      line:AppendPoint(pB0)
+      line:LineTo(pA2)
+      line:LineTo(pA6)
+      line:LineTo(pB8)
+      line:LineTo(pF8)
+      line:LineTo(pG6)
+      line:LineTo(pG2)
+      line:LineTo(pF0)
+      line:LineTo(pB0)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pG8)
+      line:LineTo(pA0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 49 then
+      line:AppendPoint(pA6)
+      line:LineTo(pD8)
+      line:LineTo(pD0)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA0)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 50 then
+      line:AppendPoint(pA6)
+      line:LineTo(pA7)
+      line:LineTo(pB8)
+      line:LineTo(pF8)
+      line:LineTo(pG7)
+      line:LineTo(pG5)
+      line:LineTo(pA2)
+      line:LineTo(pA0)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 51 then
+      line:AppendPoint(pA7)
+      line:LineTo(pB8)
+      line:LineTo(pF8)
+      line:LineTo(pG7)
+      line:LineTo(pG5)
+      line:LineTo(pF4)
+      line:LineTo(pG3)
+      line:LineTo(pG1)
+      line:LineTo(pF0)
+      line:LineTo(pB0)
+      line:LineTo(pA1)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pF4)
+      line:LineTo(pB4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 52 then
+      line:AppendPoint(pF0)
+      line:LineTo(pF8)
+      line:LineTo(pA2)
+      line:LineTo(pG2)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 53 then
+      line:AppendPoint(pG8)
+      line:LineTo(pA8)
+      line:LineTo(pA5)
+      line:LineTo(pF4)
+      line:LineTo(pG3)
+      line:LineTo(pG1)
+      line:LineTo(pF0)
+      line:LineTo(pB0)
+      line:LineTo(pA1)
+      line:LineTo(pA2)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 54 then
+      line:AppendPoint(pG7)
+      line:LineTo(pF8)
+      line:LineTo(pB8)
+      line:LineTo(pA7)
+      line:LineTo(pA1)
+      line:LineTo(pB0)
+      line:LineTo(pF0)
+      line:LineTo(pG1)
+      line:LineTo(pG3)
+      line:LineTo(pF4)
+      line:LineTo(pB4)
+      line:LineTo(pA2)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 55 then
+      line:AppendPoint(pB0)
+      line:LineTo(pG8)
+      line:LineTo(pA8)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 56 then
+      line:AppendPoint(pA1)
+      line:LineTo(pB0)
+      line:LineTo(pF0)
+      line:LineTo(pG1)
+      line:LineTo(pG3)
+      line:LineTo(pF4)
+      line:LineTo(pG5)
+      line:LineTo(pG7)
+      line:LineTo(pF8)
+      line:LineTo(pB8)
+      line:LineTo(pA7)
+      line:LineTo(pA5)
+      line:LineTo(pB4)
+      line:LineTo(pA3)
+      line:LineTo(pA1)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pB4)
+      line:LineTo(pF4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 57 then
+      line:AppendPoint(pA1)
+      line:LineTo(pB0)
+      line:LineTo(pF0)
+      line:LineTo(pG3)
+      line:LineTo(pG7)
+      line:LineTo(pF8)
+      line:LineTo(pB8)
+      line:LineTo(pA7)
+      line:LineTo(pA5)
+      line:LineTo(pB4)
+      line:LineTo(pF4)
+      line:LineTo(pG5)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 47 then
+      line:AppendPoint(pA0)
+      line:LineTo(pF8)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pG0
+    end
+    if letter  == 43 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pD1)
+      line:LineTo(pD7)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 61 then
+      line:AppendPoint(pA2)
+      line:LineTo(pG2)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA6)
+      line:LineTo(pG6)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 45 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 39 then
+      line:AppendPoint(pA7)
+      line:LineTo(pB10)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pC0
+    end
+    if letter  == 34 then
+      line:AppendPoint(pA7)
+      line:LineTo(pB10)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pB7)
+      line:LineTo(pC10)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pE0
+    end
+    if letter  == 40 then
+      line:AppendPoint(pB8)
+      line:LineTo(pA5)
+      line:LineTo(pA3)
+      line:LineTo(pB0)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pD0
+    end
+    if letter  == 41 then
+      line:AppendPoint(pA8)
+      line:LineTo(pB5)
+      line:LineTo(pB3)
+      line:LineTo(pA0)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pG0
+    end
+    if letter  == 60 then
+      line:AppendPoint(pF8)
+      line:LineTo(pA4)
+      line:LineTo(pG0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 62 then
+      line:AppendPoint(pA8)
+      line:LineTo(pF4)
+      line:LineTo(pA0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 95 then
+      line:AppendPoint(pA0)
+      line:LineTo(pF0)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 58 then
+      line:AppendPoint(pB8)
+      line:LineTo(pA8)
+      line:LineTo(pA7)
+      line:LineTo(pB7)
+      line:LineTo(pB8)
+      line:LineTo(pA8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA1)
+      line:LineTo(pB1)
+      line:LineTo(pB0)
+      line:LineTo(pA0)
+      line:LineTo(pA1)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pD0
+    end
+    if letter  == 46 then
+      line:AppendPoint(pA1)
+      line:LineTo(pB1)
+      line:LineTo(pB0)
+      line:LineTo(pA0)
+      line:LineTo(pA1)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pD0
+    end
+    if letter  == 59 then
+      line:AppendPoint(pB8)
+      line:LineTo(pA8)
+      line:LineTo(pA7)
+      line:LineTo(pB7)
+      line:LineTo(pB8)
+      line:LineTo(pA8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pB3)
+      line:LineTo(pB4)
+      line:LineTo(pA4)
+      line:LineTo(pA3)
+      line:LineTo(pB3)
+      line:LineTo(pA0)
+      layer:AddObject(CreateCadContour(line), true)
+      pH0 = pD0
+    end
+    if letter  == 35 then
+      line:AppendPoint(pA2)
+      line:LineTo(pG2)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pA6)
+      line:LineTo(pG6)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pB0)
+      line:LineTo(pB8)
+      layer:AddObject(CreateCadContour(line), true)
+      line = Contour(0.0)
+      line:AppendPoint(pF0)
+      line:LineTo(pF8)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 32 then
+      pH0 = pH0
+    end
+    if letter  == 33 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 36 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 37 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 38 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 42 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 63 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 64 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 91 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 92 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 93 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 94 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 96 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 123 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 124 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 125 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if letter  == 126 then
+      line:AppendPoint(pA4)
+      line:LineTo(pG4)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    return pH0
+  end --  function end
+  local strlen = string.len(what)
+  local strup = string.upper(what)
+  local i = 1
+  local y = ""
+  local ptx = where
+  while i <=  strlen do
+    y = string.byte(string.sub(strup, i, i))
+    ptx = DrawCADLeters(ptx, y , size, lay, ang)
+    i = i + 1
+  end
+  return true
+end --  function end
+-- ====================================================]]
+function GetDistance(objA, objB)
+  local xDist = objB.x - objA.x
+  local yDist = objB.y - objA.y
+  return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
+end
+-- ====================================================]]
+function NextSheet()
+  if not(Milling.Sheet == "") then
+    Milling.Sheet = tostring(tonumber(string.sub(Milling.Sheet,0,(string.len(Milling.Sheet) - 1))) + 1) .. "-"
+  end
+  return true
+end
+-- =================== End ============================]]

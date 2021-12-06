@@ -1,0 +1,738 @@
+
+
+--[[  -------------- AddTBone --------------------------------------------------  
+|
+| Add T-bone filletes to the given contour at the given span
+| The assumption is that the t
+|
+]]
+function AddTBone(contour, prev_span, next_span, offset_distance)
+  if (prev_span == nil) then
+    return nil
+  end
+
+  local start_point = prev_span.StartPoint2D
+  local centre_point = next_span.StartPoint2D
+  local end_point = next_span.EndPoint2D
+
+  -- Get the sharp angle between the two
+  local angle = utAngleRad2d(start_point.x, start_point.y, centre_point.x, centre_point.y, end_point.x, end_point.y)
+
+
+  -- Find out which of the two rays is longer
+  local prev_is_longer = prev_span:GetLength(0.01) > next_span:GetLength(0.01)
+  local ext_distance = offset_distance/(math.tan(angle/2))
+  
+  -- Add "extension" onto longest path
+  local extension_point = nil
+  if (prev_is_longer) then
+    extension_point = centre_point + ext_distance * -next_span:EndVector(true)
+  else
+    extension_point = centre_point + ext_distance *  prev_span:EndVector(true)
+  end
+
+  contour:LineTo(extension_point)
+  contour:LineTo(centre_point)
+end
+
+
+--[[  -------------- MakeLine --------------------------------------------------  
+|
+|  Make a straight line contour between two points
+|
+]]
+function  MakeLine(start_pt, end_pt)
+  local contour = Contour(0.0)
+  contour:AppendPoint(start_pt)
+  contour:LineTo(end_pt)
+  return contour
+end
+
+
+--[[  -------------- GetSelectedVectors --------------------------------------------------  
+|
+|  Get Selected vectors off the job
+|
+]]
+function GetSelectedVectors(job)
+
+  if job.Selection.IsEmpty then
+    DisplayMessageBox("You must select the vectors you want filleting.")
+    return false
+  end
+  
+  local selection_list = job.Selection
+  local ret_contours = ContourGroup(true)
+  
+  local pos = selection_list:GetHeadPosition()
+  local cad_obj
+  while (pos ~= nil) do
+    cad_obj, pos = selection_list:GetNext(pos)
+    
+    local contour = cad_obj:GetContour()
+    if contour == nil then
+      DisplayMessageBox("Found objects with no contour data. Ignoring")
+    else
+      ret_contours:AddTail(contour:Clone())
+    end
+  end
+  return ret_contours
+end
+
+--[[  -------------- AddGroupToJob --------------------------------------------------  
+|
+| Add the conotur group as cad object to the job
+|
+]]
+function AddGroupToJob(vectric_job, group, layer_name, create_group)
+
+   --  create a CadObject to represent the  group 
+   local layer = vectric_job.LayerManager:GetLayerWithName(layer_name)
+   if create_group then
+    local cad_object = CreateCadGroup(group);   -- and add our object to it
+    layer:AddObject(cad_object, true)
+    return
+   end
+  
+   
+   local cad_contour
+   local contour
+   local pos = group:GetHeadPosition()
+   while pos ~= nil do
+     contour, pos = group:GetNext(pos)
+     cad_contour = CreateCadContour(contour)
+     layer:AddObject(cad_contour, true)
+   end
+end
+
+
+--[[  -------------- PlaceCircles --------------------------------------------------  
+|
+| Place circles on the job
+|
+]]
+function PlaceCircles(job, cw_centres, ccw_centres, cw_radius, ccw_radius, layer_name)
+  local contour_group = ContourGroup(true)
+  for i=1,#cw_centres do
+    local centre = cw_centres[i]
+    contour_group:AddTail(CreateCircle(centre.x, centre.y, cw_radius, 0.0, 0.0))
+  end
+  for i=1,#ccw_centres do
+    local centre = ccw_centres[i]
+    contour_group:AddTail(CreateCircle(centre.x, centre.y, ccw_radius, 0.0, 0.0))
+  end
+  
+  
+  AddGroupToJob(job, contour_group, layer_name, false)
+end
+
+
+
+--[[  -------------- PlaceMarkers --------------------------------------------------  
+|
+| Place markers which are just single span contours indicating dogbone line length
+|
+]]
+function PlaceMarkers(job, marker_lines, radius, layer_name)
+  local contour_group = ContourGroup(true)
+  for i=1, #marker_lines do
+    contour_group:AddTail(marker_lines[i])
+  end
+  AddGroupToJob(job, contour_group, layer_name, false)
+end
+
+
+
+--[[  -------------- OffsetOutIn --------------------------------------------------  
+|
+| Return the result of offsetting the contour group out and then back in again
+|
+]]
+function OffsetOutIn(contour_group, radius)
+  local out_group = contour_group:Offset(radius, radius, 1, true)
+  local in_group = out_group:Offset(-radius, -radius, 1, true)
+  return in_group
+end
+
+
+
+
+--[[  -------------- ComputeDogBones --------------------------------------------------  
+|
+| Compute the markers for where dog bones should be placed on preradiused contours
+|
+]]
+function ComputeDogBones(contour_group, radius, do_ccw)
+  local circles = {}
+  local line_markers = {}
+  local ctr_pos = contour_group:GetHeadPosition()
+  local contour
+  while ctr_pos ~= nil do
+    contour, ctr_pos = contour_group:GetNext(ctr_pos)
+    if (contour.IsCCW == do_ccw) then
+      local span
+      local span_pos = contour:GetHeadPosition()
+      local prev_span = contour:GetLastSpan()
+      while span_pos ~= nil do
+        span, span_pos = contour:GetNext(span_pos)
+        
+        if (SpanIsArc(span, radius)) then
+            local centre = Point3D()
+            local arc_span = CastSpanToArcSpan(span)
+            arc_span:RadiusAndCentre(centre)
+            circles[#circles + 1]  = centre
+            local span_out_end = GetEndPointArcBisector(arc_span, radius, centre, arc_span:ArcMidPoint() )
+            line_markers[#line_markers + 1] = MakeLine(centre, span_out_end)
+        end
+        prev_span = span
+      end
+    end
+  end
+  
+  return circles, line_markers
+end
+
+
+
+--[[  -------------- SpanIsArc --------------------------------------------------  
+|
+| Return true if span is arc
+|
+]]
+function SpanIsArc(span, radius)
+  if not span.IsArcType then
+    return false
+  end
+  local centre = Point3D()
+  local arc_span = CastSpanToArcSpan(span)
+  local span_radius = arc_span:RadiusAndCentre(centre)
+  if math.abs(span_radius - radius) > 0.005 then
+    return false
+  end
+  return true
+end
+
+
+--[[  -------------- MarkDogBones --------------------------------------------------  
+|
+| Mark all dogbones for current selection
+|
+]]
+function MarkDogBones(job, options)
+  
+  local cw_radius = 0.5*options.tool_diam - options.inner_allowance
+  local ccw_radius = 0.5*options.tool_diam - options.outer_allowance
+
+  
+  local contour_group = GetSelectedVectors(job)
+  
+  local rounded_cw_contours = OffsetOutIn(contour_group, cw_radius)
+  --[[
+  if (contour_group.Count ~= rounded_cw_contours.Count) then
+    DisplayMessageBox("Not enough room to create profile - sheet " .. job.LayerManager.ActiveSheetIndex .. 
+                      "\r\nOrig count = " .. contour_group.Count .. " CW count = " .. rounded_cw_contours.Count)
+    return false
+  end
+   ]]
+  local rounded_ccw_contours = OffsetOutIn(contour_group, ccw_radius)
+  --[[
+  if (contour_group.Count ~= rounded_ccw_contours.Count) then
+    DisplayMessageBox("Not enough room to create profile - sheet " .. job.LayerManager.ActiveSheetIndex .. 
+                      "\r\nOrig count = " .. contour_group.Count .. " CCW count = " .. rounded_ccw_contours.Count)
+    return false
+  end
+  ]]
+  -- Do the ccw circles
+  local ccw_circles, ccw_marker_lines = ComputeDogBones(rounded_ccw_contours, ccw_radius, true)
+  
+  -- Do the cw circles
+  local cw_circles, cw_marker_lines = ComputeDogBones(rounded_cw_contours, cw_radius, false)
+  
+  -- do we have any dogbones?
+  if #cw_circles == 0 and #ccw_circles == 0 then
+     DisplayMessageBox("No dog bones identified")
+     return false;
+  end
+  
+  PlaceCircles(job, cw_circles, ccw_circles, cw_radius, ccw_radius, options.marker_layer_name)
+  PlaceMarkers(job, ccw_marker_lines, ccw_radius, options.marker_layer_name)
+  PlaceMarkers(job, cw_marker_lines, cw_radius, options.marker_layer_name)
+
+  job:Refresh2DView()
+  return true
+end
+
+
+
+
+   
+
+
+--[[  -------------- GetAllmarkers --------------------------------------------------  
+|
+| Get all markers on layer with name layer_name
+|
+]]
+function GetAllMarkers(job, layer_name, radius)
+  local markers = {}
+  local layer_manager = job.LayerManager
+  local layer  = layer_manager:FindLayerWithName(layer_name)
+  local pos = layer:GetHeadPosition()
+  local cad_obj
+  while (pos ~= nil) do
+    cad_obj, pos = layer:GetNext(pos)
+    
+    local contour = cad_obj:GetContour()
+    if contour == nil then
+      DisplayMessageBox("Found objects with no contour data. Ignoring")
+    else
+      if (contour.Count == 1) then
+        markers[#markers] = contour
+      end
+    end
+  end
+  return markers
+end
+
+
+
+
+
+--[[  -------------- utAngleRad2d --------------------------------------------------  
+|
+| utility function computing angle swept out by rays 
+|
+]]
+function utAngleRad2d( x1, y1, x2, y2, x3, y3)
+  local value;
+  local x = ( x1 - x2 ) * ( x3 - x2 ) + ( y1 - y2 ) * ( y3 - y2 )
+  local y = ( x1 - x2 ) * ( y3 - y2 ) - ( y1 - y2 ) * ( x3 - x2 )
+
+  if ( x == 0.0 and y == 0.0 ) then
+     value = 0.0
+  else
+     value = math.atan2 ( y, x )
+     if ( value < 0.0 ) then
+        value = value + 2.0 * math.pi
+     end
+  end 
+  return value;
+end
+
+
+
+
+
+
+--[[  -------------- GetInternalAngleArc --------------------------------------------------  
+|
+| Get the internal angle arc
+|
+]]
+function GetInternalAngleArc(arc_span, arc_centre)
+
+  local start_pt = arc_span.StartPoint2D
+  local end_pt   = arc_span.EndPoint2D
+
+  -- get included angle of arc, function assumes CCW arc so reverse direction if CW ...
+  local  arc_angle
+  if arc_span.IsClockwise then
+     arc_angle = utAngleRad2d(end_pt.x,end_pt.y, arc_centre.x, arc_centre.y,start_pt.x, start_pt.y)
+  else
+     arc_angle = utAngleRad2d(start_pt.x,start_pt.y, arc_centre.x, arc_centre.y, end_pt.x, end_pt.y)
+  end
+
+  return arc_angle
+end
+
+
+
+--[[  -------------- GetEndPointArcBisector --------------------------------------------------  
+|
+| Get the end point of the bisector which cuts arc in half and meets at point on tangents
+|
+]]
+function GetEndPointArcBisector(arc_span, radius, start_point, mid_point)
+  local internal_angle = GetInternalAngleArc(arc_span, start_point)
+  local corner_angle =  math.pi - internal_angle 
+  local offset_distance = (radius / math.sin(0.5*corner_angle)) - radius
+  local offset_vector = mid_point - start_point
+  offset_vector:Normalize()
+  
+  local offset_point = start_point  + offset_distance*offset_vector
+  return offset_point
+end
+
+
+
+--[[  -------------- SortMarkers --------------------------------------------------  
+|
+| Sort markers
+|
+]]
+ function SortMarkers(markers)
+    -- comparison function
+  	function cmpr(ctr_1, ctr_2)
+      if ctr_1.x < ctr_2.x then
+        return true
+      elseif ctr_1.x > ctr_2.x then
+        return true
+      else
+        return ctr_1.y < ctr_2.y
+      end
+    end
+    
+    table.sort(markers, cmpr)
+end
+
+
+--[[  -------------- AddFillets --------------------------------------------------  
+|
+| Add filletes to the given contour
+|
+]]
+function AddFillets(contour, markers, radius, bin_array, bin_data, is_ccw, do_tbones)
+  if contour.IsCCW == is_ccw then
+    local return_contour = Contour(0.0)
+    local span_pos = contour:GetHeadPosition()
+    local span
+
+    local prev_span = nil
+    if contour.IsClosed then
+      prev_span = contour:GetLastSpan()
+    end
+
+    while span_pos ~= nil do
+      span, span_pos = contour:GetNext(span_pos)
+      local marker_line  = HasMatchingMarker(span.StartPoint2D, bin_data, bin_array)
+      if marker_line ~= nil then
+            if return_contour.IsEmpty then
+          return_contour:AppendPoint(contour.StartPoint2D)
+      end      
+        if do_tbones and prev_span then
+          AddTBone(return_contour, prev_span, span, radius)
+        else
+          return_contour:LineTo(marker_line.EndPoint2D)
+          return_contour:LineTo(marker_line.StartPoint2D)    
+        end
+      end
+
+      return_contour:AppendSpan(CloneSpan(span))
+      prev_span = span
+    end
+    return return_contour
+  else
+    return nil
+  end
+  
+end
+
+ --[[  -------------- GetSelectedVectors --------------------------------------------------  
+|
+| Get selected vectors
+|
+]]
+function GetSelectedVectors(job)
+  
+  local selection_list = job.Selection
+  local ret_contours = ContourGroup(true)
+  
+  local pos = selection_list:GetHeadPosition()
+  local cad_obj
+  while (pos ~= nil) do
+    cad_obj, pos = selection_list:GetNext(pos)
+    
+    local contour = cad_obj:GetContour()
+    if contour == nil then
+      DisplayMessageBox("Found objects with no contour data. Ignoring")
+    else
+      ret_contours:AddTail(contour:Clone())
+    end
+  end
+  return ret_contours
+end
+
+
+
+--[[  -------------- GetMarkersFromLayers --------------------------------------------------  
+|
+| Get any markers from the given layers
+|
+]]
+ function GetMarkersFromLayer(job, radius, layer_name)
+  
+   if layer_name == nil then
+  MessageBox("Layer Name does not exist, please specify the name of the layer created from DogBone Detect")
+  return nil
+  end
+  
+  local layer_manager = job.LayerManager
+ 
+  local layer = layer_manager:GetLayerWithName(layer_name)
+  if layer.IsEmpty then
+  MessageBox("This layer has no objects, please select the layer you created with DogBone Detect")
+  return nil
+  end
+  layer.Visible = false 
+  -- Look for a list of markers on the given layer
+  local markers = {}
+  local pos = layer:GetHeadPosition()
+  local cad_obj
+  while (pos ~= nil) do
+    cad_obj, pos = layer:GetNext(pos)
+        if cad_obj.SheetIndex == job.LayerManager.ActiveSheetIndex then
+       local contour = cad_obj:GetContour()
+       if contour == nil then
+         DisplayMessageBox("Found objects with no contour data. Ignoring")
+       else
+         markers[#markers + 1] = contour:Clone()
+       end
+    end   
+     
+  end
+  return markers
+end
+
+
+--[[  -------------- CreateToolpathVectors --------------------------------------------------  
+|
+| 
+|
+]]
+ function CreateToolpathVectors(job, options)
+
+  -- Step 1 : Get all Selected Contours
+
+  local selected_contours = GetSelectedVectors(job)
+  local bounding_box = selected_contours.BoundingBox2D
+  
+  local cw_radius = 0.5*options.tool_diam - options.inner_allowance
+  local ccw_radius = 0.5*options.tool_diam - options.outer_allowance
+  
+  -- Set the min and max x to be 10 either side
+  local box_xlength = bounding_box.XLength
+  local min_x  = bounding_box.MinX - 0.1*box_xlength
+  local max_x =  bounding_box.MaxX  + 0.1*box_xlength
+  box_xlength = max_x - min_x
+
+  local box_ylength = bounding_box.YLength
+  local min_y  = bounding_box.MinY - 0.1*box_ylength
+  local max_y =  bounding_box.MaxY  + 0.1*box_ylength
+  box_ylength = max_y - min_y
+
+
+  -- Step 2: Collect all markers on the contour DogBoneMarkers layer and sort
+  local markers = GetMarkersFromLayer(job, cw_radius, options.marker_layer_name)
+  if markers == nil then
+	return false
+  end
+  local bin_data = {}
+  bin_data.min_x = min_x
+  bin_data.min_y = min_y
+  bin_data.dim = math.ceil(math.sqrt(#markers))
+  bin_data.grid_x = box_xlength / bin_data.dim
+  bin_data.grid_y = box_ylength /bin_data.dim
+  local bin_array = InitializeBins(bin_data.dim)
+  FillBins(markers, bin_data, bin_array)
+
+  -- Step 3: Offset the contours out
+  local ccw_offset_contours = selected_contours:Offset(ccw_radius, ccw_radius, 1, true)
+  local cw_offset_contours = selected_contours:Offset(cw_radius, cw_radius, 1, true)
+
+  
+
+  -- Step 4: Once offset look for spans whose end points are markers.
+  local filleted_contour_group = ContourGroup(true)
+  local pos = ccw_offset_contours:GetHeadPosition()
+  local current_contour
+  while (pos ~= nil) do
+    current_contour, pos = ccw_offset_contours:GetNext(pos)
+    local filleted_contour = AddFillets(current_contour, markers, ccw_radius, bin_array, bin_data, true, options.do_tbones)
+    if filleted_contour ~= nil then
+      filleted_contour_group:AddTail(filleted_contour)
+    end
+  end
+  
+  pos = cw_offset_contours:GetHeadPosition()
+  while (pos ~= nil) do
+    current_contour, pos = cw_offset_contours:GetNext(pos)
+    local filleted_contour = AddFillets(current_contour, markers, cw_radius, bin_array, bin_data, false, options.do_tbones)
+    if filleted_contour ~= nil then
+      filleted_contour_group:AddTail(filleted_contour)
+    end
+  end
+
+  -- Step 5: Add the new contour group to a new layer
+  AddGroupToJob(job, filleted_contour_group, options.vector_layer_name, false)
+
+  return true
+end
+
+
+
+
+--[[  -------------- BinKey --------------------------------------------------  
+|
+| Return which bin the point should be in
+|
+]]
+ function BinKey(point,bin_data)
+  local i = math.floor((point.x - bin_data.min_x) / bin_data.grid_x)
+  local j = math.floor((point.y - bin_data.min_y) / bin_data.grid_y)
+
+  if ( (i+1 > bin_data.dim) or  (j+1 > bin_data.dim)) then
+    return nil
+  end
+  return i + 1, j + 1 -- We add 1 because using lua-style 0 index matrices 
+end
+
+
+--[[  -------------- InitializeBins --------------------------------------------------  
+|
+| Initialize the bins
+|
+]]
+ function InitializeBins(dim)
+  local mt = {}
+  for i = 1, dim do
+    mt[i] = {}
+    for j = 1, dim do
+      mt[i][j] = {}
+    end
+  end
+  return mt
+end
+
+--[[  -------------- PlaceMarkerInbin --------------------------------------------------  
+|
+| Place a marker in its rightful bin
+|
+]]
+ function PlaceMarkerInBin(marker, bin_data, bin_array)
+  local i, j = BinKey(marker.StartPoint2D, bin_data)
+  if i ~= nil then
+    (bin_array[i][j])[#(bin_array[i][j]) + 1] = marker
+  end
+end
+
+
+--[[  -------------- FillBins --------------------------------------------------  
+|
+| Fill all bins
+|
+]]
+ function FillBins(markers, bin_data, bin_array)
+  for i= 1, #markers do
+    if IsSpan(markers[i]) then
+      PlaceMarkerInBin(markers[i], bin_data, bin_array)
+    end
+  end
+end
+
+
+
+--[[  -------------- HasMatchingMarker --------------------------------------------------  
+|
+| Has matrching marker
+|
+]]
+ function HasMatchingMarker(point, bin_data, bin_array)
+  local i,j = BinKey(point, bin_data)
+  if (i == nil) then
+    return nil
+  end
+  local this_bin = bin_array[i][j] 
+  if this_bin == nil then 
+    return nil
+  end
+
+  for m = 1, #this_bin do
+    local marker = this_bin[m]
+    if marker.StartPoint2D:IsCoincident(point, 0.01) then
+      return marker
+    end
+  end
+  return nil
+end
+
+
+
+
+--[[  -------------- IsSpan --------------------------------------------------  
+|
+| Return true if the contour is just a single line span
+|
+]]
+ function IsSpan(ctr)
+    if (ctr.Count == 1) and ctr:GetFirstSpan().IsLineType then
+      return true
+    else
+      return false
+    end
+  end
+  
+ 
+
+ --[[  -------------- CloneSpan --------------------------------------------------  
+|
+| Clone the given span
+|
+]] 
+ function CloneSpan(span)
+  if span.IsLineType then
+    return LineSpan(span.StartPoint2D, span.EndPoint2D)
+  elseif span.IsArcType then
+    local arc_span = CastSpanToArcSpan(span)
+    return ArcSpan(span.StartPoint2D, span.EndPoint2D, arc_span.Bulge)
+  elseif span.IsBezierType then
+    local bspan = CastSpanToBezierSpan(span)
+    return BezierSpan(bspan.StartPoint2D, 
+                      bspan.EndPoint2D, 
+                      span:GetControlPointPosition(0), 
+                      span:GetControlPointPosition(1))
+  end
+end
+
+
+--[[  -------------- ProcessSheet --------------------------------------------------  
+|
+| Process sheet with passed index
+|
+]]
+ function ProcessSheet(layer, sheet_index, tool_area, job, options, error_list)
+
+   job.LayerManager.ActiveSheetIndex = sheet_index
+   job.Selection:Clear()
+   
+   local pos = layer:GetHeadPosition()
+   while pos ~= nil do
+      local object
+      object, pos = layer:GetNext(pos)
+      local orig_sheet_index = object.SheetIndex
+      if object.SheetIndex == sheet_index then
+         -- check that vector has an area larger than the tool
+         local contour = object:GetContour();
+         if contour ~= nil then
+            if contour.Area > tool_area then 
+              if contour.IsClosed then
+                 job.Selection:Add(object, true, true)
+              end   
+            end
+         end   
+      end 
+    end 
+    job.Selection:GroupSelectionFinished()
+         
+   if job.Selection.IsEmpty then
+      local err_msg = "No vectors to dogbone found on layer " .. options.layer_to_toolpath_name .. ", sheet " .. job.LayerManager.ActiveSheetIndex 
+      error_list[#error_list + 1]  = err_msg
+   else
+      if MarkDogBones(job, options) then
+         CreateToolpathVectors(job, options)
+      else
+         local err_msg = "Failed to create dogbones for layer " .. options.layer_to_toolpath_name .. ", sheet " .. job.LayerManager.ActiveSheetIndex 
+         error_list[#error_list + 1]  = err_msg
+      end   
+   end
+
+end
