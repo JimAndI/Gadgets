@@ -25,6 +25,7 @@ VerNumber = "12.4"
 AppName = "Easy Base Cabinet Maker"
 RegName = "EasyBaseCabinetMaker" .. VerNumber
 -- Table Names
+
 BaseDim           = {}
 BaseQuestion      = {}
 Milling           = {}
@@ -32,22 +33,25 @@ Project           = {}
 WallDim           = {}
 BOM               = {}
 WallQuestion      = {}
-Hardwere          = {}
+Hardware          = {}
 Material          = {}
-Cab               = {}   -- Points
-DialogWindow      = {}   -- Dialog Managment
+Cab               = {}    -- Points
+DialogWindow      = {}    -- Dialog Managment
+
 layer = ""
 Project.Debugger =  false -- true --
 Project.Rest     =  false
-DialogWindow.BaseHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Base.html"
-DialogWindow.LayerHelp   = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Layers.html"
-DialogWindow.ProjectHelp = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Project.html"
-DialogWindow.MillingHelp = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
-DialogWindow.MainHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/index.html"
-DialogWindow.WallHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Wall.html"
-DialogWindow.PartDrawing = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/PartDrawing.html"
-DialogWindow.ExportHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/ImportExport.html"
-DialogWindow.DialogLoop  = true
+DialogWindow.BaseHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Base.html"
+DialogWindow.LayerHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Layers.html"
+DialogWindow.ProjectHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Project.html"
+DialogWindow.MillingHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
+DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/index.html"
+DialogWindow.WallHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Wall.html"
+DialogWindow.PartDrawing  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/PartDrawing.html"
+DialogWindow.ExportHelp   = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/ImportExport.html"
+DialogWindow.HardwareHelp = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Hardware.html"
+DialogWindow.DialogLoop   = true
+
 Tool_ID1 = ToolDBId()
 Tool_ID2 = ToolDBId()
 Tool_ID3 = ToolDBId()
@@ -84,6 +88,7 @@ Milling.MillTool3 = {} -- Pocketing Clearing Bit
 Milling.MillTool4 = {} -- Shelf Pins Drilling
 Milling.MillTool5 = {} -- Assembly pilot holes
 Milling.Tabs = false   -- User to setup Tabs
+
 -- =====================================================]]
 function InquiryWallOrBase(Header)
   local Wx, Wy = DialogSize(DialogWindow.InquiryWallOrBaseXY)
@@ -116,6 +121,7 @@ function InquiryWallOrBase(Header)
   dialog:AddLabelField("ToolNameLabel5",                      Milling.MillTool5.Name)
   dialog:AddToolPicker("ToolChooseButton5", "ToolNameLabel5", Tool_ID5)
   dialog:AddToolPickerValidToolType("ToolChooseButton5",      Tool.THROUGH_DRILL)
+
   if dialog:ShowDialog() then
     WallDim.CabHeight   = dialog:GetDoubleField("WallDim.CabHeight")
     WallDim.CabDepth    = dialog:GetDoubleField("WallDim.CabDepth")
@@ -127,6 +133,7 @@ function InquiryWallOrBase(Header)
     Project.NewSheet    = dialog:GetDropDownListValue("Project.NewSheet")
     Project.Drawing     = dialog:GetDropDownListValue("Project.Drawing")
     if dialog:GetTool("ToolChooseButton1") then
+      Tool_ID1:SaveDefaults("ToolChooseButton1", "")
       Milling.MillTool1 = dialog:GetTool("ToolChooseButton1")  -- Profile
     end
     if dialog:GetTool("ToolChooseButton2") then
@@ -153,7 +160,6 @@ function OnLuaButton_ImportSettings(dialog)
   local Test = true
   local Wx, Wy = DialogSize(DialogWindow.ImportSettings)
   local dialogx = HTML_Dialog(true, DialogWindow.myHtml0, Wx, Wy, "Import Settings")
-  local Mystrlen = string.len(Project.ProjectPath .. "\\")
   dialogx:AddTextField("ReadFile", Project.ProjectPath .. "\\")
   dialogx:AddFilePicker(true, "FilePickerButton", "ReadFile", true)
   local DTest = dialogx:ShowDialog()
@@ -185,7 +191,6 @@ function OnLuaButton_ImportSettings(dialog)
 end -- function end
 -- =====================================================]]
 function OnLuaButton_ExportSettings(dialogx)
-  local MyOk = true
   local Wx, Wy = DialogSize(DialogWindow.ExportSettings)
   Project.CabinetName = dialogx:GetTextField("Project.CabinetName")
   local dialog = HTML_Dialog(true, DialogWindow.myHtml9, Wx, Wy, "Export Settings")
@@ -253,6 +258,9 @@ function OnLuaButton_InquiryBaseQuestion()
   dialog:AddDropDownList("BaseQuestion.AddCenterPanel",        ifT(BaseQuestion.AddCenterPanel))
   dialog:AddDropDownList("BaseQuestion.DrawerRowCount",        tostring(BaseQuestion.DrawerRowCount))
   dialog:AddDropDownList("BaseQuestion.ShelfCount",            tostring(BaseQuestion.ShelfCount))
+  dialog:AddDropDownList("Hardware.Name",                      Hardware.Name)
+  Hardware.Name
+
   if dialog:ShowDialog() then
     BaseDim.FaceFrameBottomRailWidth  = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameBottomRailWidth"))
     BaseDim.FaceFrameBottomReveal     = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameBottomReveal"))
@@ -296,7 +304,7 @@ end -- function end
 -- =====================================================]]
 function OnLuaButton_InquiryLayers( )
   local Wx, Wy = DialogSize(DialogWindow.LayerXY)
-  local dialog = HTML_Dialog(true, DialogWindow.myHtml4, 653, 512, "Layer Setup")
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml4, Wx, Wy, "Layer Setup")
   dialog:AddTextField("Milling.LNBackPocket", Milling.LNBackPocket)
   dialog:AddTextField("Milling.LNBackProfile", Milling.LNBackProfile)
   dialog:AddTextField("Milling.LNCenterPanelProfile", Milling.LNCenterPanelProfile)
@@ -446,16 +454,17 @@ function OnLuaButton_InquiryProjectInfo()
   dialog:AddTextField("Project.PhoneNumber",             Project.PhoneNumber)
   dialog:AddTextField("Project.DrawerID",                StartDate())
   dialog:AddTextField("Project.ProjectPath",             Project.ProjectPath )
+  dialog:AddDoubleField("Project.TextHeight",            Project.TextHeight)
   dialog:AddDropDownList("Project.CabinetStyle",         Project.CabinetStyle)
   dialog:AddDirectoryPicker("DirectoryPicker", "Project.ProjectPath",  true)
   dialog:AddDropDownList("BOM.WallCabinetMateralType",   BOM.WallCabinetMateralType)
   dialog:AddDropDownList("BOM.BaseCabinetMateralType",   BOM.BaseCabinetMateralType)
   dialog:AddDropDownList("BOM.WallFaceFrameMateralType", BOM.WallFaceFrameMateralType)
   dialog:AddDropDownList("BOM.BaseFaceFrameMateralType", BOM.BaseFaceFrameMateralType)
-  dialog:AddDropDownList("BOM.WallCabinetFinish",         BOM.WallCabinetFinish)
-  dialog:AddDropDownList("BOM.BaseCabinetFinish",         BOM.BaseCabinetFinish)
-  dialog:AddDropDownList("BOM.WallFaceFrameFinish",       BOM.WallFaceFrameFinish)
-  dialog:AddDropDownList("BOM.BaseFaceFrameFinish",       BOM.BaseFaceFrameFinish)
+  dialog:AddDropDownList("BOM.WallCabinetFinish",        BOM.WallCabinetFinish)
+  dialog:AddDropDownList("BOM.BaseCabinetFinish",        BOM.BaseCabinetFinish)
+  dialog:AddDropDownList("BOM.WallFaceFrameFinish",      BOM.WallFaceFrameFinish)
+  dialog:AddDropDownList("BOM.BaseFaceFrameFinish",      BOM.BaseFaceFrameFinish)
   if dialog:ShowDialog() then
     Project.ProjectName          = string.upper(All_Trim(dialog:GetTextField("Project.ProjectName")))
     Project.ProjectContactEmail  = All_Trim(dialog:GetTextField("Project.ProjectContactEmail"))
@@ -464,14 +473,15 @@ function OnLuaButton_InquiryProjectInfo()
     BOM.BaseCabinetMateralType   = dialog:GetDropDownListValue("BOM.BaseCabinetMateralType")
     BOM.WallFaceFrameMateralType = dialog:GetDropDownListValue("BOM.WallFaceFrameMateralType")
     BOM.BaseFaceFrameMateralType = dialog:GetDropDownListValue("BOM.BaseFaceFrameMateralType")
-    BOM.WallCabinetFinish         = dialog:GetDropDownListValue("BOM.WallCabinetFinish")
-    BOM.BaseCabinetFinish         = dialog:GetDropDownListValue("BOM.BaseCabinetFinish")
-    BOM.WallFaceFrameFinish       = dialog:GetDropDownListValue("BOM.WallFaceFrameFinish")
-    BOM.BaseFaceFrameFinish       = dialog:GetDropDownListValue("BOM.BaseFaceFrameFinish")
+    BOM.WallCabinetFinish        = dialog:GetDropDownListValue("BOM.WallCabinetFinish")
+    BOM.BaseCabinetFinish        = dialog:GetDropDownListValue("BOM.BaseCabinetFinish")
+    BOM.WallFaceFrameFinish      = dialog:GetDropDownListValue("BOM.WallFaceFrameFinish")
+    BOM.BaseFaceFrameFinish      = dialog:GetDropDownListValue("BOM.BaseFaceFrameFinish")
     Project.CabinetStyle         = dialog:GetDropDownListValue("Project.CabinetStyle")
     Project.PhoneNumber          = All_Trim(dialog:GetTextField("Project.PhoneNumber"))
     Project.DrawerID             = dialog:GetTextField("Project.DrawerID")
     Project.ProjectPath          = dialog:GetTextField("Project.ProjectPath")
+    Project.TextHeight           = math.abs(dialog:GetDoubleField("Project.TextHeight"))
     DialogWindow.ProjectXY       = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
     FaceFrameManiagement()
     RegistryWrite()
@@ -570,7 +580,7 @@ function main(script_path)
   Tooler2 = assert(loadfile(script_path .. "\\EasyCabinetWallVer".. VerNumber .. ".xlua")) (Tooler2) -- Load Tool Function
   Tooler3 = assert(loadfile(script_path .. "\\EasyCabinetBaseVer".. VerNumber .. ".xlua")) (Tooler3) -- Load Tool Function
   Tooler4 = assert(loadfile(script_path .. "\\EasyCabinetLibVer" .. VerNumber .. ".xlua")) (Tooler4) -- Load Tool Function
-  GetMaterialSettings()
+GetMaterialSettings()
   RegistryRead()
   HTML()
   Base_Math()
@@ -618,7 +628,7 @@ function main(script_path)
     else
       Milling.Sheet = ""
     end
-    MakeLayers("")
+    LayerMake("")
     Mill_Math()
     MillingTools()
     CutListfileWriterHeader(Project.Drawing)
@@ -635,7 +645,7 @@ function main(script_path)
       end -- if end
       Base_Math()
       Wall_Math()
-      MakeLayers("-Wall")
+      LayerMake("-Wall")
       Wall_CabinetSide("L")
       Wall_CabinetSide("R")
       Wall_CabinetTandB("T")
@@ -709,9 +719,9 @@ function main(script_path)
         CutListfileWriterFooter()
       end -- if end
     end -- if end
-    -- =====================================================]]
+    -- =====================================================
     if Project.Drawingx == "Base" then
-      MakeLayers("-Base")
+      LayerMake("-Base")
       Wall_Math()
       Base_Math()
       if Project.Drawing == "Both" then
@@ -803,5 +813,4 @@ function main(script_path)
   Milling.job:Refresh2DView()
   return true
 end -- function end
-
 -- =================== End ============================]]

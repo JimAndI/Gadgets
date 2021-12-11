@@ -59,8 +59,8 @@ function DMark(Note, Pt)
 -- | Cpt - (2Dpoint) center of the circle
 -- | CircleRadius - radius of the circle
 -- | Layer - layer name to draw circle (make layer if not exist)
-    local pa = Polar2D(Cpt, 180.0, CircleRadius)
-    local pb = Polar2D(Cpt,   0.0, CircleRadius)
+    local pa   = Polar2D(Cpt, 180.0, CircleRadius)
+    local pb   = Polar2D(Cpt,   0.0, CircleRadius)
     local line = Contour(0.0)
     line:AppendPoint(pa); line:ArcTo(pb,1);   line:ArcTo(pa,1)
     local layer = job.LayerManager:GetLayerWithName(LayerName)
@@ -69,12 +69,9 @@ function DMark(Note, Pt)
   end -- function end
 -- ====]]
   local job = VectricJob()
-  --local layer = job.LayerManager:GetLayerWithName(LayerName)
-  --local marker1 = CadMarker(Note, Pt, 3)
   local where = Polar2D(Pt, 45.0, 0.125)
   DrawLine(Pt, where, "Debug")
   DrawWriter(Note, where, 0.125, "Debug", 0.0)
-  --layer:AddObject(marker1, true)
   DrawCircle(job, Pt, 0.0125, "Debug")
   return true
 end -- function end
@@ -82,10 +79,8 @@ end -- function end
 function DrawBox(p1, p2, p3, p4, Layer)
     local line = Contour(0.0)
     local layer = Milling.job.LayerManager:GetLayerWithName(Layer)
-    line:AppendPoint(p1) ;
-    line:LineTo(p2);
-    line:LineTo(p3) ;
-    line:LineTo(p4);
+    line:AppendPoint(p1) ;   line:LineTo(p2);
+    line:LineTo(p3)      ;   line:LineTo(p4);
     line:LineTo(p1);
     layer:AddObject(CreateCadContour(line), true)
     return true
@@ -145,13 +140,13 @@ function GetMaterialSettings()
   end
   Material.xy_origin = MaterialBlock.XYOrigin
   if MaterialBlock.InMM then
-    Milling.Units  = "Drawing Units: mm"
-    Milling.Unit = true
-    Milling.Cal = 25.4
+    Milling.Units = "Drawing Units: mm"
+    Milling.Unit  = true
+    Milling.Cal   = 25.4
   else
-    Milling.Units  = "Drawing Units: inches"
-    Milling.Unit = false
-    Milling.Cal = 1.0
+    Milling.Units = "Drawing Units: inches"
+    Milling.Unit  = false
+    Milling.Cal   = 1.0
   end
   Milling.UnitDisplay  = Milling.Units
   --local units
@@ -209,48 +204,85 @@ end -- end function
 -- =====================================================]]
 function Mill_Math()   -- All the math for Wall Cabinet
   if Milling.MillTool1.Name == "No Tool Selected" then
-    Milling.ProfileToolRadius = Milling.ProfileToolDia * 0.500
+    Milling.ProfileToolRadius = Milling.ProfileToolDia    * 0.500
   else
     Milling.ProfileToolDia    = Milling.MillTool1.ToolDia
     Milling.ProfileToolRadius = Milling.MillTool1.ToolDia * 0.500
   end
   if Milling.MillTool2.Name == "No Tool Selected" then
-    Milling.PocketToolRadius  = Milling.PocketToolDia * 0.500
+    Milling.PocketToolRadius  = Milling.PocketToolDia     * 0.500
   else
     Milling.PocketToolDia     = Milling.MillTool2.ToolDia
     Milling.PocketToolRadius  = Milling.MillTool2.ToolDia * 0.500
   end
-  Milling.ShelfPinRadius    = Milling.ShelfPinDiameter * 0.500
+  Milling.ShelfPinRadius      = Milling.ShelfPinDiameter  * 0.500
   Project.DrawerID  = StartDate()
   return true
 end
 -- =====================================================]]
 function MillingValidater()
   local MyTrue = false
+
   if Milling.ProfileToolDia == 0 then
-    MessageBox("Error: Milling Profile Default Tool Dia value cannot be 0")
+    MessageBox("Error: Milling Settings:\n" ..
+               "Default Profile Default Bit Dia - value cannot be 0")
     OnLuaButton_InquiryMilling()
+
   elseif Milling.PocketToolDia == 0 then
-    MessageBox("Error: Milling Pocket Default Tool Dia value cannot be 0")
+    MessageBox("Error: Milling Settings:\n" ..
+               "Default Pocket Bit Dia - value cannot be 0")
     OnLuaButton_InquiryMilling()
+
   elseif Milling.DadoBackHeight == 0 then
-    MessageBox("Error: Milling Dado Back Height value cannot be 0")
+    MessageBox("Error: Milling Settings:\n" ..
+               "Back Dado Height - value cannot be 0")
     OnLuaButton_InquiryMilling()
+
+  elseif Milling.PartGap == 0 then
+    MessageBox("Error: Milling Settings:\n" ..
+               "Part Gap - value cannot be 0")
+    OnLuaButton_InquiryMilling()
+
+  elseif Milling.DadoBlindAmount == 0 then
+    MessageBox("Error: Milling Settings:\n" ..
+               "Dado Blind Amount - value cannot be 0")
+    OnLuaButton_InquiryMilling()
+
   elseif Milling.DadoHeight == 0 then
-    MessageBox("Error: Milling Dado Height value cannot be 0")
+    MessageBox("Error: Milling Settings:\n" ..
+               "Dado Height - value cannot be 0")
     OnLuaButton_InquiryMilling()
+
   elseif Milling.AssemblyHoleStartEnd == 0 then
-    MessageBox("Error: Milling Assembly Hole Start and End value cannot be 0")
+    MessageBox("Error: Milling Settings:\n" ..
+               "Assembly Hole Start and End Space - value cannot be 0")
     OnLuaButton_InquiryMilling()
-   elseif Milling.AssemblyHoleMaxSpace  == 0 then
-    MessageBox("Error: Milling Assembly Hole Max Space value cannot be 0")
+
+  elseif Milling.AssemblyHoleMaxSpace == 0 then
+    MessageBox("Error: Milling Settings:\n" ..
+               "Assembly Hole Max Space - value cannot be 0")
     OnLuaButton_InquiryMilling()
-  elseif Milling.AssemblyHoleMinSpace  == 0 then
-    MessageBox("Error: Milling Assembly Hole Min Space value cannot be 0")
+
+  elseif Milling.AssemblyHoleMaxSpace == Milling.AssemblyHoleMinSpace then
+    MessageBox("Error: Milling Settings:\n" ..
+               "The 'Assembly Hole Max' and 'Assembly Hole Min Space' values cannot equal")
     OnLuaButton_InquiryMilling()
+
+  elseif Milling.AssemblyHoleMaxSpace < Milling.AssemblyHoleMinSpace then
+    MessageBox("Error: Milling Settings:\n" ..
+               "The 'Assembly Hole Max Space' cannot be larger than 'Assembly Hole Min Space'")
+    OnLuaButton_InquiryMilling()
+
+  elseif Milling.AssemblyHoleMinSpace == 0 then
+    MessageBox("Error: Milling Settings:\n" ..
+               "Assembly Hole Min Space - value cannot be 0")
+    OnLuaButton_InquiryMilling()
+
   elseif Milling.ShelfPinLen == 0 then
-    MessageBox("Error: Milling Shelf Pin Length value cannot be 0")
+    MessageBox("Error: Milling Settings:\n" ..
+               "Shelf Pin Length - value cannot be 0")
     OnLuaButton_InquiryMilling()
+
   else
     MyTrue = true
   end -- if end
@@ -258,7 +290,6 @@ function MillingValidater()
 end -- if end
 -- =====================================================]]
 function MillingTools()
-
   if Milling.MillTool1.Name == "No Tool Selected"  then
     Milling.Profile = false
   else
@@ -285,8 +316,8 @@ function MillingTools()
     Milling.AddAssemblyHolesToolpath = true
   end  -- if end
   Milling.Toolpath_Mgr = ToolpathManager()
-  if Milling.Toolpath_Mgr.Count >0 then
-      Milling.Toolpath_Mgr:DeleteAllToolpaths()
+  if Milling.Toolpath_Mgr.Count > 0 then
+    Milling.Toolpath_Mgr:DeleteAllToolpaths()
   end -- if end
   return true
 end
@@ -315,80 +346,129 @@ end
 -- =====================================================]]
 function CutListfileWriterHeader(Cab)
   local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID.. ".dat", "w")
-  file:write("============================================================================================================ \n")
-  file:write("============================================  Cabinet Cut-list  ============================================ \n")
+  local DiagWall = math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2)
+  local DiagBase = math.sqrt (BaseDim.CabHeight^2 + BaseDim.CabLength^2)
+  local Lines = "================================================================================== \n"
+  file:write(Lines)
+  file:write(   "===============================  Cabinet Cut-list  =============================== \n")
   file:write("  Project Run Date ID: ".. StartDate() .."\n")
   file:write("  Cabinet Project Name: ".. Project.ProgramName .."\n")
   file:write("  Cabinet Name: ".. Project.CabinetName   .."\n")
   file:write("  " .. Milling.Units .. " \n")
-  file:write("============================================================================================================ \n")
+  file:write(Lines)
   if Cab == "Both" then
     file:write("  Wall Cabinet Size\n")
-    file:write("  Cabinet Finish      = ".. BOM.WallCabinetFinish   .."\n")
-    file:write("  Face Frame Finish   = ".. BOM.WallFaceFrameFinish .."\n")
-    file:write("  Cabinet Height      = ".. D2S(WallDim.CabHeight) .."\n")
-    file:write("  Cabinet Length      = ".. D2S(WallDim.CabLength) .."\n")
-    file:write("  Cabinet Depth       = ".. D2S(WallDim.CabDepth)  .."\n")
-    file:write("  Face Frame Diagonal = ".. math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2) .."\n")
-    file:write("============================================================================================================ \n")
+    file:write("  Cabinet Finish      = " .. BOM.WallCabinetFinish                .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.WallFaceFrameFinish              .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)     .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(WallDim.CabHeight)             .. "\n")
+      file:write("  Cabinet Width       = " .. D2S(WallDim.CabLength)             .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(WallDim.CabDepth)              .. "\n")
+      file:write("  Face Frame Diagonal = " .. DiagWall                           .. "\n")
+    else
+      file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)     .. " as " .. Double2Fraction(WallDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(WallDim.CabHeight) .. " (" .. D2S(WallDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(WallDim.CabLength) .. " (" .. D2S(WallDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(WallDim.CabDepth)  .. " (" .. D2S(WallDim.CabDepth)  .. ")\n")
+      file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
+    end
+    file:write(Lines)
     file:write("  Base Cabinet Size\n")
-    file:write("  Cabinet Finish      = ".. BOM.BaseCabinetFinish   .."\n")
-    file:write("  Face Frame Finish   = ".. BOM.BaseFaceFrameFinish .."\n")
-    file:write("  Cabinet Height      = ".. D2S(BaseDim.CabHeight) .."\n")
-    file:write("  Cabinet Length      = ".. D2S(BaseDim.CabLength) .."\n")
-    file:write("  Cabinet Depth       = ".. D2S(BaseDim.CabDepth)  .."\n")
-    file:write("  Face Frame Diagonal = ".. math.sqrt (BaseDim.CabHeight^2 + BaseDim.CabLength^2) .."\n")
+    file:write("  Cabinet Finish      = " .. BOM.BaseCabinetFinish                .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.BaseFaceFrameFinish              .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(BaseDim.CabHeight)             .. "\n")
+      file:write("  Cabinet  Width      = " .. D2S(BaseDim.CabLength)             .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(BaseDim.CabDepth)              .. "\n")
+      file:write("  Face Frame Diagonal = " .. DiagBase                           .. "\n")
+    else
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. " as ".. Double2Fraction(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(BaseDim.CabHeight) .. " (" .. D2S(BaseDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(BaseDim.CabLength) .. " (" .. D2S(BaseDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
+      file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
+    end
   elseif Cab == "Wall" then
     file:write("  Wall Cabinet Size\n")
-    file:write("  Cabinet Finish      = ".. BOM.WallCabinetFinish   .."\n")
-    file:write("  Face Frame Finish   = ".. BOM.BaseFaceFrameFinish .."\n")
-    file:write("  Cabinet Height      = ".. D2S(WallDim.CabHeight) .."\n")
-    file:write("  Cabinet Length      = ".. D2S(WallDim.CabLength) .."\n")
-    file:write("  Cabinet Depth       = ".. D2S(WallDim.CabDepth)  .."\n")
-    file:write("  Face Frame Diagonal = ".. math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2) .."\n")
+    file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)       .. "\n")
+    file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)       .. "\n")
+    file:write("  Cabinet Finish      = " .. BOM.WallCabinetFinish                .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.WallFaceFrameFinish              .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)     .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(WallDim.CabHeight)             .. "\n")
+      file:write("  Cabinet Width       = " .. D2S(WallDim.CabLength)             .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(WallDim.CabDepth)              .. "\n")
+      file:write("  Face Frame Diagonal = " .. DiagWall                           .. "\n")
+    else
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. " as " .. Double2Fraction(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(WallDim.CabHeight) .. " (" .. D2S(WallDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(WallDim.CabLength) .. " (" .. D2S(WallDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(WallDim.CabDepth)  .. " (" .. D2S(WallDim.CabDepth)  .. ")\n")
+      file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
+    end
   else
     file:write("  Base Cabinet Size\n")
-    file:write("  Cabinet Finish      = ".. BOM.BaseCabinetFinish   .."\n")
-    file:write("  Face Frame Finish   = ".. BOM.WallFaceFrameFinish .."\n")
-    file:write("  Cabinet Height      = ".. D2S(BaseDim.CabHeight) .."\n")
-    file:write("  Cabinet Length      = ".. D2S(BaseDim.CabLength) .."\n")
-    file:write("  Cabinet Depth       = ".. D2S(BaseDim.CabDepth)  .."\n")
-    file:write("  Face Frame Diagonal = ".. math.sqrt (BaseDim.CabHeight^2 + BaseDim.CabLength^2) .."\n")
+    file:write("  Cabinet Finish      = " .. BOM.BaseCabinetFinish   .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.BaseFaceFrameFinish .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(BaseDim.CabHeight) .. "\n")
+      file:write("  Cabinet Width       = " .. D2S(BaseDim.CabLength) .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(BaseDim.CabDepth)  .. "\n")
+      file:write("  Face Frame Diagonal = " .. DiagBase .. "\n")
+    else
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. " as " .. Double2Fraction(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(BaseDim.CabHeight) .. " (" .. D2S(BaseDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(BaseDim.CabLength) .. " (" .. D2S(BaseDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
+      file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
+    end
   end -- if Both
-  file:write("============================================================================================================ \n")
-  file:write("  ID | Part Name                    | Cabinet   | Count   | Thickness | Material        | Width   | Length\n")
-  file:write("============================================================================================================ \n")
+  file:write(Lines)
+  file:write("  ID | Part Name              | Type | No | Thick | Material  | Width     | Length \n")
+  file:write(Lines)
   file:close()
-  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .."-".. Project.DrawerID..  ".csv", "w")
+  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID .. ".csv", "w")
   file:write("Type,Cabinet,ID,Part Name,Count,Thick,Material,Finish,Width,Length\n")
   file:close()
 end
 -- =====================================================]]
 function CutListfileWriterItem(ID, Name, Cab, Count, Thick, Material, Finish, Width, Length)
+  local sThick, sWidth, sLength = ""
   if string.len(ID) == 2 then ID = " " .. ID end
-  local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID.. ".dat", "a")
+  local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-" .. Project.DrawerID .. ".dat", "a")
   local sID = " " .. ID .. " "
---  local sCabName  = string.sub("| ".. Project.CabinetName .. "                                              ",1, 31)
-  local sName     = string.sub("| ".. Name .. "                                              ",1, 31)
-  local sCab      = string.sub("| ".. Cab  .. "                                              ",1, 12)
-  local sCount    = string.sub("| ".. Count .."                                              ",1, 10)
-  local sThick    = string.sub("| ".. D2S(Thick) .."                                         ",1, 12)
-  local sMaterial = string.sub("| ".. Material .."                                           ",1, 18)
-  local sWidth    = string.sub("| ".. Padder(D2S(Width)) .."                                 ",1, 10)
-  local sLength   = string.sub("| ".. Padder(D2S(Length)).."                                 ",1,  9)
+  local Spc = "                                                         "
+  local sName     = string.sub("| "  .. Name .. Spc ,1, 25)
+  local sCab      = string.sub("| "  .. Cab  .. Spc ,1, 7)
+  local sCount    = string.sub("|  " .. Count .. Spc ,1, 5)
+  local sMaterial = string.sub("| "  .. Material .. Spc ,1, 12)
+  if Milling.Unit then
+    sThick    = string.sub("| " .. D2S(Thick) .. Spc ,1, 8)
+    sWidth    = string.sub("| " .. Padder(D2S(Width))  .. Spc ,1, 12)
+    sLength   = string.sub("| " .. Padder(D2S(Length)) .. Spc ,1,  12)
+  else
+    sThick    = string.sub("| " .. Double2Fraction(Thick)  .. Spc ,1, 8)
+    sWidth    = string.sub("| " .. Double2Fraction(Width)  .. Spc ,1, 12)
+    sLength   = string.sub("| " .. Double2Fraction(Length) .. Spc ,1, 12)
+  end
   file:write(sID .. sName .. sCab .. sCount .. sThick .. sMaterial .. sWidth .. sLength .. "\n")
   file:close()
-  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-".. Project.DrawerID.. ".csv", "a")
+  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-" .. Project.DrawerID .. ".csv", "a")
   file:write(Cab .. "," .. Project.CabinetName .. "," .. ID .. "," .. Name .. "," .. Count .. "," .. Thick .. "," .. Material .. "," .. Finish .. "," .. Width .. "," .. Length  .. "  \n")
   file:close()
 end
 -- =====================================================]]
 function CutListfileWriterFooter()
-  local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID.. ".dat", "a")
-  file:write("============================================================================================================ \n")
+  local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID .. ".dat", "a")
+  local Lines = "==================================================================================== \n"
+  file:write(Lines)
   file:write("EOF \n")
   file:close()
-  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-".. Project.DrawerID.. ".csv", "a")
+  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-".. Project.DrawerID .. ".csv", "a")
   file:write("\n")
   file:close()
   return true
@@ -620,6 +700,17 @@ function Importer(xFile)
   BOM.BaseCabinetFinish = GetIniValue(xFile, xGroup, "BOM.BaseCabinetFinish", "S")
   BOM.BaseFaceFrameFinish = GetIniValue(xFile, xGroup, "BOM.BaseFaceFrameFinish", "S")
   BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "BOM.WallFaceFrameFinish", "S")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Name", "S")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Manufacturer", "S")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Partnumber", "S")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Slidelength", "D")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Centerline", "D")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Hole1", "D")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Hole2", "D")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Hole3", "D")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Hole4", "D")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Hole5", "D")
+  BOM.WallFaceFrameFinish = GetIniValue(xFile, xGroup, "Hardware.Hole6", "D")
   return true
 end -- Function end
 -- =====================================================]]
@@ -852,6 +943,17 @@ function ExportWriter(xFile)
   fileW:write("BOM.BaseCabinetFinish = " .. BOM.BaseCabinetFinish .. "\n")
   fileW:write("BOM.BaseFaceFrameFinish = " .. BOM.BaseFaceFrameFinish .. "\n")
   fileW:write("BOM.WallFaceFrameFinish = " .. BOM.WallFaceFrameFinish .. "\n")
+  fileW:write("Hardware.Name = " .. Hardware.Name .. "\n")
+  fileW:write("Hardware.Manufacturer = " .. Hardware.Manufacturer .. "\n")
+  fileW:write("Hardware.Partnumber = " .. Hardware.Partnumber .. "\n")
+  fileW:write("Hardware.Slidelength = " .. tostring(Hardware.Slidelength) .. "\n")
+  fileW:write("Hardware.Centerline = " .. tostring(Hardware.Centerline) .. "\n")
+  fileW:write("Hardware.Hole1 = " .. tostring(Hardware.Hole1) .. "\n")
+  fileW:write("Hardware.Hole2 = " .. tostring(Hardware.Hole2) .. "\n")
+  fileW:write("Hardware.Hole3 = " .. tostring(Hardware.Hole3) .. "\n")
+  fileW:write("Hardware.Hole4 = " .. tostring(Hardware.Hole4) .. "\n")
+  fileW:write("Hardware.Hole5 = " .. tostring(Hardware.Hole5) .. "\n")
+  fileW:write("Hardware.Hole6 = " .. tostring(Hardware.Hole6) .. "\n")
   fileW:write("EOF\n")
   fileW:close()
   return true
@@ -872,40 +974,249 @@ function FaceFrameManiagement()
 end -- function end
 -- =====================================================]]
 function RegistryReset()  -- Read from Registry values
-  BaseDim.CabDepth                          = 23.000
-  BaseDim.CabHeight                         = 35.500
-  BaseDim.CabLength                         = 36.000
-  BaseDim.FaceFrameBottomRailWidth          = 1.5000
-  BaseDim.FaceFrameBottomReveal             = 0.0625
-  BaseDim.FaceFrameCenterStileWidth         = 1.7500
-  BaseDim.FaceFrameDrawerHeight1            = 5.0000
-  BaseDim.FaceFrameDrawerHeight2            = 6.0000
-  BaseDim.FaceFrameDrawerHeight3            = 6.0000
-  BaseDim.FaceFrameMidRailWidth             = 1.5000
-  BaseDim.FaceFrameSideReveal               = 0.2500
-  BaseDim.FaceFrameStileWidth               = 2.2500
-  BaseDim.FaceFrameThickness                = 0.7500
-  BaseDim.FaceFrameTopOverlap               = 0.7500
-  BaseDim.FaceFrameTopRailWidth             = 1.7500
-  BaseDim.MaterialThickness                 = 0.7500
-  BaseDim.ShelfEndClarence                  = 0.1800
-  BaseDim.ShelfFrontClearance               = 0.2500
-  BaseDim.ShelfHoleFirstRowSpacing          = 4.0000
-  BaseDim.ShelfHoleLastRowSpacing           = 3.0000
-  BaseDim.ShelfHoleSpacing                  = 2.0000
-  BaseDim.ShelfMaterialThickness            = 0.7500
-  BaseDim.ShelfNosingThickness              = 0.7500
-  BaseDim.ShelfNosingWidth                  = 1.2500
-  BaseDim.ShelfPinHoleBack                  = 3.0000
-  BaseDim.ShelfPinHoleFront                 = 2.7500
-  BaseDim.StretcherThickness                = 0.5000
-  BaseDim.StretcherWidth                    = 3.5000
-  BaseDim.ThicknessBack                     = 0.5000
-  BaseDim.ToeKickBottomOffsetHeight         = 0.5000
-  BaseDim.ToeKickCoverHeight                = 3.6875
-  BaseDim.ToeKickDepth                      = 3.0000
-  BaseDim.ToeKickHeight                     = 3.5000
-  BaseDim.TopFrameWidth                     = 3.7500
+  if Milling.Unit then
+    Project.TextHeight                        = 12.0
+    BaseDim.CabDepth                          = 580.0
+    BaseDim.CabHeight                         = 900.0
+    BaseDim.CabLength                         = 915.0
+    BaseDim.FaceFrameBottomRailWidth          = 38.0
+    BaseDim.FaceFrameBottomReveal             = 1.5
+    BaseDim.FaceFrameCenterStileWidth         = 45.0
+    BaseDim.FaceFrameDrawerHeight1            = 127.0
+    BaseDim.FaceFrameDrawerHeight2            = 152.0
+    BaseDim.FaceFrameDrawerHeight3            = 152.0
+    BaseDim.FaceFrameMidRailWidth             = 38.0
+    BaseDim.FaceFrameSideReveal               = 6.0
+    BaseDim.FaceFrameStileWidth               = 57.0
+    BaseDim.FaceFrameThickness                = 18.0
+    BaseDim.FaceFrameTopOverlap               = 18.0
+    BaseDim.FaceFrameTopRailWidth             = 45.0
+    BaseDim.MaterialThickness                 = 18.0
+    BaseDim.ShelfEndClarence                  = 4.5
+    BaseDim.ShelfFrontClearance               = 6.0
+    BaseDim.ShelfHoleFirstRowSpacing          = 100.0
+    BaseDim.ShelfHoleLastRowSpacing           = 75.0
+    BaseDim.ShelfHoleSpacing                  = 50.0
+    BaseDim.ShelfMaterialThickness            = 18.0
+    BaseDim.ShelfNosingThickness              = 18.0
+    BaseDim.ShelfNosingWidth                  = 32.0
+    BaseDim.ShelfPinHoleBack                  = 76.0
+    BaseDim.ShelfPinHoleFront                 = 70.0
+    BaseDim.StretcherThickness                = 12.0
+    BaseDim.StretcherWidth                    = 89.0
+    BaseDim.ThicknessBack                     = 12.0
+    BaseDim.ToeKickBottomOffsetHeight         = 12.0
+    BaseDim.ToeKickCoverHeight                = 94.0
+    BaseDim.ToeKickDepth                      = 75.0
+    BaseDim.ToeKickHeight                     = 89.0
+    BaseDim.TopFrameWidth                     = 95.0
+    Milling.DadoBlindAmount                   = 18.0
+    Milling.DadoBackHeight                    = 6.0
+    Milling.DadoClearance                     = 0.25
+    Milling.DadoHeight                        = 9.0
+    Milling.AssemblyHoleMaxSpace              = 300.0
+    Milling.AssemblyHoleMinSpace              = 50.0
+    Milling.AssemblyHoleStartEnd              = 25.0
+    Milling.MillTool1.FeedRate                = 760.0
+    Milling.MillTool1.PlungeRate              = 380.0
+    Milling.MillTool2.RateUnits               = 1
+    Milling.MillTool1.Stepdown                = 5.0
+    Milling.MillTool1.Stepover                = 2.0
+    Milling.MillTool1.ToolDia                 = 3.0
+    Milling.MillTool2.FeedRate                = 1525.0
+    Milling.MillTool2.PlungeRate              = 380.0
+    Milling.MillTool2.RateUnits               = 1
+    Milling.MillTool2.Stepdown                = 5.0
+    Milling.MillTool2.Stepover                = 2.0
+    Milling.MillTool2.ToolDia                 = 3.0
+    Milling.MillTool3.FeedRate                = 1525.0
+    Milling.MillTool3.PlungeRate              = 380.0
+    Milling.MillTool3.RateUnits               = 1
+    Milling.MillTool3.Stepdown                = 5.0
+    Milling.MillTool3.Stepover                = 2.5
+    Milling.MillTool3.ToolDia                 = 3.0
+    Milling.MillTool4.FeedRate                = 1525.0
+    Milling.MillTool4.PlungeRate              = 380.0
+    Milling.MillTool4.RateUnits               = 1
+    Milling.MillTool4.Stepdown                = 5.0
+    Milling.MillTool4.Stepover                = 2.0
+    Milling.MillTool4.ToolDia                 = 3.0
+    Milling.MillTool5.FeedRate                = 1525.0
+    Milling.MillTool5.PlungeRate              = 380.0
+    Milling.MillTool5.RateUnits               = 1
+    Milling.MillTool5.Stepdown                = 5.0
+    Milling.MillTool5.Stepover                = 2.0
+    Milling.MillTool5.ToolDia                 = 3.0
+    Milling.PartGap                           = 12.
+    Milling.PocketToolDia                     = 6.0
+    Milling.ProfileToolDia                    = 6.0
+    Milling.ProfileToolRadius                 = 3.0
+    Milling.ShelfNosingThickness              = 18.0
+    Milling.ShelfNosingWidth                  = 32.0
+    Milling.ShelfPinDiameter                  = 5.0
+    Milling.ShelfPinLen                       = 12.0
+    Milling.ShelfPinRadius                    = 2.5
+    WallDim.CabDepth                          = 304.0
+    WallDim.CabHeight                         = 712.0
+    WallDim.CabLength                         = 915.0
+    WallDim.FaceFrameBottomRailWidth          = 32.0
+    WallDim.FaceFrameBottomReveal             = 1.5
+    WallDim.FaceFrameCenterStileWidth         = 45.0
+    WallDim.FaceFrameSideReveal               = 1.5
+    WallDim.FaceFrameStileWidth               = 57.0
+    WallDim.FaceFrameThickness                = 18.0
+    WallDim.FaceFrameTopOverlap               = 18.0
+    WallDim.FaceFrameTopRailWidth             = 45.0
+    WallDim.FaceFrameTopReveal                = 6.0
+    WallDim.MaterialThickness                 = 18.0
+    WallDim.ShelfEndClarence                  = 4.5
+    WallDim.ShelfFaceFrameThickness           = 18.0
+    WallDim.ShelfFaceFrameWidth               = 32.0
+    WallDim.ShelfFrontClearance               = 6.0
+    WallDim.ShelfHoleFirstRowSpacing          = 100.0
+    WallDim.ShelfHoleLastRowSpacing           = 76.0
+    WallDim.ShelfHoleSpacing                  = 50.0
+    WallDim.ShelfMaterialThickness            = 18.0
+    WallDim.ShelfNosingThickness              = 18.0
+    WallDim.ShelfNosingWidth                  = 32.0
+    WallDim.ShelfPinHoleBack                  = 50.0
+    WallDim.ShelfPinHoleFront                 = 45.0
+    WallDim.ThicknessBack                     = 12.0
+    Milling.MillTool1.InMM                    = true
+    Milling.MillTool2.InMM                    = true
+    Milling.MillTool3.InMM                    = true
+    Milling.MillTool4.InMM                    = true
+    Milling.MillTool5.InMM                    = true
+    Hardware.Slidelength                      = 610.0
+    Hardware.Centerline                       = 32.0
+    Hardware.Hole1                            = 32.0
+    Hardware.Hole2                            = 140.0
+    Hardware.Hole3                            = 235.0
+    Hardware.Hole4                            = 304.0
+    Hardware.Hole5                            = 406.0
+    Hardware.Hole6                            = 0.0
+  else
+    Project.TextHeight                        = 0.5000
+    BaseDim.CabDepth                          = 23.000
+    BaseDim.CabHeight                         = 35.500
+    BaseDim.CabLength                         = 36.000
+    BaseDim.FaceFrameBottomRailWidth          = 1.5000
+    BaseDim.FaceFrameBottomReveal             = 0.0625
+    BaseDim.FaceFrameCenterStileWidth         = 1.7500
+    BaseDim.FaceFrameDrawerHeight1            = 5.0000
+    BaseDim.FaceFrameDrawerHeight2            = 6.0000
+    BaseDim.FaceFrameDrawerHeight3            = 6.0000
+    BaseDim.FaceFrameMidRailWidth             = 1.5000
+    BaseDim.FaceFrameSideReveal               = 0.2500
+    BaseDim.FaceFrameStileWidth               = 2.2500
+    BaseDim.FaceFrameThickness                = 0.7500
+    BaseDim.FaceFrameTopOverlap               = 0.7500
+    BaseDim.FaceFrameTopRailWidth             = 1.7500
+    BaseDim.MaterialThickness                 = 0.7500
+    BaseDim.ShelfEndClarence                  = 0.1800
+    BaseDim.ShelfFrontClearance               = 0.2500
+    BaseDim.ShelfHoleFirstRowSpacing          = 4.0000
+    BaseDim.ShelfHoleLastRowSpacing           = 3.0000
+    BaseDim.ShelfHoleSpacing                  = 2.0000
+    BaseDim.ShelfMaterialThickness            = 0.7500
+    BaseDim.ShelfNosingThickness              = 0.7500
+    BaseDim.ShelfNosingWidth                  = 1.2500
+    BaseDim.ShelfPinHoleBack                  = 3.0000
+    BaseDim.ShelfPinHoleFront                 = 2.7500
+    BaseDim.StretcherThickness                = 0.5000
+    BaseDim.StretcherWidth                    = 3.5000
+    BaseDim.ThicknessBack                     = 0.5000
+    BaseDim.ToeKickBottomOffsetHeight         = 0.5000
+    BaseDim.ToeKickCoverHeight                = 3.6875
+    BaseDim.ToeKickDepth                      = 3.0000
+    BaseDim.ToeKickHeight                     = 3.5000
+    BaseDim.TopFrameWidth                     = 3.7500
+    Milling.DadoBlindAmount                   = 0.7500
+    Milling.DadoBackHeight                    = 0.2500
+    Milling.DadoClearance                     = 0.0100
+    Milling.DadoHeight                        = 0.3750
+    Milling.AssemblyHoleMaxSpace              = 12.000
+    Milling.AssemblyHoleMinSpace              = 2.000
+    Milling.AssemblyHoleStartEnd              = 1.000
+    Milling.MillTool1.FeedRate                = 30.000
+    Milling.MillTool1.PlungeRate              = 15.000
+    Milling.MillTool2.RateUnits               = 4
+    Milling.MillTool1.Stepdown                = 0.2000
+    Milling.MillTool1.Stepover                = 0.0825
+    Milling.MillTool1.ToolDia                 = 0.1250
+    Milling.MillTool2.FeedRate                = 60.000
+    Milling.MillTool2.PlungeRate              = 15.000
+    Milling.MillTool2.RateUnits               = 4
+    Milling.MillTool2.Stepdown                = 0.2000
+    Milling.MillTool2.Stepover                = 0.0825
+    Milling.MillTool2.ToolDia                 = 0.1250
+    Milling.MillTool3.FeedRate                = 30.000
+    Milling.MillTool3.PlungeRate              = 15.000
+    Milling.MillTool3.RateUnits               = 4
+    Milling.MillTool3.Stepdown                = 0.2000
+    Milling.MillTool3.Stepover                = 0.0825
+    Milling.MillTool3.ToolDia                 = 0.1250
+    Milling.MillTool4.FeedRate                = 30.000
+    Milling.MillTool4.PlungeRate              = 15.000
+    Milling.MillTool4.RateUnits               = 4
+    Milling.MillTool4.Stepdown                = 0.2000
+    Milling.MillTool4.Stepover                = 0.0825
+    Milling.MillTool4.ToolDia                 = 0.1250
+    Milling.MillTool5.FeedRate                = 30.000
+    Milling.MillTool5.PlungeRate              = 15.000
+    Milling.MillTool5.RateUnits               = 4
+    Milling.MillTool5.Stepdown                = 0.2000
+    Milling.MillTool5.Stepover                = 0.0825
+    Milling.MillTool5.ToolDia                 = 0.1250
+    Milling.PartGap                           = 0.5000
+    Milling.PocketToolDia                     = 0.2500
+    Milling.ProfileToolDia                    = 0.2500
+    Milling.ProfileToolRadius                 = 0.1250
+    Milling.ShelfNosingThickness              = 0.7500
+    Milling.ShelfNosingWidth                  = 1.2500
+    Milling.ShelfPinDiameter                  = 0.1940
+    Milling.ShelfPinLen                       = 0.5000
+    Milling.ShelfPinRadius                    = 0.0970
+    WallDim.CabDepth                          = 12.000
+    WallDim.CabHeight                         = 28.000
+    WallDim.CabLength                         = 36.000
+    WallDim.FaceFrameBottomRailWidth          = 1.2500
+    WallDim.FaceFrameBottomReveal             = 0.0625
+    WallDim.FaceFrameCenterStileWidth         = 1.7500
+    WallDim.FaceFrameSideReveal               = 0.0625
+    WallDim.FaceFrameStileWidth               = 2.2500
+    WallDim.FaceFrameThickness                = 0.7500
+    WallDim.FaceFrameTopOverlap               = 0.7500
+    WallDim.FaceFrameTopRailWidth             = 1.7500
+    WallDim.FaceFrameTopReveal                = 0.2500
+    WallDim.MaterialThickness                 = 0.7500
+    WallDim.ShelfEndClarence                  = 0.1800
+    WallDim.ShelfFaceFrameThickness           = 0.7500
+    WallDim.ShelfFaceFrameWidth               = 1.2500
+    WallDim.ShelfFrontClearance               = 0.2500
+    WallDim.ShelfHoleFirstRowSpacing          = 4.0000
+    WallDim.ShelfHoleLastRowSpacing           = 3.0000
+    WallDim.ShelfHoleSpacing                  = 2.0000
+    WallDim.ShelfMaterialThickness            = 0.7500
+    WallDim.ShelfNosingThickness              = 0.7500
+    WallDim.ShelfNosingWidth                  = 1.1250
+    WallDim.ShelfPinHoleBack                  = 2.0000
+    WallDim.ShelfPinHoleFront                 = 1.7500
+    WallDim.ThicknessBack                     = 0.5000
+    Milling.MillTool1.InMM                    = false
+    Milling.MillTool2.InMM                    = false
+    Milling.MillTool3.InMM                    = false
+    Milling.MillTool4.InMM                    = false
+    Milling.MillTool5.InMM                    = false
+    Hardware.Slidelength                      = 24.00
+    Hardware.Centerline                       = 1.250
+    Hardware.Hole1                            = 1.250
+    Hardware.Hole2                            = 5.500
+    Hardware.Hole3                            = 9.250
+    Hardware.Hole4                            = 12.00
+    Hardware.Hole5                            = 15.00
+    Hardware.Hole6                            = 0.000
+  end
   BaseQuestion.AddCenterFaceFrame           = true
   BaseQuestion.AddCenterPanel               = true
   BaseQuestion.AddStrecherPocket            = true
@@ -923,19 +1234,15 @@ function RegistryReset()  -- Read from Registry values
   DialogWindow.ExportSettings               = "407 X 136"
   DialogWindow.ImportSettings               = "725 X 160"
   DialogWindow.InquiryWallOrBaseXY          = "530 X 520"
-  DialogWindow.LayerXY                      = "653 X 512"
+  DialogWindow.LayerXY                      = "653 X 536"
   DialogWindow.MillingXY                    = "620 X 374"
   DialogWindow.PartDrawingXY                = "408 X 303"
-  DialogWindow.ProjectXY                    = "651 X 477"
+  DialogWindow.ProjectXY                    = "651 X 502"
   DialogWindow.WallCabinetXY                = "635 X 438"
   Milling.DadoType                          = "Through"
-  Milling.DadoBlindAmount                   = 0.7500
   Milling.AddAssemblyHolesBase              = true
   Milling.AddAssemblyHolesWall              = true
   Milling.AddJointNotes                     = true
-  Milling.DadoBackHeight                    = 0.2500
-  Milling.DadoClearance                     = 0.0100
-  Milling.DadoHeight                        = 0.3750
   Milling.LNBackPocket                      = "BackPanelPocket"
   Milling.LNBackPocketColor                 = "Red"
   Milling.LNBackProfile                     = "BackPanelProfile"
@@ -966,68 +1273,21 @@ function RegistryReset()  -- Read from Registry values
   Milling.LNTopBottomPocketColor            = "Red"
   Milling.LNTopBottomProfile                = "BottomPanelProfile"
   Milling.LNTopBottomProfileColor           = "Black"
-  Milling.AssemblyHoleMaxSpace              = 12.000
-  Milling.AssemblyHoleMinSpace              = 2.000
-  Milling.AssemblyHoleStartEnd              = 1.000
-  Milling.MillTool1.FeedRate                = 30.000
-  Milling.MillTool1.InMM                    = false
   Milling.MillTool1.Name                    = "No Tool Selected"
-  Milling.MillTool1.PlungeRate              = 15.000
-  Milling.MillTool1.RateUnits               = 4
   Milling.MillTool1.SpindleSpeed            = 20000
-  Milling.MillTool1.Stepdown                = 0.2000
-  Milling.MillTool1.Stepover                = 0.0825
-  Milling.MillTool1.ToolDia                 = 0.1250
   Milling.MillTool1.ToolNumber              = 1
-  Milling.MillTool2.FeedRate                = 60.000
-  Milling.MillTool2.InMM                    = false
   Milling.MillTool2.Name                    = "No Tool Selected"
-  Milling.MillTool2.PlungeRate              = 15.000
-  Milling.MillTool2.RateUnits               = 4
   Milling.MillTool2.SpindleSpeed            = 20000
-  Milling.MillTool2.Stepdown                = 0.2000
-  Milling.MillTool2.Stepover                = 0.0825
-  Milling.MillTool2.ToolDia                 = 0.1250
   Milling.MillTool2.ToolNumber              = 2
-  Milling.MillTool3.FeedRate                = 30.000
-  Milling.MillTool3.InMM                    = false
   Milling.MillTool3.Name                    = "No Tool Selected"
-  Milling.MillTool3.PlungeRate              = 15.000
-  Milling.MillTool3.RateUnits               = 4
   Milling.MillTool3.SpindleSpeed            = 20000
-  Milling.MillTool3.Stepdown                = 0.2000
-  Milling.MillTool3.Stepover                = 0.0825
-  Milling.MillTool3.ToolDia                 = 0.1250
-  Milling.MillTool3.ToolNumber              = 4
-  Milling.MillTool4.FeedRate                = 30.000
-  Milling.MillTool4.InMM                    = false
+  Milling.MillTool3.ToolNumber              = 3
   Milling.MillTool4.Name                    = "No Tool Selected"
-  Milling.MillTool4.PlungeRate              = 15.000
-  Milling.MillTool4.RateUnits               = 4
-  Milling.MillTool4.SpindleSpeed            = 20000
-  Milling.MillTool4.Stepdown                = 0.2000
-  Milling.MillTool4.Stepover                = 0.0825
-  Milling.MillTool4.ToolDia                 = 0.1250
-  Milling.MillTool4.ToolNumber              = 5
-  Milling.MillTool5.FeedRate                = 30.000
-  Milling.MillTool5.InMM                    = false
+  Milling.MillTool4.SpindleSpeed            = 8000
+  Milling.MillTool4.ToolNumber              = 4
   Milling.MillTool5.Name                    = "No Tool Selected"
-  Milling.MillTool5.PlungeRate              = 15.000
-  Milling.MillTool5.RateUnits               = 4
-  Milling.MillTool5.SpindleSpeed            = 20000
-  Milling.MillTool5.Stepdown                = 0.2000
-  Milling.MillTool5.Stepover                = 0.0825
-  Milling.MillTool5.ToolDia                 = 0.1250
-  Milling.MillTool5.ToolNumber              = 6
-  Milling.PartGap                           = 0.5000
-  Milling.PocketToolDia                     = 0.2500
-  Milling.ProfileToolDia                    = 0.2500
-  Milling.ProfileToolRadius                 = 0.1250
-  Milling.ShelfNosingThickness              = 0.7500
-  Milling.ShelfNosingWidth                  = 1.2500
-  Milling.ShelfPinDiameter                  = 0.1940
-  Milling.ShelfPinLen                       = 0.5000
-  Milling.ShelfPinRadius                    = 0.0970
+  Milling.MillTool5.SpindleSpeed            = 8000
+  Milling.MillTool5.ToolNumber              = 5
   Project.CabinetName                       = "Default"
   Project.NewSheet                          = "Yes"
   Project.CabinetStyle                      = "Face Frame" -- No Face Frame
@@ -1041,32 +1301,6 @@ function RegistryReset()  -- Read from Registry values
   Project.PhoneNumber                       = "(123456-7890"
   Project.ProjectName                       = "CABINET PROJECTS"
   Project.ProjectPath                       = "Default"
-  WallDim.CabDepth                          = 12.0000
-  WallDim.CabHeight                         = 28.000
-  WallDim.CabLength                         = 36.000
-  WallDim.FaceFrameBottomRailWidth          = 1.2500
-  WallDim.FaceFrameBottomReveal             = 0.0625
-  WallDim.FaceFrameCenterStileWidth         = 1.7500
-  WallDim.FaceFrameSideReveal               = 0.0625
-  WallDim.FaceFrameStileWidth               = 2.2500
-  WallDim.FaceFrameThickness                = 0.7500
-  WallDim.FaceFrameTopOverlap               = 0.7500
-  WallDim.FaceFrameTopRailWidth             = 1.7500
-  WallDim.FaceFrameTopReveal                = 0.2500
-  WallDim.MaterialThickness                 = 0.7500
-  WallDim.ShelfEndClarence                  = 0.1800
-  WallDim.ShelfFaceFrameThickness           = 0.7500
-  WallDim.ShelfFaceFrameWidth               = 1.2500
-  WallDim.ShelfFrontClearance               = 0.2500
-  WallDim.ShelfHoleFirstRowSpacing          = 4.0000
-  WallDim.ShelfHoleLastRowSpacing           = 3.0000
-  WallDim.ShelfHoleSpacing                  = 2.0000
-  WallDim.ShelfMaterialThickness            = 0.7500
-  WallDim.ShelfNosingThickness              = 0.7500
-  WallDim.ShelfNosingWidth                  = 1.1250
-  WallDim.ShelfPinHoleBack                  = 2.0000
-  WallDim.ShelfPinHoleFront                 = 1.7500
-  WallDim.ThicknessBack                     = 0.5000
   WallQuestion.AddCenterFaceFrame           = true
   WallQuestion.AddCenterPanel               = false
   WallQuestion.DrawBackPanel                = true
@@ -1085,46 +1319,260 @@ function RegistryReset()  -- Read from Registry values
   BOM.BaseFaceFrameMateralType              = "Hardwood"
   BOM.BaseCabinetFinish                     = "None"
   BOM.BaseFaceFrameFinish                   = "None"
+  Hardware.Name                             = "Blum 230M6000 24.0"
+  Hardware.Manufacturer                     = "Blum"
+  Hardware.Partnumber                       = "230M6000"
   RegistryWrite()
   return true
 end
 -- =====================================================]]
 function RegistryRead()  -- Read from Registry values
-  local RegistryRead                        = Registry(RegName)
-  BaseDim.CabDepth                          = RegistryRead:GetDouble("BaseDim.CabDepth",                        23.000)
-  BaseDim.CabHeight                         = RegistryRead:GetDouble("BaseDim.CabHeight",                       35.500)
-  BaseDim.CabLength                         = RegistryRead:GetDouble("BaseDim.CabLength",                       36.000)
-  BaseDim.FaceFrameBottomRailWidth          = RegistryRead:GetDouble("BaseDim.FaceFrameBottomRailWidth",        1.5000)
-  BaseDim.FaceFrameBottomReveal             = RegistryRead:GetDouble("BaseDim.FaceFrameBottomReveal",           0.0625)
-  BaseDim.FaceFrameCenterStileWidth         = RegistryRead:GetDouble("BaseDim.FaceFrameCenterStileWidth",       1.7500)
-  BaseDim.FaceFrameDrawerHeight1            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight1",          5.0000)
-  BaseDim.FaceFrameDrawerHeight2            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight2",          6.0000)
-  BaseDim.FaceFrameDrawerHeight3            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight3",          6.0000)
-  BaseDim.FaceFrameMidRailWidth             = RegistryRead:GetDouble("BaseDim.FaceFrameMidRailWidth",           1.5000)
-  BaseDim.FaceFrameSideReveal               = RegistryRead:GetDouble("BaseDim.FaceFrameSideReveal",             0.2500)
-  BaseDim.FaceFrameStileWidth               = RegistryRead:GetDouble("BaseDim.FaceFrameStileWidth",             2.2500)
-  BaseDim.FaceFrameThickness                = RegistryRead:GetDouble("BaseDim.FaceFrameThickness",              0.7500)
-  BaseDim.FaceFrameTopOverlap               = RegistryRead:GetDouble("BaseDim.FaceFrameTopOverlap",             0.7500)
-  BaseDim.FaceFrameTopRailWidth             = RegistryRead:GetDouble("BaseDim.FaceFrameTopRailWidth",           1.7500)
-  BaseDim.MaterialThickness                 = RegistryRead:GetDouble("BaseDim.MaterialThickness",               0.7500)
-  BaseDim.ShelfEndClarence                  = RegistryRead:GetDouble("BaseDim.ShelfEndClarence",                0.1800)
-  BaseDim.ShelfFrontClearance               = RegistryRead:GetDouble("BaseDim.ShelfFrontClearance",             0.2500)
-  BaseDim.ShelfHoleFirstRowSpacing          = RegistryRead:GetDouble("BaseDim.ShelfHoleFirstRowSpacing",        4.0000)
-  BaseDim.ShelfHoleLastRowSpacing           = RegistryRead:GetDouble("BaseDim.ShelfHoleLastRowSpacing",         3.0000)
-  BaseDim.ShelfHoleSpacing                  = RegistryRead:GetDouble("BaseDim.ShelfHoleSpacing",                2.0000)
-  BaseDim.ShelfMaterialThickness            = RegistryRead:GetDouble("BaseDim.ShelfMaterialThickness",          0.7500)
-  BaseDim.ShelfNosingThickness              = RegistryRead:GetDouble("BaseDim.ShelfNosingThickness",            0.7500)
-  BaseDim.ShelfNosingWidth                  = RegistryRead:GetDouble("BaseDim.ShelfNosingWidth",                1.2500)
-  BaseDim.ShelfPinHoleBack                  = RegistryRead:GetDouble("BaseDim.ShelfPinHoleBack",                3.0000)
-  BaseDim.ShelfPinHoleFront                 = RegistryRead:GetDouble("BaseDim.ShelfPinHoleFront",               2.7500)
-  BaseDim.StretcherThickness                = RegistryRead:GetDouble("BaseDim.StretcherThickness",              0.5000)
-  BaseDim.StretcherWidth                    = RegistryRead:GetDouble("BaseDim.StretcherWidth",                  3.5000)
-  BaseDim.ThicknessBack                     = RegistryRead:GetDouble("BaseDim.ThicknessBack",                   0.5000)
-  BaseDim.ToeKickBottomOffsetHeight         = RegistryRead:GetDouble("BaseDim.ToeKickBottomOffsetHeight",       0.5000)
-  BaseDim.ToeKickCoverHeight                = RegistryRead:GetDouble("BaseDim.ToeKickCoverHeight",              3.6875)
-  BaseDim.ToeKickDepth                      = RegistryRead:GetDouble("BaseDim.ToeKickDepth",                    3.0000)
-  BaseDim.ToeKickHeight                     = RegistryRead:GetDouble("BaseDim.ToeKickHeight",                   3.5000)
-  BaseDim.TopFrameWidth                     = RegistryRead:GetDouble("BaseDim.TopFrameWidth",                   3.7500)
+  local RegistryRead = Registry(RegName)
+  if Milling.Unit then
+    Project.TextHeight                        = RegistryRead:GetDouble("Project.TextHeight",                      12.000)
+    BaseDim.CabDepth                          = RegistryRead:GetDouble("BaseDim.CabDepth",                        580.00)
+    BaseDim.CabHeight                         = RegistryRead:GetDouble("BaseDim.CabHeight",                       900.00)
+    BaseDim.CabLength                         = RegistryRead:GetDouble("BaseDim.CabLength",                       915.00)
+    BaseDim.FaceFrameBottomRailWidth          = RegistryRead:GetDouble("BaseDim.FaceFrameBottomRailWidth",        38.000)
+    BaseDim.FaceFrameBottomReveal             = RegistryRead:GetDouble("BaseDim.FaceFrameBottomReveal",           1.5000)
+    BaseDim.FaceFrameCenterStileWidth         = RegistryRead:GetDouble("BaseDim.FaceFrameCenterStileWidth",       45.000)
+    BaseDim.FaceFrameDrawerHeight1            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight1",          127.00)
+    BaseDim.FaceFrameDrawerHeight2            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight2",          152.00)
+    BaseDim.FaceFrameDrawerHeight3            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight3",          152.00)
+    BaseDim.FaceFrameMidRailWidth             = RegistryRead:GetDouble("BaseDim.FaceFrameMidRailWidth",           38.000)
+    BaseDim.FaceFrameSideReveal               = RegistryRead:GetDouble("BaseDim.FaceFrameSideReveal",             6.0000)
+    BaseDim.FaceFrameStileWidth               = RegistryRead:GetDouble("BaseDim.FaceFrameStileWidth",             57.000)
+    BaseDim.FaceFrameThickness                = RegistryRead:GetDouble("BaseDim.FaceFrameThickness",              18.000)
+    BaseDim.FaceFrameTopOverlap               = RegistryRead:GetDouble("BaseDim.FaceFrameTopOverlap",             18.000)
+    BaseDim.FaceFrameTopRailWidth             = RegistryRead:GetDouble("BaseDim.FaceFrameTopRailWidth",           45.000)
+    BaseDim.MaterialThickness                 = RegistryRead:GetDouble("BaseDim.MaterialThickness",               18.000)
+    BaseDim.ShelfEndClarence                  = RegistryRead:GetDouble("BaseDim.ShelfEndClarence",                4.5000)
+    BaseDim.ShelfFrontClearance               = RegistryRead:GetDouble("BaseDim.ShelfFrontClearance",             6.0000)
+    BaseDim.ShelfHoleFirstRowSpacing          = RegistryRead:GetDouble("BaseDim.ShelfHoleFirstRowSpacing",        100.00)
+    BaseDim.ShelfHoleLastRowSpacing           = RegistryRead:GetDouble("BaseDim.ShelfHoleLastRowSpacing",         76.000)
+    BaseDim.ShelfHoleSpacing                  = RegistryRead:GetDouble("BaseDim.ShelfHoleSpacing",                50.000)
+    BaseDim.ShelfMaterialThickness            = RegistryRead:GetDouble("BaseDim.ShelfMaterialThickness",          18.000)
+    BaseDim.ShelfNosingThickness              = RegistryRead:GetDouble("BaseDim.ShelfNosingThickness",            18.000)
+    BaseDim.ShelfNosingWidth                  = RegistryRead:GetDouble("BaseDim.ShelfNosingWidth",                32.000)
+    BaseDim.ShelfPinHoleBack                  = RegistryRead:GetDouble("BaseDim.ShelfPinHoleBack",                76.000)
+    BaseDim.ShelfPinHoleFront                 = RegistryRead:GetDouble("BaseDim.ShelfPinHoleFront",               70.000)
+    BaseDim.StretcherThickness                = RegistryRead:GetDouble("BaseDim.StretcherThickness",              12.000)
+    BaseDim.StretcherWidth                    = RegistryRead:GetDouble("BaseDim.StretcherWidth",                  89.000)
+    BaseDim.ThicknessBack                     = RegistryRead:GetDouble("BaseDim.ThicknessBack",                   12.000)
+    BaseDim.ToeKickBottomOffsetHeight         = RegistryRead:GetDouble("BaseDim.ToeKickBottomOffsetHeight",       12.000)
+    BaseDim.ToeKickCoverHeight                = RegistryRead:GetDouble("BaseDim.ToeKickCoverHeight",              94.000)
+    BaseDim.ToeKickDepth                      = RegistryRead:GetDouble("BaseDim.ToeKickDepth",                    76.000)
+    BaseDim.ToeKickHeight                     = RegistryRead:GetDouble("BaseDim.ToeKickHeight",                   89.000)
+    BaseDim.TopFrameWidth                     = RegistryRead:GetDouble("BaseDim.TopFrameWidth",                   95.000)
+    Milling.DadoBlindAmount                   = RegistryRead:GetDouble("Milling.DadoBlindAmount",                 18.000)
+    Milling.DadoBackHeight                    = RegistryRead:GetDouble("Milling.DadoBackHeight",                  6.0000)
+    Milling.DadoClearance                     = RegistryRead:GetDouble("Milling.DadoClearance",                   0.2500)
+    Milling.DadoHeight                        = RegistryRead:GetDouble("Milling.DadoHeight",                      0.3750)
+    Milling.AssemblyHoleMaxSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMaxSpace",            304.00)
+    Milling.AssemblyHoleMinSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMinSpace",            50.000)
+    Milling.AssemblyHoleStartEnd              = RegistryRead:GetDouble("Milling.AssemblyHoleStartEnd",            25.000)
+    Milling.MillTool1.FeedRate                = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",              760.00)
+    Milling.MillTool1.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",            380.00)
+    Milling.MillTool1.RateUnits               = RegistryRead:GetInt("Milling.MillTool1.RateUnits",                1)
+    Milling.MillTool1.Stepdown                = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",              5.00)
+    Milling.MillTool1.Stepover                = RegistryRead:GetDouble("Milling.MillTool1.Stepover",              2.0)
+    Milling.MillTool1.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",               3.00)
+    Milling.MillTool2.FeedRate                = RegistryRead:GetDouble("Milling.MillTool2.FeedRate",              152100.0)
+    Milling.MillTool2.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool2.PlungeRate",            380.0)
+    Milling.MillTool2.RateUnits               = RegistryRead:GetInt("Milling.MillTool2.RateUnits",                1)
+    Milling.MillTool2.Stepdown                = RegistryRead:GetDouble("Milling.MillTool2.Stepdown",              5.00)
+    Milling.MillTool2.Stepover                = RegistryRead:GetDouble("Milling.MillTool2.Stepover",              2.0)
+    Milling.MillTool2.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool2.ToolDia",               3.00)
+    Milling.MillTool3.FeedRate                = RegistryRead:GetDouble("Milling.MillTool3.FeedRate",              760.0)
+    Milling.MillTool3.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool3.PlungeRate",            380.0)
+    Milling.MillTool3.RateUnits               = RegistryRead:GetInt("Milling.MillTool3.RateUnits",                1)
+    Milling.MillTool3.Stepdown                = RegistryRead:GetDouble("Milling.MillTool3.Stepdown",              5.00)
+    Milling.MillTool3.Stepover                = RegistryRead:GetDouble("Milling.MillTool3.Stepover",              2.0)
+    Milling.MillTool3.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool3.ToolDia",               3.00)
+    Milling.MillTool4.FeedRate                = RegistryRead:GetDouble("Milling.MillTool4.FeedRate",              760.0)
+    Milling.MillTool4.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool4.PlungeRate",            380.0)
+    Milling.MillTool4.RateUnits               = RegistryRead:GetInt("Milling.MillTool4.RateUnits",                1)
+    Milling.MillTool4.Stepdown                = RegistryRead:GetDouble("Milling.MillTool4.Stepdown",              5.00)
+    Milling.MillTool4.Stepover                = RegistryRead:GetDouble("Milling.MillTool4.Stepover",              2.0)
+    Milling.MillTool4.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool4.ToolDia",               3.00)
+    Milling.MillTool5.FeedRate                = RegistryRead:GetDouble("Milling.MillTool5.FeedRate",              760.0)
+    Milling.MillTool5.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool5.PlungeRate",            380.0)
+    Milling.MillTool5.RateUnits               = RegistryRead:GetInt("Milling.MillTool5.RateUnits",                1)
+    Milling.MillTool5.Stepdown                = RegistryRead:GetDouble("Milling.MillTool5.Stepdown",              5.00)
+    Milling.MillTool5.Stepover                = RegistryRead:GetDouble("Milling.MillTool5.Stepover",              2.0)
+    Milling.MillTool5.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool5.ToolDia",               3.00)
+    Milling.PartGap                           = RegistryRead:GetDouble("Milling.PartGap",                         12.00)
+    Milling.PocketToolDia                     = RegistryRead:GetDouble("Milling.PocketToolDia",                   6.00)
+    Milling.ProfileToolDia                    = RegistryRead:GetDouble("Milling.ProfileToolDia",                  6.00)
+    Milling.ProfileToolRadius                 = RegistryRead:GetDouble("Milling.ProfileToolRadius",               3.00)
+    Milling.ShelfNosingThickness              = RegistryRead:GetDouble("Milling.ShelfNosingThickness",            18.00)
+    Milling.ShelfNosingWidth                  = RegistryRead:GetDouble("Milling.ShelfNosingWidth",                32.00)
+    Milling.ShelfPinDiameter                  = RegistryRead:GetDouble("Milling.ShelfPinDiameter",                5.00)
+    Milling.ShelfPinLen                       = RegistryRead:GetDouble("Milling.ShelfPinLen",                     12.00)
+    Milling.ShelfPinRadius                    = RegistryRead:GetDouble("Milling.ShelfPinRadius",                  2.00)
+    WallDim.CabDepth                          = RegistryRead:GetDouble("WallDim.CabDepth",                        304.0)
+    WallDim.CabHeight                         = RegistryRead:GetDouble("WallDim.CabHeight",                       712.0)
+    WallDim.CabLength                         = RegistryRead:GetDouble("WallDim.CabLength",                       915.0)
+    WallDim.FaceFrameBottomRailWidth          = RegistryRead:GetDouble("WallDim.FaceFrameBottomRailWidth",        32.00)
+    WallDim.FaceFrameBottomReveal             = RegistryRead:GetDouble("WallDim.FaceFrameBottomReveal",           1.50)
+    WallDim.FaceFrameCenterStileWidth         = RegistryRead:GetDouble("WallDim.FaceFrameCenterStileWidth",       45.00)
+    WallDim.FaceFrameSideReveal               = RegistryRead:GetDouble("WallDim.FaceFrameSideReveal",             1.50)
+    WallDim.FaceFrameStileWidth               = RegistryRead:GetDouble("WallDim.FaceFrameStileWidth",             57.00)
+    WallDim.FaceFrameThickness                = RegistryRead:GetDouble("WallDim.FaceFrameThickness",              18.00)
+    WallDim.FaceFrameTopOverlap               = RegistryRead:GetDouble("WallDim.FaceFrameTopOverlap",             18.00)
+    WallDim.FaceFrameTopRailWidth             = RegistryRead:GetDouble("WallDim.FaceFrameTopRailWidth",           45.00)
+    WallDim.FaceFrameTopReveal                = RegistryRead:GetDouble("WallDim.FaceFrameTopReveal",              6.00)
+    WallDim.MaterialThickness                 = RegistryRead:GetDouble("WallDim.MaterialThickness",               18.00)
+    WallDim.ShelfEndClarence                  = RegistryRead:GetDouble("WallDim.ShelfEndClarence",                4.50)
+    WallDim.ShelfFaceFrameThickness           = RegistryRead:GetDouble("WallDim.ShelfFaceFrameThickness",         18.00)
+    WallDim.ShelfFaceFrameWidth               = RegistryRead:GetDouble("WallDim.ShelfFaceFrameWidth",             32.00)
+    WallDim.ShelfFrontClearance               = RegistryRead:GetDouble("WallDim.ShelfFrontClearance",             6.00)
+    WallDim.ShelfHoleFirstRowSpacing          = RegistryRead:GetDouble("WallDim.ShelfHoleFirstRowSpacing",        100.00)
+    WallDim.ShelfHoleLastRowSpacing           = RegistryRead:GetDouble("WallDim.ShelfHoleLastRowSpacing",         76.00)
+    WallDim.ShelfHoleSpacing                  = RegistryRead:GetDouble("WallDim.ShelfHoleSpacing",                50.00)
+    WallDim.ShelfMaterialThickness            = RegistryRead:GetDouble("WallDim.ShelfMaterialThickness",          18.00)
+    WallDim.ShelfNosingThickness              = RegistryRead:GetDouble("WallDim.ShelfNosingThickness",            18.00)
+    WallDim.ShelfNosingWidth                  = RegistryRead:GetDouble("WallDim.ShelfNosingWidth",                28.00)
+    WallDim.ShelfPinHoleBack                  = RegistryRead:GetDouble("WallDim.ShelfPinHoleBack",                50.00)
+    WallDim.ShelfPinHoleFront                 = RegistryRead:GetDouble("WallDim.ShelfPinHoleFront",               45.00)
+    WallDim.ThicknessBack                     = RegistryRead:GetDouble("WallDim.ThicknessBack",                   12.00)
+    WallQuestion.ShelfCount                   = RegistryRead:GetInt("WallQuestion.ShelfCount",                    50.00)
+    Milling.MillTool1.InMM                    = RegistryRead:GetBool("Milling.MillTool1.InMM ",                   true)
+    Milling.MillTool2.InMM                    = RegistryRead:GetBool("Milling.MillTool2.InMM ",                   true)
+    Milling.MillTool3.InMM                    = RegistryRead:GetBool("Milling.MillTool3.InMM ",                   true)
+    Milling.MillTool4.InMM                    = RegistryRead:GetBool("Milling.MillTool4.InMM ",                   true)
+    Milling.MillTool5.InMM                    = RegistryRead:GetBool("Milling.MillTool5.InMM ",                   true)
+    Hardware.Slidelength                      = RegistryRead:GetDouble("Hardware.Slidelength",                    610.0)
+    Hardware.Centerline                       = RegistryRead:GetDouble("Hardware.Centerline",                     32.0)
+    Hardware.Hole1                            = RegistryRead:GetDouble("Hardware.Hole1",                          32.0)
+    Hardware.Hole2                            = RegistryRead:GetDouble("Hardware.Hole2",                          140.0)
+    Hardware.Hole3                            = RegistryRead:GetDouble("Hardware.Hole3",                          235.0)
+    Hardware.Hole4                            = RegistryRead:GetDouble("Hardware.Hole4",                          304.0)
+    Hardware.Hole5                            = RegistryRead:GetDouble("Hardware.Hole5",                          406.0)
+    Hardware.Hole6                            = RegistryRead:GetDouble("Hardware.Hole6",                          0.0)
+  else
+    Project.TextHeight                        = RegistryRead:GetDouble("Project.TextHeight",                      0.3150)
+    BaseDim.CabDepth                          = RegistryRead:GetDouble("BaseDim.CabDepth",                        23.000)
+    BaseDim.CabHeight                         = RegistryRead:GetDouble("BaseDim.CabHeight",                       35.500)
+    BaseDim.CabLength                         = RegistryRead:GetDouble("BaseDim.CabLength",                       36.000)
+    BaseDim.FaceFrameBottomRailWidth          = RegistryRead:GetDouble("BaseDim.FaceFrameBottomRailWidth",        1.5000)
+    BaseDim.FaceFrameBottomReveal             = RegistryRead:GetDouble("BaseDim.FaceFrameBottomReveal",           0.0625)
+    BaseDim.FaceFrameCenterStileWidth         = RegistryRead:GetDouble("BaseDim.FaceFrameCenterStileWidth",       1.7500)
+    BaseDim.FaceFrameDrawerHeight1            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight1",          5.0000)
+    BaseDim.FaceFrameDrawerHeight2            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight2",          6.0000)
+    BaseDim.FaceFrameDrawerHeight3            = RegistryRead:GetDouble("BaseDim.FaceFrameDrawerHeight3",          6.0000)
+    BaseDim.FaceFrameMidRailWidth             = RegistryRead:GetDouble("BaseDim.FaceFrameMidRailWidth",           1.5000)
+    BaseDim.FaceFrameSideReveal               = RegistryRead:GetDouble("BaseDim.FaceFrameSideReveal",             0.2500)
+    BaseDim.FaceFrameStileWidth               = RegistryRead:GetDouble("BaseDim.FaceFrameStileWidth",             2.2500)
+    BaseDim.FaceFrameThickness                = RegistryRead:GetDouble("BaseDim.FaceFrameThickness",              0.7500)
+    BaseDim.FaceFrameTopOverlap               = RegistryRead:GetDouble("BaseDim.FaceFrameTopOverlap",             0.7500)
+    BaseDim.FaceFrameTopRailWidth             = RegistryRead:GetDouble("BaseDim.FaceFrameTopRailWidth",           1.7500)
+    BaseDim.MaterialThickness                 = RegistryRead:GetDouble("BaseDim.MaterialThickness",               0.7500)
+    BaseDim.ShelfEndClarence                  = RegistryRead:GetDouble("BaseDim.ShelfEndClarence",                0.1800)
+    BaseDim.ShelfFrontClearance               = RegistryRead:GetDouble("BaseDim.ShelfFrontClearance",             0.2500)
+    BaseDim.ShelfHoleFirstRowSpacing          = RegistryRead:GetDouble("BaseDim.ShelfHoleFirstRowSpacing",        4.0000)
+    BaseDim.ShelfHoleLastRowSpacing           = RegistryRead:GetDouble("BaseDim.ShelfHoleLastRowSpacing",         3.0000)
+    BaseDim.ShelfHoleSpacing                  = RegistryRead:GetDouble("BaseDim.ShelfHoleSpacing",                2.0000)
+    BaseDim.ShelfMaterialThickness            = RegistryRead:GetDouble("BaseDim.ShelfMaterialThickness",          0.7500)
+    BaseDim.ShelfNosingThickness              = RegistryRead:GetDouble("BaseDim.ShelfNosingThickness",            0.7500)
+    BaseDim.ShelfNosingWidth                  = RegistryRead:GetDouble("BaseDim.ShelfNosingWidth",                1.2500)
+    BaseDim.ShelfPinHoleBack                  = RegistryRead:GetDouble("BaseDim.ShelfPinHoleBack",                3.0000)
+    BaseDim.ShelfPinHoleFront                 = RegistryRead:GetDouble("BaseDim.ShelfPinHoleFront",               2.7500)
+    BaseDim.StretcherThickness                = RegistryRead:GetDouble("BaseDim.StretcherThickness",              0.5000)
+    BaseDim.StretcherWidth                    = RegistryRead:GetDouble("BaseDim.StretcherWidth",                  3.5000)
+    BaseDim.ThicknessBack                     = RegistryRead:GetDouble("BaseDim.ThicknessBack",                   0.5000)
+    BaseDim.ToeKickBottomOffsetHeight         = RegistryRead:GetDouble("BaseDim.ToeKickBottomOffsetHeight",       0.5000)
+    BaseDim.ToeKickCoverHeight                = RegistryRead:GetDouble("BaseDim.ToeKickCoverHeight",              3.6875)
+    BaseDim.ToeKickDepth                      = RegistryRead:GetDouble("BaseDim.ToeKickDepth",                    3.0000)
+    BaseDim.ToeKickHeight                     = RegistryRead:GetDouble("BaseDim.ToeKickHeight",                   3.5000)
+    BaseDim.TopFrameWidth                     = RegistryRead:GetDouble("BaseDim.TopFrameWidth",                   3.7500)
+    Milling.DadoBlindAmount                   = RegistryRead:GetDouble("Milling.DadoBlindAmount",                 0.7500)
+    Milling.DadoBackHeight                    = RegistryRead:GetDouble("Milling.DadoBackHeight",                  0.2500)
+    Milling.DadoClearance                     = RegistryRead:GetDouble("Milling.DadoClearance",                   0.0100)
+    Milling.DadoHeight                        = RegistryRead:GetDouble("Milling.DadoHeight",                      0.3750)
+    Milling.AssemblyHoleMaxSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMaxSpace",            12.000)
+    Milling.AssemblyHoleMinSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMinSpace",            2.0000)
+    Milling.AssemblyHoleStartEnd              = RegistryRead:GetDouble("Milling.AssemblyHoleStartEnd",            1.0000)
+    Milling.MillTool1.FeedRate                = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",              30.000)
+    Milling.MillTool1.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",            15.000)
+    Milling.MillTool1.RateUnits               = RegistryRead:GetInt("Milling.MillTool1.RateUnits",                4)
+    Milling.MillTool1.Stepdown                = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",              0.2000)
+    Milling.MillTool1.Stepover                = RegistryRead:GetDouble("Milling.MillTool1.Stepover",              0.0825)
+    Milling.MillTool1.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",               0.1250)
+    Milling.MillTool2.FeedRate                = RegistryRead:GetDouble("Milling.MillTool2.FeedRate",              60.000)
+    Milling.MillTool2.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool2.PlungeRate",            15.000)
+    Milling.MillTool2.RateUnits               = RegistryRead:GetInt("Milling.MillTool2.RateUnits",                4)
+    Milling.MillTool2.Stepdown                = RegistryRead:GetDouble("Milling.MillTool2.Stepdown",              0.2000)
+    Milling.MillTool2.Stepover                = RegistryRead:GetDouble("Milling.MillTool2.Stepover",              0.0825)
+    Milling.MillTool2.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool2.ToolDia",               0.1250)
+    Milling.MillTool3.FeedRate                = RegistryRead:GetDouble("Milling.MillTool3.FeedRate",              30.000)
+    Milling.MillTool3.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool3.PlungeRate",            15.000)
+    Milling.MillTool3.RateUnits               = RegistryRead:GetInt("Milling.MillTool3.RateUnits",                4)
+    Milling.MillTool3.Stepdown                = RegistryRead:GetDouble("Milling.MillTool3.Stepdown",              0.2000)
+    Milling.MillTool3.Stepover                = RegistryRead:GetDouble("Milling.MillTool3.Stepover",              0.0825)
+    Milling.MillTool3.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool3.ToolDia",               0.1250)
+    Milling.MillTool4.FeedRate                = RegistryRead:GetDouble("Milling.MillTool4.FeedRate",              30.000)
+    Milling.MillTool4.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool4.PlungeRate",            15.000)
+    Milling.MillTool4.RateUnits               = RegistryRead:GetInt("Milling.MillTool4.RateUnits",                4)
+    Milling.MillTool4.Stepdown                = RegistryRead:GetDouble("Milling.MillTool4.Stepdown",              0.2000)
+    Milling.MillTool4.Stepover                = RegistryRead:GetDouble("Milling.MillTool4.Stepover",              0.0825)
+    Milling.MillTool4.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool4.ToolDia",               0.1250)
+    Milling.MillTool5.FeedRate                = RegistryRead:GetDouble("Milling.MillTool5.FeedRate",              30.000)
+    Milling.MillTool5.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool5.PlungeRate",            15.000)
+    Milling.MillTool5.RateUnits               = RegistryRead:GetInt("Milling.MillTool5.RateUnits",                4)
+    Milling.MillTool5.Stepdown                = RegistryRead:GetDouble("Milling.MillTool5.Stepdown",              0.2000)
+    Milling.MillTool5.Stepover                = RegistryRead:GetDouble("Milling.MillTool5.Stepover",              0.0825)
+    Milling.MillTool5.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool5.ToolDia",               0.1250)
+    Milling.PartGap                           = RegistryRead:GetDouble("Milling.PartGap",                         0.5000)
+    Milling.PocketToolDia                     = RegistryRead:GetDouble("Milling.PocketToolDia",                   0.2500)
+    Milling.ProfileToolDia                    = RegistryRead:GetDouble("Milling.ProfileToolDia",                  0.2500)
+    Milling.ProfileToolRadius                 = RegistryRead:GetDouble("Milling.ProfileToolRadius",               0.1250)
+    Milling.ShelfNosingThickness              = RegistryRead:GetDouble("Milling.ShelfNosingThickness",            0.7500)
+    Milling.ShelfNosingWidth                  = RegistryRead:GetDouble("Milling.ShelfNosingWidth",                1.2500)
+    Milling.ShelfPinDiameter                  = RegistryRead:GetDouble("Milling.ShelfPinDiameter",                0.1940)
+    Milling.ShelfPinLen                       = RegistryRead:GetDouble("Milling.ShelfPinLen",                     0.5000)
+    Milling.ShelfPinRadius                    = RegistryRead:GetDouble("Milling.ShelfPinRadius",                  0.0970)
+    WallDim.CabDepth                          = RegistryRead:GetDouble("WallDim.CabDepth",                        12.000)
+    WallDim.CabHeight                         = RegistryRead:GetDouble("WallDim.CabHeight",                       28.000)
+    WallDim.CabLength                         = RegistryRead:GetDouble("WallDim.CabLength",                       36.000)
+    WallDim.FaceFrameBottomRailWidth          = RegistryRead:GetDouble("WallDim.FaceFrameBottomRailWidth",        1.2500)
+    WallDim.FaceFrameBottomReveal             = RegistryRead:GetDouble("WallDim.FaceFrameBottomReveal",           0.0625)
+    WallDim.FaceFrameCenterStileWidth         = RegistryRead:GetDouble("WallDim.FaceFrameCenterStileWidth",       1.7500)
+    WallDim.FaceFrameSideReveal               = RegistryRead:GetDouble("WallDim.FaceFrameSideReveal",             0.0625)
+    WallDim.FaceFrameStileWidth               = RegistryRead:GetDouble("WallDim.FaceFrameStileWidth",             2.2500)
+    WallDim.FaceFrameThickness                = RegistryRead:GetDouble("WallDim.FaceFrameThickness",              0.7500)
+    WallDim.FaceFrameTopOverlap               = RegistryRead:GetDouble("WallDim.FaceFrameTopOverlap",             0.7500)
+    WallDim.FaceFrameTopRailWidth             = RegistryRead:GetDouble("WallDim.FaceFrameTopRailWidth",           1.7500)
+    WallDim.FaceFrameTopReveal                = RegistryRead:GetDouble("WallDim.FaceFrameTopReveal",              0.2500)
+    WallDim.MaterialThickness                 = RegistryRead:GetDouble("WallDim.MaterialThickness",               0.7500)
+    WallDim.ShelfEndClarence                  = RegistryRead:GetDouble("WallDim.ShelfEndClarence",                0.1800)
+    WallDim.ShelfFaceFrameThickness           = RegistryRead:GetDouble("WallDim.ShelfFaceFrameThickness",         0.7500)
+    WallDim.ShelfFaceFrameWidth               = RegistryRead:GetDouble("WallDim.ShelfFaceFrameWidth",             1.2500)
+    WallDim.ShelfFrontClearance               = RegistryRead:GetDouble("WallDim.ShelfFrontClearance",             0.2500)
+    WallDim.ShelfHoleFirstRowSpacing          = RegistryRead:GetDouble("WallDim.ShelfHoleFirstRowSpacing",        4.0000)
+    WallDim.ShelfHoleLastRowSpacing           = RegistryRead:GetDouble("WallDim.ShelfHoleLastRowSpacing",         3.0000)
+    WallDim.ShelfHoleSpacing                  = RegistryRead:GetDouble("WallDim.ShelfHoleSpacing",                2.0000)
+    WallDim.ShelfMaterialThickness            = RegistryRead:GetDouble("WallDim.ShelfMaterialThickness",          0.7500)
+    WallDim.ShelfNosingThickness              = RegistryRead:GetDouble("WallDim.ShelfNosingThickness",            0.7500)
+    WallDim.ShelfNosingWidth                  = RegistryRead:GetDouble("WallDim.ShelfNosingWidth",                1.1250)
+    WallDim.ShelfPinHoleBack                  = RegistryRead:GetDouble("WallDim.ShelfPinHoleBack",                2.0000)
+    WallDim.ShelfPinHoleFront                 = RegistryRead:GetDouble("WallDim.ShelfPinHoleFront",               1.7500)
+    WallDim.ThicknessBack                     = RegistryRead:GetDouble("WallDim.ThicknessBack",                   0.5000)
+    WallQuestion.ShelfCount                   = RegistryRead:GetInt("WallQuestion.ShelfCount",                    2.0000)
+    Milling.MillTool1.InMM                    = RegistryRead:GetBool("Milling.MillTool1.InMM ",                   false)
+    Milling.MillTool2.InMM                    = RegistryRead:GetBool("Milling.MillTool2.InMM ",                   false)
+    Milling.MillTool3.InMM                    = RegistryRead:GetBool("Milling.MillTool3.InMM ",                   false)
+    Milling.MillTool4.InMM                    = RegistryRead:GetBool("Milling.MillTool4.InMM ",                   false)
+    Milling.MillTool5.InMM                    = RegistryRead:GetBool("Milling.MillTool5.InMM ",                   false)
+    Hardware.Slidelength                      = RegistryRead:GetDouble("Hardware.Slidelength",                    24.0)
+    Hardware.Centerline                       = RegistryRead:GetDouble("Hardware.Centerline",                     1.2500)
+    Hardware.Hole1                            = RegistryRead:GetDouble("Hardware.Hole1",                          1.25)
+    Hardware.Hole2                            = RegistryRead:GetDouble("Hardware.Hole2",                          5.5 )
+    Hardware.Hole3                            = RegistryRead:GetDouble("Hardware.Hole3",                          9.25)
+    Hardware.Hole4                            = RegistryRead:GetDouble("Hardware.Hole4",                          12.50)
+    Hardware.Hole5                            = RegistryRead:GetDouble("Hardware.Hole5",                          16.0)
+    Hardware.Hole6                            = RegistryRead:GetDouble("Hardware.Hole6",                          0.0)
+  end
   BaseQuestion.AddCenterFaceFrame           = RegistryRead:GetBool("BaseQuestion.AddCenterFaceFrame",           true)
   BaseQuestion.AddCenterPanel               = RegistryRead:GetBool("BaseQuestion.AddCenterPanel",               true)
   BaseQuestion.AddStrecherPocket            = RegistryRead:GetBool("BaseQuestion.AddStrecherPocket",            true)
@@ -1142,19 +1590,15 @@ function RegistryRead()  -- Read from Registry values
   DialogWindow.ExportSettings               = RegistryRead:GetString("DialogWindow.ExportSettings",             "407 X 136")
   DialogWindow.ImportSettings               = RegistryRead:GetString("DialogWindow.ImportSettings",             "725 X 160")
   DialogWindow.InquiryWallOrBaseXY          = RegistryRead:GetString("DialogWindow.InquiryWallOrBaseXY",        "530 X 520")
-  DialogWindow.LayerXY                      = RegistryRead:GetString("DialogWindow.LayerXY",                    "653 X 512")
+  DialogWindow.LayerXY                      = RegistryRead:GetString("DialogWindow.LayerXY",                    "653 X 535")
   DialogWindow.MillingXY                    = RegistryRead:GetString("DialogWindow.MillingXY",                  "620 X 374")
   DialogWindow.PartDrawingXY                = RegistryRead:GetString("DialogWindow.PartDrawingXY",              "408 X 303")
-  DialogWindow.ProjectXY                    = RegistryRead:GetString("DialogWindow.ProjectXY",                  "651 X 477")
+  DialogWindow.ProjectXY                    = RegistryRead:GetString("DialogWindow.ProjectXY",                  "651 X 506")
   DialogWindow.WallCabinetXY                = RegistryRead:GetString("DialogWindow.WallCabinetXY",              "635 X 438")
   Milling.DadoType                          = RegistryRead:GetString("Milling.DadoType",                        "Through")
-  Milling.DadoBlindAmount                   = RegistryRead:GetDouble("Milling.DadoBlindAmount",                 0.7500)
   Milling.AddAssemblyHolesBase              = RegistryRead:GetBool("Milling.AddAssemblyHolesBase",              true)
   Milling.AddAssemblyHolesWall              = RegistryRead:GetBool("Milling.AddAssemblyHolesWall",              true)
   Milling.AddJointNotes                     = RegistryRead:GetBool("Milling.AddJointNotes",                     true)
-  Milling.DadoBackHeight                    = RegistryRead:GetDouble("Milling.DadoBackHeight",                  0.2500)
-  Milling.DadoClearance                     = RegistryRead:GetDouble("Milling.DadoClearance",                   0.0100)
-  Milling.DadoHeight                        = RegistryRead:GetDouble("Milling.DadoHeight",                      0.3750)
   Milling.LNBackPocket                      = RegistryRead:GetString("Milling.LNBackPocket",                    "BackPanelPocket")
   Milling.LNBackPocketColor                 = RegistryRead:GetString("Milling.LNBackPocketColor",               "Red")
   Milling.LNBackProfile                     = RegistryRead:GetString("Milling.LNBackProfile",                   "BackPanelProfile")
@@ -1185,74 +1629,22 @@ function RegistryRead()  -- Read from Registry values
   Milling.LNTopBottomPocketColor            = RegistryRead:GetString("Milling.LNTopBottomPocketColor",          "Red")
   Milling.LNTopBottomProfile                = RegistryRead:GetString("Milling.LNTopBottomProfile",              "BottomPanelProfile")
   Milling.LNTopBottomProfileColor           = RegistryRead:GetString("Milling.LNTopBottomProfileColor",         "Black")
-  Milling.AssemblyHoleMaxSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMaxSpace",            12.000)
-  Milling.AssemblyHoleMinSpace              = RegistryRead:GetDouble("Milling.AssemblyHoleMinSpace",            2.000)
-  Milling.AssemblyHoleStartEnd              = RegistryRead:GetDouble("Milling.AssemblyHoleStartEnd",            1.000)
-
-  Milling.MillTool1.FeedRate                = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",              30.000)
-  Milling.MillTool1.InMM                    = RegistryRead:GetBool("Milling.MillTool1.InMM ",                   false)
   Milling.MillTool1.Name                    = RegistryRead:GetString("Milling.MillTool1.Name",                  "No Tool Selected")
-  Milling.MillTool1.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",            15.000)
-  Milling.MillTool1.RateUnits               = RegistryRead:GetInt("Milling.MillTool1.RateUnits",                4)
   Milling.MillTool1.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool1.SpindleSpeed",             20000)
-  Milling.MillTool1.Stepdown                = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",              0.2000)
-  Milling.MillTool1.Stepover                = RegistryRead:GetDouble("Milling.MillTool1.Stepover",              0.0825)
-  Milling.MillTool1.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",               0.1250)
   Milling.MillTool1.ToolNumber              = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",               1)
-
-  Milling.MillTool2.FeedRate                = RegistryRead:GetDouble("Milling.MillTool2.FeedRate",              60.000)
-  Milling.MillTool2.InMM                    = RegistryRead:GetBool("Milling.MillTool2.InMM ",                   false)
   Milling.MillTool2.Name                    = RegistryRead:GetString("Milling.MillTool2.Name",                  "No Tool Selected")
-  Milling.MillTool2.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool2.PlungeRate",            15.000)
-  Milling.MillTool2.RateUnits               = RegistryRead:GetInt("Milling.MillTool2.RateUnits",                4)
   Milling.MillTool2.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool2.SpindleSpeed",             20000)
-  Milling.MillTool2.Stepdown                = RegistryRead:GetDouble("Milling.MillTool2.Stepdown",              0.2000)
-  Milling.MillTool2.Stepover                = RegistryRead:GetDouble("Milling.MillTool2.Stepover",              0.0825)
-  Milling.MillTool2.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool2.ToolDia",               0.1250)
   Milling.MillTool2.ToolNumber              = RegistryRead:GetInt("Milling.MillTool2.ToolNumber",               2)
-
-  Milling.MillTool3.FeedRate                = RegistryRead:GetDouble("Milling.MillTool3.FeedRate",              30.000)
-  Milling.MillTool3.InMM                    = RegistryRead:GetBool("Milling.MillTool3.InMM",                    false)
   Milling.MillTool3.Name                    = RegistryRead:GetString("Milling.MillTool3.Name",                  "No Tool Selected")
-  Milling.MillTool3.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool3.PlungeRate",            15.000)
-  Milling.MillTool3.RateUnits               = RegistryRead:GetInt("Milling.MillTool3.RateUnits",                4)
   Milling.MillTool3.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool3.SpindleSpeed",             20000)
-  Milling.MillTool3.Stepdown                = RegistryRead:GetDouble("Milling.MillTool3.Stepdown",              0.2000)
-  Milling.MillTool3.Stepover                = RegistryRead:GetDouble("Milling.MillTool3.Stepover",              0.0825)
-  Milling.MillTool3.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool3.ToolDia",               0.1250)
   Milling.MillTool3.ToolNumber              = RegistryRead:GetInt("Milling.MillTool3.ToolNumber",               4)
-
-  Milling.MillTool4.FeedRate                = RegistryRead:GetDouble("Milling.MillTool4.FeedRate",              30.000)
-  Milling.MillTool4.InMM                    = RegistryRead:GetBool("Milling.MillTool4.InMM ",                   false)
   Milling.MillTool4.Name                    = RegistryRead:GetString("Milling.MillTool4.Name",                  "No Tool Selected")
-  Milling.MillTool4.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool4.PlungeRate",            15.000)
-  Milling.MillTool4.RateUnits               = RegistryRead:GetInt("Milling.MillTool4.RateUnits",                4)
-  Milling.MillTool4.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool4.SpindleSpeed",             20000)
-  Milling.MillTool4.Stepdown                = RegistryRead:GetDouble("Milling.MillTool4.Stepdown",              0.2000)
-  Milling.MillTool4.Stepover                = RegistryRead:GetDouble("Milling.MillTool4.Stepover",              0.0825)
-  Milling.MillTool4.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool4.ToolDia",               0.1250)
+  Milling.MillTool4.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool4.SpindleSpeed",             8000)
   Milling.MillTool4.ToolNumber              = RegistryRead:GetInt("Milling.MillTool4.ToolNumber",               5)
-
-  Milling.MillTool5.FeedRate                = RegistryRead:GetDouble("Milling.MillTool5.FeedRate",              30.000)
-  Milling.MillTool5.InMM                    = RegistryRead:GetBool("Milling.MillTool5.InMM ",                   false)
   Milling.MillTool5.Name                    = RegistryRead:GetString("Milling.MillTool5.Name",                  "No Tool Selected")
-  Milling.MillTool5.PlungeRate              = RegistryRead:GetDouble("Milling.MillTool5.PlungeRate",            15.000)
   Milling.MillTool5.RateUnits               = RegistryRead:GetInt("Milling.MillTool5.RateUnits",                4)
-  Milling.MillTool5.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool5.SpindleSpeed",             20000)
-  Milling.MillTool5.Stepdown                = RegistryRead:GetDouble("Milling.MillTool5.Stepdown",              0.2000)
-  Milling.MillTool5.Stepover                = RegistryRead:GetDouble("Milling.MillTool5.Stepover",              0.0825)
-  Milling.MillTool5.ToolDia                 = RegistryRead:GetDouble("Milling.MillTool5.ToolDia",               0.1250)
+  Milling.MillTool5.SpindleSpeed            = RegistryRead:GetInt("Milling.MillTool5.SpindleSpeed",             8000)
   Milling.MillTool5.ToolNumber              = RegistryRead:GetInt("Milling.MillTool5.ToolNumber",               6)
-
-  Milling.PartGap                           = RegistryRead:GetDouble("Milling.PartGap",                         0.5000)
-  Milling.PocketToolDia                     = RegistryRead:GetDouble("Milling.PocketToolDia",                   0.2500)
-  Milling.ProfileToolDia                    = RegistryRead:GetDouble("Milling.ProfileToolDia",                  0.2500)
-  Milling.ProfileToolRadius                 = RegistryRead:GetDouble("Milling.ProfileToolRadius",               0.1250)
-  Milling.ShelfNosingThickness              = RegistryRead:GetDouble("Milling.ShelfNosingThickness",            0.7500)
-  Milling.ShelfNosingWidth                  = RegistryRead:GetDouble("Milling.ShelfNosingWidth",                1.2500)
-  Milling.ShelfPinDiameter                  = RegistryRead:GetDouble("Milling.ShelfPinDiameter",                0.1940)
-  Milling.ShelfPinLen                       = RegistryRead:GetDouble("Milling.ShelfPinLen",                     0.5000)
-  Milling.ShelfPinRadius                    = RegistryRead:GetDouble("Milling.ShelfPinRadius",                  0.0970)
   Project.CabinetName                       = RegistryRead:GetString("Project.CabinetName",                     "Default")
   Project.NewSheet                          = RegistryRead:GetString("Project.NewSheet",                        "Yes")
   Project.CabinetStyle                      = RegistryRead:GetString("Project.CabinetStyle",                    "Face Frame") -- No Face Frame
@@ -1266,32 +1658,6 @@ function RegistryRead()  -- Read from Registry values
   Project.PhoneNumber                       = RegistryRead:GetString("Project.PhoneNumber",                     "(123)456-7890")
   Project.ProjectName                       = RegistryRead:GetString("Project.ProjectName",                     "CABINET PROJECTS")
   Project.ProjectPath                       = RegistryRead:GetString("Project.ProjectPath",                     "Default")
-  WallDim.CabDepth                          = RegistryRead:GetDouble("WallDim.CabDepth",                        12.0000)
-  WallDim.CabHeight                         = RegistryRead:GetDouble("WallDim.CabHeight",                       28.000)
-  WallDim.CabLength                         = RegistryRead:GetDouble("WallDim.CabLength",                       36.000)
-  WallDim.FaceFrameBottomRailWidth          = RegistryRead:GetDouble("WallDim.FaceFrameBottomRailWidth",        1.2500)
-  WallDim.FaceFrameBottomReveal             = RegistryRead:GetDouble("WallDim.FaceFrameBottomReveal",           0.0625)
-  WallDim.FaceFrameCenterStileWidth         = RegistryRead:GetDouble("WallDim.FaceFrameCenterStileWidth",       1.7500)
-  WallDim.FaceFrameSideReveal               = RegistryRead:GetDouble("WallDim.FaceFrameSideReveal",             0.0625)
-  WallDim.FaceFrameStileWidth               = RegistryRead:GetDouble("WallDim.FaceFrameStileWidth",             2.2500)
-  WallDim.FaceFrameThickness                = RegistryRead:GetDouble("WallDim.FaceFrameThickness",              0.7500)
-  WallDim.FaceFrameTopOverlap               = RegistryRead:GetDouble("WallDim.FaceFrameTopOverlap",             0.7500)
-  WallDim.FaceFrameTopRailWidth             = RegistryRead:GetDouble("WallDim.FaceFrameTopRailWidth",           1.7500)
-  WallDim.FaceFrameTopReveal                = RegistryRead:GetDouble("WallDim.FaceFrameTopReveal",              0.2500)
-  WallDim.MaterialThickness                 = RegistryRead:GetDouble("WallDim.MaterialThickness",               0.7500)
-  WallDim.ShelfEndClarence                  = RegistryRead:GetDouble("WallDim.ShelfEndClarence",                0.1800)
-  WallDim.ShelfFaceFrameThickness           = RegistryRead:GetDouble("WallDim.ShelfFaceFrameThickness",         0.7500)
-  WallDim.ShelfFaceFrameWidth               = RegistryRead:GetDouble("WallDim.ShelfFaceFrameWidth",             1.2500)
-  WallDim.ShelfFrontClearance               = RegistryRead:GetDouble("WallDim.ShelfFrontClearance",             0.2500)
-  WallDim.ShelfHoleFirstRowSpacing          = RegistryRead:GetDouble("WallDim.ShelfHoleFirstRowSpacing",        4.0000)
-  WallDim.ShelfHoleLastRowSpacing           = RegistryRead:GetDouble("WallDim.ShelfHoleLastRowSpacing",         3.0000)
-  WallDim.ShelfHoleSpacing                  = RegistryRead:GetDouble("WallDim.ShelfHoleSpacing",                2.0000)
-  WallDim.ShelfMaterialThickness            = RegistryRead:GetDouble("WallDim.ShelfMaterialThickness",          0.7500)
-  WallDim.ShelfNosingThickness              = RegistryRead:GetDouble("WallDim.ShelfNosingThickness",            0.7500)
-  WallDim.ShelfNosingWidth                  = RegistryRead:GetDouble("WallDim.ShelfNosingWidth",                1.1250)
-  WallDim.ShelfPinHoleBack                  = RegistryRead:GetDouble("WallDim.ShelfPinHoleBack",                2.0000)
-  WallDim.ShelfPinHoleFront                 = RegistryRead:GetDouble("WallDim.ShelfPinHoleFront",               1.7500)
-  WallDim.ThicknessBack                     = RegistryRead:GetDouble("WallDim.ThicknessBack",                   0.5000)
   WallQuestion.AddCenterFaceFrame           = RegistryRead:GetBool("WallQuestion.AddCenterFaceFrame",           true)
   WallQuestion.AddCenterPanel               = RegistryRead:GetBool("WallQuestion.AddCenterPanel",               false)
   WallQuestion.DrawBackPanel                = RegistryRead:GetBool("WallQuestion.DrawBackPanel",                true)
@@ -1299,18 +1665,20 @@ function RegistryRead()  -- Read from Registry values
   WallQuestion.DrawCenterPanel              = RegistryRead:GetBool("WallQuestion.DrawCenterPanel",              true)
   WallQuestion.DadoBackPanelForCenterPanel  = RegistryRead:GetBool("WallQuestion.DadoBackPanelForCenterPanel",  true)
   WallQuestion.DrawFaceFrame                = RegistryRead:GetBool("WallQuestion.DrawFaceFrame",                true)
-  WallQuestion.ShelfCount                   = RegistryRead:GetInt("WallQuestion.ShelfCount",                    2.0000)
+  WallQuestion.ShelfCount                   = RegistryRead:GetInt("WallQuestion.ShelfCount",                    2)
   WallQuestion.DrawShelfPanel               = RegistryRead:GetBool("WallQuestion.DrawShelfPanel",               true)
   WallQuestion.DrawSidePanels               = RegistryRead:GetBool("WallQuestion.DrawSidePanels",               true)
   BOM.WallCabinetMateralType                = RegistryRead:GetString("BOM.WallCabinetMateralType",              "Plywood")
   BOM.WallFaceFrameMateralType              = RegistryRead:GetString("BOM.WallFaceFrameMateralType",            "Hardwood")
-  BOM.WallCabinetFinish                     = RegistryRead:GetString("BOM.WallCabinetFinish",                    "None")
-  BOM.WallFaceFrameFinish                   = RegistryRead:GetString("BOM.WallFaceFrameFinish",                  "None")
+  BOM.WallCabinetFinish                     = RegistryRead:GetString("BOM.WallCabinetFinish",                   "None")
+  BOM.WallFaceFrameFinish                   = RegistryRead:GetString("BOM.WallFaceFrameFinish",                 "None")
   BOM.BaseCabinetMateralType                = RegistryRead:GetString("BOM.BaseCabinetMateralType",              "Plywood")
   BOM.BaseFaceFrameMateralType              = RegistryRead:GetString("BOM.BaseFaceFrameMateralType",            "Hardwood")
-  BOM.BaseCabinetFinish                     = RegistryRead:GetString("BOM.BaseCabinetFinish",                    "None")
-  BOM.BaseFaceFrameFinish                   = RegistryRead:GetString("BOM.BaseFaceFrameFinish",                  "None")
-
+  BOM.BaseCabinetFinish                     = RegistryRead:GetString("BOM.BaseCabinetFinish",                   "None")
+  BOM.BaseFaceFrameFinish                   = RegistryRead:GetString("BOM.BaseFaceFrameFinish",                 "None")
+  Hardware.Name                             = RegistryRead:GetString("Hardware.Name",                           "Blum 230M6000 24.0")
+  Hardware.Manufacturer                     = RegistryRead:GetString("Hardware.Manufacturer",                   "Blum")
+  Hardware.Partnumber                       = RegistryRead:GetString("Hardware.Partnumber",                     "230M6000")
   return true
 end
 -- =====================================================]]
@@ -1475,6 +1843,7 @@ function RegistryWrite() -- Write to Registry values
   RegValue = RegistryWrite:SetString("Project.Drawing",                           Project.Drawing)
   RegValue = RegistryWrite:SetString("Project.NewSheet",                          Project.NewSheet)
   RegValue = RegistryWrite:SetString("Project.CabinetStyle",                      Project.CabinetStyle)
+  RegValue = RegistryWrite:SetDouble("Project.TextHeight",                        Project.TextHeight)
   RegValue = RegistryWrite:SetString("Project.ProgramCodeBy",                     Project.ProgramCodeBy)
   RegValue = RegistryWrite:SetString("Project.ProgramName",                       Project.ProgramName)
   RegValue = RegistryWrite:SetString("Project.ProgramVersion",                    Project.ProgramVersion)
@@ -1541,6 +1910,17 @@ function RegistryWrite() -- Write to Registry values
   RegValue = RegistryWrite:SetString("BOM.BaseFaceFrameMateralType",              BOM.BaseFaceFrameMateralType)
   RegValue = RegistryWrite:SetString("BOM.BaseCabinetFinish",                     BOM.BaseCabinetFinish)
   RegValue = RegistryWrite:SetString("BOM.BaseFaceFrameFinish",                   BOM.BaseFaceFrameFinish)
+  RegValue = RegistryWrite:SetString("Hardware.Name",                             Hardware.Name)
+  RegValue = RegistryWrite:SetString("Hardware.Manufacturer",                     Hardware.Manufacturer)
+  RegValue = RegistryWrite:SetString("Hardware.Partnumber",                       Hardware.Partnumber)
+  RegValue = RegistryWrite:SetDouble("Hardware.Slidelength",                      Hardware.Slidelength)
+  RegValue = RegistryWrite:SetDouble("Hardware.Centerline",                       Hardware.Centerline)
+  RegValue = RegistryWrite:SetDouble("Hardware.Hole1",                            Hardware.Hole1)
+  RegValue = RegistryWrite:SetDouble("Hardware.Hole2",                            Hardware.Hole2)
+  RegValue = RegistryWrite:SetDouble("Hardware.Hole3",                            Hardware.Hole3)
+  RegValue = RegistryWrite:SetDouble("Hardware.Hole4",                            Hardware.Hole4)
+  RegValue = RegistryWrite:SetDouble("Hardware.Hole5",                            Hardware.Hole5)
+  RegValue = RegistryWrite:SetDouble("Hardware.Hole6",                            Hardware.Hole6)
 end
 -- =====================================================]]
 function NextSheet()
@@ -1643,11 +2023,10 @@ function CreateLayerPilotHoleToolpath(layer_name, name, start_depth, cut_depth, 
     end
      -- Create tool we will use to machine vectors
       local tool = Tool(Milling.MillTool5.Name, Tool.THROUGH_DRILL)       -- BALL_NOSE, END_MILL, VBIT, THROUGH_DRILL
-
       tool.InMM = Milling.MillTool5.InMM -- tool_in_mm
       tool.ToolDia = Milling.MillTool5.ToolDia -- tool_dia
       tool.Stepdown = Milling.MillTool5.Stepdown -- tool_stepdown
-      tool.Stepover = Milling.MillTool5.ToolDia * 0.25
+      tool.Stepover = Milling.MillTool5.ToolDia * 0.25 * Milling.Cal
       tool.RateUnits = Milling.MillTool5.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
       tool.FeedRate = Milling.MillTool5.FeedRate  -- 30
       tool.PlungeRate = Milling.MillTool5.PlungeRate   -- 10
@@ -1662,7 +2041,7 @@ function CreateLayerPilotHoleToolpath(layer_name, name, start_depth, cut_depth, 
       -- Create object used to set home position and safez gap above material surface
       local pos_data = ToolpathPosData()
       pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
-      pos_data.SafeZGap = mtl_block.Thickness * 0.1
+      pos_data.SafeZGap = mtl_block.Thickness * 0.1 * Milling.Cal
       -- Create  object used to pass drilling options
       local drill_data = DrillParameterData()
       -- start depth for toolpath
@@ -1751,8 +2130,8 @@ function CreateLayerProfileToolpath(layer_name, name, start_depth, cut_depth, In
     profile_data.CreateSquareCorners = false -- true if want to create 'square' external corners on toolpath
     profile_data.CornerSharpen = false -- true to perform corner sharpening on internal corners (only with v-bits)
     profile_data.UseTabs = UseTab -- true to use tabs (position of tabs must already have been defined on vectors)
-    profile_data.TabLength = 0.5 -- length for tabs if being used
-    profile_data.TabThickness = 0.25
+    profile_data.TabLength = 0.5 * Milling.Cal -- length for tabs if being used
+    profile_data.TabThickness = 0.25 * Milling.Cal
     profile_data.Use3dTabs = true -- if true then create 3d tabs else 2d tabs
     profile_data.ProjectToolpath = false -- if true in Aspire, project toolpath onto composite model
     local ramping_data = RampingData() -- Create object used to control ramping
@@ -1760,16 +2139,16 @@ function CreateLayerProfileToolpath(layer_name, name, start_depth, cut_depth, In
     ramping_data.DoRamping = false -- if true we do ramping into toolpath
     ramping_data.RampType = RampingData.RAMP_ZIG_ZAG -- type of ramping to perform RampingData.RAMP_LINEAR , RampingData.RAMP_ZIG_ZAG or RampingData.RAMP_SPIRAL
     ramping_data.RampConstraint = RampingData.CONSTRAIN_ANGLE -- how ramp is contrained - either by angle or distance RampingData.CONSTRAIN_DISTANCE or RampingData.CONSTRAIN_ANGLE
-    ramping_data.RampDistance = 100.0 -- if we are constraining ramp by distance, distance to ramp over
+    ramping_data.RampDistance = 2.0 * Milling.Cal -- if we are constraining ramp by distance, distance to ramp over
     ramping_data.RampAngle = 25.0 -- if we are contraining ramp by angle , angle to ramp in at (in degrees)
-    ramping_data.RampMaxAngleDist = 15 -- if we are contraining ramp by angle, max distance to travel before 'zig zaging' if zig zaging
+    ramping_data.RampMaxAngleDist = 15 * Milling.Cal -- if we are contraining ramp by angle, max distance to travel before 'zig zaging' if zig zaging
     ramping_data.RampOnLeadIn = false -- if true we restrict our ramping to lead in section of toolpath
     lead_in_out_data.DoLeadIn = false -- if true we create lead ins on profiles (not for profile on)
     lead_in_out_data.DoLeadOut = false -- if true we create lead outs on profiles (not for profile on)
     lead_in_out_data.LeadType = LeadInOutData.CIRCULAR_LEAD -- type of leads to create LeadInOutData.LINEAR_LEAD or LeadInOutData.CIRCULAR_LEAD
-    lead_in_out_data.LeadLength = 5.0 -- length of lead to create
+    lead_in_out_data.LeadLength = 5.0 * Milling.Cal -- length of lead to create
     lead_in_out_data.LinearLeadAngle = 45 -- Angle for linear leads
-    lead_in_out_data.CirularLeadRadius = 5.0 -- Radius for circular arc leads
+    lead_in_out_data.CirularLeadRadius = 2.0 * Milling.Cal-- Radius for circular arc leads
     lead_in_out_data.OvercutDistance = 0.0 -- distance to 'overcut' (travel past start point) when profiling
     local geometry_selector = GeometrySelector() -- Create object which can be used to automatically select geometry
     local create_2d_previews = true -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
@@ -1890,131 +2269,47 @@ function CreateLayerPocketingToolpath(name, layer_name, start_depth, cut_depth)
   return true
 end
 -- =====================================================]]
-function LayerClear()
-  local Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackPocket .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackPocket .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackProfile .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackProfile .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelProfile .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelProfile .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelShelfPinDrill .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelShelfPinDrill .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawFaceFrame .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawFaceFrame .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNShelfProfile .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNShelfProfile .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideShelfPinDrill .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideShelfPinDrill .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideShelfPinDrill .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideShelfPinDrill .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNAssemblyHole .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNAssemblyHole .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomProfile .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomProfile .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomPocket .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomPocket .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNStretcherRailProfile .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNStretcherRailProfile .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawNotes .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawNotes .. "-Base")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNPartLabels .. "-Wall")
-     if Mylayer.IsEmpty then
-        Milling.job.LayerManager:RemoveLayer(Mylayer)
-     end -- if end
-        Mylayer = Milling.job.LayerManager:GetLayerWithName(Milling.LNPartLabels .. "-Base")
+function MyLayerClear(LayerName)
+  local Mylayer = Milling.job.LayerManager:GetLayerWithName(LayerName)
      if Mylayer.IsEmpty then
         Milling.job.LayerManager:RemoveLayer(Mylayer)
      end -- if end
   return true
 end -- function end
 -- =====================================================]]
-function MakeLayers(What)
+function LayerClear()
+  MyLayerClear(Milling.LNBackPocket               .. "-Wall")
+  MyLayerClear(Milling.LNBackPocket               .. "-Base")
+  MyLayerClear(Milling.LNBackProfile              .. "-Wall")
+  MyLayerClear(Milling.LNBackProfile              .. "-Base")
+  MyLayerClear(Milling.LNCenterPanelProfile       .. "-Wall")
+  MyLayerClear(Milling.LNCenterPanelProfile       .. "-Base")
+  MyLayerClear(Milling.LNCenterPanelShelfPinDrill .. "-Wall")
+  MyLayerClear(Milling.LNCenterPanelShelfPinDrill .. "-Base")
+  MyLayerClear(Milling.LNDrawFaceFrame            .. "-Wall")
+  MyLayerClear(Milling.LNDrawFaceFrame            .. "-Base")
+  MyLayerClear(Milling.LNShelfProfile             .. "-Wall")
+  MyLayerClear(Milling.LNShelfProfile             .. "-Base")
+  MyLayerClear(Milling.LNSidePocket               .. "-Wall")
+  MyLayerClear(Milling.LNSidePocket               .. "-Base")
+  MyLayerClear(Milling.LNSideShelfPinDrill        .. "-Wall")
+  MyLayerClear(Milling.LNSideShelfPinDrill        .. "-Base")
+  MyLayerClear(Milling.LNAssemblyHole             .. "-Wall")
+  MyLayerClear(Milling.LNAssemblyHole             .. "-Base")
+  MyLayerClear(Milling.LNTopBottomProfile         .. "-Wall")
+  MyLayerClear(Milling.LNTopBottomProfile         .. "-Base")
+  MyLayerClear(Milling.LNTopBottomPocket          .. "-Wall")
+  MyLayerClear(Milling.LNTopBottomPocket          .. "-Base")
+  MyLayerClear(Milling.LNStretcherRailProfile     .. "-Wall")
+  MyLayerClear(Milling.LNStretcherRailProfile     .. "-Base")
+  MyLayerClear(Milling.LNDrawNotes                .. "-Wall")
+  MyLayerClear(Milling.LNDrawNotes                .. "-Base")
+  MyLayerClear(Milling.LNPartLabels               .. "-Wall")
+  MyLayerClear(Milling.LNPartLabels               .. "-Base")
+  return true
+end -- function end
+-- =====================================================]]
+function LayerMake(What)
   local Red, Green, Blue = 0, 0, 0
   -- What = the Cabinet type ("", Wall, or Bass)
   local function GetColor(str) -- returns color value for a Color Name
@@ -2106,6 +2401,57 @@ function MakeLayers(What)
           layerx:SetColor (Red, Green, Blue)
   end -- if end
   return true
+end
+-- =====================================================]]
+function Double2Fraction(Num)                           --  Converts a Double to a Frctional String
+  local Frac = tostring(Num)
+  if not Milling.Unit then
+    local AmountValue = math.floor(math.abs(Num))
+    local DicValue    = Num - AmountValue
+    AmountValue       = tostring(AmountValue)
+    Frac              = tostring(DicValue)
+    if     DicValue >= 0.90325 then
+      Frac = "15/16" .. string.char(34)
+    elseif DicValue >= 0.84375 then
+      Frac = "7/8"   .. string.char(34)
+    elseif DicValue >= 0.78125 then
+      Frac = "13/16" .. string.char(34)
+    elseif DicValue >= 0.71875 then
+      Frac = "3/4"   .. string.char(34)
+    elseif DicValue >= 0.65625 then
+      Frac = "11/16" .. string.char(34)
+    elseif DicValue >= 0.59375 then
+      Frac = "5/8"   .. string.char(34)
+    elseif DicValue >= 0.53125 then
+      Frac = "9/16"  .. string.char(34)
+    elseif DicValue >= 0.46875 then
+      Frac = "1/2"   .. string.char(34)
+    elseif DicValue >= 0.40625 then
+      Frac = "7/16"  .. string.char(34)
+    elseif DicValue >= 0.34375 then
+      Frac = "3/8"   .. string.char(34)
+    elseif DicValue >= 0.28125 then
+      Frac = "5/16"  .. string.char(34)
+    elseif DicValue >= 0.21875 then
+      Frac = "1/4"   .. string.char(34)
+    elseif DicValue >= 0.15625 then
+      Frac = "3/16"  .. string.char(34)
+    elseif DicValue >= 0.09375 then
+      Frac = "1/8"   .. string.char(34)
+    elseif DicValue >= 0.03125 then
+      Frac = "1/16"  .. string.char(34)
+    else
+      Frac = "0"
+    end -- If end
+    if Frac == "0" then
+      Frac = AmountValue .. string.char(34)
+    else
+      if AmountValue ~= "0" then
+        Frac = AmountValue .. "-" .. Frac
+      end
+    end
+  end
+  return Frac
 end
 -- =====================================================]]
 function HTML()
@@ -2715,7 +3061,7 @@ table {
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ThicknessBack" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face-Frame Rail Width</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Bottom Rail Width</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameBottomRailWidth" size="10" maxlength="10" /></td>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Bottom Reveal</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameBottomReveal" size="10" maxlength="10" /></td>
@@ -2727,7 +3073,7 @@ table {
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameSideReveal" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Stile Face Frame Width</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Stile Width</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameStileWidth" size="10" maxlength="10" /></td>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Drawer Height1</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight1" size="10" maxlength="10" /></td>
@@ -2739,10 +3085,10 @@ table {
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight2" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Drawer Height3</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight3" size="10" maxlength="10" /></td>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Thickness</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameThickness" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Drawer Height3</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight3" size="10" maxlength="10" /></td>
   </tr>
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Mid Rail Width</label></td>
@@ -2763,21 +3109,21 @@ table {
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfFrontClearance" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Hole First Row Spacing</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole First Row Spacing</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfHoleFirstRowSpacing" size="10" maxlength="10" /></td>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Material Thickness</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfMaterialThickness" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Front</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Front Setback</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfPinHoleFront" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Hole Spacing</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Spacing</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfHoleSpacing" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Hole Last Row Spacing</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Last Row Spacing</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfHoleLastRowSpacing" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Back</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Rear Clearance</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfPinHoleBack" size="10" maxlength="10" /></td>
   </tr>
   <tr>
@@ -2795,8 +3141,17 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Toe Kick Depth</label></td>
     <td class="h1-l"><input type="text" class="h2" id="BaseDim.ToeKickDepth" size="10" maxlength="10" /></td>
-    <td class="h1-r"></td>
-    <td class="h1-l"></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.HardwareHelp ..[[#Top');">Select Drawer Slides</label></td>
+    <td class="h1-l"><select size="1" id="Hardware.Name">
+        <option selected>12 inch - Blum</option>
+        <option>12 inch - Blum</option>
+        <option>14 inch - Blum</option>
+        <option>16 inch - Blum</option>
+        <option>18 inch - Blum</option>
+        <option>20 inch - Blum</option>
+        <option>22 inch - Blum</option>
+        <option>24 inch - Blum</option>
+      </select></td>
   </tr>
 </table>
 <table>
@@ -2855,6 +3210,11 @@ table {
     <td class="h2-l">Layer Name</td>
     <td class="h2-l">Color</td>
   </tr>
+  <tr>
+    <td colspan="3"><hr></td>
+  </tr>
+</table>
+<table>
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Back Panel Pocket (Dado)</label></td>
     <td><input type="text" class="h1-l" id="Milling.LNBackPocket" size="30" maxlength="50" /></td>
@@ -3134,7 +3494,7 @@ table {
     <td colspan="4" class="h1-r"><hr></td>
   </tr>
     <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Defalut Profile Bit Dia</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Default Profile Bit Dia</label></td>
     <td class="h1-l"><input type="text" class="h2" id="Milling.ProfileToolDia" size="10" maxlength="10" /></td>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Default Pocket Bit Dia</label></td>
     <td><input type="text" class="h2" id="Milling.PocketToolDia" size="10" maxlength="10" /></td>
@@ -3160,79 +3520,50 @@ table {
     <title>Hardwere Information</title>
     ]] .. DialogWindow.Style ..[[
 </head>
-<body>
-<table>
-  <tr>
-    <td class="h1-r"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Back Dado Height</label></td>
-    <td><input name="Milling.DadoBackHeight" type="text" class="h2" id="Milling.DadoBackHeight" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Height</label></td>
-    <td><input name="Milling.DadoHeight" type="text" class="h2" id="Milling.DadoHeight" size="10" maxlength="10" /></td>
-  </tr>
-  <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Clearance</label></td>
-    <td><input name="Milling.DadoClearance" type="text" class="h2" id="Milling.DadoClearance" size="10" maxlength="10" /></td>
-    <td class="h1-r">Shelf Pin Length</td>
-    <td><input name="Milling.ShelfPinLen" type="text" class="h2" id="Milling.ShelfPinLen" size="10" maxlength="10" /></td>
-  </tr>
-  <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Part Gap</label></td>
-    <td><input name="Milling.PartGap" type="text" class="h2" id="Milling.PartGap" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Shelf Pin Diameter</label></td>
-    <td><input name="Milling.ShelfPinDiameter" type="text" class="h2" id="Milling.ShelfPinDiameter" size="10" maxlength="10" /></td>
-  </tr>
-  <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Add Joint Notes</label></td>
-    <td class="h1-l"><select size="1" id="Milling.AddJointNotes">
-        <option selected>Yes</option>
-        <option>No</option>
-      </select></td>
-    <td class="h1-r">Assembly Hole Start and End Space</td>
-    <td><input name="Milling.AssemblyHoleStartEnd" type="text" class="h2" id="Milling.AssemblyHoleStartEnd" size="10" maxlength="10" /></td>
-  </tr>
-   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Base Assembly Holes</label></td>
-    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesBase">
-        <option selected>Yes</option>
-        <option>No</option>
-      </select></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Wall Assembly Holes</label></td>
-    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesWall">
-        <option selected>Yes</option>
-        <option>No</option>
-      </select></td>
-  </tr>
-   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Max Space</label></td>
-    <td><input type="text" class="h2" id="Milling.AssemblyHoleMaxSpace" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Min Space</label></td>
-    <td><input type="text" class="h2" id="Milling.AssemblyHoleMinSpace" size="10" maxlength="10" /></td>
-  </tr>
-
-    <tr>
-    <td colspan="4" class="h1-r"><hr></td>
-  </tr>
-    <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Defalut Profile Bit Dia</label></td>
-    <td class="h1-l"><input type="text" class="h2" id="Milling.ProfileToolDia" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Default Pocket Bit Dia</label></td>
-    <td><input type="text" class="h2" id="Milling.PocketToolDia" size="10" maxlength="10" /></td>
-  </tr>
-</table>
-<table>
-  <tr>
-    <td colspan="4"><hr></td>
-  </tr>
-  <tr>
-    <td><button class="FormButton-Help" onClick="window.open(']].. DialogWindow.MillingHelp .. [[');"><span class="icon">     Help </span></button></td>
-    <td class="alert-l" id="GadgetName.Alert">.</td>
-    <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
-    <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
-  </tr>
-</table>
-</body>
-</html>
-]]
-
+    <body>
+        <table>
+          <tr>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.HardwareHelp .. [[#Top');">Select Drawer Slides</label></td>
+            <td class="h1-l"><select size="1" id="Hardware.Name">
+                <option selected>Select Drawer Slide</option>
+                <option>Blum 230M6500 26.0</option>
+                <option>Blum 230M6000 24.0</option>
+                <option>Blum 230M5500 22.0</option>
+                <option>Blum 230M5000 20.0</option>
+                <option>Blum 230M4500 18.0</option>
+                <option>Blum 230M4000 16.0</option>
+                <option>Blum 230M3500 14.0</option>
+                <option>Blum 230M3000 12.0</option>
+                <option>Blum 230M2500 10.0</option>
+              </select></td>
+          </tr>
+            <tr>
+            <td colspan="2" class="h1-r"><hr></td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td class="h1-c"><input id = "InquiryAddSlide"           class="LuaButton" type = "button" value = "Add New" ></td>
+            <td class="h1-c"><input id = "InquiryDeleteCurrentSlide" class="LuaButton" type = "button" value = "Delete Current"></td>
+            <td class="h1-c"><input id = "InquiryEditCurrentSlide"   class="LuaButton" type = "button" value = "Edit Current"></td>
+          </tr>
+        <tr>
+        <td colspan="3" class="h1-r"><hr></td>
+        </tr>
+        </table>
+        <table>
+          <tr>
+            <td colspan="4"><hr></td>
+          </tr>
+          <tr>
+            <td><button class="FormButton-Help" onClick="window.open(']].. DialogWindow.MillingHelp .. [[');"><span class="icon">     Help </span></button></td>
+            <td class="alert-l" id="GadgetName.Alert">.</td>
+            <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+            <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+          </tr>
+        </table>
+    </body>
+</html>]]
 -- =====================================================]] -- Project Setup
   DialogWindow.myHtml2 = [[<html>
 <head>
@@ -3292,12 +3623,12 @@ table {
       <select id="BOM.WallCabinetMateralType">
         <option selected>Plywood</option>
         <option>Melamine </option>
-        <option>Birch plywood</option>
-        <option>Oak plywood</option>
-        <option>Maple plywood</option>
-        <option>Walnut plywood</option>
-        <option>Poplar plywood</option>
-        <option>Piano Plywood</option>
+        <option>Birch ply</option>
+        <option>Oak ply</option>
+        <option>Maple ply</option>
+        <option>Walnut ply</option>
+        <option>Poplar ply</option>
+        <option>Piano Ply</option>
     </select></td>
     <td class="h1-r">Wall Face Frame</td>
     <td class="h1-l">
@@ -3318,6 +3649,7 @@ table {
       <select  id="BOM.WallCabinetFinish">
         <option>None</option>
         <option selected>Paint</option>
+        <option>Prime Only</option>
         <option>Stain</option>
       </select>
     </td>
@@ -3340,12 +3672,12 @@ table {
       <select  id="BOM.BaseCabinetMateralType">
         <option selected>Plywood</option>
         <option>Melamine </option>
-        <option>Birch plywood</option>
-        <option>Oak plywood</option>
-        <option>Maple plywood</option>
-        <option>Walnut plywood</option>
-        <option>Poplar plywood</option>
-        <option>Piano Plywood</option>
+        <option>Birch ply</option>
+        <option>Oak ply</option>
+        <option>Maple ply</option>
+        <option>Walnut ply</option>
+        <option>Poplar ply</option>
+        <option>Piano Ply</option>
       </select>
     </td>
     <td class="h1-r">Base Face Frame</td>
@@ -3368,6 +3700,7 @@ table {
       <select id="BOM.BaseCabinetFinish">
         <option>None</option>
         <option selected>Paint</option>
+        <option>Prime Only</option>
         <option>Stain</option>
       </select>
     </td>
@@ -3380,6 +3713,10 @@ table {
         <option>Stain</option>
       </select>
     </td>
+    <tr>
+      <td class = "h1-r">Drawing Text Height</td>
+      <td><input name="Project.TextHeight" type="text" class="h1-l" id="ExportName" size="10" maxlength="10" /></td>
+    </tr>
   </tr>
 </table>
 <table>
@@ -3428,15 +3765,15 @@ table {
     <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameBottomRailWidth" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Hole First Row Spacing</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole First Row Spacing</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfHoleFirstRowSpacing" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Hole Last Row Spacing</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Last Row Spacing</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfHoleLastRowSpacing" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Rear</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Rear Clearance</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfPinHoleBack" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Front</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Front Setback</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfPinHoleFront" size="10" maxlength="10" /></td>
   </tr>
   <tr>
@@ -3446,9 +3783,9 @@ table {
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfFrontClearance" size="10" maxlength="10" /></td>
   </tr>
   <tr>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Nose Width</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Nosing Width</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfNosingWidth" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Nose Thickness</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Nosing Thickness</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfNosingThickness" size="10" maxlength="10" /></td>
   </tr>
   <tr>
@@ -3460,7 +3797,7 @@ table {
   <tr>
     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Side Reveal</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameSideReveal" size="10" maxlength="10" /></td>
-    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Hole Spacing</label></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Spacing</label></td>
     <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfHoleSpacing" size="10" maxlength="10" /></td>
   </tr>
 </table>

@@ -24,16 +24,16 @@ function Base_CabinetBack()
   local ptX = Cab.Wpt9
   local ptY = Cab.Wpt9
   local ptZ = Cab.Wpt9
-        ptW = Polar2D(ptC, 270, (BaseDim.MaterialThickness + Milling.DadoClearance)  * 0.5)
+        ptW = Polar2D(ptC, 270, (BaseDim.MaterialThickness  + Milling.DadoClearance)  * 0.5)
         ptW = Polar2D(ptW, 180, Milling.PocketToolRadius)
-        ptX = Polar2D(ptW,  90, BaseDim.MaterialThickness + Milling.DadoClearance)
-        ptY = Polar2D(ptX,   0, BaseDim.BackPanelWidth     - (BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight ))
-        ptZ = Polar2D(ptW,   0, BaseDim.BackPanelWidth     - (BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight ))
+        ptX = Polar2D(ptW,  90, BaseDim.MaterialThickness   + Milling.DadoClearance)
+        ptY = Polar2D(ptX,   0, BaseDim.BackPanelWidth      - (BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight ))
+        ptZ = Polar2D(ptW,   0, BaseDim.BackPanelWidth      - (BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight ))
   local ptF1 = Polar2D(pt2, 180, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (Milling.DadoClearance * 0.5))
   local ptF = Polar2D(ptF1, 270, Milling.PocketToolRadius)
-  local ptG = Polar2D(ptF, 180, BaseDim.MaterialThickness + Milling.DadoClearance)
-  local ptE = Polar2D(ptG,  90, BaseDim.BackPanelLength + Milling.PocketToolDia)
-  local ptH = Polar2D(ptF,  90, BaseDim.BackPanelLength + Milling.PocketToolDia)
+  local ptG = Polar2D(ptF, 180, BaseDim.MaterialThickness   + Milling.DadoClearance)
+  local ptE = Polar2D(ptG,  90, BaseDim.BackPanelLength     + Milling.PocketToolDia)
+  local ptH = Polar2D(ptF,  90, BaseDim.BackPanelLength     + Milling.PocketToolDia)
   local HoleSpace, HoleCount = 0
   local X1, X2, X3, X4, X5, X6 = Cab.Wpt9
   local ptGZ = Polar2D(Polar2D(ptG,  90, Milling.PocketToolRadius),  90, ((BaseDim.BackPanelLength - BaseDim.MaterialThickness) * 0.5) - (Milling.DadoClearance * 0.5))
@@ -131,17 +131,17 @@ function Base_CabinetBack()
         end -- While end
       end -- if end
 
-      pt1Text = Polar2D(ptW, 340,  1.75 )
+      pt1Text = Polar2D(ptW, 340,  1.75 * Milling.Cal )
       if Milling.AddJointNotes then
-        DrawWriter("Dado - ".. BaseDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  0.0)
+        DrawWriter("Dado - ".. Double2Fraction(BaseDim.MaterialThickness) .. " X " ..  Double2Fraction(Milling.DadoHeight) , pt1Text, Project.TextHeight, Milling.LNPartLabels,  0.0)
       end
     end
   else   --  No center Panel
     if BaseQuestion.DrawBackPanel then
       DrawBox(ptF, ptG, ptE, ptH, Milling.LNBackPocket .. "-Base")
-      pt1Text = Polar2D(ptG, 60,  2.75 )
+      pt1Text = Polar2D(ptG, 60,  2.75  * Milling.Cal)
       if Milling.AddJointNotes then
-        DrawWriter("Dado - ".. BaseDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  90.0)
+        DrawWriter("Dado - ".. Double2Fraction(BaseDim.MaterialThickness) .. " X " ..  Double2Fraction(Milling.DadoHeight) , pt1Text, Project.TextHeight, Milling.LNPartLabels,  90.0)
       end
 
       if Milling.AddAssemblyHolesBase then
@@ -179,8 +179,8 @@ function Base_CabinetBack()
 --  Panel Profile
   if BaseQuestion.DrawBackPanel then
     DrawBox(Cab.Wpt7, pt2, pt3, pt4, Milling.LNBackProfile .. "-Base")
-    pt1Text = Polar2D(Cab.Wpt7, 45,  1.5)
-    DrawWriter("(ID: ".. BOM.PID ..") Base Cabinet Back - ".. BaseDim.ThicknessBack .." " .. BOM.BaseCabinetMateralType .. "  (" .. BaseDim.BackPanelLength .. " x " .. BaseDim.BackPanelWidth ..")", pt1Text, 0.35, Milling.LNPartLabels, 0.0)
+    pt1Text = Polar2D(Cab.Wpt7, 45,  1.5 * Milling.Cal)
+    DrawWriter("(ID: ".. BOM.PID .." ) Base Cabinet Back - " .. Double2Fraction(BaseDim.ThicknessBack) .. " " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(BaseDim.BackPanelLength) .. " x " .. Double2Fraction(BaseDim.BackPanelWidth) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
   end
   CutListfileWriterItem(BOM.PID, "Cabinet Back", "Base", "1", BaseDim.ThicknessBack, BOM.BaseCabinetMateralType, BOM.BaseCabinetFinish, BaseDim.BackPanelLength, BaseDim.BackPanelWidth)
   --Cab.Wpt10 = Polar2D(pt2, 0,  Milling.PartGap)
@@ -231,7 +231,7 @@ function Base_CabinetSide(side)
   local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
   BOM.PID = BOM.PID + 10
   if side  ==  "R" then
-    pt1Text = Polar2D(Cab.Wpt1, 45,  1.5)
+    pt1Text = Polar2D(Cab.Wpt1, 45,  1.5 * Milling.Cal)
     pt2 = Polar2D(Cab.Wpt1, 0, BaseDim.CabHeight)
     pt3 = Polar2D(pt2,  90, BaseDim.SidePanelWidth)
     pt4 = Polar2D(pt3, 180, BaseDim.CabHeight)
@@ -241,84 +241,75 @@ function Base_CabinetSide(side)
 
     if Project.Debugger then
       DMark("Cab.Wpt1", Cab.Wpt1)
-      DMark("pt2", pt2)
-      DMark("pt3", pt3)
-      DMark("pt4", pt4)
-      DMark("pt5", pt5)
-      DMark("pt6", pt6)
-      DMark("pt7", pt7)
+      DMark("pt2", pt2);      DMark("pt3", pt3)
+      DMark("pt4", pt4);      DMark("pt5", pt5)
+      DMark("pt6", pt6);      DMark("pt7", pt7)
     end -- if end
     if BaseQuestion.DrawSidePanels then
       line:AppendPoint(Cab.Wpt1)  -- Draw Left Profile
-      line:LineTo(pt2)  ;    line:LineTo(pt5)
-      line:LineTo(pt6)  ;    line:LineTo(pt7)
-      line:LineTo(pt4)  ;    line:LineTo(Cab.Wpt1)
+      line:LineTo(pt2);    line:LineTo(pt5)
+      line:LineTo(pt6);    line:LineTo(pt7)
+      line:LineTo(pt4);    line:LineTo(Cab.Wpt1)
       layer:AddObject(CreateCadContour(line), true)
     end
 --  Back Dado
-    ptAA = Polar2D(Cab.Wpt1,  90, BaseDim.ThicknessBack)
-    ptD = Polar2D(ptAA,      180, Milling.PocketToolRadius)
-    ptA = Polar2D(ptD,      270, BaseDim.ThicknessBack + Milling.PocketToolRadius)
-    ptCA = Polar2D(pt2,       90, BaseDim.ThicknessBack)
-    ptC = Polar2D(ptCA,        0, Milling.PocketToolRadius)
-    ptB = Polar2D(ptC,      270, BaseDim.ThicknessBack + Milling.PocketToolRadius)
+    ptAA = Polar2D(Cab.Wpt1,  90.0, BaseDim.ThicknessBack)
+    ptD  = Polar2D(ptAA,     180.0, Milling.PocketToolRadius)
+    ptA  = Polar2D(ptD,      270.0, BaseDim.ThicknessBack + Milling.PocketToolRadius)
+    ptCA = Polar2D(pt2,       90.0, BaseDim.ThicknessBack)
+    ptC  = Polar2D(ptCA,       0.0, Milling.PocketToolRadius)
+    ptB  = Polar2D(ptC,      270.0, BaseDim.ThicknessBack + Milling.PocketToolRadius)
 
     if Project.Debugger then
-      DMark("ptAA", ptAA)
-      DMark("ptA", ptA)
-      DMark("ptD", ptD)
-      DMark("ptCA", ptCA)
-      DMark("ptC", ptC)
-      DMark("ptB", ptB)
+      DMark("ptAA", ptAA);      DMark("ptA", ptA)
+      DMark("ptD", ptD)  ;      DMark("ptCA", ptCA)
+      DMark("ptC", ptC)  ;      DMark("ptB", ptB)
     end -- if end
-    pText = Polar2D(Polar2D(ptA, 4, 15.75), 0, 6.0)
+    pText = Polar2D(Polar2D(ptA, 4, 15.75 * Milling.Cal), 0, 6.0 * Milling.Cal)
     if Milling.AddJointNotes and BaseQuestion.DrawSidePanels then
-      DrawWriter("Rabbit - ".. BaseDim.ThicknessBack .. " X " ..  Milling.DadoHeight , pText, 0.35, Milling.LNPartLabels,  0.0)
+      DrawWriter("Rabbit - ".. Double2Fraction(BaseDim.ThicknessBack) .. " X " ..  Double2Fraction(Milling.DadoHeight) , pText, Project.TextHeight, Milling.LNPartLabels,  0.0)
     end -- if end
 --  Bottom Dado
-    ptFA = Polar2D(pt2,   180, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (Milling.DadoClearance * 0.5))
-    ptF = Polar2D(ptFA,   270, Milling.PocketToolRadius)
-    ptGA = Polar2D(pt3,   180, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (Milling.DadoClearance * 0.5))
-    ptG = Polar2D(ptGA,    90, Milling.PocketToolRadius)
-    ptE = Polar2D(ptF,   180, BaseDim.MaterialThickness + Milling.DadoClearance)
-    ptH = Polar2D(ptG,   180, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptFA = Polar2D(pt2,   180.0, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (Milling.DadoClearance * 0.5))
+    ptF  = Polar2D(ptFA,  270.0, Milling.PocketToolRadius)
+    ptGA = Polar2D(pt3,   180.0, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (Milling.DadoClearance * 0.5))
+    ptG  = Polar2D(ptGA,   90.0, Milling.PocketToolRadius)
+    ptE  = Polar2D(ptF,   180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptH  = Polar2D(ptG,   180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
     if Project.Debugger then
-      DMark("ptFA", ptFA)
-      DMark("ptF", ptF)
-      DMark("ptGA", ptGA)
-      DMark("ptG", ptG)
-      DMark("ptE", ptE)
-      DMark("ptH", ptH)
+      DMark("ptFA", ptFA) ;      DMark("ptF", ptF)
+      DMark("ptGA", ptGA) ;      DMark("ptG", ptG)
+      DMark("ptE", ptE)   ;      DMark("ptH", ptH)
     end -- if end
 
-    pText = Polar2D(ptE, 100,  2.75 )
+    pText = Polar2D(ptE, 100,  2.75 * Milling.Cal)
     if Milling.AddJointNotes and BaseQuestion.DrawSidePanels then
-      DrawWriter("Dado - ".. BaseDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pText, 0.35, Milling.LNPartLabels,  90.0)
+      DrawWriter("Dado - ".. Double2Fraction(BaseDim.MaterialThickness) .. " X " ..  Double2Fraction(Milling.DadoHeight) , pText, Project.TextHeight, Milling.LNPartLabels,  90.0)
     end -- if end
 --  Top Frame Back Dado
     layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket .. "-Base")
-    ptO   = Polar2D(Cab.Wpt1, 90, BaseDim.ThicknessBack)
-    ptO   = Polar2D(ptO,       0, BaseDim.MaterialThickness)
-    ptN   = Polar2D(ptO,      90, BaseDim.TopFrameWidth)
-    ptNA  = Polar2D(ptN,      90, Milling.PocketToolRadius)
-    ptNB  = Polar2D(ptNA,    180, Milling.PocketToolDia + Milling.DadoClearance)
-    ptNC  = Polar2D(ptNB,    270, Milling.PocketToolRadius)
-    ptM   = Polar2D(ptN,     180, BaseDim.MaterialThickness + Milling.PocketToolRadius)
-    ptO   = Polar2D(ptO,     270, Milling.PocketToolRadius + BaseDim.ThicknessBack + Milling.PocketToolRadius)
-    ptP   = Polar2D(ptO,     180, BaseDim.MaterialThickness + Milling.PocketToolRadius)
-    ptI   = Polar2D(pt4,     0.0, BaseDim.MaterialThickness)
-    ptJ   = Polar2D(ptI,   270.0, BaseDim.TopFrameWidth)
-    ptJA  = Polar2D(ptJ,   270.0, Milling.PocketToolRadius)
-    ptJB  = Polar2D(ptJA,  180.0, Milling.PocketToolDia + Milling.DadoClearance)
-    ptJC  = Polar2D(ptJB,   90.0, Milling.PocketToolRadius)
-    ptI   = Polar2D(ptI,    90.0, Milling.PocketToolRadius)
-    ptK   = Polar2D(ptJ,   180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
-    ptL   = Polar2D(ptI,   180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptO   = Polar2D(Cab.Wpt1, 90.0, BaseDim.ThicknessBack)
+    ptO   = Polar2D(ptO,       0.0, BaseDim.MaterialThickness)
+    ptN   = Polar2D(ptO,      90.0, BaseDim.TopFrameWidth)
+    ptNA  = Polar2D(ptN,      90.0, Milling.PocketToolRadius)
+    ptNB  = Polar2D(ptNA,    180.0, Milling.PocketToolDia + Milling.DadoClearance)
+    ptNC  = Polar2D(ptNB,    270.0, Milling.PocketToolRadius)
+    ptM   = Polar2D(ptN,     180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptO   = Polar2D(ptO,     270.0, Milling.PocketToolRadius + BaseDim.ThicknessBack + Milling.PocketToolRadius)
+    ptP   = Polar2D(ptO,     180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptI   = Polar2D(pt4,       0.0, BaseDim.MaterialThickness)
+    ptJ   = Polar2D(ptI,     270.0, BaseDim.TopFrameWidth)
+    ptJA  = Polar2D(ptJ,     270.0, Milling.PocketToolRadius)
+    ptJB  = Polar2D(ptJA,    180.0, Milling.PocketToolDia + Milling.DadoClearance)
+    ptJC  = Polar2D(ptJB,     90.0, Milling.PocketToolRadius)
+    ptI   = Polar2D(ptI,      90.0, Milling.PocketToolRadius)
+    ptK   = Polar2D(ptJ,     180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptL   = Polar2D(ptI,     180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
 
     if BaseQuestion.DrawSidePanels then
       if Milling.AddAssemblyHolesBase then
         local XA = Polar2D(Polar2D(ptI,  180.0, BaseDim.MaterialThickness * 0.5), 270.0, GetDistance(ptI, ptJC) * 0.25)
-        local XB = Polar2D(Polar2D(ptJA, 180.0, BaseDim.MaterialThickness * 0.5), 90.0, GetDistance(ptI, ptJC) * 0.25)
+        local XB = Polar2D(Polar2D(ptJA, 180.0, BaseDim.MaterialThickness * 0.5),  90.0, GetDistance(ptI, ptJC) * 0.25)
         DrawCircle(XA, Milling.MillTool5.ToolDia * 0.5, Milling.LNAssemblyHole .. "-Base")
         DrawCircle(XB, Milling.MillTool5.ToolDia * 0.5, Milling.LNAssemblyHole .. "-Base")
       end
@@ -338,44 +329,34 @@ function Base_CabinetSide(side)
       DMark("ptL", ptL)
     end -- if end
 --  Toe Front Dado
-    ptR   = Polar2D(pt5, 270.0, BaseDim.MaterialThickness)
-    ptS   = Polar2D(ptR, 180.0, BaseDim.ToeKickCoverHeight)
-    ptSA  = Polar2D(ptS, 180.0, Milling.PocketToolRadius + BaseDim.ToeKickBottomOffsetHeight)
-    ptSB  = Polar2D(ptSA, 90.0, BaseDim.MaterialThickness + Milling.DadoClearance)
-    ptSC  = Polar2D(ptS,  90.0, BaseDim.MaterialThickness + Milling.DadoClearance)
-    ptR   = Polar2D(ptR,   0.0, Milling.PocketToolRadius)
-    ptQ   = Polar2D(ptR,  90.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
-    ptT   = Polar2D(ptS,  90.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptR   = Polar2D(pt5,  270.0, BaseDim.MaterialThickness)
+    ptS   = Polar2D(ptR,  180.0, BaseDim.ToeKickCoverHeight)
+    ptSA  = Polar2D(ptS,  180.0, Milling.PocketToolRadius + BaseDim.ToeKickBottomOffsetHeight)
+    ptSB  = Polar2D(ptSA,  90.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptSC  = Polar2D(ptS,   90.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptR   = Polar2D(ptR,    0.0, Milling.PocketToolRadius)
+    ptQ   = Polar2D(ptR,   90.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptT   = Polar2D(ptS,   90.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
     ptPA  = Polar2D(Polar2D(Cab.Wpt1, 270.0, Milling.PocketToolRadius), 180.0, Milling.PocketToolRadius)
     ptOD  = Polar2D(Polar2D(Cab.Wpt1,  90.0, BaseDim.ThicknessBack),      0.0, BaseDim.MaterialThickness)
-    ptCA   = Polar2D(pt2,   90.0, BaseDim.ThicknessBack)
-    ptC   = Polar2D(ptCA,    0.0, Milling.PocketToolRadius)
+    ptCA  = Polar2D(pt2,   90.0, BaseDim.ThicknessBack)
+    ptC   = Polar2D(ptCA,   0.0, Milling.PocketToolRadius)
     ptFC  = Polar2D(ptC,  180.0, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight + Milling.PocketToolRadius - (Milling.DadoClearance * 0.5))
     ptEC  = Polar2D(ptFC, 180.0, BaseDim.MaterialThickness  + Milling.DadoClearance)
     ptFSA = Polar2D(ptS,  180.0, BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
     ptFSB = Polar2D(ptSC, 180.0, BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
 
     if Project.Debugger then
-      DMark("ptR", ptR)
-      DMark("ptS", ptS)
-      DMark("ptSA", ptSA)
-      DMark("ptSB", ptSB)
-      DMark("ptSC", ptSC)
-      DMark("ptR", ptR)
-      DMark("ptQ", ptQ)
-      DMark("ptT", ptT)
-      DMark("ptPA", ptPA)
-      DMark("ptOD", ptOD)
-      DMark("ptC", ptC)
-      DMark("ptCA", ptCA)
-      DMark("ptFC", ptFC)
-      DMark("ptEC", ptEC)
-      DMark("ptFSA", ptFSA)
-      DMark("ptFSB", ptFSB)
-      DMark("ptM", ptM)
-      DMark("ptNA", ptNA)
-      DMark("ptNB", ptNB)
-      DMark("ptNC", ptNC)
+      DMark("ptR", ptR);      DMark("ptS", ptS)
+      DMark("ptSA", ptSA);    DMark("ptSB", ptSB)
+      DMark("ptSC", ptSC);    DMark("ptR", ptR)
+      DMark("ptQ", ptQ);      DMark("ptT", ptT)
+      DMark("ptPA", ptPA);    DMark("ptOD", ptOD)
+      DMark("ptC", ptC);      DMark("ptCA", ptCA)
+      DMark("ptFC", ptFC);    DMark("ptEC", ptEC)
+      DMark("ptFSA", ptFSA);  DMark("ptFSB", ptFSB)
+      DMark("ptM", ptM);      DMark("ptNA", ptNA)
+      DMark("ptNB", ptNB);    DMark("ptNC", ptNC)
     end -- if end
 
     if BaseQuestion.DrawSidePanels then
@@ -458,19 +439,19 @@ function Base_CabinetSide(side)
             DrawerHeight = BaseDim.FaceFrameDrawerHeight1 + BaseDim.FaceFrameTopRailWidth + (BaseDim.FaceFrameMidRailWidth * 0.5)
           end -- if end
           AX = Polar2D(AX,  0.0, DrawerHeight)
-          Base_StrecherPocket(AX, 270)
+          Base_StrecherPocket(AX, 270.0)
           DrawerRowCountX = DrawerRowCountX + 1
         end -- while end
       end -- if end
     end -- if end
     if BaseQuestion.DrawSidePanels then
-      DrawWriter("(ID: ".. BOM.PID ..") Base Cabinet Right Side - ".. BaseDim.MaterialThickness .." ".. BOM.BaseCabinetMateralType .."  ( " .. BaseDim.SidePanelWidth .. " x " .. BaseDim.CabHeight .." )", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+      DrawWriter("(ID: ".. BOM.PID .." ) Base Cabinet Right Side - ".. Double2Fraction(BaseDim.MaterialThickness) .." ".. BOM.BaseCabinetMateralType .."  ( " .. Double2Fraction(BaseDim.SidePanelWidth) .. " x " .. Double2Fraction(BaseDim.CabHeight) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
     end
     CutListfileWriterItem(BOM.PID, "Cabinet Right Side", "Base", "1", BaseDim.MaterialThickness, BOM.BaseCabinetMateralType, BOM.BaseCabinetFinish, BaseDim.SidePanelWidth, BaseDim.CabHeight)
 -- =====================================================]]
-  else --  side  ==  "L"=====================================
+  else --  side  ==  "Left Hand" =======================]]
 -- =====================================================]]
-    pt1Text = Polar2D(Cab.Wpt2, 45,  1.5)
+    pt1Text = Polar2D(Cab.Wpt2, 45,  1.5 * Milling.Cal)
     pt2 = Polar2D(Cab.Wpt2, 0.0, BaseDim.CabHeight)
     pt3 = Polar2D(pt2,     90.0, BaseDim.SidePanelWidth)
     pt4 = Polar2D(pt3,    180.0, BaseDim.CabHeight)
@@ -480,12 +461,9 @@ function Base_CabinetSide(side)
 
     if Project.Debugger then
       DMark("Cab.Wpt2", Cab.Wpt2)
-      DMark("pt2", pt2)
-      DMark("pt3", pt3)
-      DMark("pt4", pt4)
-      DMark("pt5", pt5)
-      DMark("pt6", pt6)
-      DMark("pt7", pt7)
+      DMark("pt2", pt2);      DMark("pt3", pt3)
+      DMark("pt4", pt4);      DMark("pt5", pt5)
+      DMark("pt6", pt6);      DMark("pt7", pt7)
     end -- if end
 
     if BaseQuestion.DrawSidePanels then
@@ -497,64 +475,55 @@ function Base_CabinetSide(side)
     end
 
 --  Back Dado
-    ptAA = Polar2D(pt4, 270.0, BaseDim.ThicknessBack)
-    ptA = Polar2D(ptAA, 180.0, Milling.PocketToolRadius)
-    ptD = Polar2D(ptA,  90.0, BaseDim.ThicknessBack + Milling.PocketToolRadius)
-    ptBA = Polar2D(pt3, 270.0, BaseDim.ThicknessBack)
-    ptB = Polar2D(ptBA,   0.0, Milling.PocketToolRadius)
-    ptC = Polar2D(ptB,  90.0, BaseDim.ThicknessBack + Milling.PocketToolRadius)
-    ptLD = Polar2D(Polar2D(pt4, 90.0, Milling.PocketToolRadius), 180.0, Milling.PocketToolRadius)
-    pText = Polar2D(ptA, 350,  2.75 )
+    ptAA  = Polar2D(pt4,  270.0, BaseDim.ThicknessBack)
+    ptA   = Polar2D(ptAA, 180.0, Milling.PocketToolRadius)
+    ptD   = Polar2D(ptA,   90.0, BaseDim.ThicknessBack + Milling.PocketToolRadius)
+    ptBA  = Polar2D(pt3,  270.0, BaseDim.ThicknessBack)
+    ptB   = Polar2D(ptBA,   0.0, Milling.PocketToolRadius)
+    ptC   = Polar2D(ptB,   90.0, BaseDim.ThicknessBack + Milling.PocketToolRadius)
+    ptLD  = Polar2D(Polar2D(pt4, 90.0, Milling.PocketToolRadius), 180.0, Milling.PocketToolRadius)
+    pText = Polar2D(ptA,  350.0,  2.75 * Milling.Cal)
     if Milling.AddJointNotes and BaseQuestion.DrawSidePanels then
-      DrawWriter("Rabbit - ".. BaseDim.ThicknessBack .. " X " ..  Milling.DadoHeight , pText, 0.35, Milling.LNPartLabels,  0.0)
+      DrawWriter("Rabbit - ".. Double2Fraction(BaseDim.ThicknessBack) .. " X " ..  Double2Fraction(Milling.DadoHeight) , pText, Project.TextHeight, Milling.LNPartLabels,  0.0)
     end -- if end
 --  Bottom Dado
-    ptFA = Polar2D(pt2,   180.0, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
-    ptF = Polar2D(ptFA,   270.0, Milling.PocketToolRadius)
-    ptGB = Polar2D(pt3,   180.0, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
-    ptG = Polar2D(ptGB,    90.0, Milling.PocketToolRadius)
-    ptGA = Polar2D(ptG,  270.0, Milling.PocketToolRadius + BaseDim.ThicknessBack )
-    ptHA = Polar2D(ptGA, 180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
-    ptE = Polar2D(ptF,   180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
-    ptH = Polar2D(ptGA,   180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
-    pText = Polar2D(ptF, 120.0,  2.75 )
+    ptFA  = Polar2D(pt2,  180.0, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
+    ptF   = Polar2D(ptFA, 270.0, Milling.PocketToolRadius)
+    ptGB  = Polar2D(pt3,  180.0, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
+    ptG   = Polar2D(ptGB,  90.0, Milling.PocketToolRadius)
+    ptGA  = Polar2D(ptG,  270.0, Milling.PocketToolRadius + BaseDim.ThicknessBack )
+    ptHA  = Polar2D(ptGA, 180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptE   = Polar2D(ptF,  180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptH   = Polar2D(ptGA, 180.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    pText = Polar2D(ptF,  120.0,  2.75 * Milling.Cal)
 
 
     if Project.Debugger then
-      DMark("ptFA", ptFA)
-      DMark("ptF", ptF)
-      DMark("ptGB", ptGB)
-      DMark("ptG", ptG)
-      DMark("ptGA", ptGA)
-      DMark("ptHA", ptHA)
-      DMark("ptE", ptE)
-      DMark("ptH", ptH)
+      DMark("ptFA", ptFA);      DMark("ptF", ptF)
+      DMark("ptGB", ptGB);      DMark("ptG", ptG)
+      DMark("ptGA", ptGA);      DMark("ptHA", ptHA)
+      DMark("ptE", ptE);        DMark("ptH", ptH)
     end -- if end
 
     if Milling.AddJointNotes and BaseQuestion.DrawSidePanels then
-      DrawWriter("Dado - ".. BaseDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pText, 0.35, Milling.LNPartLabels,  90.0)
+      DrawWriter("Dado - ".. Double2Fraction(BaseDim.MaterialThickness) .. " X " ..  Double2Fraction(Milling.DadoHeight) , pText, Project.TextHeight, Milling.LNPartLabels,  90.0)
     end -- if end
 --  Top Frame Front Dado
     layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket .. "-Base")
-    ptOA = Polar2D(Cab.Wpt2, 0.0, BaseDim.MaterialThickness)
-    ptN = Polar2D(ptOA,     90.0, BaseDim.TopFrameWidth)
-    ptNA = Polar2D(ptN,    90.0, Milling.PocketToolRadius)
-    ptNB = Polar2D(ptNA,  180.0, Milling.PocketToolDia + Milling.DadoClearance)
-    ptNC = Polar2D(ptNB,  270.0, Milling.PocketToolRadius)
-    ptM = Polar2D(ptN,    180.0, BaseDim.MaterialThickness+ Milling.PocketToolRadius)
-    ptO = Polar2D(ptOA,    270.0, Milling.PocketToolRadius)
-    ptP = Polar2D(ptO,    180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptOA  = Polar2D(Cab.Wpt2, 0.0, BaseDim.MaterialThickness)
+    ptN   = Polar2D(ptOA,    90.0, BaseDim.TopFrameWidth)
+    ptNA  = Polar2D(ptN,     90.0, Milling.PocketToolRadius)
+    ptNB  = Polar2D(ptNA,   180.0, Milling.PocketToolDia + Milling.DadoClearance)
+    ptNC  = Polar2D(ptNB,   270.0, Milling.PocketToolRadius)
+    ptM   = Polar2D(ptN,    180.0, BaseDim.MaterialThickness+ Milling.PocketToolRadius)
+    ptO   = Polar2D(ptOA,   270.0, Milling.PocketToolRadius)
+    ptP   = Polar2D(ptO,    180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
     if Project.Debugger then
-      DMark("ptO", ptO)
-      DMark("ptN", ptN)
-      DMark("ptNA", ptNA)
-      DMark("ptNB", ptNB)
-      DMark("ptNC", ptNC)
-      DMark("ptHA", ptHA)
-      DMark("ptM", ptM)
-      DMark("ptOA", ptOA)
-      DMark("ptO", ptO)
-      DMark("ptP", ptP)
+      DMark("ptO", ptO);      DMark("ptN", ptN)
+      DMark("ptNA", ptNA);    DMark("ptNB", ptNB)
+      DMark("ptNC", ptNC);    DMark("ptHA", ptHA)
+      DMark("ptM", ptM);      DMark("ptOA", ptOA)
+      DMark("ptO", ptO);      DMark("ptP", ptP)
     end -- if end
     if BaseQuestion.DrawSidePanels then
       if Milling.AddAssemblyHolesBase then
@@ -574,52 +543,38 @@ function Base_CabinetSide(side)
     end
 
 --  Top Frame Back Dado
-    ptIC = Polar2D(pt4,    270.0, BaseDim.ThicknessBack)
-    ptIB = Polar2D(ptIC,      0.0, BaseDim.MaterialThickness)
-    ptIA = ptIB
-    ptJ = Polar2D(ptIB,    270.0, BaseDim.TopFrameWidth)
-    ptJA = Polar2D(ptJ,   270.0, Milling.PocketToolRadius)
-    ptJB = Polar2D(ptJA,  180.0, Milling.PocketToolDia + Milling.DadoClearance)
-    ptJC = Polar2D(ptJB,   90.0, Milling.PocketToolRadius)
---    ptI = Polar2D(ptIB,     90.0, Milling.PocketToolRadius + BaseDim.ThicknessBack + Milling.PocketToolRadius)
-    ptK = Polar2D(ptJ,    180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
---    ptL = Polar2D(ptI,    180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
-    ptL = Polar2D(ptIB,    180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptIC  = Polar2D(pt4,  270.0, BaseDim.ThicknessBack)
+    ptIB  = Polar2D(ptIC,   0.0, BaseDim.MaterialThickness)
+    ptIA  = ptIB
+    ptJ   = Polar2D(ptIB, 270.0, BaseDim.TopFrameWidth)
+    ptJA  = Polar2D(ptJ,  270.0, Milling.PocketToolRadius)
+    ptJB  = Polar2D(ptJA, 180.0, Milling.PocketToolDia + Milling.DadoClearance)
+    ptJC  = Polar2D(ptJB,  90.0, Milling.PocketToolRadius)
+    ptK   = Polar2D(ptJ,  180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptL   = Polar2D(ptIB, 180.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
 --  Toe Front Dado
-    ptRA = Polar2D(pt5,     90.0, BaseDim.MaterialThickness)
-    ptS = Polar2D(ptRA,    180.0, BaseDim.ToeKickCoverHeight)
-    ptSA = Polar2D(ptS,   180.0, Milling.PocketToolRadius + BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
+    ptRA  = Polar2D(pt5,   90.0, BaseDim.MaterialThickness)
+    ptS   = Polar2D(ptRA, 180.0, BaseDim.ToeKickCoverHeight)
+    ptSA  = Polar2D(ptS,  180.0, Milling.PocketToolRadius + BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
     ptFSA = Polar2D(ptS,  180.0, BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
-    ptSB = Polar2D(ptSA,  270.0, BaseDim.MaterialThickness + Milling.DadoClearance)
-    ptSC = Polar2D(ptS,   270.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptSB  = Polar2D(ptSA, 270.0, BaseDim.MaterialThickness + Milling.DadoClearance)
+    ptSC  = Polar2D(ptS,  270.0, BaseDim.MaterialThickness + Milling.DadoClearance)
     ptFSB = Polar2D(ptSC, 180.0, BaseDim.ToeKickBottomOffsetHeight - (0.5 * Milling.DadoClearance ))
-    ptR = Polar2D(ptRA,      0.0, Milling.PocketToolRadius)
-    ptQ = Polar2D(ptR,    270.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
-    ptT = Polar2D(ptS,    270.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptR   = Polar2D(ptRA,   0.0, Milling.PocketToolRadius)
+    ptQ   = Polar2D(ptR,  270.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
+    ptT   = Polar2D(ptS,  270.0, BaseDim.MaterialThickness + Milling.PocketToolRadius)
 
     if Project.Debugger then
-      DMark("ptIC", ptIC)
-      DMark("ptIA", ptIA)
-      DMark("ptIB", ptIB)
-      DMark("ptJ", ptJ)
-      DMark("ptJA", ptJA)
-      DMark("ptJB", ptJB)
-      DMark("ptJC", ptJC)
-    --  DMark("ptI", ptI)
-      DMark("ptK", ptK)
-      DMark("ptL", ptL)
-      DMark("ptRA", ptRA)
-      DMark("ptS", ptS)
-      DMark("ptSA", ptSA)
-      DMark("ptFSA", ptFSA)
-      DMark("ptSB", ptSB)
-      DMark("ptSC", ptSC)
-      DMark("ptFSB", ptFSB)
-      DMark("ptR", ptR)
-      DMark("ptQ", ptQ)
-      DMark("ptT", ptT)
-      DMark("ptLD", ptLD)
-
+      DMark("ptIC", ptIC);      DMark("ptIA", ptIA)
+      DMark("ptIB", ptIB);      DMark("ptJ", ptJ)
+      DMark("ptJA", ptJA);      DMark("ptJB", ptJB)
+      DMark("ptJC", ptJC);      DMark("ptK", ptK)
+      DMark("ptL", ptL);        DMark("ptRA", ptRA)
+      DMark("ptS", ptS);        DMark("ptSA", ptSA)
+      DMark("ptFSA", ptFSA);    DMark("ptSB", ptSB)
+      DMark("ptSC", ptSC);      DMark("ptFSB", ptFSB)
+      DMark("ptR", ptR);        DMark("ptQ", ptQ)
+      DMark("ptT", ptT);        DMark("ptLD", ptLD)
     end -- if end
 
     if BaseQuestion.DrawSidePanels then
@@ -714,7 +669,7 @@ function Base_CabinetSide(side)
     end -- if end
 
     if BaseQuestion.DrawSidePanels then
-      DrawWriter("(ID: " .. BOM.PID .. ") Base Cabinet Left Side - ".. BaseDim.MaterialThickness .." " ..BOM.BaseCabinetMateralType .. "  ( " .. BaseDim.SidePanelWidth .. " x " .. BaseDim.CabHeight .." )", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+      DrawWriter("(ID: " .. BOM.PID .. " ) Base Cabinet Left Side - ".. Double2Fraction(BaseDim.MaterialThickness) .." " ..BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(BaseDim.SidePanelWidth) .. " x " .. Double2Fraction(BaseDim.CabHeight) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
     end
     CutListfileWriterItem(BOM.PID, "Cabinet Left Side ", "Base", "1", BaseDim.MaterialThickness, BOM.BaseCabinetMateralType, BOM.BaseCabinetFinish, BaseDim.SidePanelWidth, BaseDim.CabHeight)
   end -- if end for sides
@@ -724,7 +679,7 @@ function Base_CabinetSide(side)
     if side  ==  "L" then
       ptx = Polar2D(Polar2D(Cab.Wpt2, 0, BaseDim.HoleDrop), 90, BaseDim.ShelfPinHoleFront)
     else
-      ptx = Polar2D(Polar2D(Cab.Wpt1, 0, BaseDim.HoleDrop), 90, ( BaseDim.ThicknessBack + BaseDim.ShelfPinHoleBack))
+      ptx = Polar2D(Polar2D(Cab.Wpt1, 0, BaseDim.HoleDrop), 90, (BaseDim.ThicknessBack + BaseDim.ShelfPinHoleBack))
     end -- if end
     rows = BaseDim.HoleRows
     while (rows > 0) do
@@ -741,48 +696,38 @@ function Base_CenterPanel()
   local pt1Text = Cab.Wpt10
   local pt1 = Cab.Wpt10
   local pt2 = Polar2D(Cab.Wpt10, 0.0, BaseDim.CenterPanelLength)
-  local pt3 = Polar2D(pt2,     90.0, BaseDim.CenterPanelWidth)
-  local pt4 = Polar2D(pt3,    180.0, BaseDim.CenterPanelLength)
+  local pt3 = Polar2D(pt2,      90.0, BaseDim.CenterPanelWidth)
+  local pt4 = Polar2D(pt3,     180.0, BaseDim.CenterPanelLength)
 
   if Project.Debugger then
-    DMark("Cab.Wpt10", Cab.Wpt10)
-    DMark("pt2", pt2)
-    DMark("pt3", pt3)
-    DMark("pt4", pt4)
+    DMark("Cab.Wpt10", Cab.Wpt10);    DMark("pt2", pt2)
+    DMark("pt3", pt3);                DMark("pt4", pt4)
   end -- if end
   if BaseQuestion.DrawCenterPanel then
-    local pt5 = Polar2D(pt1,   0, BaseDim.MaterialThickness - Milling.DadoHeight)
-    local pt6 = Polar2D(pt5,  90, Milling.DadoBlindAmount + Milling.ProfileToolRadius)
-    local pt7 = Polar2D(pt1,  90, Milling.DadoBlindAmount + Milling.ProfileToolRadius)
-    local pt8 = Polar2D(pt2, 180, BaseDim.MaterialThickness - Milling.DadoHeight)
-    local pt9 = Polar2D(pt8,  90, Milling.DadoBlindAmount + Milling.ProfileToolRadius)
-    local pt0 = Polar2D(pt2,  90, Milling.DadoBlindAmount + Milling.ProfileToolRadius)
+    local pt5 = Polar2D(pt1,   0.0, BaseDim.MaterialThickness - Milling.DadoHeight)
+    local pt6 = Polar2D(pt5,  90.0, Milling.DadoBlindAmount   + Milling.ProfileToolRadius)
+    local pt7 = Polar2D(pt1,  90.0, Milling.DadoBlindAmount   + Milling.ProfileToolRadius)
+    local pt8 = Polar2D(pt2, 180.0, BaseDim.MaterialThickness - Milling.DadoHeight)
+    local pt9 = Polar2D(pt8,  90.0, Milling.DadoBlindAmount   + Milling.ProfileToolRadius)
+    local pt0 = Polar2D(pt2,  90.0, Milling.DadoBlindAmount   + Milling.ProfileToolRadius)
     if Project.Debugger then
-      DMark("pt5", pt5)
-      DMark("pt6", pt6)
-      DMark("pt7", pt7)
-      DMark("pt8", pt8)
-      DMark("pt9", pt9)
-      DMark("pt0", pt0)
+      DMark("pt5", pt5);      DMark("pt6", pt6)
+      DMark("pt7", pt7);      DMark("pt8", pt8)
+      DMark("pt9", pt9);      DMark("pt0", pt0)
     end -- if end
     local line = Contour(0.0)
     layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelProfile  .. "-Base")
     line:AppendPoint(pt5)
-    line:LineTo(pt6)
-    line:LineTo(pt7)
-    line:LineTo(pt4)
-    line:LineTo(pt3)
-    line:LineTo(pt0)
-    line:LineTo(pt9)
-    line:LineTo(pt8)
-    line:LineTo(pt5)
+    line:LineTo(pt6);    line:LineTo(pt7)
+    line:LineTo(pt4);    line:LineTo(pt3)
+    line:LineTo(pt0);    line:LineTo(pt9)
+    line:LineTo(pt8);    line:LineTo(pt5)
     layer:AddObject(CreateCadContour(line), true)
-
   else
     DrawBox(Cab.Wpt10, pt2, pt3, pt4, Milling.LNCenterPanelProfile .. "-Base")
   end -- if end
-  pt1Text = Polar2D(Cab.Wpt10, 45,  1.75)
-  DrawWriter("(ID: " .. BOM.PID .. ") Base Cabinet Center Panel - ".. BaseDim.MaterialThickness .. " " .. BOM.BaseCabinetMateralType .. "  (" .. BaseDim.CenterPanelWidth .. " x " .. BaseDim.CenterPanelLength ..")", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+  pt1Text = Polar2D(Cab.Wpt10, 45,  1.75 * Milling.Cal)
+  DrawWriter("(ID: " .. BOM.PID .. " ) Base Cabinet Center Panel - " .. Double2Fraction(BaseDim.MaterialThickness) .. " " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(BaseDim.CenterPanelWidth) .. " x " .. Double2Fraction(BaseDim.CenterPanelLength) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
   CutListfileWriterItem(BOM.PID, "Cabinet Center Panel", "Base", "1", BaseDim.MaterialThickness, BOM.BaseCabinetMateralType, BOM.BaseCabinetFinish, BaseDim.CenterPanelWidth, BaseDim.CenterPanelLength)
   if BaseQuestion.DrawCenterPanel and (BaseQuestion.ShelfCount >= 1) then
     local ptx = Polar2D(Polar2D(Cab.Wpt10, 0.0, BaseDim.HoleDrop), 90.0, BaseDim.ShelfPinHoleFront)
@@ -842,27 +787,19 @@ function Base_StrecherPocket(p1, Ang)
     end -- if end
   end -- if end
   if Project.Debugger then
-    DMark("X1", X1)
-    DMark("X2", X2)
-    DMark("X3", X3)
-    DMark("X4", X4)
-    DMark("X5", X5)
-    DMark("X6", X6)
-    DMark("X7", X7)
-    DMark("X8", X8)
+    DMark("X1", X1);    DMark("X2", X2)
+    DMark("X3", X3);    DMark("X4", X4)
+    DMark("X5", X5);    DMark("X6", X6)
+    DMark("X7", X7);    DMark("X8", X8)
   end -- if end
   if Milling.DadoType == "Through" then
     local layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket .. "-Base")
     local line = Contour(0.0)
     line:AppendPoint(X1)
-    line:LineTo(X2)
-    line:LineTo(X3)
-    line:LineTo(X4)
-    line:LineTo(X5)
-    line:LineTo(X6)
-    line:LineTo(X7)
-    line:LineTo(X8)
-    line:LineTo(X1)
+    line:LineTo(X2);    line:LineTo(X3)
+    line:LineTo(X4);    line:LineTo(X5)
+    line:LineTo(X6);    line:LineTo(X7)
+    line:LineTo(X8);    line:LineTo(X1)
     layer:AddObject(CreateCadContour(line), true)
   end --
   return true
@@ -938,12 +875,12 @@ function Base_Math()  --  All the math for Base Cabinet
     Cab.Wpt10 = Cab.Wpt9
   else
     if BaseDim.ShelfDistance < ((BaseDim.CabHeight + Milling.PartGap)  * 2.0) then
-      Cab.Wpt9 = Polar2D(Cab.Wpt1, 90.0, (BaseDim.CabDepth        + Milling.PartGap - BaseDim.FaceFrameThickness)) --  Shelves
-      Cab.pt9b = Polar2D(Cab.Wpt9,  0.0, BaseDim.ShelfDistance)                                                     --  Shelves bottom
+      Cab.Wpt9  = Polar2D(Cab.Wpt1, 90.0, (BaseDim.CabDepth        + Milling.PartGap - BaseDim.FaceFrameThickness)) --  Shelves
+      Cab.pt9b  = Polar2D(Cab.Wpt9,  0.0, BaseDim.ShelfDistance)                                                     --  Shelves bottom
       Cab.Wpt10 = Polar2D(Cab.Wpt1, 90.0, (BaseDim.BackPanelLength + Milling.PartGap - BaseDim.FaceFrameThickness)) --  Shelves
     else
       Cab.Wpt9  = Polar2D(Cab.Wpt1, 90.0, (BaseDim.BackPanelLength + Milling.PartGap - BaseDim.FaceFrameThickness)) --  Shelves
-      Cab.pt9b  = Polar2D(Cab.Wpt9, 0.0, BaseDim.ShelfDistance     - Milling.PartGap)                               --  Shelves bottom
+      Cab.pt9b  = Polar2D(Cab.Wpt9,  0.0, BaseDim.ShelfDistance     - Milling.PartGap)                               --  Shelves bottom
       Cab.Wpt10 = Polar2D(Cab.Wpt1, 90.0, (BaseDim.BackPanelLength + Milling.PartGap - BaseDim.FaceFrameThickness)) --  Shelves
     end -- if end
 
@@ -969,14 +906,14 @@ end
 -- =====================================================]]
 function Base_CabinetBottom()
   BOM.PID = BOM.PID + 10
-  local pt2 = Polar2D(Cab.Wpt3, 0, BaseDim.TopBottomPanelWidth)
-  local ptC = Polar2D(Cab.Wpt3, 90, (BaseDim.TopBottomPanelLength * 0.5))
-  local pt3 = Polar2D(pt2, 90, BaseDim.TopBottomPanelLength)
-  local pt4 = Polar2D(pt3,  180, BaseDim.TopBottomPanelWidth)
-  local ptW = Polar2D(Polar2D (ptC, 270, ((BaseDim.MaterialThickness + Milling.DadoClearance) * 0.5)), 180, Milling.ProfileToolRadius)
-  local ptX = Polar2D(ptW, 90, BaseDim.MaterialThickness + Milling.DadoClearance)
-  local ptY = Polar2D(ptX,  0, BaseDim.TopBottomPanelWidth + (Milling.ProfileToolRadius * 2))
-  local ptZ = Polar2D(ptW,  0, BaseDim.TopBottomPanelWidth + (Milling.ProfileToolRadius * 2))
+  local pt2 = Polar2D(Cab.Wpt3,       0.0, BaseDim.TopBottomPanelWidth)
+  local ptC = Polar2D(Cab.Wpt3,      90.0, (BaseDim.TopBottomPanelLength * 0.5))
+  local pt3 = Polar2D(pt2,           90.0, BaseDim.TopBottomPanelLength)
+  local pt4 = Polar2D(pt3,          180.0, BaseDim.TopBottomPanelWidth)
+  local ptW = Polar2D(Polar2D (ptC, 270.0, ((BaseDim.MaterialThickness + Milling.DadoClearance) * 0.5)), 180.0, Milling.ProfileToolRadius)
+  local ptX = Polar2D(ptW,           90.0, BaseDim.MaterialThickness   + Milling.DadoClearance)
+  local ptY = Polar2D(ptX,            0.0, BaseDim.TopBottomPanelWidth + (Milling.ProfileToolRadius * 2))
+  local ptZ = Polar2D(ptW,            0.0, BaseDim.TopBottomPanelWidth + (Milling.ProfileToolRadius * 2))
 
   if Milling.DadoType == "Half Blind" then
     ptW = Polar2D(ptW,  0.0, Milling.DadoBlindAmount + (Milling.ProfileToolRadius * 2))
@@ -985,18 +922,12 @@ function Base_CabinetBottom()
   local pt1Text = Cab.Wpt1
   if Project.Debugger then
     DMark("Cab.Wpt3", Cab.Wpt3)
-    DMark("ptC", ptC)
-    DMark("pt2", pt2)
-    DMark("pt3", pt3)
-    DMark("pt4", pt4)
-    DMark("ptW", ptW)
-    DMark("ptX", ptX)
-    DMark("ptY", ptY)
-    DMark("ptZ", ptZ)
+    DMark("ptC", ptC);    DMark("pt2", pt2)
+    DMark("pt3", pt3);    DMark("pt4", pt4)
+    DMark("ptW", ptW);    DMark("ptX", ptX)
+    DMark("ptY", ptY);    DMark("ptZ", ptZ)
   end -- if end
-
   local line = Contour(0.0)
-
   if BaseQuestion.AddCenterPanel and BaseQuestion.DrawBottomPanel then
     DrawBox(ptW, ptX, ptY, ptZ, Milling.LNTopBottomPocket .. "-Base")
     if Milling.AddAssemblyHolesBase then
@@ -1013,9 +944,9 @@ function Base_CabinetBottom()
         HoleCount = (HoleCount - 1.0)
       end -- While end
     end -- if end
-    pt1Text = Polar2D(ptW, 340,  1.75 )
+    pt1Text = Polar2D(ptW, 340,  1.75  * Milling.Cal)
     if Milling.AddJointNotes then
-      DrawWriter("Dado - ".. BaseDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  0.0)
+      DrawWriter("Dado - ".. Double2Fraction(BaseDim.MaterialThickness) .. " X " ..  Double2Fraction(Milling.DadoHeight) , pt1Text, Project.TextHeight, Milling.LNPartLabels,  0.0)
     end
   end
   if BaseQuestion.DrawBottomPanel then
@@ -1027,31 +958,24 @@ function Base_CabinetBottom()
         local ptE  = Polar2D(ptD,    270.0, BaseDim.MaterialThickness - Milling.DadoHeight)
         local ptF  = Polar2D(ptE,    180.0, Milling.DadoBlindAmount)
       if Project.Debugger then
-        DMark("ptA", ptA)
-        DMark("ptC", ptC)
-        DMark("ptB", ptB)
-        DMark("ptD", ptD)
-        DMark("ptE", ptE)
-        DMark("ptF", ptF)
+        DMark("ptA", ptA);        DMark("ptC", ptC)
+        DMark("ptB", ptB);        DMark("ptD", ptD)
+        DMark("ptE", ptE);        DMark("ptF", ptF)
       end -- if end
 
       line = Contour(0.0)
       layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomProfile  .. "-Base")
-      line:AppendPoint(ptA)
-      line:LineTo(ptB)
-      line:LineTo(ptC)
-      line:LineTo(ptF)
-      line:LineTo(ptE)
-      line:LineTo(ptD)
-      line:LineTo(pt3)
-      line:LineTo(pt2)
+      line:AppendPoint(ptA);      line:LineTo(ptB)
+      line:LineTo(ptC);           line:LineTo(ptF)
+      line:LineTo(ptE);           line:LineTo(ptD)
+      line:LineTo(pt3);           line:LineTo(pt2)
       line:LineTo(ptA)
       layer:AddObject(CreateCadContour(line), true)
     else
     DrawBox(Cab.Wpt3, pt2, pt3, pt4, Milling.LNTopBottomProfile .. "-Base")
     end -- if end
-    pt1Text = Polar2D(Cab.Wpt3, 45,  1.5)
-    DrawWriter("(ID: " .. BOM.PID .. ") Base Cabinet Bottom - ".. BaseDim.MaterialThickness .." " .. BOM.BaseCabinetMateralType .. "  ( " .. BaseDim.TopBottomPanelWidth .. " x " .. BaseDim.TopBottomPanelLength .." )", pt1Text, 0.35, Milling.LNPartLabels, 0.0)
+    pt1Text = Polar2D(Cab.Wpt3, 45.0,  1.5 * Milling.Cal)
+    DrawWriter("(ID: " .. BOM.PID .. " ) Base Cabinet Bottom - ".. Double2Fraction(BaseDim.MaterialThickness) .." " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(BaseDim.TopBottomPanelWidth) .. " x " .. Double2Fraction(BaseDim.TopBottomPanelLength) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
   end
   CutListfileWriterItem(BOM.PID, "Cabinet Bottom", "Base", "1", BaseDim.MaterialThickness, BOM.BaseCabinetMateralType, BOM.BaseCabinetFinish, BaseDim.TopBottomPanelWidth, BaseDim.TopBottomPanelLength)
   return true
@@ -1068,39 +992,38 @@ function Base_CabinetFaceFrame()
   BOM.PID = BOM.PID + 10
 --  Draw outer frame box
   local pt2 = Polar2D(Cab.Wpt8, 0.0,  BaseDim.FaceFrameStileLength)
-  local pt3 = Polar2D(pt2, 90.0,  BaseDim.FaceFrameRailLength+(BaseDim.FaceFrameStileWidth*2.0))
-  local pt4 = Polar2D(pt3,  180.0,  BaseDim.FaceFrameStileLength)
+  local pt3 = Polar2D(pt2,     90.0,  BaseDim.FaceFrameRailLength+(BaseDim.FaceFrameStileWidth*2.0))
+  local pt4 = Polar2D(pt3,    180.0,  BaseDim.FaceFrameStileLength)
   -- Draw Stile Lines
-  A1 = Polar2D(Cab.Wpt8, 90.0,  BaseDim.FaceFrameStileWidth)
-  B1 = Polar2D(pt2, 90.0,  BaseDim.FaceFrameStileWidth)
-  C1 = Polar2D(pt3,  270.0,  BaseDim.FaceFrameStileWidth)
-  D1 = Polar2D(pt4,  270.0,  BaseDim.FaceFrameStileWidth)
-  pt1Text = Polar2D(Cab.Wpt8, 5,  8.75 )
+  A1 = Polar2D(Cab.Wpt8,       90.0,  BaseDim.FaceFrameStileWidth)
+  B1 = Polar2D(pt2,            90.0,  BaseDim.FaceFrameStileWidth)
+  C1 = Polar2D(pt3,           270.0,  BaseDim.FaceFrameStileWidth)
+  D1 = Polar2D(pt4,           270.0,  BaseDim.FaceFrameStileWidth)
+  pt1Text = Polar2D(Cab.Wpt8,   5.0,  8.75 * Milling.Cal )
 
   if BaseQuestion.DrawFaceFrame then
     DrawBox(Cab.Wpt8, pt2, B1, A1, Milling.LNDrawFaceFrame .. "-Base")
-    DrawWriter("APart ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  0.0)
+    DrawWriter("APart ID: " .. BOM.PID, pt1Text, Project.TextHeight, Milling.LNPartLabels,  0.0)
     DrawBox(D1, C1,pt3, pt4, Milling.LNDrawFaceFrame .. "-Base")
-    pt1Text = Polar2D(pt4, 355,  8.75 )
-    DrawWriter("BPart ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  0.0)
+    pt1Text = Polar2D(pt4, 355,  8.75  * Milling.Cal)
+    DrawWriter("BPart ID: " .. BOM.PID, pt1Text, Project.TextHeight, Milling.LNPartLabels,  0.0)
     CutListfileWriterItem(BOM.PID, "Face Frame Stile", "Base", "2", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameStileWidth, BaseDim.FaceFrameStileLength)
   else
     CutListfileWriterItem(BOM.PID, "Face Frame Stile", "Base", "2", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameStileWidth, BaseDim.FaceFrameStileLength)
   end -- if end
   BOM.PID = BOM.PID + 10
 --  Draw the Top and Bottom rails
-  A2 = Polar2D(A1, 0.0, BaseDim.FaceFrameTopRailWidth)
+  A2 = Polar2D(A1,   0.0, BaseDim.FaceFrameTopRailWidth)
   B2 = Polar2D(B1, 180.0, BaseDim.FaceFrameBottomRailWidth)
   C2 = Polar2D(C1, 180.0, BaseDim.FaceFrameBottomRailWidth)
-  D2 = Polar2D(D1, 0.0, BaseDim.FaceFrameTopRailWidth)
+  D2 = Polar2D(D1,   0.0, BaseDim.FaceFrameTopRailWidth)
   BaseDim.FaceFrameRailLength = GetDistance(A2, D2)
---  local DrawerHeight  = 0.0
 
   --  Draw the Top rail
   if BaseQuestion.DrawFaceFrame then
     DrawBox(A1, A2, D2, D1, Milling.LNDrawFaceFrame .. "-Base")
-    pt1Text = Polar2D(A1, 85,  8.75 )
-    DrawWriter("CPart ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  90.0)
+    pt1Text = Polar2D(A1, 85,  8.75  * Milling.Cal)
+    DrawWriter("CPart ID: " .. BOM.PID, pt1Text, Project.TextHeight, Milling.LNPartLabels,  90.0)
     CutListfileWriterItem(BOM.PID, "Face Frame Top Rail", "Base", "1", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameTopRailWidth, BaseDim.FaceFrameRailLength )
   else
     BOM.PID = BOM.PID + 10
@@ -1112,10 +1035,10 @@ function Base_CabinetFaceFrame()
     B2x = B2
     C2x = C2
 
-    pt1Text = Polar2D(B2, 85,  8.75 )
+    pt1Text = Polar2D(B2, 85,  8.75  * Milling.Cal)
     CutListfileWriterItem(BOM.PID, "Face Frame Bottom Rail", "Base", "1", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameBottomRailWidth, BaseDim.FaceFrameRailLength )
     DrawBox(B2, B1, C1, C2, Milling.LNDrawFaceFrame .. "-Base") -- Bottom Rail
-    DrawWriter("DPart ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  90.0)
+    DrawWriter("DPart ID: " .. BOM.PID, pt1Text, Project.TextHeight, Milling.LNPartLabels,  90.0)
   else
     BOM.PID = BOM.PID + 10
     CutListfileWriterItem(BOM.PID, "Face Frame Bottom Rail", "Base", "1", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameBottomRailWidth, BaseDim.FaceFrameRailLength )
@@ -1125,20 +1048,20 @@ function Base_CabinetFaceFrame()
   -- ============
   BOM.PID = BOM.PID + 10
   if DrawerRowCountF == 3 then
-    Cab.A1 = Polar2D(A1, 0.0, BaseDim.FaceFrameTopRailWidth)
-    Cab.A2 = Polar2D(D1, 0.0, BaseDim.FaceFrameTopRailWidth)
+    Cab.A1  = Polar2D(A1, 0.0, BaseDim.FaceFrameTopRailWidth)
+    Cab.A2  = Polar2D(D1, 0.0, BaseDim.FaceFrameTopRailWidth)
     Base_FFRows(BaseDim.FaceFrameDrawerHeight1, Cab.A1,  Cab.A2, true)
     BOM.PID = BOM.PID + 10
-    Cab.A1 = Polar2D(Cab.A1, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight1)
-    Cab.A2 = Polar2D(Cab.A2, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight1)
+    Cab.A1  = Polar2D(Cab.A1, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight1)
+    Cab.A2  = Polar2D(Cab.A2, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight1)
     Base_FFRows(BaseDim.FaceFrameDrawerHeight2, Cab.A1,  Cab.A2, true)
     BOM.PID = BOM.PID + 10
-    Cab.A1 = Polar2D(Cab.A1, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight2)
-    Cab.A2 = Polar2D(Cab.A2, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight2)
+    Cab.A1  = Polar2D(Cab.A1, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight2)
+    Cab.A2  = Polar2D(Cab.A2, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight2)
     Base_FFRows(BaseDim.FaceFrameDrawerHeight3, Cab.A1,  Cab.A2, true)
     --BOM.PID = BOM.PID + 10
-    Cab.A1 = Polar2D(Cab.A1, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight3)
-    Cab.A2 = Polar2D(Cab.A2, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight3)
+    Cab.A1  = Polar2D(Cab.A1, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight3)
+    Cab.A2  = Polar2D(Cab.A2, 0.0, BaseDim.FaceFrameMidRailWidth + BaseDim.FaceFrameDrawerHeight3)
     lastBit = BaseDim.FaceFrameStileLength - ((BaseDim.FaceFrameMidRailWidth * 3) + BaseDim.FaceFrameTopRailWidth + BaseDim.FaceFrameBottomRailWidth + (BaseDim.FaceFrameDrawerHeight1 + BaseDim.FaceFrameDrawerHeight2 + BaseDim.FaceFrameDrawerHeight3))
     Base_FFRows(lastBit, Cab.A1,  Cab.A2, false)
   end
@@ -1179,17 +1102,17 @@ function Base_CabinetFaceFrame()
     Base_FFRows(lastBit, Cab.A1,  Cab.A2, false)
   end
 
-  pt1Text = Polar2D(pt2, 0,  (BaseDim.FaceFrameStileWidth * 1.5))
-  pt1Text = Polar2D(Cab.Wpt1, 90,  45.0)
-  DrawWriter(Project.ProgramName, pt1Text, 1.250, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270, 1.25)
-  DrawWriter("Cabinet ID: " .. Project.DrawerID, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270,1)
-  DrawWriter("Cabnet Name: " .. Project.CabinetName, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270,1)
-  DrawWriter("Version: " .. Project.ProgramVersion, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270,1)
-  DrawWriter("Code By: " .. Project.ProgramCodeBy, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt2, 0.0,  (BaseDim.FaceFrameStileWidth * 1.5))
+  pt1Text = Polar2D(Cab.Wpt1, 90.0,  47.0 * Milling.Cal)
+  DrawWriter(Project.ProgramName, pt1Text, Project.TextHeight * 3.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 3.35)
+  DrawWriter("Cabinet ID: " .. Project.DrawerID, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  DrawWriter("Cabnet Name: " .. Project.CabinetName, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  DrawWriter("Version: " .. Project.ProgramVersion, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  DrawWriter("Code By: " .. Project.ProgramCodeBy, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
   return true
 end
 -- =====================================================]]
@@ -1202,10 +1125,10 @@ function Base_FFRows(DrawerHeight, A2x, D2x, xx)
   local A3, B3, C3, D3
   local pt1Text
   if xx then
-    pt1Text = Polar2D(A2, 85,  8.75 )
+    pt1Text = Polar2D(A2, 85,  8.75 * Milling.Cal)
     if BaseQuestion.DrawFaceFrame then
       DrawBox(A2, B2, C2, D2, Milling.LNDrawFaceFrame .. "-Base")
-       DrawWriter("Part ID: ".. BOM.PID, pt1Text, 0.4, Milling.LNPartLabels,  90.0)
+       DrawWriter("Part ID: ".. BOM.PID, pt1Text, Project.TextHeight, Milling.LNPartLabels,  90.0)
       CutListfileWriterItem(BOM.PID, "Face Frame Mid Rail", "Base", "1", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameCenterStileWidth, GetDistance(A2, D2) )
     else
       CutListfileWriterItem(BOM.PID, "Face Frame Mid Rail", "Base", "1", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameCenterStileWidth, GetDistance(A2, D2) )
@@ -1221,8 +1144,8 @@ function Base_FFRows(DrawerHeight, A2x, D2x, xx)
     if BaseQuestion.DrawFaceFrame then
       BOM.PID = BOM.PID + 10
       DrawBox(A3, D3, C3, B3, Milling.LNDrawFaceFrame .. "-Base")
-      pt1Text = Polar2D(B3, 25,  0.75 )
-      DrawWriter("Part ID: ".. BOM.PID, pt1Text, 0.4, Milling.LNPartLabels,  0.0)
+      pt1Text = Polar2D(B3, 25,  0.75  * Milling.Cal)
+      DrawWriter("Part ID: ".. BOM.PID, pt1Text, Project.TextHeight, Milling.LNPartLabels,  0.0)
       CutListfileWriterItem(BOM.PID, "Face Frame Center", "Base", "1", BaseDim.FaceFrameThickness, BOM.BaseFaceFrameMateralType, BOM.BaseFaceFrameFinish, BaseDim.FaceFrameCenterStileWidth, GetDistance(A3, B3))
     else
       BOM.PID = BOM.PID + 10
@@ -1245,12 +1168,12 @@ function Base_CabinetShelf()
   local pt4 = Polar2D(pt3, 180, BaseDim.ShelfLength)
   local pt2pt3 = GetDistance(pt2, pt3)
   local pt3pt4 = GetDistance(pt3, pt4)
-  pt1Text = Polar2D(Polar2D(Cab.Wpt9, 0,  1), 90,  (LSD / 5))
+  pt1Text = Polar2D(Polar2D(Cab.Wpt9, 0.0,  1.0 * Milling.Cal), 90.0,  (LSD / 5))
   if BaseQuestion.DrawShelfPanel then
     DrawBox(Cab.Wpt9, pt2, pt3, pt4, Milling.LNShelfProfile .. "-Base")
-    DrawWriter("(ID: " .. BOM.PID .. ") Base Cabinet Shelf", pt1Text, 0.35, Milling.LNPartLabels, 0.0)
-    pt1Text = Polar2D(pt1Text, 270, 0.7)
-    DrawWriter(BaseDim.MaterialThickness .." Plywood (" .. pt2pt3 .. " x " .. pt3pt4..")", pt1Text, 0.35, Milling.LNPartLabels, 0.0)
+    DrawWriter("(ID: " .. BOM.PID .. " ) Base Cabinet Shelf", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
+    pt1Text = Polar2D(pt1Text, 270, 0.7  * Milling.Cal)
+    DrawWriter(Double2Fraction(BaseDim.MaterialThickness) .." Plywood ( " .. Double2Fraction(pt2pt3) .. " x " .. Double2Fraction(pt3pt4) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
   end -- if end
 if BOM.BaseShelfBOM then  -- run one time only
     CutListfileWriterItem(BOM.PID, "Cabinet Shelf", "Base", BaseQuestion.ShelfCount, BaseDim.MaterialThickness, BOM.BaseCabinetMateralType, BOM.BaseFaceFrameFinish, pt2pt3,  pt3pt4)
@@ -1271,15 +1194,13 @@ function Base_CabinetToeandRunners()
   end -- if end
   local pt4 = Polar2D(pt3, 180, BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight)
   if Project.Debugger then
-    DMark("Cab.Wpt4", Cab.Wpt4)
-    DMark("pt2", pt2)
-    DMark("pt3", pt3)
-    DMark("pt4", pt4)
+    DMark("Cab.Wpt4", Cab.Wpt4); DMark("pt2", pt2)
+    DMark("pt3", pt3);           DMark("pt4", pt4)
   end -- if end
   if BaseQuestion.DrawTopToe then
     DrawBox(Cab.Wpt4, pt2, pt3, pt4, Milling.LNStretcherRailProfile .. "-Base")
-    pt1Text = Polar2D(Cab.Wpt4, 45,  1.25)
-    DrawWriter("(ID: " .. BOM.PID .. ") Toe Kick - ".. BaseDim.MaterialThickness .." " .. BOM.BaseCabinetMateralType .. "  (" .. GetDistance(pt3, pt4) .. " x " .. GetDistance(pt3, pt2)..")", pt1Text, 0.35,Milling.LNPartLabels, 90.0)
+    pt1Text = Polar2D(Cab.Wpt4, 45,  1.25 * Milling.Cal)
+    DrawWriter("(ID: " .. BOM.PID .. " ) Toe Kick - ".. Double2Fraction(BaseDim.MaterialThickness) .." " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt3, pt4)) .. " x " .. Double2Fraction(GetDistance(pt3, pt2)).." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 90.0)
   end -- if end
   CutListfileWriterItem(BOM.PID, "Toe Kick", "Base", "1",  BaseDim.MaterialThickness, BOM.BaseCabinetMateralType, BOM.BaseFaceFrameFinish, GetDistance(pt3, pt4), GetDistance(pt2, pt3))
   --  Top Stretcher 1
@@ -1287,25 +1208,23 @@ function Base_CabinetToeandRunners()
   pt2 = Polar2D(Cab.Wpt5, 0.0,  BaseDim.TopFrameWidth)
   pt3 = Polar2D(pt2,     90.0,  BaseDim.BackPanelLength)
   if Milling.DadoType == "Half Blind" then
-    pt3 = Polar2D(pt2, 90,  BaseDim.BackPanelLength - ((BaseDim.MaterialThickness - Milling.DadoHeight) * 2))
+    pt3 = Polar2D(pt2,   90.0,  BaseDim.BackPanelLength - ((BaseDim.MaterialThickness - Milling.DadoHeight) * 2))
   end -- if end
   pt4 = Polar2D(pt3,    180.0,  BaseDim.TopFrameWidth)
   if Project.Debugger then
-    DMark("Cab.Wpt5", Cab.Wpt5)
-    DMark("pt2", pt2)
-    DMark("pt3", pt3)
-    DMark("pt4", pt4)
+    DMark("Cab.Wpt5", Cab.Wpt5); DMark("pt2", pt2)
+    DMark("pt3", pt3);           DMark("pt4", pt4)
   end -- if end
   if BaseQuestion.DrawTopToe then
     DrawBox(Cab.Wpt5, pt2, pt3, pt4, Milling.LNStretcherRailProfile .. "-Base")
     if Milling.AddAssemblyHolesBase and BaseQuestion.AddCenterFaceFrame then
-      local X1 = Polar2D(Polar2D(Cab.Wpt5, 90.0, GetDistance(pt3, pt2) * 0.5), 0.0, GetDistance(pt3, pt4) * 0.25)
-      local X2 = Polar2D(Polar2D(pt2, 90.0, GetDistance(pt3, pt2) * 0.5), 180.0, GetDistance(pt3, pt4) * 0.25)
+      local X1 = Polar2D(Polar2D(Cab.Wpt5, 90.0, GetDistance(pt3, pt2) * 0.5),   0.0, GetDistance(pt3, pt4) * 0.25)
+      local X2 = Polar2D(Polar2D(pt2,      90.0, GetDistance(pt3, pt2) * 0.5), 180.0, GetDistance(pt3, pt4) * 0.25)
       DrawCircle(X1, Milling.MillTool5.ToolDia * 0.5, Milling.LNAssemblyHole .. "-Base")
       DrawCircle(X2, Milling.MillTool5.ToolDia * 0.5, Milling.LNAssemblyHole .. "-Base")
     end -- if end
-    pt1Text = Polar2D(Cab.Wpt5, 45,  1.25)
-    DrawWriter("(ID: " .. BOM.PID .. ") Top Stretcher - ".. BaseDim.MaterialThickness .." " .. BOM.BaseCabinetMateralType .. "  (" .. GetDistance(pt4, pt3) .. " x " .. GetDistance(pt3, pt2)..")", pt1Text, 0.35, Milling.LNPartLabels, 90.0)
+    pt1Text = Polar2D(Cab.Wpt5, 45,  1.25 * Milling.Cal)
+    DrawWriter("(ID: " .. BOM.PID .. " ) Top Stretcher - ".. Double2Fraction(BaseDim.MaterialThickness) .." " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt4, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt2)) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 90.0)
   end -- if end
 
 --  Top Stretcher 2
@@ -1317,45 +1236,41 @@ function Base_CabinetToeandRunners()
   end -- if end
   pt4 = Polar2D(pt3, 180, BaseDim.TopFrameWidth)
   if Project.Debugger then
-    DMark("Cab.Wpt6", Cab.Wpt6)
-    DMark("pt2", pt2)
-    DMark("pt3", pt3)
-    DMark("pt4", pt4)
+    DMark("Cab.Wpt6", Cab.Wpt6); DMark("pt2", pt2)
+    DMark("pt3", pt3);           DMark("pt4", pt4)
   end -- if end
   if BaseQuestion.DrawTopToe then
     DrawBox(Cab.Wpt6, pt2, pt3, pt4, Milling.LNStretcherRailProfile .. "-Base")
-    pt1Text = Polar2D(Cab.Wpt6, 45,  1.25)
+    pt1Text = Polar2D(Cab.Wpt6, 45,  1.25 * Milling.Cal)
     if Milling.AddAssemblyHolesBase and BaseQuestion.AddCenterFaceFrame then
       local X3 = Polar2D(Polar2D(Cab.Wpt6, 90.0, GetDistance(pt3, pt2) * 0.5), 0.0, GetDistance(pt3, pt4) * 0.25)
       local X4 = Polar2D(Polar2D(pt2, 90.0, GetDistance(pt3, pt2) * 0.5), 180.0, GetDistance(pt3, pt4) * 0.25)
       DrawCircle(X3, Milling.MillTool5.ToolDia * 0.5, Milling.LNAssemblyHole .. "-Base")
       DrawCircle(X4, Milling.MillTool5.ToolDia * 0.5, Milling.LNAssemblyHole .. "-Base")
     end -- if end
-    DrawWriter("(ID: " .. BOM.PID .. ")Top Stretcher  - ".. BaseDim.MaterialThickness .." " .. BOM.BaseCabinetMateralType .. "  (" .. GetDistance(pt2, pt3) .. " x " .. GetDistance(pt3, pt4)..")", pt1Text, 0.35, Milling.LNPartLabels, 90.0)
+    DrawWriter("(ID: " .. BOM.PID .. " ) Top Stretcher  - ".. Double2Fraction(BaseDim.MaterialThickness) .." " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)).." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 90.0)
   end
   CutListfileWriterItem(BOM.PID, "Top Stretcher", "Base", "2", BaseDim.MaterialThickness, BOM.BaseCabinetMateralType, BOM.BaseFaceFrameFinish, GetDistance(pt3, pt4), GetDistance(pt2, pt3))
 --  Face Frame Stretcher
   if not BaseQuestion.AddCenterPanel then
     BOM.PID = BOM.PID + 10
     for i = BaseQuestion.DrawerRowCount, 1 , -1 do
-      pt2 = Polar2D(Cab.Wpt7, 0,  BaseDim.StretcherWidth)
-      pt3 = Polar2D(pt2, 90,  BaseDim.BackPanelLength)
+      pt2 = Polar2D(Cab.Wpt7, 0.0,  BaseDim.StretcherWidth)
+      pt3 = Polar2D(pt2,     90.0,  BaseDim.BackPanelLength)
       if Milling.DadoType == "Half Blind" then
-        pt3 = Polar2D(pt2, 90,  BaseDim.BackPanelLength - ((BaseDim.MaterialThickness - Milling.DadoHeight) * 2))
+        pt3 = Polar2D(pt2,   90.0,  BaseDim.BackPanelLength - ((BaseDim.MaterialThickness - Milling.DadoHeight) * 2))
       end -- if end
-      pt4 = Polar2D(pt3, 180, BaseDim.StretcherWidth)
+      pt4 = Polar2D(pt3,    180.0, BaseDim.StretcherWidth)
       if Project.Debugger then
-        DMark("Cab.Wpt7", Cab.Wpt7)
-        DMark("pt2", pt2)
-        DMark("pt3", pt3)
-        DMark("pt4", pt4)
+        DMark("Cab.Wpt7", Cab.Wpt7); DMark("pt2", pt2)
+        DMark("pt3", pt3);           DMark("pt4", pt4)
       end -- if end
       if BaseQuestion.DrawTopToe then
         DrawBox(Cab.Wpt7, pt2, pt3, pt4, Milling.LNStretcherRailProfile .. "-Base")
-        pt1Text = Polar2D(Cab.Wpt7, 45,  1.25)
-        pt1Text = Polar2D(pt1Text, 90,  0.75)
-        pt1Text = Polar2D(Cab.Wpt7, 45,  1.25)
-        DrawWriter("(ID: " .. BOM.PID .. ") Face Frame Stretcher " .. tostring(i) .. " - ".. BaseDim.StretcherThickness .." " .. BOM.BaseCabinetMateralType .. "  (" .. BaseDim.StretcherWidth .. " x " .. BaseDim.BackPanelLength..")", pt1Text, 0.35, Milling.LNPartLabels, 90.0)
+        pt1Text = Polar2D(Cab.Wpt7, 45.0,  1.25 * Milling.Cal)
+        pt1Text = Polar2D(pt1Text,  90.0,  0.75 * Milling.Cal)
+        pt1Text = Polar2D(Cab.Wpt7, 45.0,  1.25 * Milling.Cal)
+        DrawWriter("(ID: " .. BOM.PID .. " ) Face Frame Stretcher " .. tostring(i) .. " - ".. Double2Fraction(BaseDim.StretcherThickness) .." " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(BaseDim.StretcherWidth) .. " x " .. Double2Fraction(BaseDim.BackPanelLength) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 90.0)
       end -- if end
       pt2 = Polar2D(Cab.Wpt10, 0,  BaseDim.StretcherWidth)
       Cab.Wpt7 = Polar2D(Cab.Wpt7, 0, BaseDim.StretcherWidth + Milling.PartGap)
@@ -1369,59 +1284,99 @@ end
 function BaseValidater()
   local MyTrue = false
   if (BaseDim.FaceFrameBottomRailWidth == 0) and (Project.CabinetStyle == "Face Frame") then
-    MessageBox("Error: Base Face Frame Bottom Rail cannot be 0")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Face Frame Bottom Rail Width - value cannot be 0")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.FaceFrameCenterStileWidth < BaseDim.MaterialThickness then
-    MessageBox("Error: Base Center Stile Width cannot be less than Material Thickness")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Center Stile Face Frame Width - value cannot be less than Material Thickness")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.FaceFrameMidRailWidth < BaseDim.MaterialThickness then
-    MessageBox("Error: Base Face MidRail Width cannot be less than Material Thickness")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Face Frame Mid Rail Width - value cannot be less than Material Thickness")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.FaceFrameStileWidth < BaseDim.MaterialThickness then
-    MessageBox("Error: Base Face Frame Stile Width cannot be less than Material Thickness")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Face Frame Stile Width - value cannot be less than Material Thickness")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.FaceFrameTopRailWidth < BaseDim.MaterialThickness then
-    MessageBox("Error: Base Top Rail Width cannot be less than Material Thickness")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Face Frame Top Rail Width - cannot be less than Material Thickness")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.FaceFrameDrawerHeight1 == 0 then
-    MessageBox("Error: Base Face Frame Drawer Height1 cannot be 0")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Face Frame Drawer Height1 - value cannot be 0")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.FaceFrameDrawerHeight2 == 0 then
-    MessageBox("Error: Base Face Frame Drawer Height2 cannot be 0")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Face Frame Drawer Height2 - value cannot be 0")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.FaceFrameDrawerHeight3 == 0 then
-    MessageBox("Error: Base Face Frame Drawer Height3 cannot be 0")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Face Frame Drawer Height3 - value cannot be 0")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.ShelfNosingThickness == 0 then
-    MessageBox("Error: Base Shelf Face Frame Thickness cannot be 0")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Nosing Thickness - value cannot be 0")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.ShelfNosingWidth < BaseDim.ShelfMaterialThickness then
-    MessageBox("Error: Base Shelf Face Frame Width cannot be less than Shelf Material Thickness")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Nosing Width - value cannot be less than Shelf Material Thickness")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.ShelfHoleFirstRowSpacing < Milling.ShelfPinDiameter * 8 then
-    MessageBox("Error: Base Shelf Hole First Row Spacing cannot be smaller than 8 x Shelf Pin Diameter")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Pin Hole First Row Spacing - value cannot be smaller than 8 x Shelf Pin Diameter\n" ..
+               "Curent Value: " .. BaseDim.ShelfHoleFirstRowSpacing .. "\n" ..
+               "Must be grater than: " .. Milling.ShelfPinDiameter * 8)
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.ShelfHoleLastRowSpacing < Milling.ShelfPinDiameter * 8 then
-    MessageBox("Error: Base Shelf Hole Last Row Spacing cannot be smaller than 8 x Shelf Pin Diameter")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Pin Hole Last Row Spacing - value cannot be smaller than 8 x Shelf Pin Diameter\n" ..
+               "Curent Value: " .. BaseDim.ShelfHoleLastRowSpacing .. "\n" ..
+               "Must be grater than: " .. Milling.ShelfPinDiameter * 8)
     OnLuaButton_InquiryBaseQuestion()
-  elseif BaseDim.ShelfHoleSpacing < Milling.ShelfPinDiameter * 4 then
-    MessageBox("Error: Base Shelf Hole Spacing cannot be smaller than 4 x Shelf Pin Diameter")
+
+  elseif BaseDim.ShelfHoleSpacing < Milling.ShelfPinDiameter * 8 then
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Pin Hole Spacing - value cannot be smaller than 8 x Shelf Pin Diameter\n" ..
+               "Curent Value: " .. BaseDim.ShelfHoleSpacing .. "\n" ..
+               "Must be grater than: " .. Milling.ShelfPinDiameter * 8)
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.ShelfMaterialThickness == 0 then
-    MessageBox("Error: Base Face Frame Bottom Rail cannot be 0")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Material Thickness - value cannot be 0")
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.ShelfPinHoleBack < Milling.ShelfPinDiameter * 8 then
-    MessageBox("Error: Base Shelf Material Thickness cannot be smaller than 8 x Shelf Pin Diameter")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Pin Hole Rear Clearance - value cannot be smaller than 8 x Shelf Pin Diameter\n" ..
+               "Curent Value: " .. BaseDim.ShelfPinHoleBack .. "\n" ..
+               "Must be grater than: " .. Milling.ShelfPinDiameter * 8)
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.ShelfPinHoleFront < Milling.ShelfPinDiameter * 8 then
-    MessageBox("Error: Base Shelf Pin Hole Front cannot be smaller than 8 x Shelf Pin Diameter")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Shelf Pin Hole Front Setback - value cannot be smaller than 8 x Shelf Pin Diameter\n" ..
+               "Curent Value: " .. BaseDim.ShelfPinHoleFront .. "\n" ..
+               "Must be grater than: " .. Milling.ShelfPinDiameter * 8)
     OnLuaButton_InquiryBaseQuestion()
+
   elseif BaseDim.StretcherThickness  == 0 then
-    MessageBox("Error: Base Stretcher Thickness cannot be 0")
+    MessageBox("Error: Base Cabinet Settings:\n" ..
+               "Stretcher Thickness - value cannot be 0")
     OnLuaButton_InquiryBaseQuestion()
-  elseif (BaseDim.FaceFrameThickness == 0) and (Project.CabinetStyle == "Face Frame") then
-      MessageBox("Error: Base Face Frame Thickness cannot be 0")
-      OnLuaButton_InquiryBaseQuestion()
   else
     MyTrue = true
   end -- if end

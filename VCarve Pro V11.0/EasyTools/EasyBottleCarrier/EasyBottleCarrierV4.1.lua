@@ -771,14 +771,14 @@ function main()
   if not job.Exists then
     DisplayMessageBox("Error: The Gadget cannot run without a job being setup.\n" ..
                       "Select: 'Create a new file' under 'Startup Tasks' and \n" ..
-                      "specify the material dimensions \n"
+                      "specify the material dimensions"
                     )
     return false
   end
   Carrier.DoubleSided = job.IsDoubleSided
   if not Carrier.DoubleSided then  --
-    DisplayMessageBox("Error: The Job must be a double sided job /n" ..
-                      " to alow V-Carving on both faces /n")
+    DisplayMessageBox("Error: The Job must be a double sided job\n" ..
+                      " to alow V-Carving on both faces \n")
     return false
   end
 -- =====================================================]]

@@ -151,6 +151,7 @@ function main()
 end
 -- -----------------------------------------------------]]
 ang = ang + Material.Direction
+--size = size * Milling.Cal
 -- ==============================================================================
 local function Polar2D(pt, ang, dis)
   return Point2D((pt.X + dis * math.cos(math.rad(ang))), (pt.Y + dis * math.sin(math.rad(ang))))
@@ -196,203 +197,204 @@ local function MonoFont(job, pt, letter, scl, lay, ang)
  -- ------------------------------------------------------------------
   if letter == 32 then
     pH0 = pH0 ;
-  end ;
-  if letter == 33 then ;  line:AppendPoint(pB0) ;  line:LineTo(pE0) ;  line:LineTo(pE2) ;  line:LineTo(pB2) ;  line:LineTo(pB0) ;  group:AddTail(line) ;
+  end
+  if letter == 33 then ;  line:AppendPoint(pB0) ;  line:LineTo(pE0) ;  line:LineTo(pE2) ;  line:LineTo(pB2) ;  line:LineTo(pB0) ;  group:AddTail(line)
     line = Contour(0.0) line:AppendPoint(pB3) ;  line:LineTo(pE3) ;  line:LineTo(pE8) ;  line:LineTo(pB8) ;  line:LineTo(pB3) ;  group:AddTail(line) ;
-  end ;
-  if letter == 34 then ;  line:AppendPoint(pA7) ;  line:LineTo(pB10) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB7) ;  line:LineTo(pC10) ;
+  end
+  if letter == 34 then ;
+    line:AppendPoint(pA7) ;  line:LineTo(pB10) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB7) ;  line:LineTo(pC10) ;
     group:AddTail(line) ;  pH0 = pE0 ;
-  end ;
+  end
   if letter == 35 then ;  line:AppendPoint(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6) ;
     line:LineTo(pG6) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB0) ;  line:LineTo(pB8) ;  group:AddTail(line) ;
     line = Contour(0.0) ;  line:AppendPoint(pF0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 36 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;
     line:LineTo(pB4) ;  line:LineTo(pA5) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  group:AddTail(line) ;
     line = Contour(0.0) ;  line:AppendPoint(pC0) ;  line:LineTo(pE0) ;  line:LineTo(pE8) ;  line:LineTo(pC8) ;  line:LineTo(pC0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 37 then ;  line:AppendPoint(pC6) ;  line:LineTo(pC8) ;  line:LineTo(pA8) ;  line:LineTo(pA6) ;  line:LineTo(pE6) ;  line:LineTo(pG8) ;
     line:LineTo(pA0) ;  line:LineTo(pC2) ;  line:LineTo(pG2) ;  line:LineTo(pG0) ;  line:LineTo(pE0) ;  line:LineTo(pE2) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 38 then ;  line:AppendPoint(pG2) ;  line:LineTo(pG1) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  line:LineTo(pA3) ;
     line:LineTo(pE6) ;  line:LineTo(pE7) ;  line:LineTo(pD8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA6) ;  line:LineTo(pG0) ;
     group:AddTail(line) ;
-  end ;
+  end
   if letter == 39 then ;  line:AppendPoint(pA7) ;  line:LineTo(pB10) ;  group:AddTail(line) ;  pH0 = pC0 ;
-  end ;
+  end
   if letter == 40 then ;  line:AppendPoint(pB8) ;  line:LineTo(pA5) ;  line:LineTo(pA3) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
+  end
   if letter == 41 then ;  line:AppendPoint(pA8) ;  line:LineTo(pB5) ;  line:LineTo(pB3) ;  line:LineTo(pA0) ;  group:AddTail(line) ;  pH0 = pG0 ;
-  end ;
+  end
   if letter == 42 then ;  line:AppendPoint(pA2) ;  line:LineTo(pG6) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6) ;  line:LineTo(pG2) ;
     group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD7) ;
     line:LineTo(pD1) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 43 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD1) ;  line:LineTo(pD7) ;
     group:AddTail(line) ;
-  end ;
+  end
   if letter == 44 then ;  line:AppendPoint(pC0) ;  line:LineTo(pE2) ;  line:LineTo(pC2) ;  line:LineTo(pC4) ;  line:LineTo(pF4) ;  line:LineTo(pF2) ;
     line:LineTo(pD0) ;  line:LineTo(pC0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 45 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 46 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  line:LineTo(pA0) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
+  end
   if letter == 47 then ;  line:AppendPoint(pA0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  pH0 = pG0 ;
-  end ;
+  end
   if letter == 48 then ;  line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6) ;
     line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG8) ;  line:LineTo(pA0) ;
     group:AddTail(line) ;
-  end ;
+  end
   if letter == 49 then ;  line:AppendPoint(pA6) ;  line:LineTo(pD8) ;  line:LineTo(pD0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA0) ;
     line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 50 then ;  line:AppendPoint(pA6) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;
     line:LineTo(pA2) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 51 then ;  line:AppendPoint(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4) ;
     line:LineTo(pG3) ;  line:LineTo(pG1) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  line = Contour(0.0) ;
     line:AppendPoint(pF4) ;  line:LineTo(pB4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 52 then ;  line:AppendPoint(pF0) ;  line:LineTo(pF8) ;  line:LineTo(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 53 then ;  line:AppendPoint(pG8) ;  line:LineTo(pA8) ;  line:LineTo(pA5) ;  line:LineTo(pF4) ;  line:LineTo(pG3) ;  line:LineTo(pG1) ;
     line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  line:LineTo(pA2) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 54 then ;  line:AppendPoint(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA1) ;  line:LineTo(pB0) ;
     line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;  line:LineTo(pB4) ;  line:LineTo(pA2) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 55 then ;  line:AppendPoint(pB0) ;  line:LineTo(pG8) ;  line:LineTo(pA8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 56 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;
     line:LineTo(pG5) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA5) ;  line:LineTo(pB4) ;
     line:LineTo(pA3) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB4) ;  line:LineTo(pF4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 57 then ;  line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG3) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;
     line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA5) ;  line:LineTo(pB4) ;  line:LineTo(pF4) ;  line:LineTo(pG5) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 58 then ;  line:AppendPoint(pB8) ;  line:LineTo(pA8) ;  line:LineTo(pA7) ;  line:LineTo(pB7) ;  line:LineTo(pB8) ;  line:LineTo(pA8) ;
     group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  line:LineTo(pA0) ;  line:LineTo(pA1) ;
     group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
+  end
   if letter == 59 then ;  line:AppendPoint(pB8) ;  line:LineTo(pA8) ;  line:LineTo(pA7) ;  line:LineTo(pB7) ;  line:LineTo(pB8) ;  line:LineTo(pA8) ;
     group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB3) ;  line:LineTo(pB4) ;  line:LineTo(pA4) ;  line:LineTo(pA3) ;  line:LineTo(pB3) ;
     line:LineTo(pA0) ;  group:AddTail(line) ;  pH0 = pD0 ;
-  end ;
+  end
   if letter == 60 then ;  line:AppendPoint(pF8) ;  line:LineTo(pA4) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 61 then ;  line:AppendPoint(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6) ;
     line:LineTo(pG6) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 62 then ;  line:AppendPoint(pA8) ;  line:LineTo(pF4) ;  line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 63 then ;  line:AppendPoint(pB5) ;  line:LineTo(pA6) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pE8) ;  line:LineTo(pF7) ;
     line:LineTo(pF5) ;  line:LineTo(pC3) ;  line:LineTo(pC2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB0) ;  line:LineTo(pE0) ;
     line:LineTo(pE1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 64 then ;  line:AppendPoint(pG0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;
     line:LineTo(pG6) ;  line:LineTo(pG3) ;  line:LineTo(pE2) ;  line:LineTo(pB2) ;  line:LineTo(pB5) ;  line:LineTo(pE5) ;  line:LineTo(pE2) ;
     group:AddTail(line) ;
-  end ;
+  end
   if letter == 65 then ;  line:AppendPoint(pA0) ;  line:LineTo(pD8) ;  line:LineTo(pG0) ;  line:LineTo(pF3) ;  line:LineTo(pB3) ;
     line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 66 then ;  line:AppendPoint(pA4) ;  line:LineTo(pF4) ;  line:LineTo(pG5) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pA8) ;
     line:LineTo(pA0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 67 then ;  line:AppendPoint(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;
     line:LineTo(pF8) ;  line:LineTo(pG6) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 68 then ;  line:AppendPoint(pA0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG6) ;  line:LineTo(pF8) ;  line:LineTo(pA8) ;
     line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 69 then ;  line:AppendPoint(pG0) ;  line:LineTo(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  line = Contour(0.0) ;
     line:AppendPoint(pA4) ;  line:LineTo(pD4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 70 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;
     line:LineTo(pF4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 71 then ;  line:AppendPoint(pG6) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA6) ;  line:LineTo(pA2) ;
     line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG3) ;  line:LineTo(pE3) ;  line:LineTo(pE2) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 72 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG0) ;  line:LineTo(pG8) ;
     group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 73 then ;  line:AppendPoint(pB0) ;  line:LineTo(pB8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA0) ;  line:LineTo(pC0) ;
     group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA8) ;  line:LineTo(pC8) ;  group:AddTail(line) ;  pH0 = pE0 ;
-  end ;
+  end
   if letter == 74 then ;  line:AppendPoint(pA2) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG8) ;  line:LineTo(pC8) ;
     group:AddTail(line) ;
-  end ;
+  end
   if letter == 75 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA2) ;  line:LineTo(pG7) ;
     group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD4) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 76 then ;  line:AppendPoint(pA8) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 77 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pD4) ;  line:LineTo(pG8) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 78 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  pH0 = pG0 ;
-  end ;
+  end
   if letter == 79 then ;  line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6) ;
     line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 80 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4) ;
     line:LineTo(pA4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 81 then ;  line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6) ;
     line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG0) ;  line:LineTo(pD4) ;
     group:AddTail(line) ;
-  end ;
+  end
   if letter == 82 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4) ;
     line:LineTo(pA4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD4) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 83 then ;  line:AppendPoint(pG5) ;  line:LineTo(pG6) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA6) ;  line:LineTo(pA5) ;
     line:LineTo(pG3) ;  line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA3) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 84 then ;  line:AppendPoint(pA8) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD8) ;
     line:LineTo(pD0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 85 then ;  line:AppendPoint(pA8) ;  line:LineTo(pA2) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG8) ;
     group:AddTail(line) ;
-  end ;
+  end
   if letter == 86 then ;  line:AppendPoint(pA8) ;  line:LineTo(pD0) ;  line:LineTo(pG8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 87 then ;  line:AppendPoint(pA8) ;  line:LineTo(pB0) ;  line:LineTo(pD4) ;  line:LineTo(pF0) ;  line:LineTo(pG8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 88 then ;  line:AppendPoint(pA0) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA8) ;
     line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 89 then ;  line:AppendPoint(pA8) ;  line:LineTo(pD4) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD0) ;
     line:LineTo(pD4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 90 then ;  line:AppendPoint(pA8) ;  line:LineTo(pG8) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 91 then ;  line:AppendPoint(pC0) ;  line:LineTo(pB0) ;  line:LineTo(pB8) ;  line:LineTo(pC8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 92 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 93 then ;  line:AppendPoint(pE0) ;  line:LineTo(pF0) ;  line:LineTo(pF8) ;  line:LineTo(pE8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 94 then ;  line:AppendPoint(pD8) ;  line:LineTo(pG6) ;  line:LineTo(pG5) ;  line:LineTo(pD7) ;  line:LineTo(pA5) ;  line:LineTo(pA6) ;
     line:LineTo(pD8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 95 then ;  line:AppendPoint(pA0) ;  line:LineTo(pF0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 96 then ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 123 then ;  line:AppendPoint(pD0) ;  line:LineTo(pC0) ;  line:LineTo(pB1) ;  line:LineTo(pB2) ;  line:LineTo(pC3) ;  line:LineTo(pA4) ;
     line:LineTo(pC5) ;  line:LineTo(pB6) ;  line:LineTo(pB7) ;  line:LineTo(pC8) ;  line:LineTo(pD8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 124 then ;  line:AppendPoint(pA0) ;  line:LineTo(pA10) ;  line:LineTo(pC10) ;  line:LineTo(pC0) ;  line:LineTo(pA0) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 125 then ;  line:AppendPoint(pD0) ;  line:LineTo(pE0) ;  line:LineTo(pF1) ;  line:LineTo(pF2) ;  line:LineTo(pE3) ;  line:LineTo(pG4) ;
     line:LineTo(pE5) ;  line:LineTo(pF6) ;  line:LineTo(pF7) ;  line:LineTo(pE8) ;  line:LineTo(pD8) ;  group:AddTail(line) ;
-  end ;
+  end
   if letter == 126 then ;  line:AppendPoint(pA2) ;  line:LineTo(pA3) ;  line:LineTo(pB5) ;  line:LineTo(pF3) ;  line:LineTo(pG5) ;
     line:LineTo(pG4) ;  line:LineTo(pF2) ;  line:LineTo(pB4) ;  line:LineTo(pA2) ;  group:AddTail(line) ;
-  end ;
+  end
   return pH0
-end ; -- function end ;
+end  -- function end
 -- =========================================================================
 local function AddGroupToJob(job, group, layer_name)
    --  create a CadObject to represent the  group

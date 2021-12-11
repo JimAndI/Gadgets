@@ -701,7 +701,7 @@ function main(script_path) -- script_path
                       "specify the material dimensions")
     return false ;
   end
-  Tools = assert(loadfile(script_path .. "\\EasyDrawerToolsVer03.4.xlua")) (Tools)
+  Tools = assert(loadfile(script_path .. "\\EasyDrawerToolsVer03.5.xlua")) (Tools)
   HTML()
   GetMaterialSettings()
   REG_ReadRegistry()
