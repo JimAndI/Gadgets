@@ -1,0 +1,343 @@
+-- ========================================================================================================================
+--  Gadgets are an entirely optional add-in to Vectric's core software products.
+--  They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.
+--  In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.
+--  Permission is granted to anyone to use this software for any purpose,
+--  including commercial applications, and to alter it and redistribute it freely,
+--  subject to the following restrictions:
+--  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+--  If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.
+--  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+--  3. This notice may not be removed or altered from any source distribution.
+-- ========================================================================================================================
+-- Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
+-- ========================================================================================================================
+
+
+-- =====================================================]]
+
+
+-- =====================================================]]
+function INI_UpdateItem(xGroup,  xItem, xValue)
+-- Deletes old ini Hardware.bak file
+-- Copys the Hardware.ini to a backup Hardware.bak new file
+-- Reads the new backup file and writes a new file to the xGroup
+-- Writes new xValue for the xItem
+-- Reads and writes a new file to end of file
+  if Hardware.Name ~= "Deleted" then
+    local NfileName = Project.AppPath .. "\\" .. "EasyCabinetHardware" .. ".ini"
+    local OfileName = Project.AppPath .. "\\" .. "EasyCabinetHardware" .. ".bak"
+    if CopyFile(NfileName, OfileName) then
+    local fileR = io.open(OfileName)
+    local fileW = io.open(NfileName,  "w")
+    local groups = false
+    local txt = ""
+    for Line in fileR:lines() do
+      txt = Line
+      if All_Trim(Line) == "[" .. All_Trim(xGroup) .. "]" then -- Group
+        groups = true
+      end -- if end
+      if xItem == string.sub(Line, 1, string.len(xItem))  then  -- Item
+        if groups then
+          txt = xItem .. " = " .. xValue
+          groups = false
+        end -- if end
+      end -- if end
+      fileW:write(txt .. "\n")
+      txt = ""
+    end -- for end
+    fileR:close()
+    fileW:close()
+    os.remove(OfileName)
+    else
+      StatusMessage("Error", "Ini Update", "The Backup of the Ini file failed!", "(7400)")
+    end -- if end
+  end -- if end for Hardware.Name = "Deleted"
+  return true
+end -- function end
+-- =====================================================]]
+function INI_RenameGroup(xOldGroup, xNewGroup)
+--Deletes old ini Hardware.bak file
+--Copys the ini fime to a backup copy file
+--Reads the backup file and writes a new ini file to the xGroup
+--Writes new file with new group  to the new ini file
+  if Hardware.Name ~= "Deleted" then
+    local NfileName = Project.AppPath .. "\\" .. "EasyCabinetHardware" .. ".ini"
+    local OfileName = Project.AppPath .. "\\" .. "EasyCabinetHardware" .. ".bak"
+    if CopyFile(NfileName, OfileName) then
+      local fileR = io.open(OfileName)
+      local fileW = io.open(NfileName, "w")
+      local groups = false
+      local txt = ""
+      for Line in fileR:lines() do
+        txt = Line
+        if All_Trim(Line) == "[" .. All_Trim(xOldGroup) .. "]" then -- Group
+          fileW:write("[" .. xNewGroup .. "]\n")
+        else
+          fileW:write(txt .. "\n")
+        end -- if end
+      end -- for end
+      fileR:close()
+      fileW:close()
+      os.remove(OfileName)
+    else
+      StatusMessage("Error", "Ini Rename Group", "The Backup of the Ini file failed!", "(8500)")
+    end -- if end
+  end -- if end for Hardware.Name = "Deleted"
+  return true
+end -- function end
+-- =====================================================]]
+function INI_StrValue(str, ty)
+-- Convert ini string to the correct data type
+  ty = string.upper(ty)
+  if nil == str then
+    StatusMessage("Error", "Ini Value Striping", "String is nil", "(8600)")
+    return nil
+  elseif "" == All_Trim(str) then
+    StatusMessage("Error", "Ini Value Striping", "String is blank", "(8700)")
+    return nil
+  elseif not string.find(str, "=") then
+    StatusMessage("Error", "Ini Value Striping", "String dose not contane '=' sign", "(8800)")
+    return nil
+  elseif (string.find(str, "=") + 1) > 1 then  -- String contanes "="
+    if ty == "D" then  -- Double
+      return tonumber(string.sub(str, (string.find(str, "=") + 1)))
+    elseif ty == "I" then  -- Intiger
+      return math.floor(tonumber(string.sub(str, (string.find(str, "=") + 1))))
+    elseif ty == "S" then  -- String
+      return All_Trim(string.sub(str, (string.find(str, "=") + 1)))
+    elseif ty == "B" then  -- Bool
+      if "TRUE" == All_Trim(string.upper(string.sub(str, (string.find(str, "=") + 1)))) then
+        return true
+      else
+        return false
+      end -- if end
+    end -- if end
+  end -- if end
+end -- function end
+-- =====================================================]]
+function INI_GetValues(GroupName)
+  local filenameR = Project.AppPath .. "\\" .. "EasyCabinetHardware.ini"
+  local FL = LengthOfFile(filenameR)
+  local file = io.open(filenameR, "r")
+  local dat = "."
+  GroupName = All_Trim(GroupName)
+  while (FL >= 1) do
+    dat = All_Trim(file:read())
+    if dat == "[" .. GroupName .. "]" then
+      dat = All_Trim(file:read())
+      Hardware.Manufacturer      = INI_StrValue(dat, "S")
+      dat = All_Trim(file:read())
+      Hardware.PartNumber        = INI_StrValue(dat, "S")
+      dat = All_Trim(file:read())
+      Hardware.SlideLength       = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideCenterLine1  = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideHole1        = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideCenterLine2  = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideHole2        = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideCenterLine3  = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideHole3        = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideCenterLine4  = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideHole4        = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideCenterLine5  = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideHole5        = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideCenterLine6  = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.SlideHole6        = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearCenterLineA   = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearHoleA         = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearCenterLineB   = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearHoleB         = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearCenterLineC   = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearHoleC         = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearCenterLineD   = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearHoleD         = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearSideClearance = tonumber(INI_StrValue(dat, "D"))
+      dat = All_Trim(file:read())
+      Hardware.RearPartNumber    = INI_StrValue(dat, "S")
+      break
+    else
+      FL = FL - 1
+    end -- if end
+  end -- while end
+  file:close()-- closes the open file
+  return true
+end -- function end
+-- =====================================================]]
+function UpdateHardware(NewDialog)
+  INI_GetValues(Hardware.Name)
+  NewDialog:UpdateDoubleField("Hardware.SlideHole1"       , Hardware.SlideHole1)
+  NewDialog:UpdateDoubleField("Hardware.SlideHole2"       , Hardware.SlideHole2)
+  NewDialog:UpdateDoubleField("Hardware.SlideHole3"       , Hardware.SlideHole3)
+  NewDialog:UpdateDoubleField("Hardware.SlideHole4"       , Hardware.SlideHole4)
+  NewDialog:UpdateDoubleField("Hardware.SlideHole5"       , Hardware.SlideHole5)
+  NewDialog:UpdateDoubleField("Hardware.SlideHole6"       , Hardware.SlideHole6)
+  NewDialog:UpdateDoubleField("Hardware.SlideCenterLine1" , Hardware.SlideCenterLine1)
+  NewDialog:UpdateDoubleField("Hardware.SlideCenterLine2" , Hardware.SlideCenterLine2)
+  NewDialog:UpdateDoubleField("Hardware.SlideCenterLine3" , Hardware.SlideCenterLine3)
+  NewDialog:UpdateDoubleField("Hardware.SlideCenterLine4" , Hardware.SlideCenterLine4)
+  NewDialog:UpdateDoubleField("Hardware.SlideCenterLine5" , Hardware.SlideCenterLine5)
+  NewDialog:UpdateDoubleField("Hardware.SlideCenterLine6" , Hardware.SlideCenterLine6)
+  NewDialog:UpdateLabelField("Hardware.Name", Hardware.Name)
+  return true
+end
+-- =====================================================]]
+function INI_ReadGroups()
+--[[Reads Hardware INI and returns a list containg the [Headers] as Array]]
+  local filename1 = "EasyCabinetHardware.ini"
+  local filename = Project.AppPath .. "\\" .. filename1
+  if FileExists(filename) then
+    local file = io.open(filename, "r")
+    local fLength = (LengthOfFile(filename) - 1)
+    if fLength < 1 then
+      StatusMessage("Error", "Reading Ini Groups", "The " ..  filename1 .. " is empty", "(8000)")
+    else
+      ClearTable()
+      local dat = All_Trim(file:read())
+      while (fLength >= 1) do
+        if "[" == string.sub(dat, 1, 1) then
+          table.insert (Hardware.Slides, string.sub(dat, 2, (string.len(dat) - 1)))
+        end
+        dat = file:read()
+        if dat then
+          dat = All_Trim(dat)
+        else
+          return true
+        end
+        fLength = fLength - 1
+      end
+      table.sort(Hardware.Slides)
+    end
+  else
+    StatusMessage("Error", "Base Cabinet Settings", "Note: " ..  filename1 .. " in not found", "(8100)")
+  end
+  return true
+end
+-- =====================================================]]
+function CheckInList(Items)                               -- Checks the INI list for Name is already in the list if
+  local ret = true
+  for _, line in ipairs(Hardware.Slides) do
+    if line == Items then
+      ret = false
+    end -- if end
+  end
+  return ret
+end -- function end
+-- =====================================================]]
+function ClearTable()
+  for k,v in pairs(Hardware.Slides) do
+    table.remove(Hardware.Slides, k)
+  end
+end
+-- =====================================================]]
+function INI_DeleteGroup(xGroup)
+-- Deletes old ini (.bak) file
+-- Copys the .ini to a backup (.bak) new file
+-- Reads the new backup file and writes a new file to the xGroup value
+-- Stops Writing lines until next Group is found
+-- Writes to end of file
+-- Call: DeleteGroup("C:\\Users\\James\\OneDrive\\Documents\\DoorGadget\\Clients\\Marcin", "ProjectList", "Boston")
+  local NfileName = Project.AppPath .. "\\" .. "EasyCabinetHardware" .. ".ini"
+  local OfileName = Project.AppPath .. "\\" .. "EasyCabinetHardware" .. ".bak"
+  if CopyFile(NfileName, OfileName) then    -- if make backup is made
+    local fileR = io.open(OfileName)
+    local fileW = io.open(NfileName,  "w")
+    local groups = false
+    local writit = true
+    local txt = ""
+    for Line in fileR:lines() do
+      txt = Line
+      if All_Trim(Line) == "[" .. All_Trim(xGroup) .. "]" then
+        groups = true
+        txt = ""
+      end -- if end
+      if groups then
+        writit = false
+        if "[" == string.sub(All_Trim(txt), 1, 1) then
+          groups = false
+          writit = true
+        else
+          writit = false
+        end -- if end
+      end -- if end
+      if writit then
+        fileW:write(txt .. "\n")
+        txt =""
+      end -- if end
+    end -- for end
+    os.remove(OfileName)
+    fileR:close()
+    fileW:close()
+  end -- if end
+  return true
+end -- function end
+-- =====================================================]]
+function AddNewGroupWriter()
+  -- Writes new Hardware ini file
+  local IniName = Project.AppPath .. "\\" .. "EasyCabinetHardware.ini"
+  if FileExists(IniName) then
+    local fileW = io.open(IniName,  "a")
+    local DataW = "\n[" .. Hardware.Name  .. "]\nManufacturer = "    .. Hardware.Manufacturer               .. "\nPartNumber = "       .. Hardware.PartNumber                 .. "\nSlideLength = " ..
+    tostring(Hardware.SlideLength)        .. "\nSlideCenterLine1 = " .. tostring(Hardware.SlideCenterLine1) .. "\nSlideHole1 = "       .. tostring(Hardware.SlideHole1)       .. "\nSlideCenterLine2 = " ..
+    tostring(Hardware.SlideCenterLine2)   .. "\nSlideHole2 = "       .. tostring(Hardware.SlideHole2)       .. "\nSlideCenterLine3 = " .. tostring(Hardware.SlideCenterLine3) .. "\nSlideHole3 = " ..
+    tostring(Hardware.SlideHole3)         .. "\nSlideCenterLine4 = " .. tostring(Hardware.SlideCenterLine4) .. "\nSlideHole4 = "       .. tostring(Hardware.SlideHole4)       .. "\nSlideCenterLine5 = " ..
+    tostring(Hardware.SlideCenterLine5)   .. "\nSlideHole5 = "       .. tostring(Hardware.SlideHole5)       .. "\nSlideCenterLine6 = " .. tostring(Hardware.SlideCenterLine6) .. "\nSlideHole6 = " ..
+    tostring(Hardware.SlideHole1)         .. "\nRearCenterLineA = "  .. tostring(Hardware.RearCenterLineA)  .. "\nRearHoleA = "        .. tostring(Hardware.RearHoleA)        .. "\nRearCenterLineB = " ..
+    tostring(Hardware.RearCenterLineB)    .. "\nRearHoleB = "        .. tostring(Hardware.RearHoleB)        .. "\nRearCenterLineC = "  .. tostring(Hardware.RearCenterLineC)  .. "\nRearHoleC = " ..
+    tostring(Hardware.RearHoleC)          .. "\nRearCenterLineD = "  .. tostring(Hardware.RearCenterLineD)  .. "\nRearHoleD = "        .. tostring(Hardware.RearHoleD)        .. "\nRearSideClearance = " ..
+    tostring(Hardware.RearSideClearance)  .. "\nRearPartNumber = "   .. Hardware.RearPartNumber .. "\n\n"
+    fileW:write(DataW)
+    fileW:close()
+  end -- if end
+  return true
+end -- function end
+-- =====================================================]]
+function SeedINIWriter()
+  -- Writes new Hardware ini file
+  local IniName = Project.AppPath .. "\\" .. "EasyCabinetHardware.ini"
+  if not FileExists(IniName) then
+    local fileW = io.open(IniName,  "w")
+    fileW:write("# ========================================================================================================================\n# Gadgets are an entirely optional add-in to Vectric's core software products.\n# They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.\n# In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.\n# Permission is granted to anyone to use this software for any purpose,\n# including commercial applications, and to alter it and redistribute it freely,\n# subject to the following restrictions:\n# 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.\n#    If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.\n# 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.\n# 3. This notice may not be removed or altered from any source distribution.\n# =========================================================================================================\n# Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020\n# ===================================================\n# Easy Cabinet Hardware List\n# Dec 2021\n# ===================================================\n")
+
+    fileW:write("[Blum 230M6500 26]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M6000 24]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M5500 22]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M5000 20]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M4500 18]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M4000 16]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M3500 14]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M3000 12]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+
+    fileW:write("[Blum 230M2500 10]\nManufacturer = Blum\nPartNumber = 230M6500\nSlideLength = 26.0\nSlideCenterLine1 = 1.25\nSlideHole1 = 1.25\nSlideCenterLine2 = 1.25\nSlideHole2 = 5.5\nSlideCenterLine3 = 1.25\nSlideHole3 = 9.25\nSlideCenterLine4 = 1.25\nSlideHole4 = 12.0\nSlideCenterLine5 = 1.25\nSlideHole5 = 15.0\nSlideCenterLine6 = 1.25\nSlideHole6 = 20.0\nRearCenterLineA = 0.875\nRearHoleA = 0.34375\nRearCenterLineB = 0.875\nRearHoleB = 1.59375\nRearCenterLineC = 0.0\nRearHoleC = 0\nRearCenterLineD = 0.0\nRearHoleD = 0\nRearSideClearance = 0.375\nRearPartNumber = 230M6A\n\n")
+    fileW:close()
+  end -- if end
+  return true
+end -- function end
+-- ==================== End ============================]]
