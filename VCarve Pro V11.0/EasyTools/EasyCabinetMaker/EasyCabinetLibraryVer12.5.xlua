@@ -88,6 +88,10 @@ function DialogSize(Str)
 end -- if end
 -- =====================================================]]
 function Polar2D(pt, ang, dis)
+  if dis ~= math.abs(dis) then
+    ang = ang + 90.0
+    dis = math.abs(dis)
+  end
   local ang1 = ang + Material.Direction
   return Point2D((pt.X + dis * math.cos(math.rad(ang1))), (pt.Y + dis * math.sin(math.rad(ang1))))
 end

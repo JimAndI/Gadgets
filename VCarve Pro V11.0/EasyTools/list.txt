@@ -11,6 +11,7 @@ EasyFlagMaker
 EasyGearMaker
 EasyHingeMaker
 EasyKeyholeMaker
+EasyLineTypeMaker
 EasyLockJointMaker
 EasyMDFDoorMaker
 EasyPatterMaker

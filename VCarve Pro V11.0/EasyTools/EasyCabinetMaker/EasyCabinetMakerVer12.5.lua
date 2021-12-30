@@ -13,37 +13,44 @@
 -- ========================================================================================================================
 -- Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
 -- ========================================================================================================================
--- Version 12.4   - Dec  7, 2021 - Ready for Posting
--- Version 12.5   - Dec 10, 2021 - Ready for Posting
+-- Version 12.4 - Dec  7, 2021 - Ready for Posting
+-- Version 12.5 - Dec 10, 2021 - Ready for Posting
 -- =====================================================]]
-require("mobdebug").start()
--- require "strict"
+-- require("mobdebug").start()
+require "strict"
 -- =====================================================]]
 -- Global variables
 local Tooler1, Tooler2, Tooler3, Tooler4, Tooler5, Tooler6, Tooler7, Tooler8
+AQ = 0.0
 YearNumber = "2021"
 VerNumber = "12.5"
 AppName = "Easy Base Cabinet Maker"
 RegName = "EasyBaseCabinetMaker" .. VerNumber
 
 -- Table Names
-BaseDim           = {}
-BaseQuestion      = {}
-Milling           = {}
-Project           = {}
-WallDim           = {}
-BOM               = {}
-WallQuestion      = {}
-Hardware          = {}
-Material          = {}
-Cab               = {}   -- Points
-DialogWindow      = {}   -- Dialog Managment
-Hardware.Slides   = {}
-layer             = ""
-
-Project.Debugger  = true -- false -- true -- used to desplay error numbers, points, and window X/Y values
-Project.Rest      = false
-
+BaseDim              = {}
+BaseQuestion         = {}
+Milling              = {}
+Project              = {}
+WallDim              = {}
+BOM                  = {}
+WallQuestion         = {}
+Hardware             = {}
+Material             = {}
+Materials            = {}
+Cab                  = {}   -- Points
+DialogWindow         = {}   -- Dialog Managment
+Hardware.Slides      = {}
+Materials.Faceframe  = {"Hardwood",  "Cedar",    "Maple",       "Oak",     "Pine",      "Poplar",     "Walnut"}
+Materials.SheetGoods = {"Plywood",   "Melamine", "Birch ply",   "Oak ply", "Maple ply", "Walnut ply", "Poplar ply", "Piano Ply"}
+Materials.Finshes    = {"Unfinshed", "Paint",    "Primer Only", "Stain"}
+layer                = ""
+Project.Debugger          = false -- true -- used to desplay error numbers, points, and window X/Y values
+Project.Rest              = false
+DrawerHeight              = 0.0
+DrawerCounts              = 0.0
+BaseDim.BottomRail        = false
+BaseDim.BottomPocket      = true
 DialogWindow.BaseHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Base.html"
 DialogWindow.LayerHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Layers.html"
 DialogWindow.ProjectHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Project.html"
@@ -254,6 +261,7 @@ function OnLuaButton_InquiryBaseQuestion(Dia)
   dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight1",      BaseDim.FaceFrameDrawerHeight1)
   dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight2",      BaseDim.FaceFrameDrawerHeight2)
   dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight3",      BaseDim.FaceFrameDrawerHeight3)
+  dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight4",      BaseDim.FaceFrameDrawerHeight4)
   dialog:AddDoubleField("BaseDim.FaceFrameMidRailWidth",       BaseDim.FaceFrameMidRailWidth)
   dialog:AddDoubleField("BaseDim.FaceFrameSideReveal",         BaseDim.FaceFrameSideReveal)
   dialog:AddDoubleField("BaseDim.FaceFrameStileWidth",         BaseDim.FaceFrameStileWidth)
@@ -287,6 +295,7 @@ function OnLuaButton_InquiryBaseQuestion(Dia)
     BaseDim.FaceFrameDrawerHeight1    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight1"))
     BaseDim.FaceFrameDrawerHeight2    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight2"))
     BaseDim.FaceFrameDrawerHeight3    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight3"))
+    BaseDim.FaceFrameDrawerHeight4    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight4"))
     BaseDim.FaceFrameMidRailWidth     = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameMidRailWidth"))
     BaseDim.FaceFrameSideReveal       = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameSideReveal"))
     BaseDim.FaceFrameStileWidth       = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameStileWidth"))
@@ -480,6 +489,7 @@ function OnLuaButton_InquiryProjectInfo()
   dialog:AddDoubleField("Project.TextHeight",            Project.TextHeight)
   dialog:AddDropDownList("Project.CabinetStyle",         Project.CabinetStyle)
   dialog:AddDirectoryPicker("DirectoryPicker", "Project.ProjectPath",  true)
+
   dialog:AddDropDownList("BOM.WallCabinetMateralType",   BOM.WallCabinetMateralType)
   dialog:AddDropDownList("BOM.BaseCabinetMateralType",   BOM.BaseCabinetMateralType)
   dialog:AddDropDownList("BOM.WallFaceFrameMateralType", BOM.WallFaceFrameMateralType)
@@ -488,6 +498,22 @@ function OnLuaButton_InquiryProjectInfo()
   dialog:AddDropDownList("BOM.BaseCabinetFinish",        BOM.BaseCabinetFinish)
   dialog:AddDropDownList("BOM.WallFaceFrameFinish",      BOM.WallFaceFrameFinish)
   dialog:AddDropDownList("BOM.BaseFaceFrameFinish",      BOM.BaseFaceFrameFinish)
+  for _, item in pairs(Materials.SheetGoods) do
+    dialog:AddDropDownListValue("BOM.WallCabinetMateralType", item)
+    dialog:AddDropDownListValue("BOM.BaseCabinetMateralType", item)
+  end -- for end
+  for _, item in pairs(Materials.Faceframe) do
+    dialog:AddDropDownListValue("BOM.BaseFaceFrameMateralType", item)
+    dialog:AddDropDownListValue("BOM.WallFaceFrameMateralType", item)
+  end -- for end
+  for _, item in pairs(Materials.Finshes) do
+    dialog:AddDropDownListValue("BOM.WallCabinetFinish", item)
+    dialog:AddDropDownListValue("BOM.BaseCabinetFinish", item)
+  end -- for end
+  for _, item in pairs(Materials.Finshes) do
+    dialog:AddDropDownListValue("BOM.WallFaceFrameFinish", item)
+    dialog:AddDropDownListValue("BOM.BaseFaceFrameFinish", item)
+  end -- for end
   if dialog:ShowDialog() then
     Project.ProjectName          = string.upper(All_Trim(dialog:GetTextField("Project.ProjectName")))
     Project.ProjectContactEmail  = All_Trim(dialog:GetTextField("Project.ProjectContactEmail"))
@@ -847,7 +873,6 @@ function main(script_path)
     elseif Drawing and (not MainValidate()) then
         CabLoop = true
     elseif Drawing and (All_Trim(Project.ProjectPath)  ==  "") then
-
         OnLuaButton_InquiryProjectInfo()
         CabLoop = true
     elseif Drawing and (not(os.rename(Project.ProjectPath, Project.ProjectPath))) then
@@ -865,6 +890,7 @@ function main(script_path)
   end -- while end
   -- =============================================
   if Drawing then
+    INI_GetValues(Hardware.Name)
     if Project.NewSheet == "Yes" then
       Milling.Sheet = "1-"
       NewSheet()
@@ -897,7 +923,7 @@ function main(script_path)
       if WallQuestion.DrawSidePanels then
         CreateLayerPocketingToolpath(Milling.Sheet .. "Wall Side Pockets", Milling.LNSidePocket .. "-Wall", 0.0, (Milling.MaterialBlockThickness - Milling.DadoHeight))
         if WallQuestion.ShelfCount > 0 then
-          CreateLayerDrillingToolpath(Milling.LNSideShelfPinDrill .."-Wall", Milling.Sheet .. "Wall Side Panel Pin Drilling", 0.0,  Milling.ShelfPinLen, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
+          CreateLayerDrillingToolpath(Milling.LNSideShelfPinDrill .. "-Wall", Milling.Sheet .. "Wall Side Panel Pin Drilling", 0.0,  Milling.ShelfPinLen, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
         end -- if end
       end
       if WallQuestion.DrawBottomTopPanel then
@@ -908,7 +934,7 @@ function main(script_path)
         if WallQuestion.DrawCenterPanel then
           CreateLayerProfileToolpath(Milling.LNCenterPanelProfile .. "-Wall", Milling.Sheet .. "Wall Center Panel Profile", 0.0, Milling.MaterialBlockThickness, "OUT", Milling.Tabs)
           if WallQuestion.ShelfCount > 0 then
-            CreateLayerDrillingToolpath(Milling.LNCenterPanelShelfPinDrill .."-Wall", Milling.Sheet .. "Wall Center Panel Pin Drilling", 0.0,  WallDim.MaterialThickness, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
+            CreateLayerDrillingToolpath(Milling.LNCenterPanelShelfPinDrill .. "-Wall", Milling.Sheet .. "Wall Center Panel Pin Drilling", 0.0,  WallDim.MaterialThickness, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
           end -- if end
         end -- if end
       end -- if end
@@ -985,7 +1011,7 @@ function main(script_path)
       Base_CabinetSide("R")
       -- Base Tool Paths
       if BaseQuestion.ShelfCount > 0 and BaseQuestion.DrawSidePanels then
-        CreateLayerDrillingToolpath(Milling.LNSideShelfPinDrill .."-Base", Milling.Sheet .. "Base Side Drilling", 0.0, Milling.ShelfPinLen, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
+        CreateLayerDrillingToolpath(Milling.LNSideShelfPinDrill .. "-Base", Milling.Sheet .. "Base Side Drilling", 0.0, Milling.ShelfPinLen, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
       end -- if end
       -- ====
        if (BaseQuestion.ShelfCount >= 1) and BaseQuestion.DrawShelfPanel then
@@ -1042,8 +1068,17 @@ function main(script_path)
       if BaseQuestion.DrawTopToe then
         CreateLayerProfileToolpath(Milling.LNStretcherRailProfile .. "-Base", Milling.Sheet .. "Base Stretcher Rails Profile", 0.0, Milling.MaterialBlockThickness, "OUT", Milling.Tabs)
       end -- if end
+
       if BaseQuestion.DrawBottomPanel then
         CreateLayerProfileToolpath(Milling.LNTopBottomProfile .. "-Base", Milling.Sheet .. "Base Top Bottom Profile", 0.0, Milling.MaterialBlockThickness, "OUT", Milling.Tabs)
+      end -- if end
+
+      if Milling.AddAssemblyHolesBase then
+        CreateLayerDrillingToolpath(Milling.LNAssemblyHole .. "-Base", Milling.Sheet .. "Base Assembly Drilling", 0.0, Milling.ShelfPinLen, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.25)
+      end -- if end
+
+      if (Hardware.Name ~= "No Drawer Slide") then
+        CreateLayerDrillingToolpath(Milling.LNDrawerSlideHole .. "-Base", Milling.Sheet .. "Base Slide Polit Drilling", 0.0, Milling.ShelfPinLen, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.25)
       end -- if end
       -- ====
       Base_CabinetFaceFrame()

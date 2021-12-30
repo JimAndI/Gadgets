@@ -47,6 +47,19 @@ end
   return true
 end -- function end
 -- =====================================================]]
+function Sheetlabel(Wpt)
+  local pt1Text = Polar2D(Wpt, 90.0,  45.5 * Milling.Cal)
+  DrawWriter(Project.ProgramName, pt1Text, Project.TextHeight * 3.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 3.35)
+  DrawWriter("Cabinet ID: " .. Project.DrawerID, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  DrawWriter("Cabnet Name: " .. Project.CabinetName, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  DrawWriter("Version: " .. Project.ProgramVersion, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  DrawWriter("Code By: " .. Project.ProgramCodeBy, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+end
+-- =====================================================]]
 function DMark(Note, Pt)
 --[[-- ==MarkPoint==
 | Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
@@ -129,22 +142,22 @@ end --  function end
 function MainValidate()
   local val = true
     if WallDim.CabHeight == 0 then
-      StatusMessage("Error", "Wall Cabinet Height", "The Wall Cabinet Height cannot have a 0 value", "(5700)")
+      StatusMessage("Error", "Wall Cabinet Height",  "The Wall Cabinet Height cannot have a 0 value", "(5700)")
       val = false
     elseif WallDim.CabDepth  == 0 then
-      StatusMessage("Error", "Wall Cabinet Depth", "The Wall Cabinet Depth cannot have a 0 value", "(5800)")
+      StatusMessage("Error", "Wall Cabinet Depth",   "The Wall Cabinet Depth cannot have a 0 value", "(5800)")
       val = false
     elseif WallDim.CabLength  == 0 then
-      StatusMessage("Error", "Wall Cabinet Length", "The Wall Cabinet Length cannot have a 0 value", "(5900)")
+      StatusMessage("Error", "Wall Cabinet Length",  "The Wall Cabinet Length cannot have a 0 value", "(5900)")
       val = false
     elseif BaseDim.CabHeight  == 0 then
-      StatusMessage("Error", "Base Cabinet Height", "The Base Cabinet Height cannot have a 0 value", "(6000)")
+      StatusMessage("Error", "Base Cabinet Height",  "The Base Cabinet Height cannot have a 0 value", "(6000)")
       val = false
     elseif BaseDim.CabDepth  == 0 then
-      StatusMessage("Error", "Base Cabinet Depth", "The Base Cabinet Depth cannot have a 0 value", "(6100)")
+      StatusMessage("Error", "Base Cabinet Depth",   "The Base Cabinet Depth cannot have a 0 value", "(6100)")
       val = false
     elseif BaseDim.CabLength  == 0 then
-      StatusMessage("Error", "Base Cabinet Length", "The Base Cabinet Length cannot have a 0 value", "(6200)")
+      StatusMessage("Error", "Base Cabinet Length",  "The Base Cabinet Length cannot have a 0 value", "(6200)")
       val = false
     elseif All_Trim(Project.CabinetName)  == "" then
       StatusMessage("Error", "Project Cabinet Name", "The Cabinet Height cannot be blank", "(6300)")
@@ -272,13 +285,15 @@ function StatusMessage(Type, Header, Question, ErrorNumber)
   else -- "Error"
     dialog = HTML_Dialog(true, DialogWindow.myHtml17, X, Y, Header)
   end -- if end
+
   if Project.Debugger then
     Question = Question .. " " .. ErrorNumber
   end
   dialog:AddLabelField("Question", Type .. ": " .. Question)
   dialog:ShowDialog()
+
   if Project.Debugger then
-    DisplayMessageBox(tostring(string.len(Question)) .. " = " .. tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight))
+    DisplayMessageBox("Question Len " .. " = " .. tostring(string.len(Question)) .. ": \nWindow = " .. tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight))
   end
   return true
 end
@@ -365,38 +380,22 @@ function MillingTools()
   return true
 end
 -- =====================================================]]
-function NewSheetx()
-  if GetAppVersion() < 10.999 then
-    local layer_manager = Milling.job.LayerManager
-    -- get current sheet count - note sheet 0 the default sheet counts as one sheet
-    -- local orig_num_sheets = layer_manager.NumberOfSheets
-    -- get current active sheet index
-    -- local orig_active_sheet_index = layer_manager.ActiveSheetIndex
-    -- set active sheet to last sheet
-    local num_sheets = layer_manager.NumberOfSheets
-  --  layer_manager.ActiveSheetIndex = num_sheets - 1
-    Milling.job:Refresh2DView()
-    --  Add a new sheet
-    layer_manager:AddNewSheet()
-    --  set active sheet to last sheet we just added
-    num_sheets = layer_manager.NumberOfSheets
-    layer_manager.ActiveSheetIndex = num_sheets - 1
-    Milling.job:Refresh2DView()
-  else
-    Project.NewSheet = "No"
-  end -- if end
-end
--- =====================================================]]
 function CutListfileWriterHeader(Cab)
+  if Hardware.Name == "No Drawer Slide" then
+    Hardware.RearPartNumber = "N/A"
+    BaseQuestion.DrawerRowCountX = "N/A"
+  else
+    BaseQuestion.DrawerRowCountX = BaseQuestion.DrawerRowCount .. " (L&R)"
+  end
   local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-".. Project.DrawerID.. ".dat", "w")
   local DiagWall = math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2)
   local DiagBase = math.sqrt (BaseDim.CabHeight^2 + BaseDim.CabLength^2)
   local Lines = "================================================================================== \n"
   file:write(Lines)
   file:write(   "===============================  Cabinet Cut-list  =============================== \n")
-  file:write("  Project Run Date ID: ".. StartDate() .."\n")
-  file:write("  Cabinet Project Name: ".. Project.ProgramName .."\n")
-  file:write("  Cabinet Name: ".. Project.CabinetName   .."\n")
+  file:write("  Project Run Date ID: ".. StartDate() .. "\n")
+  file:write("  Cabinet Project Name: ".. Project.ProgramName .. "\n")
+  file:write("  Cabinet Name: ".. Project.CabinetName   .. "\n")
   file:write("  " .. Milling.Units .. " \n")
   file:write(Lines)
   if Cab == "Both" then
@@ -433,6 +432,9 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
       file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
     end
+      file:write("  Drawer Slides Model = " .. Hardware.Name                             .. "\n")
+      file:write("  Drawer Rear Mount   = " .. Hardware.RearPartNumber                   .. "\n")
+      file:write("  Drawer Slides Count = " .. BaseQuestion.DrawerRowCountX              .. "\n")
   elseif Cab == "Wall" then
     file:write("  Wall Cabinet Size\n")
     file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)       .. "\n")
@@ -452,6 +454,7 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Depth       = " .. Double2Fraction(WallDim.CabDepth)  .. " (" .. D2S(WallDim.CabDepth)  .. ")\n")
       file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
     end
+
   else
     file:write("  Base Cabinet Size\n")
     file:write("  Cabinet Finish      = " .. BOM.BaseCabinetFinish   .. "\n")
@@ -469,6 +472,9 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
       file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
     end
+      file:write("  Drawer Slides Model = " .. Hardware.Name                      .. "\n")
+      file:write("  Drawer Rear Mount   = " .. Hardware.RearPartNumber            .. "\n")
+      file:write("  Drawer Slides Count = " .. BaseQuestion.DrawerRowCountX       .. "\n")
   end -- if Both
   file:write(Lines)
   file:write("  ID | Part Name              | Type | No | Thick | Material  | Width     | Length \n")

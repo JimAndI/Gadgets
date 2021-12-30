@@ -15,8 +15,8 @@
 -- Easy CenterLine Gadget is written by JimAndi Gadgets of Houston Texas 2020
 -- ===========================================================================================
 -- Global Variables --
-require("mobdebug").start()
--- require "strict"
+-- require("mobdebug").start()
+require "strict"
 local CenterLine = {}
 CenterLine.Ver = "1.0"  -- Version 1.0 : Dec 2021
 --====================================================]]

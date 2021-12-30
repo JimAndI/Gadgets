@@ -22,7 +22,7 @@ function Wall_CabinetShelf(CountX)
     pt1Text = Polar2D(Cab.Wpt8, 45.0,  1.5 * Milling.Cal)
     DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Shelf ".. CountX .. " -  " .. BOM.WallCabinetMateralType,  pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
     pt1Text = Polar2D(pt1Text, 270.0,  0.75 * Milling.Cal)
-    DrawWriter("( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
+    DrawWriter("( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
   end
   if BOM.WallShelfBOM then -- run one time only
     CutListfileWriterItem(BOM.PID, "Cabinet Shelf",               "Wall", WallQuestion.ShelfCount, WallDim.MaterialThickness,    BOM.WallCabinetMateralType,   BOM.WallCabinetFinish, GetDistance(pt2, pt3),    GetDistance(pt3, pt4))
@@ -90,7 +90,7 @@ function Wall_CabinetBack()
     pt1Text = Polar2D(Cab.Wpt3, 45.0,  1.5 * Milling.Cal)
     DrawWriter( "(ID: ".. BOM.PID .. " ) Wall Cabinet Back - ".. WallDim.ThicknessBack .. " ".. BOM.WallCabinetMateralType, pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
     pt1Text = Polar2D(pt1Text, 270.0,  0.75 * Milling.Cal)
-    DrawWriter("( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
+    DrawWriter("( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
   end
   BOM.PID = BOM.PID + 10
   CutListfileWriterItem(BOM.PID, "Back Panel", "Wall", "1", WallDim.ThicknessBack, BOM.WallCabinetMateralType, BOM.WallCabinetFinish, WallDim.BackPanelWidth, WallDim.BackPanelLength)
@@ -228,12 +228,12 @@ end -- if end
 
     if xx  ==  "T" then
       if WallQuestion.DrawBottomTopPanel then
-        DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Top - ".. Double2Fraction(WallDim.MaterialThickness) .. " " .. BOM.WallCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
+        DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Top - ".. Double2Fraction(WallDim.MaterialThickness) .. " " .. BOM.WallCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
       end -- if end
       CutListfileWriterItem(BOM.PID, "Top Panel","Wall", "1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, BOM.WallCabinetFinish, WallDim.CabDepth, WallDim.BackPanelLength)
     else
       if WallQuestion.DrawBottomTopPanel then
-        DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Bottom - ".. Double2Fraction(WallDim.MaterialThickness) .. " " .. BOM.WallCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
+        DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Bottom - ".. Double2Fraction(WallDim.MaterialThickness) .. " " .. BOM.WallCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
       end -- if end
       CutListfileWriterItem(BOM.PID, "Bottom Panel", "Wall","1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, BOM.WallCabinetFinish, WallDim.CabDepth, WallDim.BackPanelLength)
     end -- if end
@@ -392,7 +392,7 @@ end -- if end
       line:LineTo(ptBF);      line:LineTo(ptB)
       line:LineTo(ptA)
       layer:AddObject(CreateCadContour(line), true)
-      DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Left Side - ".. Double2Fraction(WallDim.MaterialThickness) .." " .. BOM.WallCabinetMateralType .. " ( " .. Double2Fraction(WallDim.SidePanelWidth) .. " x " .. Double2Fraction(WallDim.SidePanelLength) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
+      DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Left Side - ".. Double2Fraction(WallDim.MaterialThickness) .. " " .. BOM.WallCabinetMateralType .. " ( " .. Double2Fraction(WallDim.SidePanelWidth) .. " x " .. Double2Fraction(WallDim.SidePanelLength) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
       DrawBox(Cab.Wpt1, pt2, pt3, pt4, Milling.LNSideProfile  .. "-Wall")
 
       if Milling.AddAssemblyHolesWall then
@@ -589,7 +589,7 @@ end -- if end
         HoleCount = (HoleCount - 1.0)
       end -- While end
     end -- if end
-      DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Right Side - ".. Double2Fraction(WallDim.MaterialThickness) .." " .. BOM.WallCabinetMateralType .. " ( " .. Double2Fraction(WallDim.SidePanelWidth) .. " x " .. Double2Fraction(WallDim.SidePanelLength) .. " )", pt1Text, Project.TextHeight , Milling.LNPartLabels, 0.0)
+      DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Right Side - ".. Double2Fraction(WallDim.MaterialThickness) .. " " .. BOM.WallCabinetMateralType .. " ( " .. Double2Fraction(WallDim.SidePanelWidth) .. " x " .. Double2Fraction(WallDim.SidePanelLength) .. " )", pt1Text, Project.TextHeight , Milling.LNPartLabels, 0.0)
 
     end
     CutListfileWriterItem(BOM.PID, "Right Side Panel","Wall", "1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, BOM.WallCabinetFinish, WallDim.SidePanelWidth, WallDim.SidePanelLength)
@@ -646,7 +646,7 @@ function Wall_CenterPanel()
   BOM.PID = BOM.PID + 10
   pt1Text = Polar2D(Cab.Wpt7, 45.0,  1.5 * Milling.Cal)
   if WallQuestion.DrawCenterPanel  then
-    DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Center Panel - ".. Double2Fraction(WallDim.MaterialThickness) .." " .. BOM.WallCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .." )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
+    DrawWriter("(ID: ".. BOM.PID .. " ) Wall Cabinet Center Panel - ".. Double2Fraction(WallDim.MaterialThickness) .. " " .. BOM.WallCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 0.0)
     if Milling.DadoType == "Half Blind" then
     local pt5 = Polar2D(pt1,   0.0, WallDim.MaterialThickness - Milling.DadoHeight)
     local pt6 = Polar2D(pt5,  90.0, Milling.DadoBlindAmount   + Milling.ProfileToolRadius)
@@ -755,16 +755,8 @@ function Wall_CabinetFaceFrame()
       CutListfileWriterItem(BOM.PID, "Center Face Frame", "Wall", "1", WallDim.FaceFrameThickness, BOM.WallFaceFrameMateralType, BOM.WallFaceFrameFinish, WallDim.FaceFrameCenterStileWidth, GetDistance(D3, C3))
     end
   end
-  pt1Text = Polar2D(Cab.Wpt1, 90.0, 46.0 * Milling.Cal)
-  DrawWriter(Project.ProgramName, pt1Text,  Project.TextHeight * 3.0, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 3.35)
-  DrawWriter("Cabinet ID: " .. Project.DrawerID, pt1Text,     Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
-  DrawWriter("Cabnet Name: " .. Project.CabinetName, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
-  DrawWriter("Version: " .. Project.ProgramVersion, pt1Text,  Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
-  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
-  DrawWriter("Code By: " .. Project.ProgramCodeBy, pt1Text,   Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  Sheetlabel(Cab.Wpt1)
+
   return true
 end  --  function end
 -- =====================================================]]
@@ -781,7 +773,7 @@ function Wall_Math()  --  All the math for Wall Cabinet
   WallDim.FaceFrameRailLength = WallDim.CabLength - ( WallDim.FaceFrameStileWidth * 2.0)
   WallDim.ShelfWidth =  WallDim.CabDepth - (WallDim.ThicknessBack + WallDim.FaceFrameThickness + WallDim.ShelfFrontClearance + WallDim.ShelfFaceFrameThickness)
   if WallQuestion.AddCenterPanel then
-    WallDim.ShelfLength =  (((WallDim.CabLength  - ((WallDim.MaterialThickness * 3.0) +  (WallDim.FaceFrameSideReveal * 2.0) ))*0.5000) -(WallDim.ShelfEndClarence * 2.0) )
+    WallDim.ShelfLength =  (((WallDim.CabLength  - ((WallDim.MaterialThickness * 3.0) +  (WallDim.FaceFrameSideReveal * 2.0) )) * 0.5000) -(WallDim.ShelfEndClarence * 2.0) )
     WallDim.ShelfNoseLength  = WallDim.ShelfLength
   else
     WallDim.ShelfLength = (WallDim.CabLength  - ((WallDim.MaterialThickness * 2.0)  + (WallDim.FaceFrameSideReveal * 2.0) + (WallDim.ShelfEndClarence * 2)) )
@@ -796,9 +788,9 @@ function Wall_Math()  --  All the math for Wall Cabinet
   Cab.pt2b    = Polar2D(Cab.Wpt2, 0.0, WallDim.SidePanelLength)                            --  Left Side Panel Bottom
 
   if  WallDim.SidePanelLength > WallDim.TopBottomPanelLength then
-    Cab.Wpt3    = Polar2D(Cab.pt2b,  0.0, Milling.PartGap)                                 --  Wall Back Panel
+    Cab.Wpt3  = Polar2D(Cab.pt2b, 0.0, Milling.PartGap)                                    --  Wall Back Panel
   else
-    Cab.Wpt3    = Polar2D(Cab.Wpt1,  0.0, (WallDim.TopBottomPanelLength + Milling.PartGap) * 2.0 ) --  Wall Back Panel
+    Cab.Wpt3  = Polar2D(Cab.Wpt1, 0.0, (WallDim.TopBottomPanelLength + Milling.PartGap) * 2.0 ) --  Wall Back Panel
   end
   Cab.pt3b    = Polar2D(Cab.Wpt3,  0.0, WallDim.BackPanelWidth)                             --  Wall Back Panel
   Cab.Wpt4    = Polar2D(Cab.pt3b,  0.0, Milling.PartGap)                                    --  Wall Face Frame

@@ -514,43 +514,27 @@ table {
       <select id="BOM.WallCabinetMateralType">
         <option selected>Plywood</option>
         <option>Melamine </option>
-        <option>Birch ply</option>
-        <option>Oak ply</option>
-        <option>Maple ply</option>
-        <option>Walnut ply</option>
-        <option>Poplar ply</option>
-        <option>Piano Ply</option>
+
     </select></td>
     <td class="h1-r">Wall Face Frame</td>
     <td class="h1-l">
       <select id="BOM.WallFaceFrameMateralType">
-        <option selected>Hardwood</option>
-        <option>Melamine</option>
-        <option>Oak</option>
-        <option>Poplar</option>
-        <option>Maple</option>
-        <option>Walnut</option>
-        <option>Pine</option>
-        <option>Cedar</option>
+
     </select></td>
   </tr>
   <tr>
     <td class="h1-r">Wall Cabinet Finish</td>
     <td class="h1-l">
       <select  id="BOM.WallCabinetFinish">
-        <option>None</option>
-        <option selected>Paint</option>
-        <option>Prime Only</option>
-        <option>Stain</option>
+
+
       </select>
     </td>
     <td class="h1-r">Wall Face Frame Finish</td>
     <td class="h1-l">
       <select id="BOM.WallFaceFrameFinish">
-        <option>None</option>
-        <option selected>Paint</option>
-        <option>Prime Only</option>
-        <option>Stain</option>
+
+
       </select>
     </td>
   </tr>
@@ -1249,7 +1233,7 @@ table {
       <tr>
         <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Hardware Pilot Holes:</label></td>
         <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel6">-</span></td>
-        <td class="hl-l"><input id = "ToolChooseButton5" class="ToolPicker" name = "ToolChooseButton6" type = "button" value = "Tool"></td>
+        <td class="hl-l"><input id = "ToolChooseButton6" class="ToolPicker" name = "ToolChooseButton6" type = "button" value = "Tool"></td>
       </tr>
       <tr>
         <td>&nbsp;</td>
@@ -1642,7 +1626,7 @@ table {
       <table>
         <tr>
           <td class="h2-l"><img src="]] .. DialogWindow.SlideImages1 .. [[" width="40" height="35"></td>
-          <td class="h2-l" id="Question">Question</td>
+          <td class="h2-lm" id="Question">Question</td>
         </tr>
         <tr>
           <td colspan="2"><hr></td>
@@ -1665,7 +1649,7 @@ table {
       <table>
         <tr>
           <td class="h2-l"><img src="]] .. DialogWindow.SlideImages2 .. [[" width="40" height="35"></td>
-          <td class="h2-l" id="Question">Question</td>
+          <td class="h2-lm" id="Question">Question</td>
         </tr>
         <tr>
           <td colspan="2"><hr></td>

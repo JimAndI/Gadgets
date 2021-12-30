@@ -76,11 +76,13 @@ function main()
   local pos   = selection:GetHeadPosition()
   local object
   object, pos = selection:GetNext(pos)
+  -- selection:Remove(object, true)
   local pos1  = object:GetContour()
   local Ang   = GetAngle(pos1.StartPoint2D,pos1.EndPoint2D)
   local group = ContourGroup(true)
-  local pt1a = pos1.StartPoint2D
-  local pt2a = pos1.StartPoint2D
+  local pt1a  = pos1.StartPoint2D
+  local pt2a  = pos1.StartPoint2D
+
   CenterLine.Angle = math.abs(Ang)
   if Ang == 0.0 and (pos1.StartPoint2D.X < pos1.EndPoint2D.X) then
     pt1a = pos1.StartPoint2D
@@ -111,6 +113,7 @@ function main()
     CenterLine.Angle = 360.00 - CenterLine.Angle
     CenterLine.RAngle = CenterLine.Angle + 180.00
   end -- if end
+
   CenterLine.length = GetDistance(pt1a, pt2a)
   local pt1 = Polar2D(pt1a, CenterLine.Angle,  CenterLine.length * 0.375)
   local pt2 = Polar2D(pt2a, CenterLine.RAngle, CenterLine.length * 0.375)
