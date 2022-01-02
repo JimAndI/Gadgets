@@ -144,71 +144,26 @@ function MainValidate()
     if WallDim.CabHeight == 0 then
       StatusMessage("Error", "Wall Cabinet Height",  "The Wall Cabinet Height cannot have a 0 value", "(5700)")
       val = false
-    elseif WallDim.CabDepth == 0 then
+    elseif WallDim.CabDepth  == 0 then
       StatusMessage("Error", "Wall Cabinet Depth",   "The Wall Cabinet Depth cannot have a 0 value", "(5800)")
       val = false
-    elseif WallDim.CabLength == 0 then
+    elseif WallDim.CabLength  == 0 then
       StatusMessage("Error", "Wall Cabinet Length",  "The Wall Cabinet Length cannot have a 0 value", "(5900)")
       val = false
-    elseif BaseDim.CabHeight == 0 then
+    elseif BaseDim.CabHeight  == 0 then
       StatusMessage("Error", "Base Cabinet Height",  "The Base Cabinet Height cannot have a 0 value", "(6000)")
       val = false
-    elseif BaseDim.CabDepth == 0 then
+    elseif BaseDim.CabDepth  == 0 then
       StatusMessage("Error", "Base Cabinet Depth",   "The Base Cabinet Depth cannot have a 0 value", "(6100)")
       val = false
-    elseif BaseDim.CabLength == 0 then
+    elseif BaseDim.CabLength  == 0 then
       StatusMessage("Error", "Base Cabinet Length",  "The Base Cabinet Length cannot have a 0 value", "(6200)")
       val = false
-    elseif All_Trim(Project.CabinetName) == "" then
+    elseif All_Trim(Project.CabinetName)  == "" then
       StatusMessage("Error", "Project Cabinet Name", "The Cabinet Height cannot be blank", "(6300)")
       val = false
     end
   return val
-end
--- =====================================================]]
-function Sheet(Sname)
-
-
-  if GetAppVersion() >= 11.0 then
-    DialogWindow.Sheets = "disabled"
-
-  local job = VectricJob()
-  local sheet_manager = job.SheetManager
-  local sheet_ids = sheet_manager:GetSheetIds()
-  for id in sheet_ids do
-    if(sheet_manager:GetSheetName(id) == "Sheet 1") then
-      sheet_manager:CreateSheets(1, id)
-      -- sheet_manager:CreateSheets(1, id, Box2D(Point2D(0, 0), Point2D(48, 48)))
-    end
-  end
-end
--- =====================================================]]
-function SetSheet(Sname)
-  local job = VectricJob()
-  local sheet_manager = job.SheetManager
-  local sheet_ids = sheet_manager:GetSheetIds()
-  for id in sheet_ids do
-    if(sheet_manager:GetSheetName(id) == Sname) then
-      sheet_manager.ActiveSheetId = id
-    end
-  end
-end
-
-
-
-
-  else
-    local layer_manager = Milling.job.LayerManager
-    local orig_num_sheets = layer_manager.NumberOfSheets
-    local orig_active_sheet_index = layer_manager.ActiveSheetIndex
-    local num_sheets = layer_manager.NumberOfSheets
-    layer_manager.ActiveSheetIndex = num_sheets - 1
-    Milling.job:Refresh2DView()
-    layer_manager:AddNewSheet()
-    num_sheets = layer_manager.NumberOfSheets
-    layer_manager.ActiveSheetIndex = num_sheets - 1
-    Milling.job:Refresh2DView()
-  end -- if end
 end
 -- =====================================================]]
 function GetMaterialSettings()
@@ -388,32 +343,32 @@ function MillingValidater()
 end -- if end
 -- =====================================================]]
 function MillingTools()
-  if Milling.MillTool1.Name == "No Tool Selected" then
+  if Milling.MillTool1.Name == "No Tool Selected"  then
     Milling.Profile = false
   else
     Milling.Profile = true
   end  -- if end
-  if Milling.MillTool2.Name == "No Tool Selected" then
+  if Milling.MillTool2.Name == "No Tool Selected"  then
     Milling.Pocket = false
   else
     Milling.Pocket = true
   end  -- if end
-  if Milling.MillTool3.Name == "No Tool Selected" then
+  if Milling.MillTool3.Name == "No Tool Selected"  then
     Milling.Clearning = false
   else
     Milling.Clearning = true
   end  -- if end
-  if Milling.MillTool4.Name == "No Tool Selected" then
+  if Milling.MillTool4.Name == "No Tool Selected"  then
     Milling.Drilling = false
   else
     Milling.Drilling = true
   end  -- if end
-  if Milling.MillTool5.Name == "No Tool Selected" then
+  if Milling.MillTool5.Name == "No Tool Selected"  then
     Milling.AddAssemblyHolesToolpath = false
   else
     Milling.AddAssemblyHolesToolpath = true
   end  -- if end
-  if Milling.MillTool6.Name == "No Tool Selected" then
+  if Milling.MillTool6.Name == "No Tool Selected"  then
     Milling.AddSlideHolesToolpath = false
   else
     Milling.AddSlideHolesToolpath = true
@@ -423,29 +378,6 @@ function MillingTools()
     Milling.Toolpath_Mgr:DeleteAllToolpaths()
   end -- if end
   return true
-end
--- =====================================================]]
-function MakeSheet()
-  local job = VectricJob()
-  local sheet_manager = job.SheetManager
-  local sheet_ids = sheet_manager:GetSheetIds()
-  for id in sheet_ids do
-    if(sheet_manager:GetSheetName(id) == "Sheet 1") then
-      sheet_manager:CreateSheets(1, id)
-      -- sheet_manager:CreateSheets(1, id, Box2D(Point2D(0, 0), Point2D(48, 48)))
-    end
-  end
-end
--- =====================================================]]
-function SetSheet(Sname)
-  local job = VectricJob()
-  local sheet_manager = job.SheetManager
-  local sheet_ids = sheet_manager:GetSheetIds()
-  for id in sheet_ids do
-    if(sheet_manager:GetSheetName(id) == Sname) then
-      sheet_manager.ActiveSheetId = id
-    end
-  end
 end
 -- =====================================================]]
 function CutListfileWriterHeader(Cab)

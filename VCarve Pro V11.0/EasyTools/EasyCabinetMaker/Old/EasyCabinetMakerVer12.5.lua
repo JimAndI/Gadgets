@@ -28,23 +28,20 @@ AppName = "Easy Base Cabinet Maker"
 RegName = "EasyBaseCabinetMaker" .. VerNumber
 
 -- Table Names
-BaseDim              = {}
-BaseQuestion         = {}
-Milling              = {}
-Project              = {}
-WallDim              = {}
-BOM                  = {}
-WallQuestion         = {}
-Hardware             = {}
-Material             = {}
-Materials            = {}
-Cab                  = {}   -- Points
-DialogWindow         = {}   -- Dialog Managment
-Hardware.Slides      = {}
-Materials.Faceframe  = {"Hardwood",  "Cedar",    "Maple",       "Oak",     "Pine",      "Poplar",     "Walnut"}
-Materials.SheetGoods = {"Plywood",   "Melamine", "Birch ply",   "Oak ply", "Maple ply", "Walnut ply", "Poplar ply", "Piano Ply"}
-Materials.Finshes    = {"Unfinshed", "Paint",    "Primer Only", "Stain"}
-layer                = ""
+BaseDim           = {}
+BaseQuestion      = {}
+Milling           = {}
+Project           = {}
+WallDim           = {}
+BOM               = {}
+WallQuestion      = {}
+Hardware          = {}
+Material          = {}
+Cab               = {}   -- Points
+DialogWindow      = {}   -- Dialog Managment
+Hardware.Slides   = {}
+layer             = ""
+
 Project.Debugger          = false -- true -- used to desplay error numbers, points, and window X/Y values
 Project.Rest              = false
 DrawerHeight              = 0.0
@@ -183,7 +180,6 @@ function InquiryWallOrBase(Header)
   end
   return Xval
 end
-
 -- =====================================================]]
 function OnLuaButton_ImportSettings(dialog)
   local Test = true
@@ -490,7 +486,6 @@ function OnLuaButton_InquiryProjectInfo()
   dialog:AddDoubleField("Project.TextHeight",            Project.TextHeight)
   dialog:AddDropDownList("Project.CabinetStyle",         Project.CabinetStyle)
   dialog:AddDirectoryPicker("DirectoryPicker", "Project.ProjectPath",  true)
-
   dialog:AddDropDownList("BOM.WallCabinetMateralType",   BOM.WallCabinetMateralType)
   dialog:AddDropDownList("BOM.BaseCabinetMateralType",   BOM.BaseCabinetMateralType)
   dialog:AddDropDownList("BOM.WallFaceFrameMateralType", BOM.WallFaceFrameMateralType)
@@ -499,22 +494,6 @@ function OnLuaButton_InquiryProjectInfo()
   dialog:AddDropDownList("BOM.BaseCabinetFinish",        BOM.BaseCabinetFinish)
   dialog:AddDropDownList("BOM.WallFaceFrameFinish",      BOM.WallFaceFrameFinish)
   dialog:AddDropDownList("BOM.BaseFaceFrameFinish",      BOM.BaseFaceFrameFinish)
-  for _, item in pairs(Materials.SheetGoods) do
-    dialog:AddDropDownListValue("BOM.WallCabinetMateralType", item)
-    dialog:AddDropDownListValue("BOM.BaseCabinetMateralType", item)
-  end -- for end
-  for _, item in pairs(Materials.Faceframe) do
-    dialog:AddDropDownListValue("BOM.BaseFaceFrameMateralType", item)
-    dialog:AddDropDownListValue("BOM.WallFaceFrameMateralType", item)
-  end -- for end
-  for _, item in pairs(Materials.Finshes) do
-    dialog:AddDropDownListValue("BOM.WallCabinetFinish", item)
-    dialog:AddDropDownListValue("BOM.BaseCabinetFinish", item)
-  end -- for end
-  for _, item in pairs(Materials.Finshes) do
-    dialog:AddDropDownListValue("BOM.WallFaceFrameFinish", item)
-    dialog:AddDropDownListValue("BOM.BaseFaceFrameFinish", item)
-  end -- for end
   if dialog:ShowDialog() then
     Project.ProjectName          = string.upper(All_Trim(dialog:GetTextField("Project.ProjectName")))
     Project.ProjectContactEmail  = All_Trim(dialog:GetTextField("Project.ProjectContactEmail"))
@@ -831,14 +810,11 @@ function main(script_path)
   Hardware.Action = "HOLD"
   Project.AppPath = script_path
   Milling.job = VectricJob()
-  DialogWindow.Sheets = ""
-
   if GetAppVersion() >= 11.0 then
     DialogWindow.Sheets = "disabled"
   else
     DialogWindow.Sheets = ""
   end -- if end
-
   if not Milling.job.Exists then
     StatusMessage("Error", "Project Path", "The Gadget cannot run without a job being setup.\n" ..
                       "Select: 'Create a new file' under 'Startup Tasks' and \n" ..
