@@ -1,0 +1,2436 @@
+-- ========================================================================================================================
+--  Gadgets are an entirely optional add-in to Vectric's core software products.
+--  They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.
+--  In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.
+--  Permission is granted to anyone to use this software for any purpose,
+--  including commercial applications, and to alter it and redistribute it freely,
+--  subject to the following restrictions:
+--  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+--  If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.
+--  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+--  3. This notice may not be removed or altered from any source distribution.
+-- ========================================================================================================================
+-- Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
+-- ========================================================================================================================
+function InquiryWallOrBase(Header)
+  local Wx, Wy = DialogSize(DialogWindow.InquiryWallOrBaseXY)
+  local Xval = true
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml7, Wx, Wy,  Header .. "  " .. Milling.UnitDisplay)
+  dialog:AddDropDownList("Project.Drawing",  Project.Drawing)
+  if DialogWindow.Sheets == "" then
+    dialog:AddDropDownList("Project.NewSheet", "Yes")
+  else
+    dialog:AddDropDownList("Project.NewSheet", "No")
+  end -- if end
+  dialog:AddDropDownList("Hardware.Name", Hardware.Name)
+  dialog:AddDropDownListValue("Hardware.Name", "No Drawer Slide")
+  for i, line in ipairs(Hardware.Slides) do
+    dialog:AddDropDownListValue("Hardware.Name", line)
+  end
+  dialog:AddDoubleField("WallDim.CabHeight", WallDim.CabHeight)
+  dialog:AddDoubleField("WallDim.CabDepth",  WallDim.CabDepth)
+  dialog:AddDoubleField("WallDim.CabLength", WallDim.CabLength)
+  dialog:AddDoubleField("BaseDim.CabHeight", BaseDim.CabHeight)
+  dialog:AddDoubleField("BaseDim.CabDepth",  BaseDim.CabDepth)
+  dialog:AddDoubleField("BaseDim.CabLength", BaseDim.CabLength)
+  dialog:AddTextField("Project.CabinetName", Project.CabinetName)
+  dialog:AddLabelField("ToolNameLabel1",                      Milling.MillTool1.Name)
+  dialog:AddToolPicker("ToolChooseButton1", "ToolNameLabel1", Tool_ID1)
+  dialog:AddToolPickerValidToolType("ToolChooseButton1",      Tool.END_MILL)
+  dialog:AddLabelField("ToolNameLabel2",                      Milling.MillTool2.Name)
+  dialog:AddToolPicker("ToolChooseButton2", "ToolNameLabel2", Tool_ID2)
+  dialog:AddToolPickerValidToolType("ToolChooseButton2",      Tool.END_MILL)
+  dialog:AddLabelField("ToolNameLabel3",                      Milling.MillTool3.Name)
+  dialog:AddToolPicker("ToolChooseButton3", "ToolNameLabel3", Tool_ID3)
+  dialog:AddToolPickerValidToolType("ToolChooseButton3",      Tool.END_MILL)
+  dialog:AddLabelField("ToolNameLabel4",                      Milling.MillTool4.Name)
+  dialog:AddToolPicker("ToolChooseButton4", "ToolNameLabel4", Tool_ID4)
+  dialog:AddToolPickerValidToolType("ToolChooseButton4",      Tool.THROUGH_DRILL)
+  dialog:AddLabelField("ToolNameLabel5",                      Milling.MillTool5.Name)
+  dialog:AddToolPicker("ToolChooseButton5", "ToolNameLabel5", Tool_ID5)
+  dialog:AddToolPickerValidToolType("ToolChooseButton5",      Tool.THROUGH_DRILL)
+  dialog:AddLabelField("ToolNameLabel6",                      Milling.MillTool6.Name)
+  dialog:AddToolPicker("ToolChooseButton6", "ToolNameLabel6", Tool_ID6)
+  dialog:AddToolPickerValidToolType("ToolChooseButton6",      Tool.THROUGH_DRILL)
+  if dialog:ShowDialog() then
+    WallDim.CabHeight   = dialog:GetDoubleField("WallDim.CabHeight")
+    WallDim.CabDepth    = dialog:GetDoubleField("WallDim.CabDepth")
+    WallDim.CabLength   = dialog:GetDoubleField("WallDim.CabLength")
+    BaseDim.CabHeight   = dialog:GetDoubleField("BaseDim.CabHeight")
+    BaseDim.CabDepth    = dialog:GetDoubleField("BaseDim.CabDepth")
+    BaseDim.CabLength   = dialog:GetDoubleField("BaseDim.CabLength")
+    Hardware.Name       = dialog:GetDropDownListValue("Hardware.Name")
+    Project.CabinetName = All_Trim(dialog:GetTextField("Project.CabinetName"))
+    Project.NewSheet    = dialog:GetDropDownListValue("Project.NewSheet")
+    Project.Drawing     = dialog:GetDropDownListValue("Project.Drawing")
+    if Hardware.Name == "" then
+      Hardware.Name     = "No Drawer Slide"
+    end
+    if dialog:GetTool("ToolChooseButton1") then
+      Tool_ID1:SaveDefaults("ToolChooseButton1", "")
+      Milling.MillTool1 = dialog:GetTool("ToolChooseButton1")  -- Profile
+    end
+    if dialog:GetTool("ToolChooseButton2") then
+      Milling.MillTool2 = dialog:GetTool("ToolChooseButton2")  -- Pocket
+    end
+    if dialog:GetTool("ToolChooseButton3") then
+      Milling.MillTool3 = dialog:GetTool("ToolChooseButton3")  -- Pocket Clearing
+    end
+    if dialog:GetTool("ToolChooseButton4") then
+      Milling.MillTool4 = dialog:GetTool("ToolChooseButton4")  -- Drilling
+    end
+    if dialog:GetTool("ToolChooseButton5") then
+      Milling.MillTool5 = dialog:GetTool("ToolChooseButton5")  -- Assembly Hole
+    end
+    if dialog:GetTool("ToolChooseButton6") then
+      Milling.MillTool6 = dialog:GetTool("ToolChooseButton6")  -- Hardware Hole
+    end
+    DialogWindow.InquiryWallOrBaseXY = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+    RegistryWrite()
+    Xval = true
+  else
+    Xval = false
+  end
+  return Xval
+end
+
+-- =====================================================]]
+function OnLuaButton_ImportSettings(dialog)
+  local Test = true
+  local Wx, Wy = DialogSize(DialogWindow.ImportSettings)
+  local dialogx = HTML_Dialog(true, DialogWindow.myHtml0, Wx, Wy, "Import Settings")
+  dialogx:AddTextField("ReadFile", Project.ProjectPath .. "\\")
+  dialogx:AddFilePicker(true, "FilePickerButton", "ReadFile", true)
+  local DTest = dialogx:ShowDialog()
+  DialogWindow.ImportSettings = tostring(dialogx.WindowWidth) .. " x " .. tostring(dialogx.WindowHeight)
+  RegistryWrite()
+  local fName = dialogx:GetTextField("ReadFile")
+  local strlen = string.len(fName)
+  if not DTest then
+    Test = false
+  elseif string.sub(fName, strlen - 3) ~= ".ini" then
+    StatusMessage("Error", "Import Settings", " You must select a .ini file" , "(1700)")
+  elseif string.len(Project.ProjectPath .. "\\") < strlen then
+    Importer(dialogx:GetTextField("ReadFile"))
+    RegistryWrite()
+    dialog:UpdateDoubleField("BaseDim.CabDepth",  BaseDim.CabDepth)
+    dialog:UpdateDoubleField("WallDim.CabDepth",  WallDim.CabDepth)
+    dialog:UpdateDoubleField("BaseDim.CabLength", BaseDim.CabLength)
+    dialog:UpdateDoubleField("WallDim.CabLength", WallDim.CabLength)
+    dialog:UpdateDoubleField("BaseDim.CabHeight", BaseDim.CabHeight)
+    dialog:UpdateDoubleField("WallDim.CabHeight", WallDim.CabHeight)
+    dialog:UpdateLabelField("ToolNameLabel1",     Milling.MillTool1.Name)
+    dialog:UpdateLabelField("ToolNameLabel2",     Milling.MillTool2.Name)
+    dialog:UpdateLabelField("ToolNameLabel3",     Milling.MillTool3.Name)
+    dialog:UpdateLabelField("ToolNameLabel4",     Milling.MillTool4.Name)
+    dialog:UpdateLabelField("ToolNameLabel5",     Milling.MillTool5.Name)
+    dialog:UpdateLabelField("ToolNameLabel6",     Milling.MillTool6.Name)
+    DialogWindow.ImportSettings = tostring(dialogx.WindowWidth) .. " x " .. tostring(dialogx.WindowHeight)
+  end -- if end
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_ExportSettings(dialogx)
+  local Wx, Wy = DialogSize(DialogWindow.ExportSettings)
+  Project.CabinetName = dialogx:GetTextField("Project.CabinetName")
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml9, Wx, Wy, "Export Settings")
+  dialog:AddTextField("Project.ExportName", Project.CabinetName)
+  if dialog:ShowDialog() then
+    Project.ExportName = All_Trim(dialog:GetTextField("Project.ExportName"))
+    if Project.ExportName ~= "" then
+      DialogWindow.ExportSettings = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+      RegistryWrite()
+      if NameValidater(Project.ExportName) then
+        ExportWriter(Project.ExportName)
+      else
+        StatusMessage("Error", "Export Settings", "The File Name is Incorrect." , "(1800)")
+      end -- if end
+    end -- if end
+  end -- if end
+  return true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryAbout()
+  local Wx, Wy = DialogSize(DialogWindow.AboutXY)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml6, Wx, Wy, "About")
+  dialog:AddLabelField("SysName", AppName)
+  dialog:AddLabelField("Version", "Version: " .. VerNumber)
+  dialog:AddCheckBox("RegistryReset", false)
+  dialog:ShowDialog()
+  Project.Rest = dialog:GetCheckBox("RegistryReset")
+  DialogWindow.AboutXY = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+  RegistryWrite()
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryBaseQuestion(Dia)
+  local Wx, Wy = DialogSize(DialogWindow.BaseCabinetXY)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml5, Wx, Wy, "Base Cabinet Setup")
+  dialog:AddDoubleField("BaseDim.FaceFrameBottomRailWidth",    BaseDim.FaceFrameBottomRailWidth)
+  dialog:AddDoubleField("BaseDim.FaceFrameBottomReveal",       BaseDim.FaceFrameBottomReveal)
+  dialog:AddDoubleField("BaseDim.FaceFrameCenterStileWidth",   BaseDim.FaceFrameCenterStileWidth)
+  dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight1",      BaseDim.FaceFrameDrawerHeight1)
+  dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight2",      BaseDim.FaceFrameDrawerHeight2)
+  dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight3",      BaseDim.FaceFrameDrawerHeight3)
+  dialog:AddDoubleField("BaseDim.FaceFrameDrawerHeight4",      BaseDim.FaceFrameDrawerHeight4)
+  dialog:AddDoubleField("BaseDim.FaceFrameMidRailWidth",       BaseDim.FaceFrameMidRailWidth)
+  dialog:AddDoubleField("BaseDim.FaceFrameSideReveal",         BaseDim.FaceFrameSideReveal)
+  dialog:AddDoubleField("BaseDim.FaceFrameStileWidth",         BaseDim.FaceFrameStileWidth)
+  dialog:AddDoubleField("BaseDim.FaceFrameThickness",          BaseDim.FaceFrameThickness)
+  dialog:AddDoubleField("BaseDim.FaceFrameTopRailWidth",       BaseDim.FaceFrameTopRailWidth)
+  dialog:AddDoubleField("BaseDim.MaterialThickness",           BaseDim.MaterialThickness)
+  dialog:AddDoubleField("BaseDim.ShelfEndClarence",            BaseDim.ShelfEndClarence)
+  dialog:AddDoubleField("BaseDim.ShelfFrontClearance",         BaseDim.ShelfFrontClearance)
+  dialog:AddDoubleField("BaseDim.ShelfHoleFirstRowSpacing",    BaseDim.ShelfHoleFirstRowSpacing)
+  dialog:AddDoubleField("BaseDim.ShelfHoleLastRowSpacing",     BaseDim.ShelfHoleLastRowSpacing)
+  dialog:AddDoubleField("BaseDim.ShelfHoleSpacing",            BaseDim.ShelfHoleSpacing)
+  dialog:AddDoubleField("BaseDim.ShelfMaterialThickness",      BaseDim.ShelfMaterialThickness)
+  dialog:AddDoubleField("BaseDim.ShelfNosingThickness",        BaseDim.ShelfNosingThickness)
+  dialog:AddDoubleField("BaseDim.ShelfNosingWidth",            BaseDim.ShelfNosingWidth)
+  dialog:AddDoubleField("BaseDim.ShelfPinHoleBack",            BaseDim.ShelfPinHoleBack)
+  dialog:AddDoubleField("BaseDim.ShelfPinHoleFront",           BaseDim.ShelfPinHoleFront)
+  dialog:AddDoubleField("BaseDim.StretcherWidth",              BaseDim.StretcherWidth)
+  dialog:AddDoubleField("BaseDim.ThicknessBack",               BaseDim.ThicknessBack)
+  dialog:AddDoubleField("BaseDim.ToeKickBottomOffsetHeight",   BaseDim.ToeKickBottomOffsetHeight)
+  dialog:AddDoubleField("BaseDim.ToeKickDepth",                BaseDim.ToeKickDepth)
+  dialog:AddDoubleField("BaseDim.ToeKickHeight",               BaseDim.ToeKickHeight)
+  dialog:AddDoubleField("BaseDim.TopFrameWidth",               BaseDim.TopFrameWidth)
+  dialog:AddDropDownList("BaseQuestion.AddCenterPanel",        ifT(BaseQuestion.AddCenterPanel))
+  dialog:AddDropDownList("BaseQuestion.DrawerRowCount",        tostring(BaseQuestion.DrawerRowCount))
+  dialog:AddDropDownList("BaseQuestion.ShelfCount",            tostring(BaseQuestion.ShelfCount))
+  if dialog:ShowDialog() then
+    BaseDim.FaceFrameBottomRailWidth  = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameBottomRailWidth"))
+    BaseDim.FaceFrameBottomReveal     = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameBottomReveal"))
+    BaseDim.FaceFrameCenterStileWidth = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameCenterStileWidth"))
+    BaseDim.FaceFrameDrawerHeight1    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight1"))
+    BaseDim.FaceFrameDrawerHeight2    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight2"))
+    BaseDim.FaceFrameDrawerHeight3    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight3"))
+    BaseDim.FaceFrameDrawerHeight4    = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameDrawerHeight4"))
+    BaseDim.FaceFrameMidRailWidth     = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameMidRailWidth"))
+    BaseDim.FaceFrameSideReveal       = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameSideReveal"))
+    BaseDim.FaceFrameStileWidth       = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameStileWidth"))
+    BaseDim.FaceFrameThickness        = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameThickness"))
+    BaseDim.FaceFrameTopRailWidth     = math.abs(dialog:GetDoubleField("BaseDim.FaceFrameTopRailWidth"))
+    BaseDim.MaterialThickness         = math.abs(dialog:GetDoubleField("BaseDim.MaterialThickness"))
+    BaseDim.ShelfEndClarence          = math.abs(dialog:GetDoubleField("BaseDim.ShelfEndClarence"))
+    BaseDim.ShelfFrontClearance       = math.abs(dialog:GetDoubleField("BaseDim.ShelfFrontClearance"))
+    BaseDim.ShelfHoleFirstRowSpacing  = math.abs(dialog:GetDoubleField("BaseDim.ShelfHoleFirstRowSpacing"))
+    BaseDim.ShelfHoleLastRowSpacing   = math.abs(dialog:GetDoubleField("BaseDim.ShelfHoleLastRowSpacing"))
+    BaseDim.ShelfHoleSpacing          = math.abs(dialog:GetDoubleField("BaseDim.ShelfHoleSpacing"))
+    BaseDim.ShelfMaterialThickness    = math.abs(dialog:GetDoubleField("BaseDim.ShelfMaterialThickness"))
+    BaseDim.ShelfNosingThickness      = math.abs(dialog:GetDoubleField("BaseDim.ShelfNosingThickness"))
+    BaseDim.ShelfNosingWidth          = math.abs(dialog:GetDoubleField("BaseDim.ShelfNosingWidth"))
+    BaseDim.ShelfPinHoleBack          = math.abs(dialog:GetDoubleField("BaseDim.ShelfPinHoleBack"))
+    BaseDim.ShelfPinHoleFront         = math.abs(dialog:GetDoubleField("BaseDim.ShelfPinHoleFront"))
+    BaseDim.StretcherWidth            = math.abs(dialog:GetDoubleField("BaseDim.StretcherWidth"))
+    BaseDim.ThicknessBack             = math.abs(dialog:GetDoubleField("BaseDim.ThicknessBack"))
+    BaseDim.ToeKickBottomOffsetHeight = math.abs(dialog:GetDoubleField("BaseDim.ToeKickBottomOffsetHeight"))
+    BaseDim.ToeKickDepth              = math.abs(dialog:GetDoubleField("BaseDim.ToeKickDepth"))
+    BaseDim.ToeKickHeight             = math.abs(dialog:GetDoubleField("BaseDim.ToeKickHeight"))
+    BaseDim.TopFrameWidth             = math.abs(dialog:GetDoubleField("BaseDim.TopFrameWidth"))
+    BaseQuestion.AddCenterPanel       = ifY(dialog:GetDropDownListValue("BaseQuestion.AddCenterPanel"))
+    BaseQuestion.DrawerRowCount       = tonumber(dialog:GetDropDownListValue("BaseQuestion.DrawerRowCount"))
+    BaseQuestion.ShelfCount           = tonumber(dialog:GetDropDownListValue("BaseQuestion.ShelfCount"))
+    DialogWindow.BaseCabinetXY        = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+    RegistryWrite()
+  end
+  Base_Math()
+  RegistryWrite()
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryLayers()
+  local Wx, Wy = DialogSize(DialogWindow.LayerXY)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml4, Wx, Wy, "Layer Setup")
+  dialog:AddTextField("Milling.LNBackPocket", Milling.LNBackPocket)
+  dialog:AddTextField("Milling.LNBackProfile", Milling.LNBackProfile)
+  dialog:AddTextField("Milling.LNCenterPanelProfile", Milling.LNCenterPanelProfile)
+  dialog:AddTextField("Milling.LNCenterPanelShelfPinDrill", Milling.LNCenterPanelShelfPinDrill)
+  dialog:AddTextField("Milling.LNDrawFaceFrame", Milling.LNDrawFaceFrame)
+  dialog:AddTextField("Milling.LNShelfProfile", Milling.LNShelfProfile)
+  dialog:AddTextField("Milling.LNSideProfile", Milling.LNSideProfile)
+  dialog:AddTextField("Milling.LNSidePocket", Milling.LNSidePocket)
+  dialog:AddTextField("Milling.LNSideShelfPinDrill", Milling.LNSideShelfPinDrill)
+  dialog:AddTextField("Milling.LNTopBottomProfile", Milling.LNTopBottomProfile)
+  dialog:AddTextField("Milling.LNTopBottomPocket", Milling.LNTopBottomPocket)
+  dialog:AddTextField("Milling.LNStretcherRailProfile", Milling.LNStretcherRailProfile)
+  dialog:AddTextField("Milling.LNPartLabels", Milling.LNPartLabels)
+  dialog:AddTextField("Milling.LNDrawNotes",  Milling.LNDrawNotes)
+  dialog:AddTextField("Milling.LNDrawerSlideHole",  Milling.LNDrawerSlideHole)
+  dialog:AddDropDownList("Milling.LNBackPocketColor", Milling.LNBackPocketColor)
+  dialog:AddDropDownList("Milling.LNBackProfileColor", Milling.LNBackProfileColor)
+  dialog:AddDropDownList("Milling.LNCenterPanelProfileColor", Milling.LNCenterPanelProfileColor)
+  dialog:AddDropDownList("Milling.LNCenterPanelShelfPinDrillColor", Milling.LNCenterPanelShelfPinDrillColor)
+  dialog:AddDropDownList("Milling.LNDrawFaceFrameColor", Milling.LNDrawFaceFrameColor)
+  dialog:AddDropDownList("Milling.LNShelfProfileColor", Milling.LNShelfProfileColor)
+  dialog:AddDropDownList("Milling.LNSideProfileColor", Milling.LNSideProfileColor)
+  dialog:AddDropDownList("Milling.LNSidePocketColor", Milling.LNSidePocketColor)
+  dialog:AddDropDownList("Milling.LNSideShelfPinDrillColor", Milling.LNSideShelfPinDrillColor)
+  dialog:AddDropDownList("Milling.LNTopBottomProfileColor", Milling.LNTopBottomProfileColor)
+  dialog:AddDropDownList("Milling.LNTopBottomPocketColor", Milling.LNTopBottomPocketColor)
+  dialog:AddDropDownList("Milling.LNStretcherRailProfileColor", Milling.LNStretcherRailProfileColor)
+  dialog:AddDropDownList("Milling.LNPartLabelsColor", Milling.LNPartLabelsColor)
+  dialog:AddDropDownList("Milling.LNDrawNotesColor", Milling.LNDrawNotesColor)
+  dialog:AddDropDownList("Milling.LNDrawerSlideHoleColor", Milling.LNDrawerSlideHoleColor)
+  if dialog:ShowDialog() then
+    Milling.LNBackPocket                    = All_Trim(dialog:GetTextField("Milling.LNBackPocket"))
+    Milling.LNBackProfile                   = All_Trim(dialog:GetTextField("Milling.LNBackProfile"))
+    Milling.LNCenterPanelProfile            = All_Trim(dialog:GetTextField("Milling.LNCenterPanelProfile"))
+    Milling.LNCenterPanelShelfPinDrill      = All_Trim(dialog:GetTextField("Milling.LNCenterPanelShelfPinDrill"))
+    Milling.LNDrawFaceFrame                 = All_Trim(dialog:GetTextField("Milling.LNDrawFaceFrame"))
+    Milling.LNShelfProfile                  = All_Trim(dialog:GetTextField("Milling.LNShelfProfile"))
+    Milling.LNSideProfile                   = All_Trim(dialog:GetTextField("Milling.LNSideProfile"))
+    Milling.LNSidePocket                    = All_Trim(dialog:GetTextField("Milling.LNSidePocket"))
+    Milling.LNSideShelfPinDrill             = All_Trim(dialog:GetTextField("Milling.LNSideShelfPinDrill"))
+    Milling.LNTopBottomProfile              = All_Trim(dialog:GetTextField("Milling.LNTopBottomProfile"))
+    Milling.LNTopBottomPocket               = All_Trim(dialog:GetTextField("Milling.LNTopBottomPocket"))
+    Milling.LNStretcherRailProfile          = All_Trim(dialog:GetTextField("Milling.LNStretcherRailProfile"))
+    Milling.LNPartLabels                    = All_Trim(dialog:GetTextField("Milling.LNPartLabels"))
+    Milling.LNDrawNotes                     = All_Trim(dialog:GetTextField("Milling.LNDrawNotes"))
+    Milling.LNDrawerSlideHole               = All_Trim(dialog:GetTextField("Milling.LNDrawerSlideHole"))
+    Milling.LNBackPocketColor               = dialog:GetDropDownListValue("Milling.LNBackPocketColor")
+    Milling.LNBackProfileColor              = dialog:GetDropDownListValue("Milling.LNBackProfileColor")
+    Milling.LNCenterPanelProfileColor       = dialog:GetDropDownListValue("Milling.LNCenterPanelProfileColor")
+    Milling.LNCenterPanelShelfPinDrillColor = dialog:GetDropDownListValue("Milling.LNCenterPanelShelfPinDrillColor")
+    Milling.LNDrawFaceFrameColor            = dialog:GetDropDownListValue("Milling.LNDrawFaceFrameColor")
+    Milling.LNShelfProfileColor             = dialog:GetDropDownListValue("Milling.LNShelfProfileColor")
+    Milling.LNSideProfileColor              = dialog:GetDropDownListValue("Milling.LNSideProfileColor")
+    Milling.LNSidePocketColor               = dialog:GetDropDownListValue("Milling.LNSidePocketColor")
+    Milling.LNSideShelfPinDrillColor        = dialog:GetDropDownListValue("Milling.LNSideShelfPinDrillColor")
+    Milling.LNTopBottomProfileColor         = dialog:GetDropDownListValue("Milling.LNTopBottomProfileColor")
+    Milling.LNTopBottomPocketColor          = dialog:GetDropDownListValue("Milling.LNTopBottomPocketColor")
+    Milling.LNStretcherRailProfileColor     = dialog:GetDropDownListValue("Milling.LNStretcherRailProfileColor")
+    Milling.LNPartLabelsColor               = dialog:GetDropDownListValue("Milling.LNPartLabelsColor")
+    Milling.LNDrawNotesColor                = dialog:GetDropDownListValue("Milling.LNDrawNotesColor")
+    Milling.LNDrawerSlideHoleColor          = dialog:GetDropDownListValue("Milling.LNDrawerSlideHoleColor")
+    DialogWindow.LayerXY                    = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
+    RegistryWrite()
+  end
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryMilling()
+  local Wx, Wy = DialogSize(DialogWindow.MillingXY)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml3, Wx, Wy, "Milling Setting ")
+  dialog:AddDoubleField("Milling.DadoBackHeight",        Milling.DadoBackHeight)
+  dialog:AddDoubleField("Milling.DadoHeight",            Milling.DadoHeight)
+  dialog:AddDoubleField("Milling.DadoClearance",         Milling.DadoClearance)
+  dialog:AddDoubleField("Milling.ShelfPinLen",           Milling.ShelfPinLen)
+  dialog:AddDoubleField("Milling.PartGap",               Milling.PartGap)
+  dialog:AddDoubleField("Milling.ShelfPinDiameter",      Milling.ShelfPinDiameter)
+  dialog:AddDropDownList("Milling.AddJointNotes",        ifT(Milling.AddJointNotes))
+  dialog:AddDoubleField("Milling.AssemblyHoleStartEnd",  Milling.AssemblyHoleStartEnd)
+  dialog:AddDropDownList("Milling.AddAssemblyHolesBase", ifT(Milling.AddAssemblyHolesBase))
+  dialog:AddDropDownList("Milling.AddAssemblyHolesWall", ifT(Milling.AddAssemblyHolesWall))
+  dialog:AddDoubleField("Milling.AssemblyHoleMaxSpace",  Milling.AssemblyHoleMaxSpace)
+  dialog:AddDoubleField("Milling.AssemblyHoleMinSpace",  Milling.AssemblyHoleMinSpace)
+  dialog:AddDoubleField("Milling.ProfileToolDia",        Milling.ProfileToolDia)
+  dialog:AddDoubleField("Milling.PilotHoleDia",          Milling.PilotHoleDia)
+  dialog:AddDoubleField("Milling.PilotHoleDepth",        Milling.PilotHoleDepth)
+  dialog:AddDoubleField("Milling.AssemblyHoleDia",       Milling.AssemblyHoleDia)
+  dialog:AddDoubleField("Milling.PocketToolDia",         Milling.PocketToolDia)
+  dialog:AddDropDownList("Milling.DadoType",             Milling.DadoType)
+  dialog:AddDoubleField("Milling.DadoBlindAmount",       Milling.DadoBlindAmount)
+  if dialog:ShowDialog() then
+    Milling.DadoBackHeight       = math.abs(dialog:GetDoubleField("Milling.DadoBackHeight"))
+    Milling.DadoHeight           = math.abs(dialog:GetDoubleField("Milling.DadoHeight"))
+    Milling.DadoClearance        = dialog:GetDoubleField("Milling.DadoClearance")
+    Milling.PartGap              = math.abs(dialog:GetDoubleField("Milling.PartGap"))
+    Milling.ShelfPinDiameter     = math.abs(dialog:GetDoubleField("Milling.ShelfPinDiameter"))
+    Milling.AddJointNotes        = ifY(dialog:GetDropDownListValue("Milling.AddJointNotes"))
+    Milling.AssemblyHoleStartEnd = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleStartEnd"))
+    Milling.AddAssemblyHolesBase = ifY(dialog:GetDropDownListValue("Milling.AddAssemblyHolesBase"))
+    Milling.AddAssemblyHolesWall = ifY(dialog:GetDropDownListValue("Milling.AddAssemblyHolesWall"))
+    Milling.DadoType             = dialog:GetDropDownListValue("Milling.DadoType")
+    Milling.AssemblyHoleMaxSpace = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleMaxSpace"))
+    Milling.AssemblyHoleMinSpace = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleMinSpace"))
+    Milling.ProfileToolDia       = math.abs(dialog:GetDoubleField("Milling.ProfileToolDia"))
+
+    Milling.PilotHoleDia         = math.abs(dialog:GetDoubleField("Milling.PilotHoleDia"))
+    Milling.PilotHoleDepth       = math.abs(dialog:GetDoubleField("Milling.PilotHoleDepth"))
+    Milling.AssemblyHoleDia      = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleDia"))
+
+    Milling.PocketToolDia        = math.abs(dialog:GetDoubleField("Milling.PocketToolDia"))
+    Milling.DadoBlindAmount      = math.abs(dialog:GetDoubleField("Milling.DadoBlindAmount"))
+    DialogWindow.MillingXY       = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
+    RegistryWrite()
+  end
+  return true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryPartDrawing()
+  local Wx, Wy = DialogSize(DialogWindow.PartDrawingXY)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml8 , Wx, Wy, "Part Selection")
+  dialog:AddCheckBox("BaseQuestion.DrawBackPanel",      BaseQuestion.DrawBackPanel)
+  dialog:AddCheckBox("BaseQuestion.DrawBottomPanel",    BaseQuestion.DrawBottomPanel)
+  dialog:AddCheckBox("BaseQuestion.DrawCenterPanel",    BaseQuestion.DrawCenterPanel)
+  dialog:AddCheckBox("BaseQuestion.DrawFaceFrame",      BaseQuestion.DrawFaceFrame)
+  dialog:AddCheckBox("BaseQuestion.DrawShelfPanel",     BaseQuestion.DrawShelfPanel)
+  dialog:AddCheckBox("BaseQuestion.DrawSidePanels",     BaseQuestion.DrawSidePanels)
+  dialog:AddCheckBox("BaseQuestion.DrawTopToe",         BaseQuestion.DrawTopToe)
+  dialog:AddCheckBox("WallQuestion.DrawBackPanel",      WallQuestion.DrawBackPanel)
+  dialog:AddCheckBox("WallQuestion.DrawBottomTopPanel", WallQuestion.DrawBottomTopPanel)
+  dialog:AddCheckBox("WallQuestion.DrawCenterPanel",    WallQuestion.DrawCenterPanel)
+  dialog:AddCheckBox("WallQuestion.DrawFaceFrame",      WallQuestion.DrawFaceFrame)
+  dialog:AddCheckBox("WallQuestion.DrawShelfPanel",     WallQuestion.DrawShelfPanel)
+  dialog:AddCheckBox("WallQuestion.DrawSidePanels",     WallQuestion.DrawSidePanels)
+  if dialog:ShowDialog() then
+    BaseQuestion.DrawBackPanel       = dialog:GetCheckBox("BaseQuestion.DrawBackPanel")
+    BaseQuestion.DrawBottomPanel     = dialog:GetCheckBox("BaseQuestion.DrawBottomPanel")
+    BaseQuestion.DrawCenterPanel     = dialog:GetCheckBox("BaseQuestion.DrawCenterPanel")
+    BaseQuestion.DrawFaceFrame       = dialog:GetCheckBox("BaseQuestion.DrawFaceFrame")
+    BaseQuestion.DrawShelfPanel      = dialog:GetCheckBox("BaseQuestion.DrawShelfPanel")
+    BaseQuestion.DrawSidePanels      = dialog:GetCheckBox("BaseQuestion.DrawSidePanels")
+    BaseQuestion.DrawTopToe          = dialog:GetCheckBox("BaseQuestion.DrawTopToe")
+    WallQuestion.DrawBackPanel       = dialog:GetCheckBox("WallQuestion.DrawBackPanel")
+    WallQuestion.DrawBottomTopPanel  = dialog:GetCheckBox("WallQuestion.DrawBottomTopPanel")
+    WallQuestion.DrawCenterPanel     = dialog:GetCheckBox("WallQuestion.DrawCenterPanel")
+    WallQuestion.DrawFaceFrame       = dialog:GetCheckBox("WallQuestion.DrawFaceFrame")
+    WallQuestion.DrawShelfPanel      = dialog:GetCheckBox("WallQuestion.DrawShelfPanel")
+    WallQuestion.DrawSidePanels      = dialog:GetCheckBox("WallQuestion.DrawSidePanels")
+    DialogWindow.PartDrawingXY       = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
+    RegistryWrite()
+  end
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryProjectInfo()
+  local Wx, Wy = DialogSize(DialogWindow.ProjectXY)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml2, Wx, Wy, "Project Setup")
+  dialog:AddTextField("Project.ProjectName",             Project.ProjectName)
+  dialog:AddTextField("Project.ProjectContactEmail",     Project.ProjectContactEmail)
+  dialog:AddTextField("Project.ProjectContactName",      Project.ProjectContactName)
+  dialog:AddTextField("Project.PhoneNumber",             Project.PhoneNumber)
+  dialog:AddTextField("Project.DrawerID",                StartDate())
+  dialog:AddTextField("Project.ProjectPath",             Project.ProjectPath)
+  dialog:AddDoubleField("Project.TextHeight",            Project.TextHeight)
+  dialog:AddDropDownList("Project.CabinetStyle",         Project.CabinetStyle)
+  dialog:AddDirectoryPicker("DirectoryPicker", "Project.ProjectPath",  true)
+
+  dialog:AddDropDownList("BOM.WallCabinetMateralType",   BOM.WallCabinetMateralType)
+  dialog:AddDropDownList("BOM.BaseCabinetMateralType",   BOM.BaseCabinetMateralType)
+  dialog:AddDropDownList("BOM.WallFaceFrameMateralType", BOM.WallFaceFrameMateralType)
+  dialog:AddDropDownList("BOM.BaseFaceFrameMateralType", BOM.BaseFaceFrameMateralType)
+  dialog:AddDropDownList("BOM.WallCabinetFinish",        BOM.WallCabinetFinish)
+  dialog:AddDropDownList("BOM.BaseCabinetFinish",        BOM.BaseCabinetFinish)
+  dialog:AddDropDownList("BOM.WallFaceFrameFinish",      BOM.WallFaceFrameFinish)
+  dialog:AddDropDownList("BOM.BaseFaceFrameFinish",      BOM.BaseFaceFrameFinish)
+  for _, item in pairs(Material.SheetGoods) do
+    dialog:AddDropDownListValue("BOM.WallCabinetMateralType", item)
+    dialog:AddDropDownListValue("BOM.BaseCabinetMateralType", item)
+  end -- for end
+  for _, item in pairs(Material.Faceframe) do
+    dialog:AddDropDownListValue("BOM.BaseFaceFrameMateralType", item)
+    dialog:AddDropDownListValue("BOM.WallFaceFrameMateralType", item)
+  end -- for end
+  for _, item in pairs(Material.Finshes) do
+    dialog:AddDropDownListValue("BOM.WallCabinetFinish", item)
+    dialog:AddDropDownListValue("BOM.BaseCabinetFinish", item)
+  end -- for end
+  for _, item in pairs(Material.Finshes) do
+    dialog:AddDropDownListValue("BOM.WallFaceFrameFinish", item)
+    dialog:AddDropDownListValue("BOM.BaseFaceFrameFinish", item)
+  end -- for end
+  if dialog:ShowDialog() then
+    Project.ProjectName          = string.upper(All_Trim(dialog:GetTextField("Project.ProjectName")))
+    Project.ProjectContactEmail  = All_Trim(dialog:GetTextField("Project.ProjectContactEmail"))
+    Project.ProjectContactName   = All_Trim(dialog:GetTextField("Project.ProjectContactName"))
+    BOM.WallCabinetMateralType   = dialog:GetDropDownListValue("BOM.WallCabinetMateralType")
+    BOM.BaseCabinetMateralType   = dialog:GetDropDownListValue("BOM.BaseCabinetMateralType")
+    BOM.WallFaceFrameMateralType = dialog:GetDropDownListValue("BOM.WallFaceFrameMateralType")
+    BOM.BaseFaceFrameMateralType = dialog:GetDropDownListValue("BOM.BaseFaceFrameMateralType")
+    BOM.WallCabinetFinish        = dialog:GetDropDownListValue("BOM.WallCabinetFinish")
+    BOM.BaseCabinetFinish        = dialog:GetDropDownListValue("BOM.BaseCabinetFinish")
+    BOM.WallFaceFrameFinish      = dialog:GetDropDownListValue("BOM.WallFaceFrameFinish")
+    BOM.BaseFaceFrameFinish      = dialog:GetDropDownListValue("BOM.BaseFaceFrameFinish")
+    Project.CabinetStyle         = dialog:GetDropDownListValue("Project.CabinetStyle")
+    Project.PhoneNumber          = All_Trim(dialog:GetTextField("Project.PhoneNumber"))
+    Project.DrawerID             = dialog:GetTextField("Project.DrawerID")
+    Project.ProjectPath          = dialog:GetTextField("Project.ProjectPath")
+    Project.TextHeight           = math.abs(dialog:GetDoubleField("Project.TextHeight"))
+    DialogWindow.ProjectXY       = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
+    FaceFrameManiagement()
+    RegistryWrite()
+  end
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryWallQuestion()
+  local Wx, Wy = DialogSize(DialogWindow.WallCabinetXY)
+  local dialog = HTML_Dialog(true,  DialogWindow.myHtml1, Wx, Wy, "Wall Cabinet Setup")
+  dialog:AddDoubleField("WallDim.FaceFrameBottomRailWidth",  WallDim.FaceFrameBottomRailWidth)
+  dialog:AddDoubleField("WallDim.FaceFrameBottomReveal",     WallDim.FaceFrameBottomReveal)
+  dialog:AddDoubleField("WallDim.FaceFrameCenterStileWidth", WallDim.FaceFrameCenterStileWidth)
+  dialog:AddDoubleField("WallDim.FaceFrameSideReveal",       WallDim.FaceFrameSideReveal)
+  dialog:AddDoubleField("WallDim.FaceFrameStileWidth",       WallDim.FaceFrameStileWidth)
+  dialog:AddDoubleField("WallDim.FaceFrameThickness",        WallDim.FaceFrameThickness)
+  dialog:AddDoubleField("WallDim.FaceFrameTopRailWidth",     WallDim.FaceFrameTopRailWidth)
+  dialog:AddDoubleField("WallDim.FaceFrameTopReveal",        WallDim.FaceFrameTopReveal)
+  dialog:AddDoubleField("WallDim.MaterialThickness",         WallDim.MaterialThickness)
+  dialog:AddDoubleField("WallDim.ShelfEndClarence",          WallDim.ShelfEndClarence)
+  dialog:AddDoubleField("WallDim.ShelfFrontClearance",       WallDim.ShelfFrontClearance)
+  dialog:AddDoubleField("WallDim.ShelfHoleFirstRowSpacing",  WallDim.ShelfHoleFirstRowSpacing)
+  dialog:AddDoubleField("WallDim.ShelfHoleLastRowSpacing",   WallDim.ShelfHoleLastRowSpacing)
+  dialog:AddDoubleField("WallDim.ShelfHoleSpacing",          WallDim.ShelfHoleSpacing)
+  dialog:AddDoubleField("WallDim.ShelfMaterialThickness",    WallDim.ShelfMaterialThickness)
+  dialog:AddDoubleField("WallDim.ShelfNosingThickness",      WallDim.ShelfNosingThickness)
+  dialog:AddDoubleField("WallDim.ShelfNosingWidth",          WallDim.ShelfNosingWidth)
+  dialog:AddDoubleField("WallDim.ShelfPinHoleBack",          WallDim.ShelfPinHoleBack)
+  dialog:AddDoubleField("WallDim.ShelfPinHoleFront",         WallDim.ShelfPinHoleFront)
+  dialog:AddDoubleField("WallDim.ThicknessBack",             WallDim.ThicknessBack)
+  dialog:AddDropDownList("WallQuestion.AddCenterFaceFrame",  ifT(WallQuestion.AddCenterFaceFrame))
+  dialog:AddDropDownList("WallQuestion.AddCenterPanel",      ifT(WallQuestion.AddCenterPanel))
+  dialog:AddDropDownList("WallQuestion.ShelfCount",          tostring(WallQuestion.ShelfCount))
+  if dialog:ShowDialog() then
+    WallDim.FaceFrameBottomRailWidth  = math.abs(dialog:GetDoubleField("WallDim.FaceFrameBottomRailWidth"))
+    WallDim.FaceFrameBottomReveal     = math.abs(dialog:GetDoubleField("WallDim.FaceFrameBottomReveal"))
+    WallDim.FaceFrameCenterStileWidth = math.abs(dialog:GetDoubleField("WallDim.FaceFrameCenterStileWidth"))
+    WallDim.FaceFrameSideReveal       = math.abs(dialog:GetDoubleField("WallDim.FaceFrameSideReveal"))
+    WallDim.FaceFrameStileWidth       = math.abs(dialog:GetDoubleField("WallDim.FaceFrameStileWidth"))
+    WallDim.FaceFrameThickness        = math.abs(dialog:GetDoubleField("WallDim.FaceFrameThickness"))
+    WallDim.FaceFrameTopRailWidth     = math.abs(dialog:GetDoubleField("WallDim.FaceFrameTopRailWidth"))
+    WallDim.FaceFrameTopReveal        = math.abs(dialog:GetDoubleField("WallDim.FaceFrameTopReveal"))
+    WallDim.MaterialThickness         = math.abs(dialog:GetDoubleField("WallDim.MaterialThickness"))
+    WallDim.ShelfEndClarence          = math.abs(dialog:GetDoubleField("WallDim.ShelfEndClarence"))
+    WallDim.ShelfFrontClearance       = math.abs(dialog:GetDoubleField("WallDim.ShelfFrontClearance"))
+    WallDim.ShelfHoleFirstRowSpacing  = math.abs(dialog:GetDoubleField("WallDim.ShelfHoleFirstRowSpacing"))
+    WallDim.ShelfHoleLastRowSpacing   = math.abs(dialog:GetDoubleField("WallDim.ShelfHoleLastRowSpacing"))
+    WallDim.ShelfHoleSpacing          = math.abs(dialog:GetDoubleField("WallDim.ShelfHoleSpacing"))
+    WallDim.ShelfMaterialThickness    = math.abs(dialog:GetDoubleField("WallDim.ShelfMaterialThickness"))
+    WallDim.ShelfNosingThickness      = math.abs(dialog:GetDoubleField("WallDim.ShelfNosingThickness"))
+    WallDim.ShelfNosingWidth          = math.abs(dialog:GetDoubleField("WallDim.ShelfNosingWidth"))
+    WallDim.ShelfPinHoleBack          = math.abs(dialog:GetDoubleField("WallDim.ShelfPinHoleBack"))
+    WallDim.ShelfPinHoleFront         = math.abs(dialog:GetDoubleField("WallDim.ShelfPinHoleFront"))
+    WallDim.ThicknessBack             = math.abs(dialog:GetDoubleField("WallDim.ThicknessBack"))
+    WallQuestion.AddCenterFaceFrame   = ifY(dialog:GetDropDownListValue("WallQuestion.AddCenterFaceFrame"))
+    WallQuestion.AddCenterPanel       = ifY(dialog:GetDropDownListValue("WallQuestion.AddCenterPanel"))
+    WallQuestion.ShelfCount           = tonumber(dialog:GetDropDownListValue("WallQuestion.ShelfCount"))
+    DialogWindow.WallCabinetXY        = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
+    Wall_Math()
+    RegistryWrite()
+  end
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryHardwareNew(NewDialog)
+  local Wx, Wy = DialogSize(DialogWindow.NewSlideXY)
+  local dialog = HTML_Dialog(true,  DialogWindow.myHtml13, Wx, Wy, "New Slide Setup")
+  dialog:AddTextField("Hardware.Manufacturer",     Hardware.Manufacturer)
+  dialog:AddTextField("Hardware.PartNumber",       Hardware.PartNumber)
+  dialog:AddDoubleField("Hardware.SlideLength",    Hardware.SlideLength)
+  dialog:AddTextField("Hardware.RearPartNumber",   Hardware.RearPartNumber)
+  local MyLoop = true
+  while MyLoop do
+    if dialog:ShowDialog() then
+      Hardware.Manufacturer   = All_Trim(dialog:GetTextField("Hardware.Manufacturer"))
+      Hardware.PartNumber     = All_Trim(dialog:GetTextField("Hardware.PartNumber"))
+      Hardware.SlideLength    = math.abs(dialog:GetDoubleField("Hardware.SlideLength"))
+      Hardware.RearPartNumber = All_Trim(dialog:GetTextField("Hardware.RearPartNumber"))
+      Hardware.Name           = Hardware.Manufacturer .. "-" .. Hardware.PartNumber .. "-" .. tonumber(Hardware.SlideLength)
+      if Hardware.Manufacturer == "" then
+        StatusMessage("Error", "New Hardware Settings", "Manufacturer connot be empty.",     "(1900)")
+        MyLoop = true
+      elseif "" == Hardware.PartNumber then
+        StatusMessage("Error", "New Hardware Settings", "Part Number connot be empty.",      "(2000)")
+        MyLoop = true
+      elseif 0.0 == Hardware.SlideLength then
+        StatusMessage("Error", "New Hardware Settings", "Slide Length connot be 0.",         "(2100)")
+        MyLoop = true
+      elseif 0.0 == Hardware.RearPartNumber then
+        StatusMessage("Error", "New Hardware Settings", "Rear Part Number connot be empty.", "(2200)")
+        MyLoop = true
+      elseif CheckInList(Items) then
+        AddNewGroupWriter(Hardware.Name)
+        INI_ReadGroups()
+        NewDialog:UpdateLabelField("Hardware.Name", Hardware.Name)
+        Hardware.Editdialog:UpdateDropDownList("Hardware.Name",      "No Drawer Slide")
+        Hardware.Editdialog:UpdateDropDownListValue("Hardware.Name", "No Drawer Slide")
+        MyLoop = false
+      else
+        StatusMessage("Error", "New Hardware Settings", "Part Name was already found in the inventory list.", "(2300)")
+      end
+    else
+      MyLoop = false
+    end -- if end
+  end -- while end
+  DialogWindow.NewSlideXY = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+  RegistryWrite()
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryHardwareDelete(NewDialog)
+  if Hardware.Name ~= "No Drawer Slide" then
+    if MyInquiryYesNo("Slide Editing", "Delete Requested!: Are You Sure? \nThis action cannot be undone. (Yes or No)") then
+      INI_DeleteGroup(Hardware.Name)
+      Hardware.Name = "No Drawer Slide"
+      NewDialog:UpdateLabelField("Hardware.Name", "No Drawer Slide")
+      INI_ReadGroups()
+      RegistryWrite()
+    end
+  end
+  return true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryHardwareEditQuestion(MyDia1)
+  Hardware.Name = All_Trim(MyDia1:GetDropDownListValue("Hardware.Name"))
+  if Hardware.Name == "No Drawer Slide" then
+    StatusMessage("Alert", "Slide Editing", "Cannot Edit this Drawer Slide.", "(1110)")
+  elseif Hardware.Name == "" then
+    StatusMessage("Alert", "Slide Editing", "Slide value cannot be blank.", "(1210)")
+  else
+    local Wx, Wy = DialogSize(DialogWindow.SlideMountXY)
+    INI_GetValues(Hardware.Name)
+    local dialog = HTML_Dialog(true, DialogWindow.myHtml11, Wx, Wy, "Hardware Configure")
+    Hardware.Editdialog = dialog
+    dialog:AddLabelField("Hardware.Name",              Hardware.Name)
+    dialog:AddDoubleField("Hardware.SlideHole1",       Hardware.SlideHole1)
+    dialog:AddDoubleField("Hardware.SlideCenterLine1", Hardware.SlideCenterLine1)
+    dialog:AddDoubleField("Hardware.SlideHole2",       Hardware.SlideHole2)
+    dialog:AddDoubleField("Hardware.SlideCenterLine2", Hardware.SlideCenterLine2)
+    dialog:AddDoubleField("Hardware.SlideHole3",       Hardware.SlideHole3)
+    dialog:AddDoubleField("Hardware.SlideCenterLine3", Hardware.SlideCenterLine3)
+    dialog:AddDoubleField("Hardware.SlideHole4",       Hardware.SlideHole4)
+    dialog:AddDoubleField("Hardware.SlideCenterLine4", Hardware.SlideCenterLine4)
+    dialog:AddDoubleField("Hardware.SlideHole5",       Hardware.SlideHole5)
+    dialog:AddDoubleField("Hardware.SlideCenterLine5", Hardware.SlideCenterLine5)
+    dialog:AddDoubleField("Hardware.SlideHole6",       Hardware.SlideHole6)
+    dialog:AddDoubleField("Hardware.SlideCenterLine6", Hardware.SlideCenterLine6)
+    if dialog:ShowDialog() then
+      if Hardware.Name == "No Drawer Slide" then
+        MyDia1:UpdateDropDownListValue("Hardware.Name", "No Drawer Slide")
+      else
+        if Hardware.SlideHole1 ~= dialog:GetDoubleField("Hardware.SlideHole1") then
+          INI_UpdateItem(Hardware.Name, "SlideHole1", math.abs(dialog:GetDoubleField("Hardware.SlideHole1")))
+        end
+        if Hardware.SlideHole2 ~= dialog:GetDoubleField("Hardware.SlideHole2") then
+          INI_UpdateItem(Hardware.Name, "SlideHole2", math.abs(dialog:GetDoubleField("Hardware.SlideHole2")))
+        end
+        if Hardware.SlideHole3 ~= dialog:GetDoubleField("Hardware.SlideHole3") then
+          INI_UpdateItem(Hardware.Name, "SlideHole3", math.abs(dialog:GetDoubleField("Hardware.SlideHole3")))
+        end
+        if Hardware.SlideHole4 ~= dialog:GetDoubleField("Hardware.SlideHole4") then
+          INI_UpdateItem(Hardware.Name, "SlideHole4", math.abs(dialog:GetDoubleField("Hardware.SlideHole4")))
+        end
+        if Hardware.SlideHole5 ~= dialog:GetDoubleField("Hardware.SlideHole5") then
+          INI_UpdateItem(Hardware.Name, "SlideHole5", math.abs(dialog:GetDoubleField("Hardware.SlideHole5")))
+        end
+        if Hardware.SlideHole6 ~= dialog:GetDoubleField("Hardware.SlideHole6") then
+          INI_UpdateItem(Hardware.Name, "SlideHole6", math.abs(dialog:GetDoubleField("Hardware.SlideHole6")))
+        end
+        if Hardware.SlideCenterLine1 ~= dialog:GetDoubleField("Hardware.SlideCenterLine1") then
+          INI_UpdateItem(Hardware.Name, "SlideCenterLine1", math.abs(dialog:GetDoubleField("Hardware.SlideCenterLine1")))
+        end
+        if Hardware.SlideCenterLine2 ~= dialog:GetDoubleField("Hardware.SlideCenterLine2") then
+          INI_UpdateItem(Hardware.Name, "SlideCenterLine2", math.abs(dialog:GetDoubleField("Hardware.SlideCenterLine2")))
+        end
+        if Hardware.SlideCenterLine3 ~= dialog:GetDoubleField("Hardware.SlideCenterLine3") then
+          INI_UpdateItem(Hardware.Name, "SlideCenterLine3", math.abs(dialog:GetDoubleField("Hardware.SlideCenterLine3")))
+        end
+        if Hardware.SlideCenterLine4 ~= dialog:GetDoubleField("Hardware.SlideCenterLine4") then
+          INI_UpdateItem(Hardware.Name, "SlideCenterLine4", math.abs(dialog:GetDoubleField("Hardware.SlideCenterLine4")))
+        end
+        if Hardware.SlideCenterLine5 ~= dialog:GetDoubleField("Hardware.SlideCenterLine5") then
+          INI_UpdateItem(Hardware.Name, "SlideCenterLine5", math.abs(dialog:GetDoubleField("Hardware.SlideCenterLine5")))
+        end
+        if Hardware.SlideCenterLine6 ~= dialog:GetDoubleField("Hardware.SlideCenterLine6") then
+          INI_UpdateItem(Hardware.Name, "SlideCenterLine6", math.abs(dialog:GetDoubleField("Hardware.SlideCenterLine6")))
+        end
+        MyDia1:UpdateDropDownListValue("Hardware.Name", Hardware.Name)
+      end
+      if Project.Debugger then
+        StatusMessage("Alert", "Slide Editing", "Gadget restart is required.", "(1510)")
+      end
+      DialogWindow.SlideMountXY = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
+      RegistryWrite()
+    end -- if end
+    MyDia1:UpdateDropDownListValue("Hardware.Name", Hardware.Name)
+  end -- if end
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryHardwareSelection(dialogX)
+  if Hardware.Name == "No Drawer Slide" then
+    StatusMessage("Alert", "Slide Editing", "Cannot edit this drawer Slide.", "(1310)")
+  else
+    local Wx, Wy = DialogSize(DialogWindow.SlideSelectXY)
+    local dialog = HTML_Dialog(true, DialogWindow.myHtml18, Wx, Wy, "Select Slide")
+    dialog:AddDropDownList("Hardware.Name", Hardware.Name)
+    for _, line in ipairs(Hardware.Slides) do
+      dialog:AddDropDownListValue("Hardware.Name", line)
+    end
+    if dialog:ShowDialog() then
+      Hardware.Name = dialog:GetDropDownListValue("Hardware.Name")
+      UpdateHardware(dialogX)
+    end
+    DialogWindow.SlideSelectXY = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
+    RegistryWrite()
+  end
+  return true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryRearMountEdit(MyDia1)
+  if All_Trim(Hardware.RearPartNumber) == "" then
+    StatusMessage("Alert", "Rear Part Number", "The Rear Mount has no Part Number. It Cannot Be Edited.","(1100)")
+  elseif Hardware.Name == "No Drawer Slide" then
+    StatusMessage("Error", "Rear Part Number", "The Slide has been Deleted and cannot be edited.", "(1200)")
+  else
+    local Wx, Wy = DialogSize(DialogWindow.RearMountXY)
+    local dialog = HTML_Dialog(true, DialogWindow.myHtml12, Wx, Wy, "Rear Mount Configure")
+    dialog:AddLabelField("Hardware.RearPartName",       Hardware.RearPartNumber)
+    dialog:AddDoubleField("Hardware.RearCenterLineA",   Hardware.RearCenterLineA)
+    dialog:AddDoubleField("Hardware.RearHoleA",         Hardware.RearHoleA)
+    dialog:AddDoubleField("Hardware.RearCenterLineB",   Hardware.RearCenterLineB)
+    dialog:AddDoubleField("Hardware.RearHoleB",         Hardware.RearHoleB)
+    dialog:AddDoubleField("Hardware.RearCenterLineC",   Hardware.RearCenterLineC)
+    dialog:AddDoubleField("Hardware.RearHoleC",         Hardware.RearHoleC)
+    dialog:AddDoubleField("Hardware.RearCenterLineD",   Hardware.RearCenterLineD)
+    dialog:AddDoubleField("Hardware.RearHoleD",         Hardware.RearHoleD)
+    dialog:AddDoubleField("Hardware.RearSideClearance", Hardware.RearSideClearance)
+    if dialog:ShowDialog() then
+      if Hardware.RearCenterLineA ~= dialog:GetDoubleField("Hardware.RearCenterLineA") then
+        INI_UpdateItem(Hardware.Name,  "RearCenterLineA", math.abs(dialog:GetDoubleField("Hardware.RearCenterLineA")))
+      end
+      if Hardware.RearCenterLineB ~= dialog:GetDoubleField("Hardware.RearCenterLineB") then
+        INI_UpdateItem(Hardware.Name,  "RearCenterLineB", math.abs(dialog:GetDoubleField("Hardware.RearCenterLineB")))
+      end
+      if Hardware.RearCenterLineC ~= dialog:GetDoubleField("Hardware.RearCenterLineC") then
+        INI_UpdateItem(Hardware.Name,  "RearCenterLineC", math.abs(dialog:GetDoubleField("Hardware.RearCenterLineC")))
+      end
+      if Hardware.RearCenterLineD ~= dialog:GetDoubleField("Hardware.RearCenterLineD") then
+        INI_UpdateItem(Hardware.Name,  "RearCenterLineD", math.abs(dialog:GetDoubleField("Hardware.RearCenterLineD")))
+      end
+      if Hardware.RearHoleA ~= dialog:GetDoubleField("Hardware.RearHoleA") then
+        INI_UpdateItem(Hardware.Name,  "RearHoleA", dialog:GetDoubleField("Hardware.RearHoleA"))
+      end
+      if Hardware.RearHoleB ~= dialog:GetDoubleField("Hardware.RearHoleB") then
+        INI_UpdateItem(Hardware.Name,  "RearHoleB", dialog:GetDoubleField("Hardware.RearHoleB"))
+      end
+      if Hardware.RearHoleC ~= dialog:GetDoubleField("Hardware.RearHoleC") then
+        INI_UpdateItem(Hardware.Name,  "RearHoleC", dialog:GetDoubleField("Hardware.RearHoleC"))
+      end
+      if Hardware.RearHoleD ~= dialog:GetDoubleField("Hardware.RearHoleD") then
+        INI_UpdateItem(Hardware.Name,  "RearHoleD", dialog:GetDoubleField("Hardware.RearHoleD"))
+      end
+      if Hardware.RearSideClearance ~= dialog:GetDoubleField("Hardware.RearSideClearance") then
+        INI_UpdateItem(Hardware.Name,  "RearSideClearance", dialog:GetDoubleField("Hardware.RearSideClearance"))
+      end
+      if Project.Debugger then
+        StatusMessage("Alert", "Rear Mount Holes", "Gadget restart is required." , "(1310)")
+      end
+    end
+    DialogWindow.RearMountXY = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
+    RegistryWrite()
+  end
+  return  true
+end -- function end
+-- =====================================================]]
+function OnLuaButton_InquiryToolClear(dialog)
+  Milling.MillTool1.Name = "No Tool Selected"
+  Milling.MillTool2.Name = "No Tool Selected"
+  Milling.MillTool3.Name = "No Tool Selected"
+  Milling.MillTool4.Name = "No Tool Selected"
+  Milling.MillTool5.Name = "No Tool Selected"
+  Milling.MillTool6.Name = "No Tool Selected"
+  dialog:UpdateLabelField("ToolNameLabel1", Milling.MillTool1.Name)
+  dialog:UpdateLabelField("ToolNameLabel2", Milling.MillTool2.Name)
+  dialog:UpdateLabelField("ToolNameLabel3", Milling.MillTool3.Name)
+  dialog:UpdateLabelField("ToolNameLabel4", Milling.MillTool4.Name)
+  dialog:UpdateLabelField("ToolNameLabel5", Milling.MillTool5.Name)
+  dialog:UpdateLabelField("ToolNameLabel6", Milling.MillTool6.Name)
+  RegistryWrite()
+  return true
+end -- function end
+-- =====================================================]]
+function HTML()
+-- =====================================================]] -- Style
+  DialogWindow.Style    = [[<style>
+.DirectoryPicker {
+ font-weight: bold;
+ font-size: 12px;
+ white-space: nowrap;
+ background-color: #663300;
+ color: #FFFFFF;
+}
+.FilePicker {
+ font-weight: bold;
+ font-size: 12px;
+ white-space: nowrap;
+ background-color: #663300;
+ color: #FFFFFF;
+}
+.FormButton {
+	font-weight: bold;
+	width: 75px;
+	font-size: 12px;
+	white-space: nowrap;
+	background-color: #663300;
+	color: #FFFFFF;
+}
+.FormButton-Help {
+	font-weight: bold;
+	width: 75px;
+	font-size: 12px;
+	white-space: nowrap;
+	background-color: #663300;
+	color: #FFFFFF;
+	padding-left: 10;
+	padding-right: 10;
+}
+.LuaButton {
+	font-weight: bold;
+	font-size: 12px;
+	background-color: #663300;
+	color: #FFFFFF;
+}
+.ToolNameLabel {
+	font-weight: bolder;
+	font-size: 12px;
+	text-align: left;
+	color: #000;
+	width: 70%;
+}
+.ToolPicker {
+	font-weight: bold;
+	text-align: center;
+	font-size: 12px;
+	text-align: center;
+	width: 50px;
+	background-color: #663300;
+	color: #FFFFFF;
+}
+.alert-c {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+}
+.alert-l {
+	font-size: 14px;
+	font-weight: bold;
+	text-shadow: 5px 5px 10px #FFF;
+	text-align: left;
+	width: 100%;
+	white-space: nowrap;
+}
+.alert-r {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+}
+.error {
+	font-size: 18px;
+	font-weight: bold;
+	color: #FF0000;
+	text-align: left;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 10px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.errorMessage {
+	font-size: 12px;
+	color: #000;
+	font-weight: bold;
+	text-align: left;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 10px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.errorTable {
+	background-color: #FFFFFF;
+	white-space: nowrap;
+}
+.p1-l {
+	font-size: 12px;
+	text-align: left;
+}
+.h1-c {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+}
+.h1-cOk {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	width: 15%;
+}
+.h1-l {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: left;
+	white-space: nowrap;
+}
+.h1-r {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+}
+.h1-rP {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 4px;
+}
+.h1-rPx {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 8px;
+	padding-left: 8px;
+}
+.h2-c {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	text-shadow: 2px 2px white;
+}
+.h2-l {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: left;
+	white-space: nowrap;
+	text-shadow: 2px 2px white;
+}
+.h2-lm {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: left;
+	text-shadow: 2px 2px white;
+}
+.h2-r {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+	text-shadow: 2px 2px white;
+}
+.h2-rPx {
+	font-size:   14px;
+	font-weight: bold;
+	text-align:  right;
+  white-space: nowrap;
+	padding-right: 10px;
+	padding-left:  10px;
+  text-shadow: 2px 2px white;
+}
+.h3-bc {
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+}
+.h3-c {
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+}
+.h3-l {
+	font-size: 16px;
+	font-weight: bold;
+	text-align: left;
+	white-space: nowrap;
+}
+.h3-r {
+	font-size: 16px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+}
+.h4-c {
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+}
+.h4-l {
+	font-size: 18px;
+	font-weight: bold;
+	text-align: left;
+	white-space: nowrap;
+}
+.h4-r {
+	font-size: 18px;
+	font-weight: bold;
+	text-align: right;
+	white-space: nowrap;
+}
+.help_But {
+	width: 45px;
+}
+.helplabel-r {
+	cursor: pointer;
+	white-space: nowrap;
+	text-align: right;
+}
+.helplabel-rp {
+	cursor: pointer;
+	white-space: nowrap;
+	text-align: right;
+	padding-right: 8px;
+}
+.jsTag-no-vis {
+	font-size: 10px;
+	display: none;
+	text-align: center;
+	color: #00F;
+	visibility: hidden;
+}
+.jsbutton {
+	background-color: #663300;
+	border: 2px solid #999;
+	border-right-color: #000;
+	border-bottom-color: #000;
+	border-top-color: #FFF;
+	border-left-color: #FFF;
+	text-align: center;
+	text-decoration: none;
+	font-size: 12px;
+	margin: 1px 1px;
+	color: #FFFFFF;
+}
+.p1-c {
+	font-size: 12px;
+	text-align: center;
+}
+.p1-r {
+	font-size: 12px;
+	text-align: right;
+}
+.ver-c {
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+	color: #ffd9b3;
+}
+.webLink-c {
+	font-size: 16px;
+	font-weight: bold;
+	background-color: yellow;
+	text-align: center;
+	white-space: nowrap;
+}
+body {
+	background-color: #3a4660;
+	background-position: center;
+	overflow: hidden;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	color: #FFFFFF;
+	background-image: url(]].. DialogWindow.myBackGround ..[[);
+}
+html {
+	overflow: hidden
+}
+table {
+	width: 100%;
+	border: 0;
+}
+</style>
+]]
+-- =====================================================]] -- Import
+  DialogWindow.myHtml0  = [[<head>
+<title>Cabinet Settings Import</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <tr>
+    <th class="h2-l"><strong>Select ini File to Import Settings</strong></th>
+    <th>&nbsp;</th>
+  </tr>
+  <tr>
+    <th> <input name = "ReadFile" type = "text" id = "ReadFile" size = "100%"></th>
+    <th>
+      <input id = "FilePickerButton" class = "FilePicker" type = "button" value = "  File  ">
+      </span></th>
+  </tr>
+  <tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td><button class="FormButton" onClick="window.open(']].. DialogWindow.ExportHelp .. [[');"><span class="icon">Help</span></button></td>
+    <td class="alert-l" id="GadgetName.Alert">.</td>
+    <td class="h1-c"><input id="ButtonOK" class="FormButton" type="button" value="OK"></td>
+    <td class="h1-c"><input id="ButtonCancel" class="FormButton" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]] -- Wall Cabinet Settings
+  DialogWindow.myHtml1  = [[<html>
+<head>
+    <title>Wall Cabinet Setup</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Material Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.MaterialThickness" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Back Material Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ThicknessBack" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Material Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfMaterialThickness" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameThickness" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Stile Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameStileWidth" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Top Rail Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameTopRailWidth" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Center Stile Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameCenterStileWidth" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Bottom Rail Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameBottomRailWidth" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole First Row Spacing</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfHoleFirstRowSpacing" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Last Row Spacing</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfHoleLastRowSpacing" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Rear Clearance</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfPinHoleBack" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Front Setback</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfPinHoleFront" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf End Clearance</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfEndClarence" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Front Clearance</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfFrontClearance" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Nosing Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfNosingWidth" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Nosing Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfNosingThickness" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Top Reveal</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameTopReveal" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Bottom Reveal</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameBottomReveal" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Face Frame Side Reveal</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.FaceFrameSideReveal" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Pin Hole Spacing</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="WallDim.ShelfHoleSpacing" size="10" maxlength="10" /></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="6"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Add Center Panel</label></td>
+    <td class="h1-l"><select size="1" id="WallQuestion.AddCenterPanel">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Center Face frame</label></td>
+    <td class="h1-l"><select size="1" id="WallQuestion.AddCenterFaceFrame">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.WallHelp ..[[#Top');">Shelf Count</label></td>
+    <td class="h1-l"><select name="WallQuestion.ShelfCount" id="WallQuestion.ShelfCount">
+        <option selected>0</option>
+        <option>1</option>
+        <option>2 </option>
+        <option>3 </option>
+        <option>4 </option>
+        <option>5 </option>
+        <option>6 </option>
+        <option>7 </option>
+        <option>8 </option>
+      </select></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td ><button class="FormButton" onClick="window.open(']].. DialogWindow.WallHelp .. [[');"><span class="icon">Help</span></button></td>
+    <td class="alert-l" id="GadgetName.Alert">.</td>
+    <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]] -- Project Setup
+  DialogWindow.myHtml2  = [[<html>
+<head>
+    <title>Project Setup</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.ProjectHelp ..[[#Top');">Project Name</label></td>
+    <td><input type="text" class="h2" id="Project.ProjectName" size="50" maxlength="50" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.ProjectHelp ..[[#Top');">Contact Name</label></td>
+    <td><input type="text" class="h2" id="Project.ProjectContactName" size="50" maxlength="50" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.ProjectHelp ..[[#Top');">Email</label></td>
+    <td><input type="text" class="h2" id="Project.ProjectContactEmail" size="50" maxlength="50" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.ProjectHelp ..[[#Top');">Phone Number</label></td>
+    <td><input type="text" class="h2" id="Project.PhoneNumber" size="50" maxlength="50" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.ProjectHelp ..[[#Top');">Drawing ID (Readonly)</label></td>
+    <td><input type="text" class="h2" id="Project.DrawerID" size="16" maxlength="16" readonly /></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.ProjectHelp ..[[#Top');">Project Path (Required)</label></td>
+    <td><input name="Project.ProjectPath" type="text" class="h2" id="Project.ProjectPath" size="58" maxlength="250" /></td>
+    <td><span class="h1">
+      <input id = "DirectoryPicker" class = "DirectoryPicker" name = "DirectoryPicker" type = "button" value = "Path...">
+      </span></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+    <td class="h1-r">Cabinet Style</td>
+    <td class="h1-l">
+      <select id="Project.CabinetStyle">
+        <option selected>Face Frame</option>
+        <option>No Face Frame</option>
+    </select></td>
+    <td>&nbsp;</tr>
+    <td>&nbsp;</tr>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Wall Cabinet Mat Type</td>
+    <td class="h1-l">
+      <select id="BOM.WallCabinetMateralType">
+        <option selected>Plywood</option>
+        <option>Melamine </option>
+
+    </select></td>
+    <td class="h1-r">Wall Face Frame</td>
+    <td class="h1-l">
+      <select id="BOM.WallFaceFrameMateralType">
+
+    </select></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Wall Cabinet Finish</td>
+    <td class="h1-l">
+      <select  id="BOM.WallCabinetFinish">
+
+
+      </select>
+    </td>
+    <td class="h1-r">Wall Face Frame Finish</td>
+    <td class="h1-l">
+      <select id="BOM.WallFaceFrameFinish">
+
+
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-r">Base Cabinet Mat Type</td>
+    <td class="h1-l">
+      <select  id="BOM.BaseCabinetMateralType">
+        <option selected>Plywood</option>
+        <option>Melamine </option>
+        <option>Birch ply</option>
+        <option>Oak ply</option>
+        <option>Maple ply</option>
+        <option>Walnut ply</option>
+        <option>Poplar ply</option>
+        <option>Piano Ply</option>
+      </select>
+    </td>
+    <td class="h1-r">Base Face Frame</td>
+    <td class="h1-l">
+      <select id="BOM.BaseFaceFrameMateralType">
+        <option selected>Hardwood</option>
+        <option>Melamine</option>
+        <option>Oak</option>
+        <option>Poplar</option>
+        <option>Maple</option>
+        <option>Walnut</option>
+        <option>Pine</option>
+        <option>Cedar</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td class="h1-r">Base Cabinet Finish</td>
+    <td class="h1-l">
+      <select id="BOM.BaseCabinetFinish">
+        <option>None</option>
+        <option selected>Paint</option>
+        <option>Prime Only</option>
+        <option>Stain</option>
+      </select>
+    </td>
+    <td class="h1-r">Base Face Frame Finish</td>
+    <td class="h1-l">
+      <select id="BOM.BaseFaceFrameFinish">
+        <option>None</option>
+        <option selected>Paint</option>
+        <option>Prime Only</option>
+        <option>Stain</option>
+      </select>
+    </td>
+    <tr>
+      <td class = "h1-r">Drawing Text Height</td>
+      <td><input name="Project.TextHeight" type="text" class="h1-l" id="ExportName" size="10" maxlength="10" /></td>
+    </tr>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td ><button class="FormButton" onClick="window.open(']].. DialogWindow.ProjectHelp .. [[');"><span class="icon"> Help </span></button></td>
+    <td class="alert-l" id="GadgetName.Alert">.</td>
+    <td class="h1-c"><input id="ButtonOK" class="FormButton" type="button" value="OK"></td>
+    <td class="h1-c"><input id="ButtonCancel" class="FormButton" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]] -- Milling Information
+  DialogWindow.myHtml3  = [[<html>
+<head>
+    <title>Milling Information</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r" onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Back Dado Height</label></td>
+    <td><input name="Milling.DadoBackHeight" type="text" class="h2" id="Milling.DadoBackHeight" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Height</label></td>
+    <td><input name="Milling.DadoHeight" type="text" class="h2" id="Milling.DadoHeight" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Clearance</label></td>
+    <td><input name="Milling.DadoClearance" type="text" class="h2" id="Milling.DadoClearance" size="10" maxlength="10" /></td>
+    <td class="h1-r">Shelf Pin Length</td>
+    <td><input name="Milling.ShelfPinLen" type="text" class="h2" id="Milling.ShelfPinLen" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Part Gap</label></td>
+    <td><input name="Milling.PartGap" type="text" class="h2" id="Milling.PartGap" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Shelf Pin Diameter</label></td>
+    <td><input name="Milling.ShelfPinDiameter" type="text" class="h2" id="Milling.ShelfPinDiameter" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Add Joint Notes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddJointNotes">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r">Assembly Hole Start and End Space</td>
+    <td><input name="Milling.AssemblyHoleStartEnd" type="text" class="h2" id="Milling.AssemblyHoleStartEnd" size="10" maxlength="10" /></td>
+  </tr>
+  <tr><td colspan="4" class="h1-r"><hr></td></tr>
+   <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Base Assembly Holes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesBase">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Wall Assembly Holes</label></td>
+    <td class="h1-l"><select size="1" id="Milling.AddAssemblyHolesWall">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+  </tr>
+   <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Max Space</label></td>
+    <td><input type="text" class="h2" id="Milling.AssemblyHoleMaxSpace" size="10" maxlength="10" /></td>
+
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Min Space</label></td>
+    <td><input type="text" class="h2" id="Milling.AssemblyHoleMinSpace" size="10" maxlength="10" /></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Assembly Hole Diameter</label></td>
+    <td><input type="text" class="h2" id="Milling.AssemblyHoleDia" size="10" maxlength="10" /></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Pilot Hole Diameter</label></td>
+    <td><input type="text" class="h2" id="Milling.PilotHoleDia" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Pilot Hole Depth</label></td>
+    <td><input type="text" class="h2" id="Milling.PilotHoleDepth" size="10" maxlength="10" /></td>
+  </tr>
+
+  <tr><td colspan="4" class="h1-r"><hr></td></tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado and Rabbit Types</label></td>
+    <td class="h1-l"><select size="1" id="Milling.DadoType">
+        <option selected>Through</option>
+        <option>Half Blind</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Dado Blind Amount</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="Milling.DadoBlindAmount" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Default Profile Bit Dia</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="Milling.ProfileToolDia" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MillingHelp ..[[#Top');">Default Pocket Bit Dia</label></td>
+    <td><input type="text" class="h2" id="Milling.PocketToolDia" size="10" maxlength="10" /></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td><button class="FormButton-Help" onClick="window.open(']].. DialogWindow.MillingHelp .. [[');"><span class="icon">     Help </span></button></td>
+    <td class="alert-l" id="GadgetName.Alert"></td>
+    <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>
+]]
+-- =====================================================]] -- Layer Names
+  DialogWindow.myHtml4  = [[<html>
+<head>
+    <title>Layer Names</title>
+    ]] .. DialogWindow.Style ..[[
+</head><body>
+<table>
+  <tr>
+    <td class="h2-rPx">Item</td>
+    <td class="h2-l">Layer Name</td>
+    <td class="h2-l">Color</td>
+  </tr>
+  <tr>
+    <td colspan="3"><hr></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Back Panel Pocket (Dado)</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNBackPocket" size="30" maxlength="50" /></td>
+    <td><select name="Milling.LNBackPocketColor" id="Milling.LNBackPocketColor">
+      <option>Black</option>
+      <option selected>Red</option>
+      <option>Blue</option>
+      <option>Yellow</option>
+      <option>Cyan</option>
+      <option>Magenta</option>
+      <option>Green</option>
+    </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Back Panel Profile</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNBackProfile" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNBackProfileColor">
+        <option selected="selected">Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Center Panel Profile</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNCenterPanelProfile" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNCenterPanelProfileColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option selected>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Center Panel - Shelf Pin (Drilling)</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNCenterPanelShelfPinDrill" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNCenterPanelShelfPinDrillColor">
+        <option selected="selected">Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Face Frame Drawing</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNDrawFaceFrame" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNDrawFaceFrameColor">
+        <option selected="selected">Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Shelfing Profile</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNShelfProfile" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNShelfProfileColor">
+        <option selected>Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+    </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Side Profile</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNSideProfile" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNSideProfileColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option selected>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Side Pocket (Dado and Rabbet)</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNSidePocket" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNSidePocketColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option selected>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Cabinet Side - Shelf Pin Drilling</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNSideShelfPinDrill" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNSideShelfPinDrillColor">
+        <option>Black</option>
+        <option selected>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Bottom Panel Profile</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNTopBottomProfile" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNTopBottomProfileColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option selected>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Bottom Panel Pocket</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNTopBottomPocket" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNTopBottomPocketColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option selected>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Stretcher and Rail Profile</label></td>
+    <td><input  type="text" class="h1-l" id="Milling.LNStretcherRailProfile" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNStretcherRailProfileColor">
+        <option selected="selected">Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Draw Notes</label></td>
+    <td><input class="h1-l" id="Milling.LNDrawNotes" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNDrawNotesColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option selected>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Part Labels</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNPartLabels" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNPartLabelsColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option selected>Green</option>
+      </select></td>
+  </tr>
+
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.LayerHelp ..[[#Top');">Drawer Slide Holes</label></td>
+    <td><input type="text" class="h1-l" id="Milling.LNDrawerSlideHole" size="30" maxlength="50" /></td>
+    <td><select id="Milling.LNDrawerSlideHoleColor">
+        <option>Black</option>
+        <option>Red</option>
+        <option>Blue</option>
+        <option>Yellow</option>
+        <option>Cyan</option>
+        <option>Magenta</option>
+        <option selected>Green</option>
+      </select></td>
+  </tr>
+
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td><button class="FormButton-Help" onClick="window.open(']].. DialogWindow.LayerHelp .. [[');"><span class="icon">Help</span></button></td>
+    <td class="alert-l" id="GadgetName.Alert">.</td>
+    <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]] -- Base Cabinet Settings
+  DialogWindow.myHtml5  = [[<html>
+<head>
+    <title>Base Cabinet Setup</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table id="ValueTable">
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Material Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.MaterialThickness" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Material Thickness Back</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ThicknessBack" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Bottom Rail Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameBottomRailWidth" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Bottom Reveal</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameBottomReveal" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Center Stile Face Frame Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameCenterStileWidth" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Side Reveal</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameSideReveal" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Stile Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameStileWidth" size="10" maxlength="10" /></td>
+     <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Top Rail Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameTopRailWidth" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Drawer Height1</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight1" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Drawer Height2</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight2" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Drawer Height3</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight3" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Drawer Height4</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameDrawerHeight4" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameThickness" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Face Frame Mid Rail Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.FaceFrameMidRailWidth" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Top Frame Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.TopFrameWidth" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Nosing Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfNosingThickness" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Nosing Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfNosingWidth" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf End Clearance</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfEndClarence" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Clearance Front</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfFrontClearance" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole First Row Spacing</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfHoleFirstRowSpacing" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Material Thickness</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfMaterialThickness" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Front Setback</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfPinHoleFront" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Spacing</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfHoleSpacing" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Last Row Spacing</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfHoleLastRowSpacing" size="10" maxlength="10" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Pin Hole Rear Clearance</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ShelfPinHoleBack" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Stretcher Width</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.StretcherWidth" size="10" maxlength="10" /></td>
+   </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Toe Kick Bottom Offset Height</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ToeKickBottomOffsetHeight" size="10" maxlength="10" /></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Toe Kick Height</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ToeKickHeight" size="10" maxlength="10" /></td>
+     </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Toe Kick Depth</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="BaseDim.ToeKickDepth" size="10" maxlength="10" /></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="6"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Add Center Panel</label></td>
+    <td class="h1-l"><select id="BaseQuestion.AddCenterPanel">
+        <option selected>Yes</option>
+        <option>No</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Drawer Row Count</label></td>
+    <td class="h1-l"><select id="BaseQuestion.DrawerRowCount">
+        <option>0</option>
+        <option selected>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+      </select></td>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.BaseHelp ..[[#Top');">Shelf Count</label></td>
+    <td class="h1-l"><select id="BaseQuestion.ShelfCount">
+        <option selected>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+      </select></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4" class="h2"><hr></td>
+  </tr>
+  <tr>
+    <td><button class="FormButton" onClick="window.open(']].. DialogWindow.BaseHelp .. [[');"><span class="icon">Help</span></button></td>
+    <td class="alert-l" id="GadgetName.Alert">.</td>
+    <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]] -- About
+  DialogWindow.myHtml6  = [[<html>
+<head>
+    <title>About</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+    <table>
+        <tr>
+            <td class="h4-c">Easy Cabinet Maker</td>
+        </tr>
+        <tr>
+            <td class="h3-c" id="Version">Version</td>
+        </tr>
+        <tr>
+            <td>
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td class="h2-c">Disclaimer</td>
+        </tr>
+        <tr>
+            <td>
+                <p class="p1-l">The ]] .. AppName .. [[ Gadget is a plugin for Vectric software, V-Carve Pro and Aspire.<br> Gadgets are an entirely optional add-in to Vectric's core software products.<br> They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.<br> In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.<br><br> Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:<br> 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.<br> * If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.<br> 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.<br> 3. This notice may not be removed or altered from any source distribution.<br><br>The author heavily utilized the SDK documentation and supplied code samples in addition to the outstanding user community on the Vectric User forum.</p>
+            </td>
+        </tr>
+        <tr>
+          <td class="h1-r"><INPUT class="h1-r" type="checkbox" checked ID="RegistryReset" value='active'>Reset to Default Values</td>
+        </tr>
+        <tr>
+            <td class="h1-c"><a href="https://forum.vectric.com" class="webLink-c">Vectric User Forum</a></td>
+        </tr>
+        <tr>
+            <td class="h2-c">JimAndi Gadgets</td>
+        </tr>
+        <tr>
+            <td class="h1-c">Houston, TX.</td>
+        </tr>
+        <tr>
+            <td>
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+        </tr>
+    </table>
+</body>
+</html>]]
+-- =====================================================]] -- Main - Cabinet Maker and Tool-path
+  DialogWindow.myHtml7  = [[<html>
+<head>
+    <title>Cabinet Maker and Tool-path Creator</title>
+    ]] .. DialogWindow.Style .. [[
+</head>
+<body>
+    <table>
+        <tr>
+            <td class="h1-c"><input id = "InquiryAbout"        class="LuaButton" type = "button" value = "      About      " ></td>
+            <td class="h1-c"><input id = "InquiryLayers"       class="LuaButton" type = "button" value = "      Layers      "></td>
+            <td class="h1-c"><input id = "InquiryBaseQuestion" class="LuaButton" type = "button" value = " Base Cabinet "    ></td>
+            <td class="h1-c"><input id = "InquiryWallQuestion" class="LuaButton" type = "button" value = " Wall Cabinet "    ></td>
+        </tr>
+        <tr>
+            <td colspan="4" class="h1-c">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td class="h1-c"><input id = "InquiryMilling"      class="LuaButton" type = "button" value = "      Milling      " ></td>
+            <td class="h1-c"><input id = "InquiryProjectInfo"  class="LuaButton" type = "button" value = "      Project      " ></td>
+            <td class="h1-c"><input id = "ImportSettings"      class="LuaButton" type = "button" value = "Import Setting"      ></td>
+            <td class="h1-c"><input id = "ExportSettings"      class="LuaButton" type = "button" value = "Export Setting"      ></td>
+        </tr>
+    </table>
+    <table id="GenSizeTable">
+        <tr>
+            <td colspan="4">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Base Depth</label></td>
+            <td class="h1-l"><input name="BaseDim.CabDepth" type="text" class="h1-l" id="BaseDim.CabDepth" size="10" maxlength="10" /></td>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Wall Depth</label></td>
+            <td class="h1-l"><input name="WallDim.CabDepth" type="text" class="h1-l" id="WallDim.CabDepth" size="10" maxlength="10" /></td>
+        </tr>
+        <tr>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Base Width</label></td>
+            <td class="h1-l"><input name="BaseDim.CabLength" type="text" class="h1-l" id="BaseDim.CabLength" size="10" maxlength="10" /></td>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Wall Width</label></td>
+            <td class="h1-l"><input name="WallDim.CabLength" type="text" class="h1-l" id="WallDim.CabLength" size="10" maxlength="10" /></td>
+        </tr>
+        <tr>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Base Height</label></td>
+            <td class="h1-l"><input name="BaseDim.CabHeight" type="text" class="h1-l" id="BaseDim.CabHeight" size="10" maxlength="10" /></td>
+            <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Wall Height</label></td>
+            <td class="h1-l"><input name="WallDim.CabHeight" type="text" class="h1-l" id="WallDim.CabHeight" size="10" maxlength="10" /></td>
+        </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan="4" class="h1-r">
+          <hr>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Cabinet Name</label></td>
+        <td class="h2"><input type="text" class="h1-l" id="Project.CabinetName" size="14" maxlength="40" /></td>
+        <td class="h2-r"><label  class="h1-r">Slide Hardware<select size="1" id="Hardware.Name">
+            <option value="1">first</option>
+            <option value="2" selected>second</option>
+            <option value="3" >third</option>
+          </select></label>
+        </td>
+        <td class="h1-l"><input id = "InquiryHardwareEditQuestion"  class="LuaButton" type = "button" value = "Edit" ></td>
+      </tr>
+      <tr>
+        <td colspan="4" class="h1-r"><hr></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Profile Bit:</label></td>
+        <td bgcolor="#33FFFF" class="ToolNameLabel"><span id="ToolNameLabel1">-</span></td>
+        <td class="h1-l"><input id = "ToolChooseButton1" class="ToolPicker" name = "ToolChooseButton1" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Pocket Bit:</label></td>
+        <td bgcolor="#FFFF33" class="ToolNameLabel"><span id="ToolNameLabel2">-</span></td>
+        <td class="h1-l"><input id = "ToolChooseButton2" class="ToolPicker" name = "ToolChooseButton2" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Pocket Clearing Bit:</label></td>
+        <td bgcolor="#FFFF33" class="ToolNameLabel"><span id="ToolNameLabel3">-</span></td>
+        <td class="h1-l"><input id = "ToolChooseButton3" class="ToolPicker" name = "ToolChooseButton3" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Shelf Pins:</label></td>
+        <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel4">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton4" class="ToolPicker" name = "ToolChooseButton4" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Assembly Pilot Holes:</label></td>
+        <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel5">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton5" class="ToolPicker" name = "ToolChooseButton5" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Hardware Pilot Holes:</label></td>
+        <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel6">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton6" class="ToolPicker" name = "ToolChooseButton6" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="3" class="h1-l"><input id = "InquiryToolClear" class="LuaButton" type = "button" value = "  Clear All Tool Selections  "></td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan="6">
+          <hr>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">New Sheet</label></td>
+        <td class="h1-l"><select ]] .. DialogWindow.Sheets .. [[ id = "Project.NewSheet"><option>Yes</option><option selected>No</option></select></td>
+        <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.MainHelp .. [[#Top');">Draw Cabinet </label></td>
+        <td class="h1-l"><select name = "Project.Drawing" id = "Project.Drawing"><option selected>Wall</option><option>Base</option><option>Both</option></select></td>
+        <td class="h1-r"><input id = "InquiryPartDrawing" class="LuaButton" type = "button" value = "Part Selecter"></td>
+      </tr>
+    </table>
+    <table class="mytable" id="OkayButtonTable">
+      <tr>
+        <td colspan="4" class="h2">
+          <hr>
+        </td>
+      </tr>
+      <tr>
+          <td class="help_But"><button class="FormButton" onClick="window.open(']] .. DialogWindow.MainHelp .. [[');"><span class="icon">Help</span></button></td>
+          <td class="alert-l" id="GadgetName.Alert">.</td>
+          <td class="h1-cOk"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
+          <td class="h1-cOk"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+      </tr>
+    </table>
+</body>
+</html>]]
+-- =====================================================]] -- Part Drawing
+  DialogWindow.myHtml8  = [[<html>
+<head>
+    <title>Milling Information</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <tr>
+    <td colspan="2" class="h3-c">Base Cabinet</td>
+    <td colspan="2" class="h3-c">Wall Cabinet</td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Side Panels</label></td>
+    <td><input type="checkbox" id="BaseQuestion.DrawSidePanels"></td>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Side Panels</label></td>
+    <td><input type="checkbox" id="WallQuestion.DrawSidePanels"></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Top Stretcher & Toe Kick</label></td>
+    <td><input type="checkbox" id="BaseQuestion.DrawTopToe"></td>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Top & Bottom Panel</label></td>
+    <td><input type="checkbox" id="WallQuestion.DrawBottomTopPanel"></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Top & Bottom Panel</label></td>
+    <td><input type="checkbox" id="BaseQuestion.DrawBottomPanel"></td>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Center Panel</label></td>
+    <td><input type="checkbox" id="WallQuestion.DrawCenterPanel"></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Center Panel</label></td>
+    <td><input type="checkbox" id="BaseQuestion.DrawCenterPanel"></td>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Back Panel</label></td>
+    <td><input type="checkbox" id="WallQuestion.DrawBackPanel"></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Back Panel</label></td>
+    <td><input type="checkbox" id="BaseQuestion.DrawBackPanel"></td>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Shelf Panels</label></td>
+    <td><input type="checkbox" id="WallQuestion.DrawShelfPanel"></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Shelf Panels</label></td>
+    <td><input type="checkbox" id="BaseQuestion.DrawShelfPanel"></td>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Face Frame</label></td>
+    <td><input type="checkbox" id="WallQuestion.DrawFaceFrame"></td>
+  </tr>
+    <tr>
+    <td class="h1-r"><label class="helplabel-rp"  onClick="window.open(']] .. DialogWindow.PartDrawing ..[[#Top');">Face Frame</label></td>
+    <td><input type="checkbox" id="BaseQuestion.DrawFaceFrame"></td>
+    <td class="h1-r"></td>
+    <td class="h1-r"></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td><button class="FormButton-Help" onClick="window.open(']].. DialogWindow.PartDrawing .. [[');"><span class="icon">     Help </span></button></td>
+    <td class="alert-l" id="GadgetName.Alert">.</td>
+    <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+
+-- =====================================================]] -- Export
+  DialogWindow.myHtml9  = [[<head>
+<title>Cabinet Settings Import</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+  <table>
+    <tr>
+      <td> <strong class = "h2">Enter Export File Name</strong></td>
+      <td class="h1-l"><input name="Project.ExportName" type="text" class="h1-l" id="ExportName" size="30" maxlength="50" /></td>
+    </tr>
+  </table>
+  <table>
+    <tr>
+      <td colspan="4" class="h2"><hr></td>
+    </tr>
+    <tr>
+      <td><button class="FormButton" onClick="window.open(']] .. DialogWindow.ExportHelp .. [[');"><span class="icon">Help</span></button></td>
+      <td class="alert-l" id="GadgetName.Alert">.</td>
+      <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+      <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+    </tr>
+  </table>
+</body>
+</html>
+]]
+-- =====================================================]] -- Open
+  DialogWindow.myHtml10 = [[]]
+-- =====================================================]] -- Slide Mount Information
+  DialogWindow.myHtml11 = [[<html>
+<head>
+<title>Base Cabinet Hardware</title>
+  ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <tr>
+    <td><label class="h4-l" id="Hardware.Name">.</label></td>
+    <td class="h1-c"><input id="InquiryHardwareSelection" class="LuaButton" type = "button" value = "Select Different"></td>
+    <td class="h1-r"><input id="InquiryHardwareNew"       class="LuaButton" type = "button" value = "Add New Slide"   ></td>
+    <td class="h1-r"><input id="InquiryRearMountEdit"     class="LuaButton" type = "button" value = "Edit Rear Mount"    ></td>
+    <td class="h1-r"><input id="InquiryHardwareDelete"    class="LuaButton" type = "button" value = "Delete Current"  ></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="]] .. DialogWindow.SlideImange .. [[" width="410" height="320" /></td>
+    <td>
+    <table>
+  <tr>
+    <td colspan="2" class="h2-c"><strong>Horizontal Values</strong></td>
+    <td colspan="2" class="h2-c"><strong>Vertical Values</strong></td>
+  </tr>
+  <tr>
+    <td colspan="4"><hr/></td>
+  </tr>
+  <tr>
+    <td width="177" class="h1-r"><span class="helplabel-r">Hole 1 Value (A)</span></td>
+    <td width="178" class="h1-l"><input type="text" class="h2" id="Hardware.SlideHole1" size="7" maxlength="7" /></td>
+    <td width="240" class="h1-r"><span class="helplabel-r">Hole 1 Value (I)</span></td>
+    <td width="182" class="h1-l"><input type="text" class="h2" id="Hardware.SlideCenterLine1" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 2 Value (B)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideHole2" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 2 Value (II)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideCenterLine2" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 3 Value (C)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideHole3" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 3 Value (III)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideCenterLine3" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 4 Value (D)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideHole4" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 4 Value (IV)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideCenterLine4" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 5 Value (E)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideHole5" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 5 Value (V)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideCenterLine5" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 6 Value (F)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideHole6" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 6 Value (VI)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.SlideCenterLine6" size="7" maxlength="7" /></td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td colspan="4" class="alert-l" id="Hardware.Alert1">.</td></tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td height="24"><button class="FormButton" onClick="window.open(']].. DialogWindow.HardwareHelp .. [[');"><span class="icon">Help</span></button></td>
+    <td width="120">&nbsp;</td>
+    <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
+    <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]] -- Rear Mount Information
+  DialogWindow.myHtml12 = [[<html>
+<head>
+<title>Rear Slide Pilot Holes</title>
+  ]] .. DialogWindow.Style .. [[
+</head>
+<body>
+<table>
+  <tr>
+    <td colspan="6"><label class="h3-l" id = "Hardware.RearPartName"></label></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="]] .. DialogWindow.RearMountImange .. [[" width="350" height="320" /></td>
+    <td>
+    <table>
+  <tr>
+    <td colspan="2" class="h2-c"><span>Horizontal Values</span></td>
+    <td colspan="2" class="h2-c"><span>Vertical Values</span></td>
+  </tr>
+    <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><label class="helplabel-r"  onClick="window.open(']] .. DialogWindow.HardwareHelp ..[[#Top');">Hole 1 Value (G)</label></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearHoleA" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 1 Value (VII)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearCenterLineA" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 2 Value (H)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearHoleB" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 2 Value (VIII)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearCenterLineB" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 3 Value (I)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearHoleC" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 3 Value (IX)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearCenterLineC" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Hole 4 Value (J)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearHoleD" size="7" maxlength="7" /></td>
+    <td class="h1-r"><span class="helplabel-r">Hole 4 Value (X)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearCenterLineD" size="7" maxlength="7" /></td>
+  </tr>
+  <tr>
+    <td class="h1-r"><span class="helplabel-r">Side Clearance (K)</span></td>
+    <td class="h1-l"><input type="text" class="h2" id="Hardware.RearSideClearance" size="7" maxlength="7" /></td>
+    <td class="h1-r">&nbsp;</td>
+    <td class="h1-l">&nbsp;</td>
+  </tr>
+   <tr>
+      <td class="h1-l">&nbsp;</td>
+   </tr>
+      <tr>
+      <td class="h1-l">&nbsp;</td>
+   </tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td colspan="4" class="alert-l" id="Hardware.Alert1">.</td></tr>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td height="24"><button class="FormButton" onClick="window.open(']].. DialogWindow.HardwareHelp .. [[');"><span class="icon">Help</span></button></td>
+    <td width="120">&nbsp;</td>
+    <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
+    <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]] -- Add New Slide
+  DialogWindow.myHtml13 = [[<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Slide ID</title>
+  ]] .. DialogWindow.Style .. [[
+</head>
+  <body>
+    <table>
+      <tr>
+        <th width="150" class="h1-l"><span class="helplabel-l">Manufacturer</span></th>
+        <th width="150" class="h1-l"><span class="helplabel-l">PartNumber  </span></th>
+        <th width="150" class="h1-l"><span class="helplabel-l">Slide Length</span></th>
+        <th width="150" class="h1-l"><span class="helplabel-l">Rear PartNumber</span></th>
+      </tr>
+      <tr>
+        <td><input type="text" class="h1-l" id="Hardware.Manufacturer"   size="15" maxlength="15" /></td>
+        <td><input type="text" class="h1-l" id="Hardware.PartNumber"     size="10" maxlength="10" /></td>
+        <td><input type="text" class="h1-l" id="Hardware.SlideLength"    size="5"  maxlength="5"  /></td>
+        <td><input type="text" class="h1-l" id="Hardware.RearPartNumber" size="15" maxlength="15"  /></td>
+     </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan="4"><hr></td>
+      </tr>
+      <tr>
+        <td><button class="FormButton" onClick="window.open(']].. DialogWindow.HardwareHelp .. [[');"><span class="icon">Help</span></button></td>
+        <td class="alert-l" id="GadgetName.Alert">.</td>
+        <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
+        <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+      </tr>
+    </table>
+  </body>
+</html>]]
+-- =====================================================]] -- Select Group
+  DialogWindow.myHtml14 = [[<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Select Slide</title>
+  ]] .. DialogWindow.Style .. [[
+</head>
+<body>
+  <table>
+    <tr>
+      <td class="h1-r"><label for="Hardware.Name" class="helplabel-r"  onClick="window.open(']] .. DialogWindow.HardwareHelp .. [[#Top');">Select Drawer Slides</label>
+      <select size="1" id="Hardware.Name">
+        <option value="1">first</option>
+        <option value="2" selected>second</option>
+        <option value="3" >third</option>
+      </select>
+      </td>
+   </tr>
+  </table>
+  <table>
+    <tr>
+      <td colspan="4"><hr></td>
+    </tr>
+    <tr>
+      <td><button class="FormButton" onClick="window.open(']] .. DialogWindow.HardwareHelp .. [[');"><span class="icon">Help</span></button></td>
+      <td class="alert-l" id="GadgetName.Alert">.</td>
+      <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
+      <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+    </tr>
+  </table>
+</body>
+</html>]]
+-- =====================================================]] -- Y/N Question
+  DialogWindow.myHtml15 = [[<html>
+<head>
+<title>Yes / No Question</title>
+]] .. DialogWindow.Style ..[[
+</head>
+  <body>
+    <table>
+      <tr>
+        <td class="h2-l"><img src="]] .. DialogWindow.SlideImages3 .. [[" width="80" height="75"></td>
+        <td class="h2-lm" id="Question">Question</td>
+      </tr>
+      <tr>
+        <td colspan="2"><hr></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="No"></td>
+        <td style="width: 20%" class="h2-r"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="Yes"></td>
+      </tr>
+    </table>
+  </body>
+</html>]]
+-- =====================================================]] -- Alert Message
+  DialogWindow.myHtml16 = [[<html>
+<head>
+<title>Project Information</title>
+]] .. DialogWindow.Style ..[[
+</head>
+  <body>
+      <table>
+        <tr>
+          <td class="h2-l"><img src="]] .. DialogWindow.SlideImages1 .. [[" width="40" height="35"></td>
+          <td class="h2-lm" id="Question">Question</td>
+        </tr>
+        <tr>
+          <td colspan="2"><hr></td>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <td class="h2-r"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+        </tr>
+     </table>
+  </body>
+</html>]]
+-- =====================================================]] -- Error Message
+  DialogWindow.myHtml17 = [[<html>
+<head>
+<title>Project Information</title>
+]] .. DialogWindow.Style ..[[
+</head>
+  <body>
+      <table>
+        <tr>
+          <td class="h2-l"><img src="]] .. DialogWindow.SlideImages2 .. [[" width="40" height="35"></td>
+          <td class="h2-lm" id="Question">Question</td>
+        </tr>
+        <tr>
+          <td colspan="2"><hr></td>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <td class="h2-r"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+        </tr>
+     </table>
+  </body>
+</html>]]
+-- =====================================================]] -- Slide Selction
+  DialogWindow.myHtml18 = [[<html>
+<head>
+<title>Select New Slide Hardware</title>
+  ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+<table>
+  <td class="h1-r"><label for="Hardware.Name" class="helplabel-r"  onClick="window.open(']] .. DialogWindow.HardwareHelp .. [[#Top');">Select Drawer Slides</label>
+    <select size="1" id="Hardware.Name">
+      <option value="1">first</option>
+      <option value="2" selected>second</option>
+      <option value="3" >third</option>
+    </select>
+  </td>
+</table>
+<table>
+  <tr>
+    <td colspan="4"><hr></td>
+  </tr>
+  <tr>
+    <td height="24"><button class="FormButton" onClick="window.open(']] .. DialogWindow.HardwareHelp .. [[');"><span class="icon">Help</span></button></td>
+    <td class="alert-l" id="Hardware.Alert1">.</td>
+    <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+    <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
+  </tr>
+</table>
+</body>
+</html>]]
+-- =====================================================]]
+ return true
+end  --  function end
+-- ==================== End ============================]]
