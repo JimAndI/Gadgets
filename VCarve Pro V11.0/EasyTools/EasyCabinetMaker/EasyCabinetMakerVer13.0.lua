@@ -337,7 +337,11 @@ function main(script_path)
       end
       -- ===============================================================================================
       if Project.NewSheet == "Yes" then -- Sheet 2
-        NextSheet(BaseDim.CabHeight, BaseDim.CabLength)
+        BaseQuestion.DrawerRowCountSpace = 0
+        for _ = 1, BaseQuestion.DrawerRowCount, 1 do
+          BaseQuestion.DrawerRowCountSpace = BaseQuestion.DrawerRowCountSpace + BaseDim.StretcherWidth  + Milling.PartGap
+	      end
+        NextSheet(BaseDim.CabHeight +  BaseQuestion.DrawerRowCountSpace, BaseDim.CabLength)
         if Material.Orantation == "V" then
           Cab.Wpt3 = Polar2D(Cab.Wpt1, 90.0, 10.0 * Milling.Cal)
         else
@@ -352,7 +356,7 @@ function main(script_path)
       end
       -- ====
       Base_CabinetToeandRunners()
-      if Milling.AddAssemblyHolesBase then
+      if Milling.AddAssemblyHolesBase and BaseQuestion.AddCenterFaceFrame then
         CreateLayerDrillingToolpath(Milling.LNAssemblyHole .. "Bottom-Base", Milling.Sheet .. "Base Assy Drilling Bottom", 0.0, Milling.ShelfPinLen, BaseDim.MaterialThickness, Milling.ShelfPinLen * 0.25)
         CreateLayerDrillingToolpath(Milling.LNAssemblyHole .. "Top-Base", Milling.Sheet .. "Base Assy Drilling Top", 0.0, Milling.ShelfPinLen, BaseDim.MaterialThickness, Milling.ShelfPinLen * 0.25)
       end -- if end
@@ -400,8 +404,17 @@ function main(script_path)
       Base_CabinetFaceFrame()
       -- ====
       CutListfileWriterFooter()
-      end
+    end
   end -- if end
+  if Project.NewSheet == "Yes" then
+    StatusMessage("Alert", "Project Sheet", "All Sheet are replicated from the initial sheet configuration. \n " ..
+                                    "Therefore, you will need to manually adjust material thickness to \n" ..
+                                    "to match other varying part thicknesses", "(1492)")
+  else
+    StatusMessage("Alert", "Project Sheet", "All Parts have been drawn on the same. \n " ..
+                                    "Therefore, you will need to check the material thickness for \n" ..
+                                    "the Base and Wall Cabinet back material thickness to be correct", "(1493)")
+  end
   LayerClear()
   Milling.job:Refresh2DView()
   return true

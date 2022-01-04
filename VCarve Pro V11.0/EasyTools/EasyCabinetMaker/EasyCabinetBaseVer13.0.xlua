@@ -60,66 +60,66 @@ end -- if end
         -- Top row Assy Holes
         X1 = Polar2D(Polar2D(Cab.Wpt7, 0.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         X2 = Polar2D(Polar2D(ptC,      0.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
         HoleSpace = (GetDistance(X1, X2) / HoleCount)
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 270.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
         -- Center column Assy Holes
         X1 = Polar2D(Polar2D(ptC, 0.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         X2 = Polar2D(Polar2D(pt4, 0.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
         HoleSpace = (GetDistance(X1, X2) / HoleCount)
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 270.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
         -- Bottom row Assy Holes
         X6 = Polar2D(ptG, 90.0, GetDistance(ptE, ptGY))
         X1 = Polar2D(Polar2D(ptG, 0.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         X2 = Polar2D(Polar2D(X6,  0.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
         HoleSpace = (GetDistance(X1, X2) / HoleCount)
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 270.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
         X1 = Polar2D(Polar2D(ptGY, 0.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         X2 = Polar2D(Polar2D(ptE,  0.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
         HoleSpace = (GetDistance(X1, X2) / HoleCount)
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 270.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
         X5 = Polar2D(ptG, 90.0, GetDistance(ptE, ptGY) + (BaseDim.MaterialThickness * 0.5))
         X3 = Polar2D(ptC,  0.0, Milling.AssemblyHoleStartEnd)
         X4 = Polar2D(X5, 180.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X3, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
-        DrawCircle(X4, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X3, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X4, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X3, X4) / HoleSpace)
         HoleSpace = (GetDistance(X3, X4) / HoleCount)
         while (HoleCount > 1) do
           X4 = Polar2D(X4, 180.0, HoleSpace)
-          DrawCircle(X4, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+          DrawCircle(X4, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -139,8 +139,8 @@ end -- if end
       if Milling.AddAssemblyHolesBase then
         X1 = Polar2D(Polar2D(ptG, 0.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         X2 = Polar2D(Polar2D(ptE, 0.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
 
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
@@ -148,21 +148,21 @@ end -- if end
 
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 270.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
 
         X3 = Polar2D(Polar2D(Cab.Wpt7, 0.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         X4 = Polar2D(Polar2D(pt4, 0.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X3, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
-        DrawCircle(X4, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X3, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
+        DrawCircle(X4, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
 
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X3, X4) / HoleSpace)
         HoleSpace = (GetDistance(X3, X4) / HoleCount)
         while (HoleCount > 1) do
           X4 = Polar2D(X4, 270.0, HoleSpace)
-          DrawCircle(X4, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Back-Base")
+          DrawCircle(X4, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Back-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -290,8 +290,8 @@ function Base_CabinetSide(side)
       if Milling.AddAssemblyHolesBase then
         local XA = Polar2D(Polar2D(ptI,  180.0, BaseDim.MaterialThickness * 0.5), 270.0, GetDistance(ptI, ptJC) * 0.25)
         local XB = Polar2D(Polar2D(ptJA, 180.0, BaseDim.MaterialThickness * 0.5),  90.0, GetDistance(ptI, ptJC) * 0.25)
-        DrawCircle(XA, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(XB, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(XA, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(XB, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
       end
       if Milling.DadoType == "Through" then
         line = Contour(0.0)
@@ -365,39 +365,39 @@ function Base_CabinetSide(side)
       if Milling.AddAssemblyHolesBase then
         X0 = Polar2D(Polar2D(ptFSA, 90.0, GetDistance(ptFSA, ptFSB) * 0.5),   0.0, GetDistance(ptFSA, ptR) * 0.25)
         X1 = Polar2D(Polar2D(ptR,   90.0, GetDistance(ptFSA, ptFSB) * 0.5), 180.0, GetDistance(ptFSA, ptR) * 0.25)
-        DrawCircle(X0, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X0, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
 
         X2 = Polar2D(Polar2D(ptOD, 180.0, BaseDim.MaterialThickness * 0.5),  90.0, GetDistance(ptOD, ptNC) * 0.25)
         X3 = Polar2D(Polar2D(ptNA, 180.0, BaseDim.MaterialThickness * 0.5), 270.0, GetDistance(ptOD, ptNC) * 0.25)
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X3, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X3, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
 
         X4 = Polar2D(Polar2D(ptG,  180.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
         X5 = Polar2D(Polar2D(ptFC, 180.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X4, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X5, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X4, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X5, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
 
         HoleCount = math.floor(GetDistance(X4, X5) / HoleSpace)
         HoleSpace = (GetDistance(X4, X5) / HoleCount)
 
         while (HoleCount > 1) do
           X5 = Polar2D(X5, 90.0, HoleSpace)
-          DrawCircle(X5, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+          DrawCircle(X5, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
 
         X6 = Polar2D(Polar2D(Cab.Wpt1, 90.0, BaseDim.ThicknessBack * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
         X7 = Polar2D(Polar2D(pt2,      90.0, BaseDim.ThicknessBack * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X6, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X7, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X6, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X7, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
 
         HoleCount = math.floor(GetDistance(Cab.Wpt1, pt2) / HoleSpace)
         HoleSpace = (GetDistance(X6, X7) / HoleCount)
 
         while (HoleCount > 1) do
           X7 = Polar2D(X7, 180.0, HoleSpace)
-          DrawCircle(X7, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+          DrawCircle(X7, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -560,8 +560,8 @@ if BaseQuestion.DrawSidePanels then  -- Drawer Slides
       if Milling.AddAssemblyHolesBase then
         local XC = Polar2D(Polar2D(ptO,  180.0, BaseDim.MaterialThickness * 0.5),  90.0, GetDistance(ptO, ptNA) * 0.25)
         local XD = Polar2D(Polar2D(ptNA, 180.0, BaseDim.MaterialThickness * 0.5), 270.0, GetDistance(ptO, ptNA) * 0.25)
-        DrawCircle(XC, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(XD, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(XC, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(XD, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
       end
       if Milling.DadoType == "Through" then
         line = Contour(0.0)
@@ -611,13 +611,13 @@ if BaseQuestion.DrawSidePanels then  -- Drawer Slides
       if Milling.AddAssemblyHolesBase then
         X0 = Polar2D(Polar2D(ptFSA, 270.0, GetDistance(ptFSA, ptFSB) * 0.5),   0.0, GetDistance(ptFSA, ptR) * 0.25)
         X1 = Polar2D(Polar2D(ptR,   270.0, GetDistance(ptFSA, ptFSB) * 0.5), 180.0, GetDistance(ptFSA, ptR) * 0.25)
-        DrawCircle(X0, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X0, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
 
         X2 = Polar2D(Polar2D(ptIA, 180.0, BaseDim.MaterialThickness * 0.5), 270.0, GetDistance(ptIA, ptJC) * 0.25)
         X3 = Polar2D(Polar2D(ptJA, 180.0, BaseDim.MaterialThickness * 0.5),  90.0, GetDistance(ptIA, ptJC) * 0.25)
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X3, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X3, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
 
         if Milling.DadoType == "Half Blind" then
           ptF = Polar2D(ptFA,   90.0, Milling.DadoBlindAmount + Milling.ProfileToolRadius)
@@ -626,26 +626,26 @@ if BaseQuestion.DrawSidePanels then  -- Drawer Slides
 
         X4 = Polar2D(Polar2D(ptF,  180.0, BaseDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         X5 = Polar2D(Polar2D(ptGA, 180.0, BaseDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X4, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X5, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X4, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X5, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
 
         HoleCount = math.floor(GetDistance(X4, X5) / HoleSpace)
         HoleSpace = (GetDistance(X4, X5) / HoleCount)
 
         while (HoleCount > 1) do
           X5 = Polar2D(X5, 270.0, HoleSpace)
-          DrawCircle(X5, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+          DrawCircle(X5, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
         X6 = Polar2D(Polar2D(pt4, 270.0, BaseDim.ThicknessBack * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
         X7 = Polar2D(Polar2D(pt3, 270.0, BaseDim.ThicknessBack * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X6, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X7, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X6, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X7, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
         HoleCount = math.floor(GetDistance(pt4, pt3) / HoleSpace)
         HoleSpace = (GetDistance(X6, X7) / HoleCount)
         while (HoleCount > 1) do
           X7 = Polar2D(X7, 180.0, HoleSpace)
-          DrawCircle(X7, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+          DrawCircle(X7, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -891,8 +891,8 @@ function Base_StrecherPocket(p1, Ang)
       if Milling.AddAssemblyHolesBase then
         X0 = Polar2D(Polar2D(X1, 0.0, (BaseDim.MaterialThickness  + Milling.DadoClearance) * 0.5), 270.0, GetDistance(X1, X4) * 0.24)
         X9 = Polar2D(Polar2D(X4, 0.0, GetDistance(X4, X5) * 0.5), 90.0, GetDistance(X1, X4) * 0.24)
-        DrawCircle(X0, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X9, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X0, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X9, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
       end -- if end
     else -- Ang == 90
       X1 = Polar2D(Polar2D(p1, 270.0, Milling.PocketToolRadius), 0.0, ((BaseDim.MaterialThickness + Milling.DadoClearance) * 0.5 ))
@@ -907,8 +907,8 @@ function Base_StrecherPocket(p1, Ang)
       if Milling.AddAssemblyHolesBase then
         X0 = Polar2D(Polar2D(X8, 0.0, (BaseDim.MaterialThickness  + Milling.DadoClearance) * 0.5), 90.0, GetDistance(X1, X4) * 0.25)
         X9 = Polar2D(Polar2D(X5, 0.0, GetDistance(X4, X5) * 0.5), 270.0, GetDistance(X1, X4) * 0.25)
-        DrawCircle(X0, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
-        DrawCircle(X9, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X0, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
+        DrawCircle(X9, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Base")
       end -- if end
     end -- if end
     if Project.Debugger then
@@ -942,6 +942,7 @@ function Base_Math()                                    -- All the math for Base
   BaseDim.FaceFrameStileLength = BaseDim.CabHeight - BaseDim.ToeKickHeight
   BaseDim.FaceFrameRailLength  = BaseDim.CabLength - ( BaseDim.FaceFrameStileWidth * 2.0)
   BaseDim.ShelfWidth           = BaseDim.CabDepth - (BaseDim.ThicknessBack + BaseDim.FaceFrameThickness + BaseDim.ShelfFrontClearance)
+  BaseDim.InsideDepth          = BaseDim.CabDepth - BaseDim.ThicknessBack
   BaseDim.ToeKickCoverHeight   = ((BaseDim.ToeKickHeight + BaseDim.FaceFrameBottomRailWidth) - (BaseDim.FaceFrameBottomReveal + BaseDim.MaterialThickness + BaseDim.ToeKickBottomOffsetHeight ))
   if BaseQuestion.AddCenterPanel then
     BaseDim.ShelfLength              = (BaseDim.CabLength - ((BaseDim.FaceFrameSideReveal * 2.0) + (BaseDim.MaterialThickness  * 3.0) + (BaseDim.ShelfEndClarence * 4.0)))* 0.5
@@ -1059,14 +1060,14 @@ function Base_CabinetBottom()
     if Milling.AddAssemblyHolesBase then
       local X1 = Polar2D(Polar2D(ptW, 90.0, BaseDim.MaterialThickness * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
       local X2 = Polar2D(Polar2D(ptZ, 90.0, BaseDim.MaterialThickness * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-      DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Bottom-Base")
-      DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Bottom-Base")
+      DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Bottom-Base")
+      DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Bottom-Base")
       local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
       local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
             HoleSpace = (GetDistance(X1, X2) / HoleCount)
       while (HoleCount > 1) do
         X2 = Polar2D(X2, 180.0, HoleSpace)
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Bottom-Base")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Bottom-Base")
         HoleCount = (HoleCount - 1.0)
       end -- While end
     end -- if end
@@ -1532,8 +1533,8 @@ function Base_CabinetToeandRunners()
     if Milling.AddAssemblyHolesBase and BaseQuestion.AddCenterFaceFrame then
       local X1 = Polar2D(Polar2D(Cab.Wpt5, 90.0, GetDistance(pt3, pt2) * 0.5),   0.0, GetDistance(pt3, pt4) * 0.25)
       local X2 = Polar2D(Polar2D(pt2,      90.0, GetDistance(pt3, pt2) * 0.5), 180.0, GetDistance(pt3, pt4) * 0.25)
-      DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Top-Base")
-      DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Top-Base")
+      DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Top-Base")
+      DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Top-Base")
     end -- if end
     pt1Text = Polar2D(Cab.Wpt5, 45,  1.25 * Milling.Cal)
     DrawWriter("(ID: " .. BOM.PID .. " ) Top Stretcher - ".. Double2Fraction(BaseDim.MaterialThickness) .. " " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt4, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt2)) .. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 90.0)
@@ -1556,8 +1557,8 @@ function Base_CabinetToeandRunners()
     if Milling.AddAssemblyHolesBase and BaseQuestion.AddCenterFaceFrame then
       local X3 = Polar2D(Polar2D(Cab.Wpt6, 90.0, GetDistance(pt3, pt2) * 0.5), 0.0, GetDistance(pt3, pt4) * 0.25)
       local X4 = Polar2D(Polar2D(pt2, 90.0, GetDistance(pt3, pt2) * 0.5), 180.0, GetDistance(pt3, pt4) * 0.25)
-      DrawCircle(X3, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Top-Base")
-      DrawCircle(X4, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "Top-Base")
+      DrawCircle(X3, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Top-Base")
+      DrawCircle(X4, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "Top-Base")
     end -- if end
     DrawWriter("(ID: " .. BOM.PID .. " ) Top Stretcher  - ".. Double2Fraction(BaseDim.MaterialThickness) .. " " .. BOM.BaseCabinetMateralType .. "  ( " .. Double2Fraction(GetDistance(pt2, pt3)) .. " x " .. Double2Fraction(GetDistance(pt3, pt4)).. " )", pt1Text, Project.TextHeight, Milling.LNPartLabels, 90.0)
   end
@@ -1664,6 +1665,9 @@ function BaseValidater()
   elseif BaseDim.ShelfMaterialThickness == 0 then
     StatusMessage("Error", "Base Cabinet Settings", "Shelf Material Thickness - value cannot be 0", "(9950)")
     OnLuaButton_InquiryBaseQuestion()
+
+  elseif (Hardware.Name ~= "No Drawer Slide") and (Hardware.SlideLength > BaseDim.InsideDepth) then
+    StatusMessage("Error", "Base Cabinet Slide", "Drawer Slide is longer than the Cabinet Depth", "(9955)")
 
   elseif BaseDim.ShelfPinHoleBack < Milling.ShelfPinDiameter * 8 then
     StatusMessage("Error", "Base Cabinet Settings", "Shelf Pin Hole Rear Clearance - value cannot be smaller than 8 x Shelf Pin Diameter\n" ..

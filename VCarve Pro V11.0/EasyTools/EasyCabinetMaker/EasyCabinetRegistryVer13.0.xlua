@@ -12,8 +12,6 @@
 -- ========================================================================================================================
 -- Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
 -- ========================================================================================================================
-
--- =====================================================]]
 function Importer(xFile)
   local xGroup = "Default Settings"
   BaseDim.CabDepth = GetIniValue(xFile, xGroup, "BaseDim.CabDepth", "D")
@@ -855,11 +853,11 @@ function RegistryReset()  -- Read from Registry values
   BaseQuestion.DrawTopToe                   = true
   DialogWindow.AboutXY                      = "720 X 514"
   DialogWindow.BaseCabinetXY                = "739 X 580"
-  DialogWindow.ExportSettings               = "407 X 136"
+  DialogWindow.ExportSettings               = "407 X 153"
   DialogWindow.HardwareXY                   = "697 x 926"
   DialogWindow.ImportSettings               = "725 X 160"
   DialogWindow.InquiryWallOrBaseXY          = "608 X 585"
-  DialogWindow.LayerXY                      = "653 X 535"
+  DialogWindow.LayerXY                      = "653 X 558"
   DialogWindow.MillingXY                    = "620 X 429"
   DialogWindow.NewSlideXY                   = "487 x 155"
   DialogWindow.PartDrawingXY                = "408 X 303"
@@ -1263,11 +1261,11 @@ function RegistryRead()  -- Read from Registry values
   BaseQuestion.DrawTopToe                   = RegistryRead:GetBool("BaseQuestion.DrawTopToe",                   true)
   DialogWindow.AboutXY                      = RegistryRead:GetString("DialogWindow.AboutXY",                    "720 X 514")
   DialogWindow.BaseCabinetXY                = RegistryRead:GetString("DialogWindow.BaseCabinetXY",              "739 X 580")
-  DialogWindow.ExportSettings               = RegistryRead:GetString("DialogWindow.ExportSettings",             "407 X 136")
+  DialogWindow.ExportSettings               = RegistryRead:GetString("DialogWindow.ExportSettings",             "407 X 153")
   DialogWindow.HardwareXY                   = RegistryRead:GetString("DialogWindow.HardwareXY",                 "697 x 926")
   DialogWindow.ImportSettings               = RegistryRead:GetString("DialogWindow.ImportSettings",             "725 X 160")
   DialogWindow.InquiryWallOrBaseXY          = RegistryRead:GetString("DialogWindow.InquiryWallOrBaseXY",        "586 X 585")
-  DialogWindow.LayerXY                      = RegistryRead:GetString("DialogWindow.LayerXY",                    "653 X 535")
+  DialogWindow.LayerXY                      = RegistryRead:GetString("DialogWindow.LayerXY",                    "653 X 558")
   DialogWindow.MillingXY                    = RegistryRead:GetString("DialogWindow.MillingXY",                  "620 X 429")
   DialogWindow.NewSlideXY                   = RegistryRead:GetString("DialogWindow.NewSlideXY",                 "487 x 155")
   DialogWindow.PartDrawingXY                = RegistryRead:GetString("DialogWindow.PartDrawingXY",              "408 X 303")

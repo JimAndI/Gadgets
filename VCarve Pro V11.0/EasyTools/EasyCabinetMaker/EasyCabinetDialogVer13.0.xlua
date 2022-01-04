@@ -63,6 +63,7 @@ function InquiryWallOrBase(Header)
     Project.CabinetName = All_Trim(dialog:GetTextField("Project.CabinetName"))
     Project.NewSheet    = dialog:GetDropDownListValue("Project.NewSheet")
     Project.Drawing     = dialog:GetDropDownListValue("Project.Drawing")
+    INI_GetValues(Hardware.Name)
     if Hardware.Name == "" then
       Hardware.Name     = "No Drawer Slide"
     end

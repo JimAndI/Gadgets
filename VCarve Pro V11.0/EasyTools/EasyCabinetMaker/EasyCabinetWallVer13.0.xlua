@@ -69,14 +69,14 @@ function Wall_CabinetBack()
       if Milling.AddAssemblyHolesWall then
         local X1 = Polar2D(Polar2D(ptW, 90.0, WallDim.MaterialThickness * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
         local X2 = Polar2D(Polar2D(ptZ, 90.0, WallDim.MaterialThickness * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
         local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
               HoleSpace = (GetDistance(X1, X2) / HoleCount)
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 180.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -176,23 +176,23 @@ end -- if end
       if Milling.AddAssemblyHolesWall then
         local X1 = Polar2D(Polar2D(ptF,  90.0, WallDim.ThicknessBack * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
         local X2 = Polar2D(Polar2D(ptZF, 90.0, WallDim.ThicknessBack * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
         local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
               HoleSpace = (GetDistance(X1, X2) / HoleCount)
 
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 180.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
       if Milling.AddAssemblyHolesWall then
         local X1 = Polar2D(Polar2D(ptYF, 90.0, WallDim.ThicknessBack * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
         local X2 = Polar2D(Polar2D(ptH,  90.0, WallDim.ThicknessBack * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
 
         local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
@@ -200,7 +200,7 @@ end -- if end
 
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 180.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -208,8 +208,8 @@ end -- if end
       if Milling.AddAssemblyHolesWall then
         local X1 = Polar2D(Polar2D(ptX,  180.0, WallDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         local X2 = Polar2D(Polar2D(ptYF, 180.0, WallDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
 
         local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
@@ -217,7 +217,7 @@ end -- if end
 
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 180.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -260,8 +260,8 @@ end -- if end
         if Milling.AddAssemblyHolesWall then
           local X1 = Polar2D(Polar2D(pt4, 270.0, WallDim.ThicknessBack * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
           local X2 = Polar2D(Polar2D(pt3, 270.0, WallDim.ThicknessBack * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-          DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
 
           local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
           local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
@@ -269,7 +269,7 @@ end -- if end
 
           while (HoleCount > 1) do
             X2 = Polar2D(X2, 180.0, HoleSpace)
-            DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+            DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
             HoleCount = (HoleCount - 1.0)
           end -- While end
         end -- if end
@@ -400,8 +400,8 @@ end -- if end
           X1 = Polar2D(Polar2D(Cab.Wpt1, 0.0, WallDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         end -- if end
         local X2 = Polar2D(Polar2D(pt4,      0.0, WallDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
 
         local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
@@ -409,7 +409,7 @@ end -- if end
 
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 270.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
           HoleCount = (HoleCount - 1.0)
         end -- While end
         if Milling.DadoType == "Half Blind" then
@@ -418,8 +418,8 @@ end -- if end
           X1 = Polar2D(Polar2D(pt2, 180.0, WallDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
         end -- if end
         X2 = Polar2D(Polar2D(pt3, 180.0, WallDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
 
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
@@ -427,14 +427,14 @@ end -- if end
 
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 270.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
           HoleCount = (HoleCount - 1.0)
         end -- While end
 
         X1 = Polar2D(Polar2D(pt4, 270.0, WallDim.ThicknessBack * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
         X2 = Polar2D(Polar2D(pt3, 270.0, WallDim.ThicknessBack * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-        DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
 
         HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
         HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
@@ -442,7 +442,7 @@ end -- if end
 
         while (HoleCount > 1) do
           X2 = Polar2D(X2, 180.0, HoleSpace)
-          DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+          DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
           HoleCount = (HoleCount - 1.0)
         end -- While end
       end -- if end
@@ -547,14 +547,14 @@ end -- if end
         else
           X2 = Polar2D(Polar2D(pt4, 0.0, WallDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
         end
-      DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-      DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+      DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+      DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
       local HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
       local HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
             HoleSpace = (GetDistance(X1, X2) / HoleCount)
       while (HoleCount > 1) do
         X2 = Polar2D(X2, 270.0, HoleSpace)
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
         HoleCount = (HoleCount - 1.0)
       end -- While end
       X1 = Polar2D(Polar2D(pt2,   180.0, WallDim.MaterialThickness * 0.5),  90.0, Milling.AssemblyHoleStartEnd)
@@ -563,26 +563,26 @@ end -- if end
       else
         X2 = Polar2D(Polar2D(pt3, 180.0, WallDim.MaterialThickness * 0.5), 270.0, Milling.AssemblyHoleStartEnd)
       end -- if end
-      DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-      DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+      DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+      DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
       HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
       HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
       HoleSpace = (GetDistance(X1, X2) / HoleCount)
       while (HoleCount > 1) do
         X2 = Polar2D(X2, 270.0, HoleSpace)
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
         HoleCount = (HoleCount - 1.0)
       end -- While end
       X1 = Polar2D(Polar2D(Cab.Wpt2, 90.0, WallDim.ThicknessBack * 0.5),   0.0, Milling.AssemblyHoleStartEnd)
       X2 = Polar2D(Polar2D(pt2, 90.0, WallDim.ThicknessBack * 0.5), 180.0, Milling.AssemblyHoleStartEnd)
-      DrawCircle(X1, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
-      DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+      DrawCircle(X1, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
+      DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
       HoleSpace = ((Milling.AssemblyHoleMaxSpace + Milling.AssemblyHoleMinSpace) * 0.5)
       HoleCount = math.floor(GetDistance(X1, X2) / HoleSpace)
       HoleSpace = (GetDistance(X1, X2) / HoleCount)
       while (HoleCount > 1) do
         X2 = Polar2D(X2, 180.0, HoleSpace)
-        DrawCircle(X2, Milling.AssemblyHoleDia, Milling.LNAssemblyHole .. "-Wall")
+        DrawCircle(X2, Milling.AssemblyHoleDia * 0.5, Milling.LNAssemblyHole .. "-Wall")
         HoleCount = (HoleCount - 1.0)
       end -- While end
     end -- if end
