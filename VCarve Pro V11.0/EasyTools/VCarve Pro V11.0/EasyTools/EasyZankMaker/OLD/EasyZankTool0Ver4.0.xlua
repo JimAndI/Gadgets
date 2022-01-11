@@ -1,0 +1,233 @@
+-- =====================================================]]
+function MakeToolpaths()  --  All the math for Zank Joint
+  --[[
+  Milling.Toolpath_Mgr = ToolpathManager()
+  if Milling.Toolpath_Mgr.Count >0 then
+      Milling.Toolpath_Mgr:DeleteAllToolpaths()
+  end -- if end
+  ]]
+  Milling.StartDepth = 0.0
+
+  for i=1, Milling.PassCount do
+    CreateVCarvingToolpath("Zank Inlay - " .. i)
+    Milling.StartDepth = Milling.StartDepth + Milling.MillTool1.Stepdown
+  end -- for end
+
+  if Milling.LastPassDepth > 0.0 then
+    Milling.InlayDepth = Milling.LastPassDepth
+    CreateVCarvingToolpath("Zank Inlay - " .. Milling.PassCount + 1)
+  end
+
+  return true
+end
+-- =====================================================]]
+function Mill_Math()  --  All the math for Zank Joint
+  if Milling.Tool2  == "No Tool Selected" then
+    Milling.Clearing = false
+  else
+    Milling.Clearing = true
+  end
+  Milling.InlayDepth = Milling.MillTool1.Stepdown
+  Milling.PassAmount = Milling.InlayAmount + Milling.AirGap
+  Milling.PassCount = math.floor(Milling.PassAmount / Milling.MillTool1.Stepdown)
+  Milling.LastPassDepth = Milling.PassAmount - (Milling.PassCount * Milling.InlayDepth)
+
+  RegistryWrite()
+  return true
+end
+-- =====================================================]]
+function RegistryRead()  --  Read from Registry values
+  local RegistryRead              = Registry(RegName)
+  DialogWindow.AboutXY            = RegistryRead:GetString("DialogWindow.AboutXY",            "0")
+  DialogWindow.MainXY             = RegistryRead:GetString("DialogWindow.MainXY",             "0")
+  Milling.InlayAmount             = RegistryRead:GetDouble("Milling.InlayAmount",            0.5000)
+  Milling.AirGap                  = RegistryRead:GetDouble("Milling.AirGap",                 0.1250)
+  Milling.PassCount               = RegistryRead:GetInt("Milling.PassCount",                  0)
+  Milling.LastPassDepth           = RegistryRead:GetDouble("Milling.LastPassDepth",           0.0)
+  Milling.BaseDepth               = RegistryRead:GetDouble("Milling.BaseDepth",               0.6250)
+  Milling.InlayWaste              = RegistryRead:GetDouble("Milling.InlayWaste",              0.1250)
+  Milling.MillTool1.VBit_Angle    = RegistryRead:GetDouble("Milling.MillTool1.VBit_Angle",    60.000)
+  Milling.MillTool1.ClearStepover = RegistryRead:GetDouble("Milling.MillTool1.ClearStepover", 0.125)
+  Milling.MillTool1.FeedRate      = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",      30.000)
+  Milling.MillTool1.InMM          = RegistryRead:GetBool("Milling.MillTool1.InMM",            false)
+  Milling.MillTool1.Name          = RegistryRead:GetString("Milling.MillTool1.Name",          "No Tool Selected")
+  Milling.MillTool1.PlungeRate    = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",    15.000)
+  Milling.MillTool1.RateUnits     = RegistryRead:GetInt("Milling.MillTool1.RateUnits",        4)
+  Milling.MillTool1.SpindleSpeed  = RegistryRead:GetInt("Milling.MillTool1.SpindleSpeed",     20000)
+  Milling.MillTool1.Stepdown      = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",      0.2000)
+  Milling.MillTool1.Stepover      = RegistryRead:GetDouble("Milling.MillTool1.Stepover",      0.0825)
+  Milling.MillTool1.ToolDia       = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",       0.1250)
+  Milling.MillTool1.ToolNumber    = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",        1)
+  Milling.MillTool2.FeedRate      = RegistryRead:GetDouble("Milling.MillTool2.FeedRate",      30.000)
+  Milling.MillTool2.InMM          = RegistryRead:GetBool("Milling.MillTool2.InMM",            false)
+  Milling.MillTool2.Name          = RegistryRead:GetString("Milling.MillTool2.Name",          "No Tool Selected")
+  Milling.MillTool2.PlungeRate    = RegistryRead:GetDouble("Milling.MillTool2.PlungeRate",    15.000)
+  Milling.MillTool2.RateUnits     = RegistryRead:GetInt("Milling.MillTool2.RateUnits",        4)
+  Milling.MillTool2.SpindleSpeed  = RegistryRead:GetInt("Milling.MillTool2.SpindleSpeed",      20000)
+  Milling.MillTool2.Stepdown      = RegistryRead:GetDouble("Milling.MillTool2.Stepdown",      0.2000)
+  Milling.MillTool2.Stepover      = RegistryRead:GetDouble("Milling.MillTool2.Stepover",      0.0825)
+  Milling.MillTool2.ToolDia       = RegistryRead:GetDouble("Milling.MillTool2.ToolDia",       0.1250)
+  Milling.MillTool2.ToolNumber    = RegistryRead:GetInt("Milling.MillTool2.ToolNumber",        2)
+  return true
+end
+-- =====================================================]]
+function RegistryWrite() --  Write to Registry values
+  local RegistryWrite = Registry(RegName)
+  local
+  RegValue = RegistryWrite:SetString("DialogWindow.AboutXY",             DialogWindow.AboutXY)
+  RegValue = RegistryWrite:SetString("DialogWindow.MainXY",              DialogWindow.MainXY)
+  RegValue = RegistryWrite:SetDouble("Milling.InlayAmount",              Milling.InlayAmount)
+  RegValue = RegistryWrite:SetDouble("Milling.AirGap",                   Milling.AirGap)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.VBit_Angle",     Milling.MillTool1.VBit_Angle)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.FeedRate",       Milling.MillTool1.FeedRate)
+  RegValue = RegistryWrite:SetBool("Milling.MillTool1.InMM",             Milling.MillTool1.InMM)
+  RegValue = RegistryWrite:SetString("Milling.MillTool1.Name",           Milling.MillTool1.Name)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.PlungeRate",     Milling.MillTool1.PlungeRate)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.RateUnits",         Milling.MillTool1.RateUnits)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.SpindleSpeed",      Milling.MillTool1.SpindleSpeed)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepdown",       Milling.MillTool1.Stepdown)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.ClearStepover",  Milling.MillTool1.ClearStepover)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepover",       Milling.MillTool1.Stepover)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.ToolDia",        Milling.MillTool1.ToolDia)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.ToolNumber",        Milling.MillTool1.ToolNumber)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool2.FeedRate",       Milling.MillTool2.FeedRate)
+  RegValue = RegistryWrite:SetBool("Milling.MillTool2.InMM",             Milling.MillTool2.InMM)
+  RegValue = RegistryWrite:SetString("Milling.MillTool2.Name",           Milling.MillTool2.Name)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool2.PlungeRate",     Milling.MillTool2.PlungeRate)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool2.RateUnits",         Milling.MillTool2.RateUnits)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool2.SpindleSpeed",      Milling.MillTool2.SpindleSpeed)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool2.Stepdown",       Milling.MillTool2.Stepdown)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool2.Stepover",       Milling.MillTool2.Stepover)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool2.ToolDia",        Milling.MillTool2.ToolDia)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool2.ToolNumber",        Milling.MillTool2.ToolNumber)
+  return true
+end
+-- =====================================================]]
+function ValidJob()
+-- A better error message
+  Milling.job = VectricJob()
+  if not Milling.job.Exists then
+    DisplayMessageBox("Error: Cannot run Gadget, no drawing found \n" ..
+                      "Please create a new file (drawing) and \n" ..
+                      "specify the material dimensions \n"
+    )
+    return false
+  end  -- if end
+end -- ValidJob end
+-- =====================================================]]
+function GetMaterialSettings()
+  local MaterialBlock = MaterialBlock()
+  Milling.MaterialBlockThickness = MaterialBlock.Thickness
+  Milling.MaterialBlockWidth     = MaterialBlock.Width
+  Milling.MaterialBlockHeight    = MaterialBlock.Height
+  Milling.MaterialBlockJobType   = MaterialBlock.JobType
+  if Milling.MaterialBlockJobType == 1 then
+    DisplayMessageBox("This Gadget works best on Single Sided Jobs")
+  elseif Milling.MaterialBlockJobType == 2 then
+    DisplayMessageBox("This Gadget will not work on Rotary Job")
+    return false
+  end
+  Material.xy_origin = MaterialBlock.XYOrigin
+  if MaterialBlock.InMM then
+    Milling.Units  = "Drawing Units: mm"
+    Milling.Unit = true
+    Milling.Cal = 25.4
+  else
+    Milling.Units  = "Drawing Units: inches"
+    Milling.Unit = false
+    Milling.Cal = 1.0
+  end
+  Milling.UnitDisplay  = "Note: Units: (" .. Milling.Units ..")"  --local units
+  return true
+end -- end function
+-- =====================================================]]
+function CreateVCarvingToolpath(name )
+-- Create tool we will use to machine vectors
+  local tool         = Tool(Milling.MillTool1.Name, Tool.VBIT )-- BALL_NOSE, END_MILL, VBIT
+  tool.InMM          = Milling.MillTool1.InMM
+  tool.ToolDia       = Milling.MillTool1.ToolDia
+  tool.Stepdown      = Milling.MillTool1.Stepdown
+  tool.Stepover      = Milling.MillTool1.Stepover
+  tool.RateUnits     = Milling.MillTool1.RateUnits             -- Tool.MM_SEC, MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+  tool.FeedRate      = Milling.MillTool1.FeedRate
+  tool.PlungeRate    = Milling.MillTool1.PlungeRate
+  tool.SpindleSpeed  = Milling.MillTool1.SpindleSpeed
+  tool.ToolNumber    = Milling.MillTool1.ToolNumber
+  tool.VBit_Angle     =Milling.MillTool1.VBit_Angle --  30.0 Milling.MillTool1.VBit_Angle
+  tool.ClearStepover = Milling.MillTool1.ClearStepover
+  -- Create object used to set home position and safez gap above material surface
+  local pos_data = ToolpathPosData()
+  pos_data:SetHomePosition(0, 0, 5.0)
+  pos_data.SafeZGap = 5.0
+  -- Create object used to pass pocketing options - used for area clearance only
+  local vcarve_data = VCarveParameterData()
+  -- start depth for toolpath
+  vcarve_data.StartDepth = Milling.StartDepth -- start_depth
+  -- flag indicating if we are creating a flat bottomed toolpath
+  vcarve_data.DoFlatBottom = true -- flat_depth > 0.0
+  -- cut depth for toolpath this is depth below start depth
+  vcarve_data.FlatDepth = Milling.InlayDepth  -- flat_depth
+  -- if true in Aspire, project toolpath onto composite model
+  vcarve_data.ProjectToolpath =  false
+  -- set flag indicating we are using flat tool
+  vcarve_data.UseAreaClearTool = true
+  -- Create object used to pass pocketing options - used for area clearance only
+  local pocket_data = PocketParameterData()
+  -- start depth for toolpath
+  pocket_data.StartDepth = Milling.StartDepth    -- start_depth
+  -- cut depth for toolpath this is depth below start depth
+  pocket_data.CutDepth = Milling.InlayDepth  -- flat_depth
+  -- direction of cut for offet clearance - ProfileParameterData.CLIMB_DIRECTION
+  -- or ProfileParameterData.CONVENTIONAL_DIRECTION - NOTE: enum from ProfileParameterData
+  pocket_data.CutDirection = ProfileParameterData.CLIMB_DIRECTION
+  -- if true use raster clearance strategy , else use offset area clearance
+  pocket_data.DoRasterClearance = false
+  -- set flag indicating we are using flat tool
+  pocket_data.UseAreaClearTool = true
+  -- angle for raster if using raster clearance
+  pocket_data.RasterAngle = 0
+  -- type of profile pass to perform PocketParameterData.PROFILE_NONE ,
+  -- PocketParameterData.PROFILE_FIRST orPocketParameterData.PROFILE_LAST
+  pocket_data.ProfilePassType = PocketParameterData.PROFILE_LAST
+  -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+  local create_2d_previews = true
+  -- if this is true we will display errors and warning to the user
+  local display_warnings = true
+  -- if we are doing two tool pocketing define tool to use for area clearance
+  local area_clear_tool = nil
+  if Milling.Clearing then
+    area_clear_tool              = Tool(Milling.MillTool2.Name, Tool.END_MILL) -- BALL_NOSE, END_MILL, VBIT
+    area_clear_tool.InMM         = Milling.MillTool2.InMM
+    area_clear_tool.ToolDia      = Milling.MillTool2.ToolDia
+    area_clear_tool.Stepdown     = Milling.MillTool2.Stepdown
+    area_clear_tool.Stepover     = Milling.MillTool2.Stepover
+    area_clear_tool.RateUnits    = Milling.MillTool2.RateUnits -- Tool.MM_SEC, MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+    area_clear_tool.FeedRate     = Milling.MillTool2.FeedRate
+    area_clear_tool.PlungeRate   = Milling.MillTool2.PlungeRate
+    area_clear_tool.SpindleSpeed = Milling.MillTool2.SpindleSpeed
+    area_clear_tool.ToolNumber   = Milling.MillTool2.ToolNumber
+  end -- if end
+  -- Create object which can be used to automatically select geometry
+  local geometry_selector = GeometrySelector()
+  -- Create our toolpath
+  local toolpath_manager = ToolpathManager()
+  local toolpath_id = toolpath_manager:CreateVCarvingToolpath(name, tool, area_clear_tool, vcarve_data, pocket_data, pos_data, geometry_selector,create_2d_previews,true)
+  if toolpath_id == nil then
+    DisplayMessageBox("Error creating toolpath")
+    return false
+  end
+  return true
+end
+-- =====================================================]]
+function ValidJob()
+-- A better error message
+  Milling.job = VectricJob()
+  if not Milling.job.Exists then
+    DisplayMessageBox("Error: Cannot run Gadget, no drawing found \n" ..
+                      "Please create a new file (drawing) and \n" ..
+                      "specify the material dimensions \n"
+    )
+    return false
+  end  -- if end
+end -- ValidJob end
+-- ==================== End ============================]]

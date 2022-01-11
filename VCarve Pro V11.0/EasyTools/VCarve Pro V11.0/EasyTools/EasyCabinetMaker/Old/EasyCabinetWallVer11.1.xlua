@@ -1,0 +1,519 @@
+function Wall_CabinetShelf(CountX)
+  local pt1Text = Cab.Wpt1
+  local pt2 = Polar2D(Cab.Wpt5, 0.0, WallDim.ShelfLength)
+  local pt3 = Polar2D(pt2, 90.0, WallDim.ShelfWidth)
+  local pt4 = Polar2D(pt3,  180.0, WallDim.ShelfLength)
+  if WallQuestion.DrawShelfPanel then
+    DrawBox(Cab.Wpt5, pt2, pt3, pt4, Milling.LNShelfProfile .. "-Wall")
+    pt1Text = Polar2D(Cab.Wpt5, 45,  1.5)
+    DrawWriter("(ID: ".. BOM.PID .. ") Wall Cabinet Shelf ".. CountX .. " -  " .. BOM.WallCabinetMateralType ,  pt1Text, 0.350, Milling.LNPartLabels,0.0)
+    pt1Text = Polar2D(pt1Text, 270,  0.75, 0.0)
+    DrawWriter("( " .. GetDistance(pt2, pt3) .. " x " .. GetDistance(pt3, pt4) .." )", pt1Text, 0.350, Milling.LNPartLabels, 0.0)
+  end
+  if BOM.WallShelfBOM then -- run one time only
+    CutListfileWriterItem(BOM.PID, "Cabinet Shelf",   "Wall",       WallQuestion.ShelfCount, WallDim.MaterialThickness, BOM.WallCabinetMateralType, GetDistance(pt2, pt3), GetDistance(pt3, pt4))
+    CutListfileWriterItem(BOM.PID + 10, "Shelf Nose (Not Shown)", "Wall", WallQuestion.ShelfCount, WallDim.ShelfNosingThickness, BOM.WallFaceFrameMateralType, WallDim.ShelfNosingWidth, GetDistance(pt3, pt4))
+    BOM.WallShelfBOM = false
+  end -- if end
+  return true
+end
+-- =====================================================]]
+function Wall_CabinetBack()
+  local pt1 = Cab.Wpt8
+  local pt1Text = Cab.Wpt1
+  local pt2 = Polar2D(Cab.Wpt8, 0.0,  WallDim.BackPanelWidth)
+  local ptC = Polar2D(Cab.Wpt8, 90.0,  WallDim.BackPanelLength * 0.5)
+  local pt3 = Polar2D(pt2, 90.0,  WallDim.BackPanelLength)
+  local pt4 = Polar2D(pt3, 180.0,  WallDim.BackPanelWidth)
+  local ptW = Cab.Wpt8
+  local ptX = Cab.Wpt8
+  local ptY = Cab.Wpt8
+  local ptZ = Cab.Wpt8
+  ptW = Polar2D(ptC, 270.0, ((WallDim.MaterialThickness + Milling.DadoClearance) * 0.50))
+  ptW = Polar2D(ptW, 180.0, Milling.PocketToolDia)
+  ptX = Polar2D(ptW,  90.0, (WallDim.MaterialThickness + Milling.DadoClearance))
+  ptY = Polar2D(ptX, 0.0, WallDim.BackPanelWidth + (Milling.PocketToolDia * 2.0))
+  ptZ = Polar2D(ptW, 0.0, WallDim.BackPanelWidth + (Milling.PocketToolDia * 2.0))
+  if WallQuestion.DrawBackPanel then
+    DrawBox(pt1, pt2, pt3, pt4, Milling.LNBackProfile .. "-Wall")
+    if WallQuestion.AddCenterPanel then
+      DrawBox(ptW, ptX, ptY, ptZ, Milling.LNBackPocket .. "-Wall")
+      pt1Text = Polar2D(ptX, 10,  1.75 )
+      if Milling.AddJointNotes then
+        DrawWriter("Dado - ".. WallDim.MaterialThickness .. " X " ..  Milling.DadoBackHeight , pt1Text, 0.35, Milling.LNPartLabels, 0.0)
+      end
+    end
+    pt1Text = Polar2D(Cab.Wpt8, 45,  1.5)
+    DrawWriter( "(ID: ".. BOM.PID .. ") Wall Cabinet Back - ".. WallDim.ThicknessBack .. " ".. BOM.WallCabinetMateralType, pt1Text, 0.35, Milling.LNPartLabels, 0.0)
+    pt1Text = Polar2D(pt1Text, 270,  0.75)
+    DrawWriter("( " .. GetDistance(pt2, pt3) .. " x " .. GetDistance(pt3, pt4) .." )", pt1Text, 0.350, Milling.LNPartLabels, 0.0)
+  end
+  Cab.Wpt9 = Polar2D(pt2,  0.0, Milling.PartGap)
+  BOM.PID = BOM.PID + 10
+  CutListfileWriterItem(BOM.PID, "Back Panel", "Wall", "1", WallDim.ThicknessBack, BOM.WallCabinetMateralType, WallDim.BackPanelWidth, WallDim.BackPanelLength)
+  return true
+end
+-- =====================================================]]
+function Wall_CabinetTandB(xx)
+  local pt1 = Cab.Wpt1
+  local pt2 = Cab.Wpt1
+  local ptC = Cab.Wpt1
+  local pt3 = Cab.Wpt1
+  local pt4 = Cab.Wpt1
+  local ptG = Cab.Wpt1
+  local ptH = Cab.Wpt1
+  local ptE = Cab.Wpt1
+  local ptF = Cab.Wpt1
+  local ptW = Cab.Wpt1
+  local ptX = Cab.Wpt1
+  local ptY = Cab.Wpt1
+  local ptZ = Cab.Wpt1
+  local ptZF = Cab.Wpt1
+  local ptYF = Cab.Wpt1
+  local line
+  local layer
+  local pt1Text = Cab.Wpt1
+  BOM.PID = BOM.PID + 10
+  if xx  ==  "T" then
+    pt1 = Cab.Wpt3
+    pt1Text = Polar2D(pt1, 45,  1.5)
+  else
+    pt1 = Cab.Wpt4
+    pt1Text = Polar2D(pt1, 45,  1.5)
+  end -- if end
+  pt2 = Polar2D(pt1, 0.0, WallDim.TopBottomPanelLength)
+  Cab.Wpt8 = Point2D(pt2.X + Milling.PartGap,1)
+  ptC = Polar2D(pt1,   0.0, (WallDim.TopBottomPanelLength * 0.5))
+  pt3 = Polar2D(pt2,  90.0, WallDim.CabDepth)
+  pt4 = Polar2D(pt3, 180.0, WallDim.TopBottomPanelLength)
+  ptG = Polar2D(pt3,   0.0, Milling.ProfileToolRadius)
+  ptH = Polar2D(ptG, 270.0, WallDim.ThicknessBack)
+  ptE = Polar2D(pt4, 180.0, Milling.ProfileToolRadius)
+  ptF = Polar2D(ptE, 270.0, WallDim.ThicknessBack)
+  ptE = Polar2D(ptE,  90.0, Milling.RabbitClearance)
+  ptG = Polar2D(ptG,  90.0, Milling.RabbitClearance)
+  ptW = Polar2D(ptC, 180.0, ((WallDim.MaterialThickness + Milling.DadoClearance) * 0.5))
+  ptW = Polar2D(ptW, 270.0, Milling.PocketToolDia)
+  ptX = Polar2D(ptW,   0.0, (WallDim.MaterialThickness + Milling.DadoClearance))
+  ptY = Polar2D(ptX,  90.0, WallDim.CabDepth + (Milling.PocketToolDia * 2))
+  ptZ = Polar2D(ptW,  90.0, WallDim.CabDepth + (Milling.PocketToolDia * 2))
+  ptZF = Point2D(ptZ.x,ptF.y)
+  ptYF = Point2D(ptY.x,ptF.y)
+
+  if WallQuestion.DrawBottomTopPanel then
+    line = Contour(0.0)
+    layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomPocket  .. "-Wall")
+    line:AppendPoint(ptW)
+    line:LineTo(ptX)
+    line:LineTo(ptYF)
+    line:LineTo(ptH)
+    line:LineTo(ptG)
+    line:LineTo(ptE)
+    line:LineTo(ptF)
+    line:LineTo(ptZF)
+    line:LineTo(ptW)
+    layer:AddObject(CreateCadContour(line), true)
+  end -- if end
+
+  if xx  ==  "T" then
+    if WallQuestion.DrawBottomTopPanel then
+      DrawWriter("(ID: ".. BOM.PID .. ") Wall Cabinet Top - ".. WallDim.MaterialThickness .. " " .. BOM.WallCabinetMateralType .. "  ( " .. GetDistance(pt2, pt3) .. " x " .. GetDistance(pt3, pt4).." )", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+    end -- if end
+    CutListfileWriterItem(BOM.PID, "Top Panel","Wall", "1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, WallDim.CabDepth, WallDim.BackPanelLength)
+  else
+    if WallQuestion.DrawBottomTopPanel then
+      DrawWriter("(ID: ".. BOM.PID .. ") Wall Cabinet Bottom - ".. WallDim.MaterialThickness .. " " .. BOM.WallCabinetMateralType .. "  ( " .. GetDistance(pt2, pt3) .. " x " .. GetDistance(pt3, pt4).." )", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+    end -- if end
+    CutListfileWriterItem(BOM.PID, "Bottom Panel", "Wall","1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, WallDim.CabDepth, WallDim.BackPanelLength)
+  end -- if end
+  if WallQuestion.DrawBottomTopPanel then
+    DrawBox(pt1, pt2, pt3, pt4, Milling.LNTopBottomProfile  .. "-Wall")
+  end -- if end
+  if WallQuestion.AddCenterPanel then
+    pt1Text = Polar2D(ptW, 100,  1.75 )
+    if Milling.AddJointNotes then
+      if WallQuestion.DrawBottomTopPanel then
+        DrawWriter("Dado - ".. WallDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels, 90.0)
+      end -- if end
+    end -- if end
+  end -- if end
+  pt1Text = Polar2D(ptF, 340,  1.75 )
+  if Milling.AddJointNotes then
+    if WallQuestion.DrawBottomTopPanel then
+      DrawWriter("Rabbet - ".. WallDim.ThicknessBack .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  0.0)
+    end -- if end
+  end -- if end
+  Cab.Wpt9 = Point2D(pt2.X + Milling.PartGap,1)
+  return true
+end
+-- =====================================================]]
+function Wall_CabinetSide(side)
+  local pt2 = Cab.Wpt1
+  local pt3 = Cab.Wpt1
+  local pt4 = Cab.Wpt1
+  local ptA = Cab.Wpt1
+  local ptB = Cab.Wpt1
+  local ptL = Cab.Wpt1
+  local ptK = Cab.Wpt1
+  local ptG = Cab.Wpt1
+  local ptH = Cab.Wpt1
+  local ptI = Cab.Wpt1
+  local ptJ = Cab.Wpt1
+  local ptD = Cab.Wpt1
+  local ptC = Cab.Wpt1
+  local ptE = Cab.Wpt1
+  local ptF = Cab.Wpt1
+  local pt1Text = Polar2D(Cab.Wpt1, 45,  1.5)
+  local ptx = Cab.Wpt1
+  local ptAG = Cab.Wpt1
+  local ptLG = Cab.Wpt1
+  local ptKH = Cab.Wpt1
+  local ptBH = Cab.Wpt1
+  local ptAE = Cab.Wpt1
+  local ptJH = Cab.Wpt1
+  local ptBF = Cab.Wpt1
+
+  local line
+  local layer
+  local anx = 0
+  --local layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideProfile  .. "-Wall")
+-- =====================================================]]
+  if side  ==  "L" then --  L side
+    pt1Text = Polar2D(Cab.Wpt1, 45,  1.5)
+    pt2     = Polar2D(Cab.Wpt1,   0.0, WallDim.CabHeight)
+    pt3     = Polar2D(pt2,       90.0, WallDim.CabDepth)
+    pt4     = Polar2D(pt3,      180.0, WallDim.CabHeight)
+    ptA     = Polar2D(Cab.Wpt1, 270.0, Milling.ProfileToolRadius)
+    ptB     = Polar2D(ptA,        0.0, WallDim.MaterialThickness)
+    ptL     = Polar2D(pt2,      270.0, Milling.ProfileToolRadius)
+    ptK     = Polar2D(ptL,      180.0, WallDim.MaterialThickness)
+    ptG     = Polar2D(pt3,        0.0, Milling.ProfileToolRadius)
+    ptH     = Polar2D(ptG,      270.0, WallDim.ThicknessBack)
+    ptI     = Polar2D(pt3,       90.0, Milling.ProfileToolRadius)
+    ptJ     = Polar2D(ptI,      180.0, WallDim.MaterialThickness)
+    ptD     = Polar2D(pt4,       90.0, Milling.ProfileToolRadius)
+    ptC     = Polar2D(ptD,        0.0, WallDim.MaterialThickness)
+    ptE     = Polar2D(pt4,      180.0, Milling.ProfileToolRadius)
+    ptF     = Polar2D(ptE,      270.0, WallDim.ThicknessBack)
+    ptA     = Polar2D(ptA,      180.0, Milling.RabbitClearance)
+    ptL     = Polar2D(ptL,        0.0, Milling.RabbitClearance)
+    ptG     = Polar2D(ptG,       90.0, Milling.RabbitClearance)
+    ptI     = Polar2D(ptI,        0.0, Milling.RabbitClearance)
+    ptE     = Polar2D(ptE,       90.0, Milling.RabbitClearance)
+    ptD     = Polar2D(ptD,      180.0, Milling.RabbitClearance)
+    ptJH    = Point2D(ptJ.x,ptH.y)
+    ptBF    = Point2D(ptB.x,ptF.y)
+    ptAE    = Point2D(ptA.x,ptE.y)
+    ptLG    = Point2D(ptL.x,ptG.y)
+    if WallQuestion.DrawSidePanels then
+      line = Contour(0.0)
+      layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket  .. "-Wall")
+      line:AppendPoint(ptA)
+      line:LineTo(ptAE)
+      line:LineTo(ptLG)
+      line:LineTo(ptL)
+      line:LineTo(ptK)
+      line:LineTo(ptJH)
+      line:LineTo(ptBF)
+      line:LineTo(ptB)
+      line:LineTo(ptA)
+      layer:AddObject(CreateCadContour(line), true)
+    end
+    if WallQuestion.DrawSidePanels then
+      DrawWriter("(ID: ".. BOM.PID .. ") Wall Cabinet Left Side - ".. WallDim.MaterialThickness .." " .. BOM.WallCabinetMateralType .. " ( " .. WallDim.CabHeight .. " x " .. WallDim.CabDepth .. " )", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+      DrawBox(Cab.Wpt1, pt2, pt3, pt4, Milling.LNSideProfile  .. "-Wall")
+    end
+    BOM.PID = BOM.PID + 10
+    CutListfileWriterItem(BOM.PID, "Left Side Panel","Wall", "1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, WallDim.CabDepth, WallDim.CabHeight)
+--  top Dado
+--    DrawBox(ptA, ptB, ptC, ptD, Milling.LNSidePocket  .. "-Wall")
+    pt1Text = Polar2D(ptA, 60,  2.5 )
+    if Milling.AddJointNotes and WallQuestion.DrawSidePanels then
+      DrawWriter("Rabbet - ".. WallDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  90.0)
+    end
+--  back Dado
+--    DrawBox(ptE, ptF, ptH, ptG, Milling.LNSidePocket  .. "-Wall")
+    pt1Text = Polar2D(ptF, 340,  1.75 )
+    if Milling.AddJointNotes and WallQuestion.DrawSidePanels then
+      DrawWriter("Rabbet - ".. WallDim.ThicknessBack .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  0.0)
+    end
+--  bottom Dado
+--    DrawBox(ptI, ptJ, ptK, ptL, Milling.LNSidePocket  .. "-Wall")
+    pt1Text = Polar2D(ptL, 120,  1.85 )
+    if Milling.AddJointNotes and WallQuestion.DrawSidePanels then
+      DrawWriter("Rabbet - ".. WallDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  90.0)
+    end
+    ptx = Cab.Wpt1
+    anx = 0
+    ptx = Polar2D(Polar2D(Cab.Wpt1, 0.0, (WallDim.ShelfHoleFirstRowSpacing + WallDim.MaterialThickness)), 90, ((WallDim.CabDepth - WallDim.ThicknessBack) * WallDim.ShelfPinHoleBack))
+-- =====================================================]]
+    ptx = Cab.Wpt2
+    anx = 0
+    ptx = Polar2D(Polar2D(Cab.Wpt2, 0.0, (WallDim.ShelfHoleFirstRowSpacing + WallDim.MaterialThickness)), 90, ((WallDim.CabDepth - WallDim.ThicknessBack) * WallDim.ShelfPinHoleBack))
+    anx = 90
+-- =====================================================]]
+  else  --  R side
+-- =====================================================]]
+    pt1Text = Polar2D(Cab.Wpt2, 45,  1.5)
+    pt2 = Polar2D(Cab.Wpt2, 0, WallDim.CabHeight)
+    pt3 = Polar2D(pt2, 90, WallDim.CabDepth)
+    pt4 = Polar2D(pt3, 180, WallDim.CabHeight)
+    ptA = Polar2D(Cab.Wpt2, 270, Milling.ProfileToolRadius)
+    ptB = Polar2D(ptA,  0, WallDim.MaterialThickness)
+    ptL = Polar2D(pt2, 270, Milling.ProfileToolRadius)
+    ptK = Polar2D(ptL, 180, WallDim.MaterialThickness)
+    ptI = Polar2D(pt3, 90, Milling.ProfileToolRadius)
+    ptJ = Polar2D(ptI, 180, WallDim.MaterialThickness)
+    ptD = Polar2D(pt4, 90, Milling.ProfileToolRadius)
+    ptC = Polar2D(ptD,  0, WallDim.MaterialThickness)
+    ptG = Polar2D(pt2,  0, Milling.ProfileToolRadius)
+    ptH = Polar2D(ptG, 90, WallDim.ThicknessBack)
+    ptE = Polar2D(Cab.Wpt2, 180, Milling.ProfileToolRadius)
+    ptF = Polar2D(ptE, 90, WallDim.ThicknessBack)
+
+    BOM.PID = BOM.PID + 10
+--  Right Side
+    ptL = Polar2D(ptL,  0, Milling.RabbitClearance)
+    ptI = Polar2D(ptI,  0, Milling.RabbitClearance)
+--  Back Side
+    ptG = Polar2D(ptG, 270, Milling.RabbitClearance)
+    ptE = Polar2D(ptE, 270, Milling.RabbitClearance)
+--  Left Side
+    ptD = Polar2D(ptD, 180, Milling.RabbitClearance)
+    ptA = Polar2D(ptA, 180, Milling.RabbitClearance)
+
+    ptAG = Point2D(ptA.x,ptG.y)
+    ptLG = Point2D(ptL.x,ptG.y)
+    ptKH = Point2D(ptK.x,ptH.y)
+    ptBH = Point2D(ptB.x,ptH.y)
+    if WallQuestion.DrawSidePanels then
+      line = Contour(0.0)
+      layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket  .. "-Wall")
+      line:AppendPoint(ptAG)
+      line:LineTo(ptLG)
+      line:LineTo(ptI)
+      line:LineTo(ptJ)
+      line:LineTo(ptKH)
+      line:LineTo(ptBH)
+      line:LineTo(ptC)
+      line:LineTo(ptD)
+      line:LineTo(ptAG)
+      layer:AddObject(CreateCadContour(line), true)
+      DrawBox(Cab.Wpt2, pt2, pt3, pt4, Milling.LNSideProfile  .. "-Wall")
+      DrawWriter("(ID: ".. BOM.PID .. ") Wall Cabinet Right Side - ".. WallDim.MaterialThickness .." " .. BOM.WallCabinetMateralType .. " ( " .. WallDim.CabHeight .. " x " .. WallDim.CabDepth .. " )", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+    end
+    CutListfileWriterItem(BOM.PID, "Right Side Panel","Wall", "1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, WallDim.CabDepth, WallDim.CabHeight)
+    pt1Text = Polar2D(ptB, 70,  1.85 )
+    if Milling.AddJointNotes and WallQuestion.DrawSidePanels then
+      DrawWriter("Rabbet - ".. WallDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  90.0)
+    end
+--  back Dado
+--    DrawBox(ptE, ptF, ptH, ptG, Milling.LNSidePocket  .. "-Wall")
+    pt1Text = Polar2D(ptG, 175,  8.75 )
+    if Milling.AddJointNotes and WallQuestion.DrawSidePanels then
+      DrawWriter("Rabbet - ".. WallDim.ThicknessBack .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  0.0)
+    end
+--  bottom Dado
+--    DrawBox(ptI, ptJ, ptK, ptL, Milling.LNSidePocket  .. "-Wall")
+    pt1Text = Polar2D(ptL, 120,  1.85 )
+    if Milling.AddJointNotes and WallQuestion.DrawSidePanels then
+      DrawWriter("Rabbet - ".. WallDim.MaterialThickness .. " X " ..  Milling.DadoHeight , pt1Text, 0.35, Milling.LNPartLabels,  90.0)
+    end
+    ptx = Cab.Wpt2
+    anx = 0
+    ptx = Polar2D(Polar2D(pt4, 0, (WallDim.ShelfHoleFirstRowSpacing + WallDim.MaterialThickness)), 270, ((WallDim.CabDepth - WallDim.ThicknessBack) * WallDim.ShelfPinHoleBack))
+    anx = 270
+  end
+  if (WallQuestion.ShelfCount >= 1) and WallQuestion.DrawSidePanels then
+    if side  ==  "L" then --  L side
+      ptx = Polar2D(Polar2D(Cab.Wpt1, 0.0, (WallDim.ShelfHoleFirstRowSpacing + WallDim.MaterialThickness)), 90.0, WallDim.ShelfPinHoleFront)
+      anx = 90
+    else
+      ptx = Polar2D(Cab.Wpt2, 90.0, WallDim.CabDepth)
+      anx = 270.0
+      ptx = Polar2D(Polar2D(ptx, 0.0, (WallDim.ShelfHoleFirstRowSpacing + WallDim.MaterialThickness)), 270.0, WallDim.ShelfPinHoleFront)
+    end
+    local  rows = WallDim.HoleRows
+    while (rows >0) do
+      Holer(ptx, anx, WallDim.HoleSpace, Milling.ShelfPinRadius, Milling.LNSideShelfPinDrill .. "-Wall")
+      ptx = Polar2D(ptx, 0, WallDim.ShelfHoleSpacing)
+      rows = (rows - 1.0)
+    end
+  end
+  return true
+end  --  function end
+-- =====================================================]]
+function Wall_CenterPanel()
+  layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelProfile .. "-Wall")
+  local pt1 = Cab.Wpt7
+  local pt1Text = Cab.Wpt1
+  local pt2 = Polar2D(pt1, 0.0, WallDim.CenterPanelLength)
+  local pt3 = Polar2D(pt2, 90.0, WallDim.CenterPanelWidth)
+  local pt4 = Polar2D(pt3, 180, WallDim.CenterPanelLength )
+  Cab.Wpt8 = Polar2D(pt2, 0.0,  Milling.PartGap)
+  BOM.PID = BOM.PID + 10
+  pt1Text = Polar2D(Cab.Wpt7, 45,  1.5)
+  if WallQuestion.DrawCenterPanel  then
+    DrawWriter("(ID: ".. BOM.PID .. ") Wall Cabinet Center Panel - ".. WallDim.MaterialThickness .." " .. BOM.WallCabinetMateralType .. "  ( " .. GetDistance(pt2, pt3) .. " x " .. GetDistance(pt3, pt4).." )", pt1Text, 0.35000, Milling.LNPartLabels, 0.0)
+    DrawBox(pt1, pt2, pt3, pt4, Milling.LNCenterPanelProfile .. "-Wall")
+  end
+  CutListfileWriterItem(BOM.PID, "Center Panel","Wall", "1", WallDim.MaterialThickness, BOM.WallCabinetMateralType, WallDim.CenterPanelWidth, WallDim.CenterPanelLength)
+  if WallQuestion.ShelfCount >= 1 and WallQuestion.DrawCenterPanel  then
+    local ptx = Cab.Wpt7
+    local anx = 90
+    ptx = Polar2D(Polar2D(Cab.Wpt7, 0, (WallDim.ShelfHoleFirstRowSpacing + WallDim.MaterialThickness)), 90, WallDim.ShelfPinHoleFront )
+    local rows = WallDim.HoleRows
+    while (rows >0) do
+      Holer(ptx, anx, WallDim.HoleSpace, Milling.ShelfPinRadius, Milling.LNCenterPanelShelfPinDrill .. "-Wall")
+      ptx = Polar2D(ptx, 0.0, WallDim.ShelfHoleSpacing)
+      rows = (rows - 1.0)
+    end
+  end
+  return true
+end  --  function end
+-- =====================================================]]
+function Wall_CabinetFaceFrame()
+  local pt1Text = Cab.Wpt1
+  local pt2 = Polar2D(Cab.Wpt9, 0, WallDim.CabHeight)
+  local pt3 = Polar2D(pt2,  90, WallDim.CabLength)
+  local pt4 = Polar2D(pt3, 180, WallDim.CabHeight)
+  local A1 = Polar2D(Cab.Wpt9, 90,  WallDim.FaceFrameStileWidth)
+  local B1 = Polar2D(pt2, 90,  WallDim.FaceFrameStileWidth)
+  local C1 = Polar2D(pt3,  270, WallDim.FaceFrameStileWidth)
+  local D1 = Polar2D(pt4,  270, WallDim.FaceFrameStileWidth)
+  BOM.PID = BOM.PID + 10
+  -- Draw Stiles
+  if WallQuestion.DrawFaceFrame then
+    DrawBox(Cab.Wpt9, pt2, B1, A1, Milling.LNDrawFaceFrame .. "-Wall")
+  end -- if end
+  CutListfileWriterItem(BOM.PID, "Face Frame Stile","Wall", "2", WallDim.FaceFrameThickness, BOM.WallFaceFrameMateralType, WallDim.FaceFrameStileWidth, GetDistance(A1, B1))
+  pt1Text = Polar2D(Cab.Wpt9, 5,  8.75 )
+  if WallQuestion.DrawFaceFrame then
+    DrawWriter("Part ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  0.0)
+    DrawBox(D1, C1, pt3, pt4, Milling.LNDrawFaceFrame .. "-Wall")
+    pt1Text = Polar2D(D1, 5,  8.75 )
+    DrawWriter("Part ID: ".. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  0.0)
+  end
+  BOM.PID = BOM.PID + 10
+  local A2 = Polar2D(A1, 0, WallDim.FaceFrameBottomRailWidth)
+  local B2 = Polar2D(B1, 180, WallDim.FaceFrameTopRailWidth)
+  local C2 = Polar2D(C1, 180,  WallDim.FaceFrameTopRailWidth)
+  local D2 = Polar2D(D1, 0, WallDim.FaceFrameBottomRailWidth)
+  local pt2c = Polar2D(A2, 90, ((WallDim.CabLength * 0.5) - WallDim.FaceFrameStileWidth) )
+  local pt1c = Polar2D(B2,  90, ((WallDim.CabLength * 0.5) - WallDim.FaceFrameStileWidth) )
+  -- Draw Top Rail
+  if WallQuestion.DrawFaceFrame then
+    DrawBox(A1, A2, D2, D1, Milling.LNDrawFaceFrame .. "-Wall")
+    pt1Text = Polar2D(A2, 95,  2.75 )
+    DrawWriter("Part ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  90.0)
+    -- Draw Top Rail
+    DrawBox(B2, B1, C1, C2, Milling.LNDrawFaceFrame .. "-Wall")
+    pt1Text = Polar2D(B1, 95,  2.75 )
+    DrawWriter("Part ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  90.0)
+  end
+  BOM.PID = BOM.PID + 10
+  CutListfileWriterItem(BOM.PID, "Face Frame Top", "Wall", "1", WallDim.FaceFrameThickness, BOM.WallFaceFrameMateralType, WallDim.FaceFrameTopRailWidth, GetDistance(A1, B1))
+  BOM.PID = BOM.PID + 10
+  CutListfileWriterItem(BOM.PID, "Face Frame Bottom", "Wall", "1", WallDim.FaceFrameThickness, BOM.WallFaceFrameMateralType, WallDim.FaceFrameBottomRailWidth, GetDistance(A1, B1))
+
+  if WallQuestion.AddCenterFaceFrame then
+    WallDim.FaceFrameCenterStileLength = (WallDim.CabLength * 0.50) - (WallDim.FaceFrameStileWidth + (WallDim.FaceFrameCenterStileWidth * 0.5))
+    local A3 = Polar2D(pt1c,  90.0, (WallDim.FaceFrameCenterStileWidth * 0.5))
+    local B3 = Polar2D(pt2c,  90.0, (WallDim.FaceFrameCenterStileWidth * 0.5))
+    local C3 = Polar2D(pt1c, 270.0, (WallDim.FaceFrameCenterStileWidth * 0.5))
+    local D3 = Polar2D(pt2c, 270.0, (WallDim.FaceFrameCenterStileWidth * 0.5))
+    if WallQuestion.DrawFaceFrame then
+      DrawBox(A3, B3, D3, C3, Milling.LNDrawFaceFrame .. "-Wall")
+      pt1Text = Polar2D(A3, 185,  8.75 )
+      DrawWriter("Part ID: " .. BOM.PID, pt1Text, 0.40, Milling.LNPartLabels,  0.0)
+    end
+    BOM.PID = BOM.PID + 10
+    CutListfileWriterItem(BOM.PID, "Center Face Frame", "Wall", "1", WallDim.FaceFrameThickness, BOM.WallFaceFrameMateralType, WallDim.FaceFrameCenterStileWidth, GetDistance(D3, C3))
+  end
+  WallDim.FaceFrameStileLength = WallDim.CabHeight
+  WallDim.FaceFrameRailLength = WallDim.CabLength - (WallDim.FaceFrameStileWidth * 2.0)
+  WallDim.FaceFrameCenterStileLength = WallDim.CabHeight- (WallDim.FaceFrameBottomRailWidth + WallDim.FaceFrameTopRailWidth)
+  pt1Text = Polar2D(Cab.Wpt1, 90,  45.0)
+  DrawWriter(Project.ProgramName, pt1Text, 1.250, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270, 1.25)
+  DrawWriter("Cabinet ID: " .. Project.DrawerID, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270,1)
+  DrawWriter("Cabnet Name: " .. Project.CabinetName, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270,1)
+  DrawWriter("Version: " .. Project.ProgramVersion, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270,1)
+  DrawWriter("Code By: " .. Project.ProgramCodeBy, pt1Text, 0.750, Milling.LNDrawNotes, 0.0)
+  return true
+end  --  function end
+-- =====================================================]]
+function Wall_Math()  --  All the math for Wall Cabinet
+  WallQuestion.AddFaceFrame = true
+  WallDim.BackPanelWidth = WallDim.CabHeight - Milling.DadoHeight
+  WallDim.FaceFrameTopOverlap = WallDim.FaceFrameTopRailWidth - WallDim.FaceFrameTopReveal-WallDim.MaterialThickness
+  WallDim.BackPanelLength = WallDim.CabLength - ( (Milling.DadoHeight * 2.0) + (WallDim.FaceFrameSideReveal * 2.0))
+  WallDim.SidePanelWidth  = WallDim.CabDepth - WallDim.FaceFrameThickness
+  WallDim.SidePanelLength =  WallDim.CabHeight - WallDim.FaceFrameTopOverlap
+  WallDim.TopBottomPanelWidth = WallDim.CabDepth - WallDim.FaceFrameThickness
+  WallDim.TopBottomPanelLength =  WallDim.CabLength - ( (Milling.DadoHeight * 2.0) + (WallDim.FaceFrameSideReveal * 2.0))
+  WallDim.FaceFrameStileLength = WallDim.CabHeight
+  Project.DrawerID = StartDate()
+  WallDim.FaceFrameRailLength = WallDim.CabLength - ( WallDim.FaceFrameStileWidth * 2.0)
+  WallDim.ShelfWidth =  WallDim.CabDepth - (WallDim.ThicknessBack + WallDim.FaceFrameThickness + WallDim.ShelfFrontClearance + WallDim.ShelfFaceFrameThickness)
+  if WallQuestion.AddCenterPanel then
+    WallDim.ShelfLength =  (((WallDim.CabLength  - ((WallDim.MaterialThickness * 3.0) +  (WallDim.FaceFrameSideReveal * 2.0) ))*0.5000) -(WallDim.ShelfEndClarence * 2.0) )
+    WallDim.ShelfNoseLength  = WallDim.ShelfLength
+  else
+    WallDim.ShelfLength = (WallDim.CabLength  - ((WallDim.MaterialThickness * 2.0)  + (WallDim.FaceFrameSideReveal * 2.0) + (WallDim.ShelfEndClarence * 2)) )
+    WallDim.ShelfNoseLength  = WallDim.ShelfLength
+  end
+  WallDim.HoleSpace = WallDim.SidePanelWidth - (WallDim.ThicknessBack + WallDim.ShelfPinHoleFront + WallDim.ShelfPinHoleBack)
+  WallDim.HoleRows = ((WallDim.CabHeight - (WallDim.ShelfHoleFirstRowSpacing + WallDim.ShelfHoleLastRowSpacing + (WallDim.MaterialThickness * 2.0))) / WallDim.ShelfHoleSpacing)
+  WallDim.CenterPanelLength = WallDim.SidePanelLength - (WallDim.FaceFrameBottomRailWidth + (Milling.DadoHeight * 2.0))
+  WallDim.CenterPanelWidth =  WallDim.CabDepth - (Milling.DadoBackHeight + WallDim.FaceFrameThickness )
+  RegistryWrite()
+  return true
+end
+-- =====================================================]]
+function WallValidater()
+  local MyTrue = false
+  if WallDim.FaceFrameBottomRailWidth == 0 then
+    MessageBox("Error: Wall Face Frame Bottom Rail Width cannot be 0")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.FaceFrameCenterStileWidth == 0 then
+    MessageBox("Error: Wall Face Frame Center Stile Width cannot be 0")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.FaceFrameStileWidth == 0 then
+    MessageBox("Error: Wall Face Frame Stile Width cannot be 0")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.FaceFrameTopRailWidth == 0 then
+    MessageBox("Error: Wall Face Frame Top Rail Width Width cannot be 0")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.ShelfHoleFirstRowSpacing < Milling.ShelfPinDiameter * 8 then
+    MessageBox("Error: Wall Shelf Hole FirstRow Spacing cannot be smaller than 8 x Shelf Pin Diameter")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.ShelfHoleLastRowSpacing < Milling.ShelfPinDiameter * 8 then
+    MessageBox("Error: Wall Shelf Hole Last Row Spacing cannot be smaller than 8 x Shelf Pin Diameter")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.ShelfHoleSpacing < Milling.ShelfPinDiameter * 4 then
+    MessageBox("Error: Wall Shelf Hole Spacing cannot be smaller than 4 x Shelf Pin Diameter")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.ShelfMaterialThickness == 0 then
+    MessageBox("Error: Wall Shelf Material Thickness cannot be 0")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.ShelfPinHoleBack < Milling.ShelfPinDiameter * 8 then
+    MessageBox("Error: Wall Shelf Pin Hole Back cannot be smaller than 8 x Shelf Pin Diameter")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.ShelfPinHoleFront < Milling.ShelfPinDiameter * 8 then
+    MessageBox("Error: Wall Shelf Pin Hole Front cannot be smaller than 8 x Shelf Pin Diameter")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.MaterialThickness == 0 then
+    MessageBox("Error: Wall Face Frame Bottom Rail Width cannot be 0")
+    OnLuaButton_InquiryWallQuestion()
+  elseif WallDim.ThicknessBack == 0 then
+    MessageBox("Error: Wall Face Frame Bottom Rail Width cannot be 0")
+    OnLuaButton_InquiryWallQuestion()
+  else
+    MyTrue = true
+  end -- if end
+  return MyTrue
+end -- if end

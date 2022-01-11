@@ -1,0 +1,115 @@
+-- =====================================================]]
+function GearMath()
+    Gear.ToothAngle       = (360.0 / Gear.ToothCountNum)
+    Gear.PitchChord       = (Gear.ToothTickness * Gear.ToothCountNum)
+    Gear.PitchRadius      = (Gear.ToothTickness / 2.0) * (math.sin( 180.0 / Gear.ToothCountNum))
+    Gear.PitchDiameter    = (Gear.PitchRadius * 2.0)
+	return true
+end -- function end
+-- =====================================================]]
+function RegistryRead(RegName)                                 -- Read from Registry values
+  local RegistryRead = Registry(RegName)
+  --[[
+  local Yes_No    = RegistryRead:GetBool("BaseDim.Yes_No", ture)
+  local CabHeight = RegistryRead:GetDouble("BaseDim.CabHeight", 35.500)
+  local CabCount  = RegistryRead:GetInt("BaseDim.CabCount", 36)
+  local Name      = RegistryRead:GetString("BaseDim.Name", "Words")
+  ]]
+
+  Gear.ToothCount                 = RegistryRead:GetString("Gear.ToothCount",               "20")
+  Gear.ShowLines                  = RegistryRead:GetString("Gear.ShowLines",                "Yes")
+  Gear.Addendum                   = RegistryRead:GetDouble("Gear.Addendum",                 0.5000)
+  Gear.Dedendum                   = RegistryRead:GetDouble("Gear.Dedendum",                 0.5000)
+  Gear.AddendumDiameter           = RegistryRead:GetDouble("Gear.AddendumDiameter",         6.0000)
+  Gear.DedendumDiameter           = RegistryRead:GetDouble("Gear.DedendumDiameter",         5.5000)
+  Gear.ToothTickness              = RegistryRead:GetDouble("Gear.ToothTickness",            0.5000)
+  Gear.Slotwidth                  = RegistryRead:GetDouble("Gear.Slotwidth",                0.5000)
+  Gear.ToothAngle                 = RegistryRead:GetDouble("Gear.ToothAngle",               5.5000)
+  Gear.PitchDiameter              = RegistryRead:GetDouble("Gear.PitchDiameter",            15.5000)
+  Gear.FilletRadius               = RegistryRead:GetDouble("Gear.FilletRadius",             0.0500)
+  Gear.ToplandAmount              = RegistryRead:GetDouble("Gear.ToplandAmount",            0.5000)
+  Gear.FaceFlankRadius            = RegistryRead:GetDouble("Gear.FaceFlankRadius",          0.1250)
+  Gear.PitchChord                 = RegistryRead:GetDouble("Gear.PitchChord",               1.0000)
+  Gear.PitchRadius                = RegistryRead:GetDouble("Gear.PitchRadius",              5.5000)
+  Milling.MillTool1.FeedRate      = RegistryRead:GetDouble("Milling.MillTool1.FeedRate",    30.000)
+  Milling.MillTool1.InMM          = RegistryRead:GetBool("Milling.MillTool1.InMM ",         false)
+  Milling.MillTool1.Name          = RegistryRead:GetString("Milling.MillTool1.Name",        "No Tool Selected")
+  Milling.MillTool1.BitType       = RegistryRead:GetString("Milling.MillTool1.BitType",     "END_MILL") -- BALL_NOSE, END_MILL, VBIT
+  Milling.MillTool1.RateUnits     = RegistryRead:GetInt("Milling.MillTool1.RateUnits",      4)
+  Milling.MillTool1.SpindleSpeed  = RegistryRead:GetInt("Milling.MillTool1.SpindleSpeed",   20000)
+  Milling.MillTool1.ToolNumber    = RegistryRead:GetInt("Milling.MillTool1.ToolNumber",     1)
+  Milling.MillTool1.Stepdown      = RegistryRead:GetDouble("Milling.MillTool1.Stepdown",    0.2000)
+  Milling.MillTool1.Stepover      = RegistryRead:GetDouble("Milling.MillTool1.Stepover",    0.0825)
+  Milling.MillTool1.ToolDia       = RegistryRead:GetDouble("Milling.MillTool1.ToolDia",     0.1250)
+  Milling.MillTool1.PlungeRate    = RegistryRead:GetDouble("Milling.MillTool1.PlungeRate",  15.000)
+  return true
+end -- function end
+-- =====================================================]]
+function GetUnits()
+  local mtl_block = MaterialBlock()
+  if mtl_block.InMM then
+    DialogWindow.Units  = "Drawing Units: mm"
+    DialogWindow.Unit = true
+    DialogWindow.Cal = 25.4
+  else
+    DialogWindow.Units  = "Drawing Units: inches"
+    DialogWindow.Unit = false
+    DialogWindow.Cal = 1.0
+  end
+  DialogWindow.UnitDisplay  = "Note: Units: (" .. DialogWindow.Units ..")"
+  return true
+end -- end function
+-- =====================================================]]
+function RegistryWrite(RegName)                                -- Write to Registry values
+  local RegistryWrite = Registry(RegName)
+  local RegValue
+  --[[
+  RegValue = RegistryWrite:SetBool("ProjectQuestion.CabinetName",      true)
+  RegValue = RegistryWrite:SetDouble("BaseDim.CabDepth",               23.0000)
+  RegValue = RegistryWrite:SetInt("BaseDim.CabHeight",                 35)
+  RegValue = RegistryWrite:SetString("BaseDim.CabLength",              "Words")
+  ]]
+
+  RegValue = RegistryWrite:SetString("Gear.ToothCount",                 Gear.ToothCount)
+  RegValue = RegistryWrite:SetString("Gear.ShowLines",                  Gear.ShowLines)
+  RegValue = RegistryWrite:SetDouble("Gear.Addendum",                   Gear.Addendum)
+  RegValue = RegistryWrite:SetDouble("Gear.Dedendum",                   Gear.Dedendum)
+  RegValue = RegistryWrite:SetDouble("Gear.AddendumDiameter",           Gear.AddendumDiameter)
+  RegValue = RegistryWrite:SetDouble("Gear.DedendumDiameter",           Gear.DedendumDiameter)
+  RegValue = RegistryWrite:SetDouble("Gear.ToothTickness",              Gear.ToothTickness)
+  RegValue = RegistryWrite:SetDouble("Gear.Slotwidth",                  Gear.Slotwidth)
+  RegValue = RegistryWrite:SetDouble("Gear.ToothAngle",                 Gear.ToothAngle)
+  RegValue = RegistryWrite:SetDouble("Gear.PitchDiameter",              Gear.PitchDiameter)
+  RegValue = RegistryWrite:SetDouble("Gear.FilletRadius",               Gear.FilletRadius)
+  RegValue = RegistryWrite:SetDouble("Gear.ToplandAmount",              Gear.ToplandAmount)
+  RegValue = RegistryWrite:SetDouble("Gear.FaceFlankRadius",            Gear.FaceFlankRadius)
+  RegValue = RegistryWrite:SetDouble("Gear.PitchChord",                 Gear.PitchChord)
+  RegValue = RegistryWrite:SetDouble("Gear.PitchRadius",                Gear.PitchRadius)
+  RegValue = RegistryWrite:SetString("DialogWindow.InquiryMainXY",      DialogWindow.InquiryMainXY)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.FeedRate",      Milling.MillTool1.FeedRate)
+  RegValue = RegistryWrite:SetBool("Milling.MillTool1.InMM",            Milling.MillTool1.InMM)
+  RegValue = RegistryWrite:SetString("Milling.MillTool1.Name",          Milling.MillTool1.Name)
+  RegValue = RegistryWrite:SetString("Milling.MillTool1.BitType",       Milling.MillTool1.BitType)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.PlungeRate",    Milling.MillTool1.PlungeRate)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.RateUnits",        Milling.MillTool1.RateUnits)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.SpindleSpeed",     Milling.MillTool1.SpindleSpeed)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepdown",      Milling.MillTool1.Stepdown)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.Stepover",      Milling.MillTool1.Stepover)
+  RegValue = RegistryWrite:SetDouble("Milling.MillTool1.ToolDia",       Milling.MillTool1.ToolDia)
+  RegValue = RegistryWrite:SetInt("Milling.MillTool1.ToolNumber",       Milling.MillTool1.ToolNumber)
+  return true
+end -- function end
+-- =====================================================]]
+function ValidJob()
+-- A better error message
+    Milling.Job = VectricJob()
+    if not Milling.Job.Exists then
+      DisplayMessageBox("Error: Cannot run the Gadget, no drawing found \n" ..
+                        "Please create a new file (drawing) and \n" ..
+                        "specify the material dimensions \n")
+      return false
+    else
+      return true
+    end  -- if end
+  end -- ValidJob end
+-- ==================== End ============================]]

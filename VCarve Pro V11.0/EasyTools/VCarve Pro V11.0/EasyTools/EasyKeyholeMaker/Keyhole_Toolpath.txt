@@ -1,0 +1,5 @@
+Keyhole Toolpath
+
+Brings up a dialog box, after selecting two circular vectors,  that allows the user to enter the parameters for a keyhole toolpath. The gadget will then create the toolpath with the entered name
+
+Version 3.0 Note: The EasyKeyhole version of the EasyKeyhole is a rewrite of the Keyhole_Toolpath gadget produced and provided by Vectric Ltd. At no point should anyone believe that I (Jimandi) did anything but add some functionality. This is and always will be a Gadget delived and write by Vectric Ltd team.

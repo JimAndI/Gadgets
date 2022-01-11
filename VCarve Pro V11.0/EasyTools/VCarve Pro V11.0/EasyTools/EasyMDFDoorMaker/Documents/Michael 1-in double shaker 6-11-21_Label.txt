@@ -1,0 +1,19 @@
+Item,Job,Room,DoorName,Size
+Mi1,Michael,Basement,Upper 1,14.25x35.75
+Mi2,Michael,Basement,Upper 2,14.25x35.75
+Mi3,Michael,Basement,Upper 3,14.25x35.75
+Mi4,Michael,Basement,Upper 4,14.25x35.75
+Mi5,Michael,Basement,Upper 5,11.75x35.75
+Mi6,Michael,Basement,Upper 6,11.75x35.75
+Mi7,Michael,Basement,Upper 7,17.75x15.75
+Mi8,Michael,Basement,Upper 8,17.75x15.75
+Mi9,Michael,Basement,DW Panel,23.75x30.375
+Mi10,Michael,Basement,Pantry,59.5x11.5
+Mi11,Michael,Basement,Pantry,30.375x11.5
+Mi12,Michael,Basement,Base 1,23.75x6
+Mi13,Michael,Basement,Base 2,11.625x24.125
+Mi14,Michael,Basement,Base 3,11.625x24.125
+Mi15,Michael,Basement,Base 4,10.75x30.375
+Mi16,Michael,Basement,Base 5,26.25x6
+Mi17,Michael,Basement,Base 6,12.875x24.125
+Mi18,Michael,Basement,Base 7,12.875x24.125

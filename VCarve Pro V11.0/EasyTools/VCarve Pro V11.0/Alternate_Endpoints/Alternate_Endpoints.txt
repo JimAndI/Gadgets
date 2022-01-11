@@ -1,0 +1,3 @@
+Alternate Endpoints
+
+Given a set of lines sets the starting points so that the start point of line n+1 is at the same end as the end point of line n.

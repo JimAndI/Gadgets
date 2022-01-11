@@ -1,0 +1,4 @@
+List Folders
+This gadget will process a folder (c:\temp) in the enxample and create a list
+of all the files and folders under this folder. The output is written to 
+c:\temp\lua_filelist.txt. Edit the script to change these paths.

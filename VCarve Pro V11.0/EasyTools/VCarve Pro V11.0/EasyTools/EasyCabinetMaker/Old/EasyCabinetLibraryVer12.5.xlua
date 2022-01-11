@@ -1,0 +1,884 @@
+-- ========================================================================================================================
+--  Gadgets are an entirely optional add-in to Vectric's core software products.
+--  They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.
+--  In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.
+--  Permission is granted to anyone to use this software for any purpose,
+--  including commercial applications, and to alter it and redistribute it freely,
+--  subject to the following restrictions:
+--  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+--  If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.
+--  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+--  3. This notice may not be removed or altered from any source distribution.
+-- ========================================================================================================================
+-- Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
+-- ========================================================================================================================
+function NameStrip(str, var) -- convert string to the correct data type
+-- Local Words = NameStrip("KPSDFKSPSK - 34598923", "-") -- returns "KPSDFKSPSK"
+    if "" == str then
+      StatusMessage("Error", "Name Striping", "Error in string", "(7300)")
+    else
+      if string.find(str, var) then
+        local j = assert(string.find(str, var) - 1)
+        return All_Trim(string.sub(str, 1, j)) ;
+      else
+        return str
+      end
+    end
+  end -- function end
+  -- =====================================================]]
+function InquiryYesNo( Header, Question)
+ --[[
+     Drop list for user to input project info
+     Caller = local y = InquiryDropList("JimAndi Cabinet Maker", "Select Cabinet Style", 290, 165, IniFile)
+     Dialog Header = "JimAndi Cabinet Maker"
+     User Question = "DO you want a Free Pie"
+     Selection Array = IniFile
+     Returns = String
+   ]]
+   local myHtml = [[<html> <head> <title>Project Information</title>]] .. DialogWindow.Style ..[[ </head> <body bgcolor = "#EBEBEB" text = "#000000">
+                 <table width="400" border="0" align="left" cellpadding="0"> <tr>
+                 <td colspan="3" align="left" valign="middle" nowrap class="h2" id="Question2">&nbsp;</td> </tr> <tr>
+                 <td colspan="3" align="left" valign="middle" nowrap class="h2" id="Question">Question</td> </tr> <tr>
+                 <td align="left" valign="middle" nowrap class="h2">&nbsp;</td> </tr> <tr>
+                 <td colspan="3" align="center" valign="middle"> <table width="350" border="0" cellpadding="0"> <tr>
+                 <td style="width: 20%" align="center" valign="middle"> <input id="ButtonCancel"  class="FormButton"
+                 name="ButtonCancel" type="button" value="No"> </th> <td style="width: 20%" align="center" valign="middle">
+                 <input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="Yes"> </th> </tr> </table>
+                 </td> </tr> </table> </body> </html>]] ;
+-- =========================================================
+ local dialog = HTML_Dialog(true, myHtml, 440, 170, Header)
+    dialog:AddLabelField("Question",Question)
+    if not dialog:ShowDialog() then
+       return false
+    else
+      return  true
+    end
+ end
+  -- =====================================================]]
+function NameValidater(FileName)
+  local MyTrue = true
+  local strlen = string.len(FileName)
+  local strup = string.upper(FileName)
+  local i = 1
+  local y = ""
+  while i <=  strlen do
+    y = string.byte(string.sub(strup, i, i))
+    if y == 32 then
+      MyTrue = true
+    elseif y == 45 then
+      MyTrue = true
+    elseif (y >= 48) and (y <= 57) then
+      MyTrue = true
+    elseif (y >= 65) and (y <= 90) then
+      MyTrue = true
+    else
+      MyTrue = false
+      break
+    end -- if end
+    i = i + 1
+  end -- while end;
+  return MyTrue
+end -- if end
+-- =====================================================]]
+function DialogSize(Str)
+  local InText = string.find(string.upper(Str) , "X")
+  local DialogX = All_Trim(string.sub(Str, 1, InText - 1))
+  local DialogY = All_Trim(string.sub(Str, InText + 1))
+  return tonumber(DialogX), tonumber(DialogY)
+end -- if end
+-- =====================================================]]
+function Polar2D(pt, ang, dis)
+  if dis ~= math.abs(dis) then
+    ang = ang + 90.0
+    dis = math.abs(dis)
+  end
+  local ang1 = ang + Material.Direction
+  return Point2D((pt.X + dis * math.cos(math.rad(ang1))), (pt.Y + dis * math.sin(math.rad(ang1))))
+end
+  -- =====================================================]]
+function StrIniValue(str, ty)
+-- Convert string to the correct data type
+    if nil == str then
+      StatusMessage("Error", "Ini Value Striping", "Ini file - looking for a " .. ty .. " value", "(7400)")
+    else
+      if "" == All_Trim(str) then
+        StatusMessage("Error", "Ini Value Striping", "Ini value Ini file - looking for a " .. ty .. " value", "(7500)")
+      else
+        local j = (string.find(str, "=") + 1)
+        if ty == "D" then -- Double
+          return tonumber(string.sub(str, j))
+        end -- if end
+        if ty == "I" then -- Intiger
+          return tonumber(string.sub(str, j))
+        end -- if end
+        if ty == "S" then -- String
+          return All_Trim(string.sub(str, j))
+        end -- if end
+        if ty == "B" then -- Bool
+          if "TRUE" == All_Trim(string.upper(string.sub(str, j))) then
+            return true
+          else
+            return false
+          end -- if end
+        end -- if end
+      end -- if end
+    end -- if end
+    return nil
+  end -- function end
+-- =====================================================]]
+function GetIniValue(FileName, GroupName, ItemName, ValueType)
+    -- ==GetIniValue(FileName, GroupName, ItemName, ValueType)==
+-- Returns a value from a file, group, and Item
+-- Usage: XX.YY = GetIniValue(FileName, GroupName, "XX.YY", "N")
+    local file = io.open(FileName, "r")
+    local dat = "."
+    local ItemNameLen = string.len(ItemName)
+    while (dat ~= "EOF") do
+      dat = string.upper(All_Trim(file:read()))
+      if dat == "[" .. string.upper(GroupName) .. "]" then
+        break
+      end -- if end
+    end -- while end
+    while (dat ~= "EOF") do
+      dat = All_Trim(file:read())
+      if ItemName == string.sub(dat, 1, ItemNameLen)  then
+        break
+      else
+        if dat == "EOF" then
+          StatusMessage("Error", "Ini File Value", "Note the " .. ItemName .. " item under Group [" .. GroupName .. "] not found", "(7600)")
+          break
+        end -- if end
+      end -- if end
+    end -- while end
+    file:close()-- closes the open file
+    local XX = StrIniValue(dat, ValueType)
+    return XX
+  end -- function end
+-- =====================================================]]
+function DrawWriter(what, where, size, lay, ang)
+  local group
+--[[ How to use:
+|    local TextMessage = "Your Text Here"
+|    local TextPt = Point2D(3.5,3.8)
+|    local TextHight = 0.5
+|    local TextLayer = "Jim Anderson"
+|    local TextAng = 20.0
+|    DrawTextWriter(TextMessage ,local TextPt , TextHight , TextLayer,TextAng )
+|    -- ==Draw Writer==
+|    -- Utilizing a provided string of text, the program walks the string and reproduces each letter (parametrically) on the drawing using vectors.
+function main()
+    -- create a layer with passed name if it doesn't already exist
+  local job = VectricJob()
+  if not job.Exists then
+       DisplayMessageBox("No job loaded")
+       return false;
+  end
+  local TextMessage = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 1 2 3 4 5 6 7 8 9 0 ! @ # $ % & * ( ) { } [ ] ? , . : ; '' ' _ - + = ~ ^ < > |"
+  local TextPt = Point2D(0.1, 2.0)
+  local TextHight = 0.25
+  local TextLayer = "Gadget Text"
+  local TextAng = 10.0
+  DrawTextWriter(TextMessage, TextPt, TextHight, TextLayer, TextAng)
+	job:Refresh2DView()
+  return true
+end
+-- -----------------------------------------------------]]
+ang = ang + Material.Direction
+--size = size * Milling.Cal
+-- ==============================================================================
+local function Polar2D(pt, ang, dis)
+  return Point2D((pt.X + dis * math.cos(math.rad(ang))), (pt.Y + dis * math.sin(math.rad(ang))))
+end
+-- ==============================================================================
+local function MonoFont(job, pt, letter, scl, lay, ang)
+  scl = (scl * 0.5) ;
+  local pA0 = pt ;
+  local pA1 = Polar2D(pt, ang + 90.0000, (0.2500 * scl)) ;  local pA2 = Polar2D(pt, ang + 90.0000, (0.5000 * scl)) ;
+  local pA3 = Polar2D(pt, ang + 90.0000, (0.7500 * scl)) ;  local pA4 = Polar2D(pt, ang + 90.0000, (1.0000 * scl)) ;
+  local pA5 = Polar2D(pt, ang + 90.0000, (1.2500 * scl)) ;  local pA6 = Polar2D(pt, ang + 90.0000, (1.5000 * scl)) ;
+  local pA7 = Polar2D(pt, ang + 90.0000, (1.7500 * scl)) ;  local pA8 = Polar2D(pt, ang + 90.0000, (2.0000 * scl)) ;
+  local pA9 = Polar2D(pt, ang + 90.0000, (2.2500 * scl)) ;  local pA10 = Polar2D(pt, ang + 90.0000, (2.5000 * scl)) ;
+  local pB0 = Polar2D(pt, ang +  0.0000, (0.2500 * scl)) ;  local pB1 = Polar2D(pt, ang + 45.0000, (0.3536 * scl)) ;
+  local pB2 = Polar2D(pt, ang + 63.4352, (0.5590 * scl)) ;  local pB3 = Polar2D(pt, ang + 71.5651, (0.7906 * scl)) ;
+  local pB4 = Polar2D(pt, ang + 75.9638, (1.0308 * scl)) ;  local pB5 = Polar2D(pt, ang + 78.6901, (1.2748 * scl)) ;
+  local pB6 = Polar2D(pt, ang + 80.5376, (1.5207 * scl)) ;  local pB7 = Polar2D(pt, ang + 81.8699, (1.7678 * scl)) ;
+  local pB8 = Polar2D(pt, ang + 82.8750, (2.0156 * scl)) ;  local pB10 = Polar2D(pt, ang + 84.2894, (2.5125 * scl)) ;
+  local pC0 = Polar2D(pt, ang +  0.0000, (0.5000 * scl)) ;  local pC1 = Polar2D(pt, ang + 26.5650, (0.5590 * scl)) ;
+  local pC2 = Polar2D(pt, ang + 45.0000, (0.7071 * scl)) ;  local pC3 = Polar2D(pt, ang + 56.3099, (0.9014 * scl)) ;
+  local pC4 = Polar2D(pt, ang + 63.4342, (1.1180 * scl)) ;  local pC5 = Polar2D(pt, ang + 68.1993, (1.3463 * scl)) ;
+  local pC6 = Polar2D(pt, ang + 71.5650, (1.5811 * scl)) ;  local pC7 = Polar2D(pt, ang + 63.4342, (1.1180 * scl)) ;
+  local pC8 = Polar2D(pt, ang + 75.9640, (2.0616 * scl)) ;  local pC10 = Polar2D(pt, ang + 78.6899, (2.5495 * scl)) ;
+  local pD0 = Polar2D(pt, ang +  0.0000, (0.6250 * scl)) ;  local pD1 = Polar2D(pt, ang + 21.8014, (0.6731 * scl)) ;
+  local pD2 = Polar2D(pt, ang + 33.6901, (0.9014 * scl)) ;  local pD4 = Polar2D(pt, ang + 57.9946, (1.1792 * scl)) ;
+  local pD7 = Polar2D(pt, ang + 70.3462, (1.8583 * scl)) ;  local pD8 = Polar2D(pt, ang + 72.6460, (2.0954 * scl)) ;
+  local pE0 = Polar2D(pt, ang +  0.0000, (0.7500 * scl)) ;  local pE1 = Polar2D(pt, ang + 18.4346, (0.7906 * scl)) ;
+  local pE2 = Polar2D(pt, ang + 33.6901, (0.9014 * scl)) ;  local pE3 = Polar2D(pt, ang + 45.0000, (1.0607 * scl)) ;
+  local pE5 = Polar2D(pt, ang + 59.0371, (1.4578 * scl)) ;  local pE6 = Polar2D(pt, ang + 63.4349, (1.6771 * scl)) ;
+  local pE7 = Polar2D(pt, ang + 66.4349, (1.9039 * scl)) ;  local pE8 = Polar2D(pt, ang + 69.4440, (2.1360 * scl)) ;
+  local pF0 = Polar2D(pt, ang +  0.0000, (1.0000 * scl)) ;  local pF1 = Polar2D(pt, ang + 14.0360, (1.0308 * scl)) ;
+  local pF2 = Polar2D(pt, ang + 26.5651, (1.1180 * scl)) ;  local pF3 = Polar2D(pt, ang + 36.8699, (1.2500 * scl)) ;
+  local pF4 = Polar2D(pt, ang + 45.0000, (1.4142 * scl)) ;  local pF5 = Polar2D(pt, ang + 51.3425, (1.6006 * scl)) ;
+  local pF6 = Polar2D(pt, ang + 56.3099, (1.8025 * scl)) ;  local pF7 = Polar2D(pt, ang + 60.2551, (2.0156 * scl)) ;
+  local pF8 = Polar2D(pt, ang + 63.4349, (2.2361 * scl)) ;  local pG0 = Polar2D(pt, ang +  0.0000, (1.2500 * scl)) ;
+  local pG1 = Polar2D(pt, ang + 11.3099, (1.2748 * scl)) ;  local pG2 = Polar2D(pt, ang + 21.8014, (1.3463 * scl)) ;
+  local pG3 = Polar2D(pt, ang + 30.9638, (1.4577 * scl)) ;  local pG4 = Polar2D(pt, ang + 38.6598, (1.6008 * scl)) ;
+  local pG5 = Polar2D(pt, ang + 45.0000, (1.7678 * scl)) ;  local pG6 = Polar2D(pt, ang + 50.1944, (1.9526 * scl)) ;
+  local pG7 = Polar2D(pt, ang + 54.4623, (2.1506 * scl)) ;  local pG8 = Polar2D(pt, ang + 57.9946, (2.3585 * scl)) ;
+  local pG10 = Polar2D(pt,59.0362, (2.9155 * scl))       ;  local pH0 = Polar2D(pt, ang +  0.0000, (1.5000 * scl)) ;
+  local pH10 = Polar2D(pt,63.4349, (2.7951 * scl))       ;  local layer = job.LayerManager:GetLayerWithName(lay) ;
+  local line = Contour(0.0)
+ -- ------------------------------------------------------------------
+  if letter == 32 then
+    pH0 = pH0 ;
+  end
+  if letter == 33 then
+    line:AppendPoint(pB0) ;  line:LineTo(pE0) ;  line:LineTo(pE2) ;  line:LineTo(pB2) ;  line:LineTo(pB0) ;  group:AddTail(line)
+    line = Contour(0.0) line:AppendPoint(pB3) ;  line:LineTo(pE3) ;  line:LineTo(pE8) ;  line:LineTo(pB8) ;  line:LineTo(pB3) ;  group:AddTail(line)
+  end
+  if letter == 34 then
+    line:AppendPoint(pA7) ;  line:LineTo(pB10) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB7) ;  line:LineTo(pC10)
+    group:AddTail(line) ;  pH0 = pE0 ;
+  end
+  if letter == 35 then
+    line:AppendPoint(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6)
+    line:LineTo(pG6) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB0) ;  line:LineTo(pB8) ;  group:AddTail(line)
+    line = Contour(0.0) ;  line:AppendPoint(pF0) ;  line:LineTo(pF8) ;  group:AddTail(line)
+  end
+  if letter == 36 then
+    line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4)
+    line:LineTo(pB4) ;  line:LineTo(pA5) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  group:AddTail(line)
+    line = Contour(0.0) ;  line:AppendPoint(pC0) ;  line:LineTo(pE0) ;  line:LineTo(pE8) ;  line:LineTo(pC8) ;  line:LineTo(pC0) ;  group:AddTail(line)
+  end
+  if letter == 37 then
+    line:AppendPoint(pC6) ;  line:LineTo(pC8) ;  line:LineTo(pA8) ;  line:LineTo(pA6) ;  line:LineTo(pE6) ;  line:LineTo(pG8)
+    line:LineTo(pA0) ;  line:LineTo(pC2) ;  line:LineTo(pG2) ;  line:LineTo(pG0) ;  line:LineTo(pE0) ;  line:LineTo(pE2) ;  group:AddTail(line)
+  end
+  if letter == 38 then
+    line:AppendPoint(pG2) ;  line:LineTo(pG1) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  line:LineTo(pA3)
+    line:LineTo(pE6) ;  line:LineTo(pE7) ;  line:LineTo(pD8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA6) ;  line:LineTo(pG0)
+    group:AddTail(line)
+  end
+  if letter == 39 then
+    line:AppendPoint(pA7) ;  line:LineTo(pB10) ;  group:AddTail(line) ;  pH0 = pC0
+  end
+  if letter == 40 then
+    line:AppendPoint(pB8) ;  line:LineTo(pA5) ;  line:LineTo(pA3) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  pH0 = pD0
+  end
+  if letter == 41 then
+    line:AppendPoint(pA8) ;  line:LineTo(pB5) ;  line:LineTo(pB3) ;  line:LineTo(pA0) ;  group:AddTail(line) ;  pH0 = pG0
+  end
+  if letter == 42 then
+    line:AppendPoint(pA2) ;  line:LineTo(pG6) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6) ;  line:LineTo(pG2)
+    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD7)
+    line:LineTo(pD1) ;  group:AddTail(line)
+  end
+  if letter == 43 then
+    line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD1) ;  line:LineTo(pD7) ; group:AddTail(line)
+  end
+  if letter == 44 then
+    line:AppendPoint(pC0) ;  line:LineTo(pE2) ;  line:LineTo(pC2) ;  line:LineTo(pC4) ;  line:LineTo(pF4) ;  line:LineTo(pF2)
+    line:LineTo(pD0) ;  line:LineTo(pC0) ;  group:AddTail(line)
+  end
+  if letter == 45 then
+    line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line)
+  end
+  if letter == 46 then
+    line:AppendPoint(pA1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  line:LineTo(pA0) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  pH0 = pD0
+  end
+  if letter == 47 then
+    line:AppendPoint(pA0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  pH0 = pG0
+  end
+  if letter == 48 then
+    line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6)
+    line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG8) ;  line:LineTo(pA0)
+    group:AddTail(line)
+  end
+  if letter == 49 then
+    line:AppendPoint(pA6) ;  line:LineTo(pD8) ;  line:LineTo(pD0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA0)
+    line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 50 then
+    line:AppendPoint(pA6) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5)
+    line:LineTo(pA2) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 51 then
+    line:AppendPoint(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4)
+    line:LineTo(pG3) ;  line:LineTo(pG1) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  line = Contour(0.0)
+    line:AppendPoint(pF4) ;  line:LineTo(pB4) ;  group:AddTail(line)
+  end
+  if letter == 52 then
+    line:AppendPoint(pF0) ;  line:LineTo(pF8) ;  line:LineTo(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line)
+  end
+  if letter == 53 then
+    line:AppendPoint(pG8) ;  line:LineTo(pA8) ;  line:LineTo(pA5) ;  line:LineTo(pF4) ;  line:LineTo(pG3) ;  line:LineTo(pG1)
+    line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA1) ;  line:LineTo(pA2) ;  group:AddTail(line)
+  end
+  if letter == 54 then
+    line:AppendPoint(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA1) ;  line:LineTo(pB0)
+    line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;  line:LineTo(pB4) ;  line:LineTo(pA2) ;  group:AddTail(line)
+  end
+  if letter == 55 then
+    line:AppendPoint(pB0) ;  line:LineTo(pG8) ;  line:LineTo(pA8) ;  group:AddTail(line)
+  end
+  if letter == 56 then
+    line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4)
+    line:LineTo(pG5) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA5) ;  line:LineTo(pB4)
+    line:LineTo(pA3) ;  line:LineTo(pA1) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB4) ;  line:LineTo(pF4) ;  group:AddTail(line)
+  end
+  if letter == 57 then
+    line:AppendPoint(pA1) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG3) ;  line:LineTo(pG7) ;  line:LineTo(pF8)
+    line:LineTo(pB8) ;  line:LineTo(pA7) ;  line:LineTo(pA5) ;  line:LineTo(pB4) ;  line:LineTo(pF4) ;  line:LineTo(pG5) ;  group:AddTail(line)
+  end
+  if letter == 58 then
+    line:AppendPoint(pB8) ;  line:LineTo(pA8) ;  line:LineTo(pA7) ;  line:LineTo(pB7) ;  line:LineTo(pB8) ;  line:LineTo(pA8)
+    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  line:LineTo(pA0) ;  line:LineTo(pA1)
+    group:AddTail(line) ;  pH0 = pD0
+  end
+  if letter == 59 then
+    line:AppendPoint(pB8) ;  line:LineTo(pA8) ;  line:LineTo(pA7) ;  line:LineTo(pB7) ;  line:LineTo(pB8) ;  line:LineTo(pA8)
+    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB3) ;  line:LineTo(pB4) ;  line:LineTo(pA4) ;  line:LineTo(pA3) ;  line:LineTo(pB3)
+    line:LineTo(pA0) ;  group:AddTail(line) ;  pH0 = pD0
+  end
+  if letter == 60 then
+    line:AppendPoint(pF8) ;  line:LineTo(pA4) ;  line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 61 then
+    line:AppendPoint(pA2) ;  line:LineTo(pG2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA6)
+    line:LineTo(pG6) ;  group:AddTail(line)
+  end
+  if letter == 62 then
+    line:AppendPoint(pA8) ;  line:LineTo(pF4) ;  line:LineTo(pA0) ;  group:AddTail(line)
+  end
+  if letter == 63 then
+    line:AppendPoint(pB5) ;  line:LineTo(pA6) ;  line:LineTo(pA7) ;  line:LineTo(pB8) ;  line:LineTo(pE8) ;  line:LineTo(pF7)
+    line:LineTo(pF5) ;  line:LineTo(pC3) ;  line:LineTo(pC2) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pB0) ;  line:LineTo(pE0)
+    line:LineTo(pE1) ;  line:LineTo(pB1) ;  line:LineTo(pB0) ;  group:AddTail(line)
+  end
+  if letter == 64 then
+    line:AppendPoint(pG0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8)
+    line:LineTo(pG6) ;  line:LineTo(pG3) ;  line:LineTo(pE2) ;  line:LineTo(pB2) ;  line:LineTo(pB5) ;  line:LineTo(pE5) ;  line:LineTo(pE2)
+    group:AddTail(line)
+  end
+  if letter == 65 then
+    line:AppendPoint(pA0) ;  line:LineTo(pD8) ;  line:LineTo(pG0) ;  line:LineTo(pF3) ;  line:LineTo(pB3)
+    line:LineTo(pA0) ;  group:AddTail(line) ;
+  end
+  if letter == 66 then
+    line:AppendPoint(pA4) ;  line:LineTo(pF4) ;  line:LineTo(pG5) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pA8)
+    line:LineTo(pA0) ;  line:LineTo(pF0) ;  line:LineTo(pG1) ;  line:LineTo(pG3) ;  line:LineTo(pF4) ;  group:AddTail(line)
+  end
+  if letter == 67 then
+    line:AppendPoint(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8)
+    line:LineTo(pF8) ;  line:LineTo(pG6) ;  group:AddTail(line)
+  end
+  if letter == 68 then
+    line:AppendPoint(pA0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG6) ;  line:LineTo(pF8) ;  line:LineTo(pA8)
+    line:LineTo(pA0) ;  group:AddTail(line)
+  end
+  if letter == 69 then
+    line:AppendPoint(pG0) ;  line:LineTo(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  line = Contour(0.0)
+    line:AppendPoint(pA4) ;  line:LineTo(pD4) ;  group:AddTail(line)
+  end
+  if letter == 70 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4)
+    line:LineTo(pF4) ;  group:AddTail(line)
+  end
+  if letter == 71 then
+    line:AppendPoint(pG6) ;  line:LineTo(pG7) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA6) ;  line:LineTo(pA2)
+    line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG3) ;  line:LineTo(pE3) ;  line:LineTo(pE2) ;  group:AddTail(line)
+  end
+  if letter == 72 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG0) ;  line:LineTo(pG8)
+    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line)
+  end
+  if letter == 73 then
+    line:AppendPoint(pB0) ;  line:LineTo(pB8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA0) ;  line:LineTo(pC0)
+    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA8) ;  line:LineTo(pC8) ;  group:AddTail(line) ;  pH0 = pE0
+  end
+  if letter == 74 then
+    line:AppendPoint(pA2) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG8) ;  line:LineTo(pC8) ;  group:AddTail(line)
+  end
+  if letter == 75 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA2) ;  line:LineTo(pG7)
+    group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD4) ;  line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 76 then
+    line:AppendPoint(pA8) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 77 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pD4) ;  line:LineTo(pG8) ;  line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 78 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF0) ;  line:LineTo(pF8) ;  group:AddTail(line) ;  pH0 = pG0
+  end
+  if letter == 79 then
+    line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6)
+    line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line)
+  end
+  if letter == 80 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4)
+    line:LineTo(pA4) ;  group:AddTail(line)
+  end
+  if letter == 81 then
+    line:AppendPoint(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA6) ;  line:LineTo(pB8) ;  line:LineTo(pF8) ;  line:LineTo(pG6)
+    line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pG0) ;  line:LineTo(pD4)
+    group:AddTail(line)
+  end
+  if letter == 82 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA8) ;  line:LineTo(pF8) ;  line:LineTo(pG7) ;  line:LineTo(pG5) ;  line:LineTo(pF4)
+    line:LineTo(pA4) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD4) ;  line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 83 then
+    line:AppendPoint(pG5) ;  line:LineTo(pG6) ;  line:LineTo(pF8) ;  line:LineTo(pB8) ;  line:LineTo(pA6) ;  line:LineTo(pA5)
+    line:LineTo(pG3) ;  line:LineTo(pG2) ;  line:LineTo(pF0) ;  line:LineTo(pB0) ;  line:LineTo(pA2) ;  line:LineTo(pA3) ;  group:AddTail(line)
+  end
+  if letter == 84 then
+    line:AppendPoint(pA8) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD8)
+    line:LineTo(pD0) ;  group:AddTail(line)
+  end
+  if letter == 85 then
+    line:AppendPoint(pA8) ;  line:LineTo(pA2) ;  line:LineTo(pB0) ;  line:LineTo(pF0) ;  line:LineTo(pG2) ;  line:LineTo(pG8) ;  group:AddTail(line)
+  end
+  if letter == 86 then
+    line:AppendPoint(pA8) ;  line:LineTo(pD0) ;  line:LineTo(pG8) ;  group:AddTail(line)
+  end
+  if letter == 87 then
+    line:AppendPoint(pA8) ;  line:LineTo(pB0) ;  line:LineTo(pD4) ;  line:LineTo(pF0) ;  line:LineTo(pG8) ;  group:AddTail(line)
+  end
+  if letter == 88 then
+    line:AppendPoint(pA0) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pA8)
+    line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 89 then
+    line:AppendPoint(pA8) ;  line:LineTo(pD4) ;  line:LineTo(pG8) ;  group:AddTail(line) ;  line = Contour(0.0) ;  line:AppendPoint(pD0)
+    line:LineTo(pD4) ;  group:AddTail(line)
+  end
+  if letter == 90 then
+    line:AppendPoint(pA8) ;  line:LineTo(pG8) ;  line:LineTo(pA0) ;  line:LineTo(pG0) ;  group:AddTail(line)
+  end
+  if letter == 91 then
+    line:AppendPoint(pC0) ;  line:LineTo(pB0) ;  line:LineTo(pB8) ;  line:LineTo(pC8) ;  group:AddTail(line)
+  end
+  if letter == 92 then
+    line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line)
+  end
+  if letter == 93 then
+    line:AppendPoint(pE0) ;  line:LineTo(pF0) ;  line:LineTo(pF8) ;  line:LineTo(pE8) ;  group:AddTail(line)
+  end
+  if letter == 94 then
+    line:AppendPoint(pD8) ;  line:LineTo(pG6) ;  line:LineTo(pG5) ;  line:LineTo(pD7) ;  line:LineTo(pA5) ;  line:LineTo(pA6)
+    line:LineTo(pD8) ;  group:AddTail(line)
+  end
+  if letter == 95 then
+    line:AppendPoint(pA0) ;  line:LineTo(pF0) ;  group:AddTail(line)
+  end
+  if letter == 96 then
+    line:AppendPoint(pA4) ;  line:LineTo(pG4) ;  group:AddTail(line)
+  end
+  if letter == 123 then
+    line:AppendPoint(pD0) ;  line:LineTo(pC0) ;  line:LineTo(pB1) ;  line:LineTo(pB2) ;  line:LineTo(pC3) ;  line:LineTo(pA4)
+    line:LineTo(pC5) ;  line:LineTo(pB6) ;  line:LineTo(pB7) ;  line:LineTo(pC8) ;  line:LineTo(pD8) ;  group:AddTail(line)
+  end
+  if letter == 124 then
+    line:AppendPoint(pA0) ;  line:LineTo(pA10) ;  line:LineTo(pC10) ;  line:LineTo(pC0) ;  line:LineTo(pA0) ;  group:AddTail(line)
+  end
+  if letter == 125 then
+    line:AppendPoint(pD0) ;  line:LineTo(pE0) ;  line:LineTo(pF1) ;  line:LineTo(pF2) ;  line:LineTo(pE3) ;  line:LineTo(pG4)
+    line:LineTo(pE5) ;  line:LineTo(pF6) ;  line:LineTo(pF7) ;  line:LineTo(pE8) ;  line:LineTo(pD8) ;  group:AddTail(line)
+  end
+  if letter == 126 then
+    line:AppendPoint(pA2) ;  line:LineTo(pA3) ;  line:LineTo(pB5) ;  line:LineTo(pF3) ;  line:LineTo(pG5)
+    line:LineTo(pG4) ;  line:LineTo(pF2) ;  line:LineTo(pB4) ;  line:LineTo(pA2) ;  group:AddTail(line)
+  end
+  return pH0
+end  -- function end
+-- =========================================================================
+local function AddGroupToJob(job, group, layer_name)
+   --  create a CadObject to represent the  group
+  local cad_object = CreateCadGroup(group);
+   -- create a layer with passed name if it doesnt already exist
+  local layer = job.LayerManager:GetLayerWithName(layer_name)
+   -- and add our object to it
+  layer:AddObject(cad_object, true)
+  return cad_object
+end
+-- =========================================================================
+  local job = VectricJob()
+  if not job.Exists then
+    StatusMessage("Error", "Job Setup", "Not finding a job loaded", "(7100)")
+    return false
+  end ;
+  local strlen = string.len(what)
+  local strup = string.upper(what)
+  local x = strlen
+  local i = 1
+  local y = ""
+  local ptx = where
+  group = ContourGroup(true)
+  while i <=  x do
+    y = string.byte(string.sub(strup, i, i))
+    ptx = MonoFont(job, ptx, y, size, lay, ang)
+    i = i + 1
+  end -- while end;
+  AddGroupToJob(job, group, lay)
+  job:Refresh2DView()
+  return true ;
+end ; -- DrawWriter function end ;
+--  ====================================================]]
+function LengthOfFile(filename)-- Returns file line count
+--[[
+Counts the lines in a file
+Returns: number
+]]
+    local len = 0
+    if FileExists(filename) then
+      local file = io.open(filename)
+      for _ in file:lines() do
+        len = len + 1
+      end
+      file:close() ;
+    end
+    return len
+  end -- function end
+-- =====================================================]]
+function FileExists(name)
+    local f=io.open(name,"r")
+    if f~=nil then
+      io.close(f)
+      return true
+    else
+      return false
+    end
+  end -- Function end
+-- =====================================================]]
+function DrawCircle(Cpt, CircleRadius, LayerName)  -- Draws a circle
+  -- | draws a circle based on user inputs
+  -- | job - current validated job unique ID
+  -- | Cpt - (2Dpoint) center of the circle
+  -- | CircleRadius - radius of the circle
+  -- | Layer - layer name to draw circle (make layer if not exist)
+  local pa = Polar2D(Cpt, 180.0, CircleRadius)
+  local pb = Polar2D(Cpt,   0.0, CircleRadius)
+  local line = Contour(0.0)
+  line:AppendPoint(pa)
+  line:ArcTo(pb,1)
+  line:ArcTo(pa,1)
+  local layer = Milling.job.LayerManager:GetLayerWithName(LayerName)
+  layer:AddObject(CreateCadContour(line), true)
+  return true
+end -- function end
+-- =====================================================]]
+function WorkingPath(Header, Quest, DefaltPath)
+--[[
+    Number Box for user input with default value
+    Caller: local X = WorkingPath("Select Working Path", "My files go to this file location?", "C:\\")
+    Dialog Header = "My files go to this file location?"
+    User Question = "Path name?"
+    Default Value = "C:\\"
+    Returns = String
+  ]]
+  local myHtml = [[ <html> <head> <title>Easy Tools</title> <style type = "text/css">  html {overflow: hidden; } body {
+             background-color: #EBEBEB; overflow:hidden; font-family: Arial, Helvetica, sans-serif; font-size: 12px; } body, td,
+             th {font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; color: #000 ; } .FormButton {font-weight: bold ;
+             width: 100% ; font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; } body { background-color: #EBEBEB; }
+             </style> </head> <body bgcolor = "#EBEBEB" text = "#000000"> <table width = "470" border = "0" cellpadding = "0">
+             <tr> <th align = "left" valign = "top" bgcolor = "#EBEBEB" id = "QuestionID"><strong>Message Here</strong></th>
+             <th align = "left" valign = "middle" bgcolor = "#EBEBEB"> </th> </tr> <tr>
+             <th width = "381" align = "right" valign = "middle" bgcolor = "#EBEBEB" id = "QuestionID">
+             <input name = "DInput" type = "text" id = "DInput" size = "60"></th>
+             <th width = "83" align = "center" valign = "middle" bgcolor = "#EBEBEB"> <span style="width: 15%">
+             <input id = "DirectoryPicker" class = "DirectoryPicker" name = "DirectoryPicker" type = "button" value = "Path">
+             </span></th> </tr> <tr> <td colspan = "2" align = "center" valign = "middle" bgcolor = "#EBEBEB">
+             <table border = "0" width = "100%"> <tr align = "right"> <td style = "width: 20%"> </td>
+             <td style = "width: 20%"></td> <td style = "width: 25%"></td> <td style = "width: 15%">
+             <input id = "ButtonCancel" class = "FormButton" name = "ButtonCancel" type = "button" value = "Cancel"> </td>
+             <td style = "width: 15%"> <input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK">
+             </td> </tr> </table> </td> </tr> </table> </body>  </html>]]
+  -- =============================================
+  local dialog = HTML_Dialog(true, myHtml, 505, 150, Header)
+    dialog:AddLabelField("QuestionID", Quest)
+    dialog:AddTextField("DInput", DefaltPath )
+    dialog:AddDirectoryPicker("DirectoryPicker",  "DInput",  true)
+    if not dialog:ShowDialog() then
+      return ""
+    else
+      return dialog:GetTextField("DInput")
+    end -- if end
+ end -- function end
+-- =====================================================]]
+function SelectVectorsOnLayer(layer, selection, select_closed, select_open, select_groups)
+  --[[ Please Note: SelectVectorsOnLayer is provided by Vectric and can be found in the SDK and Sample Gadget files.
+  -- | ---------------- SelectVectorsOnLayer ----------------
+  -- |   SelectVectorsOnLayer("Stringer Profile", selection, true, falus, falus)
+  -- |   Add all the vectors on the layer to the selection
+  -- |     layer,            -- layer we are selecting vectors on
+  -- |     selection         -- selection object
+  -- |     select_closed     -- if true  select closed objects
+  -- |     select_open       -- if true  select open objects
+  -- |     select_groups     -- if true select grouped vectors (irrespective of open / closed state of member objects)
+  -- |  Return Values:  true if selected one or more vectors
+  -- |
+  -- ====================================================]]
+  local objects_selected = false
+  local warning_displayed = false
+  local pos = layer:GetHeadPosition()
+  while pos ~= nil do
+    local object
+    object, pos = layer:GetNext(pos)
+    local contour = object:GetContour()
+    if contour == nil then
+      if (object.ClassName == "vcCadObjectGroup") and select_groups then
+        selection:Add(object, true, true)
+        objects_selected = true
+      else
+        if not warning_displayed then
+          local message = "Object(s) without contour information found on layer - ignoring"
+          if not select_groups then
+            message = message ..  "\r\n\r\n" ..
+            "If layer contains grouped vectors these must be ungrouped for this script"
+          end -- if end
+          StatusMessage("Error", "Select Vectors", message, "(7200)")
+          warning_displayed = true
+        end -- if end
+      end -- if end
+    else  -- contour was NOT nil, test if Open or Closed
+      if contour.IsOpen and select_open then
+        selection:Add(object, true, true)
+        objects_selected = true
+      elseif select_closed then
+        selection:Add(object, true, true)
+        objects_selected = true
+      end -- if end
+    end -- if end
+  end -- while end
+  -- to avoid excessive redrawing etc we added vectors to the selection in 'batch' mode
+  -- tell selection we have now finished updating
+  if objects_selected then
+    selection:GroupSelectionFinished()
+  end -- if end
+  return objects_selected
+end -- function end
+-- =====================================================]]
+function All_Trim(s)                                    -- Trims spaces off both ends of a string
+  if s == nil then
+   return ""
+  else
+   return s:match( "^%s*(.-)%s*$" )
+  end
+end -- function end
+-- =====================================================]]
+function CopyFile(old_path, new_path)
+  local new_file = io.open(new_path, "wb")
+  local old_file = io.open(old_path, "rb")
+  local old_file_sz, new_file_sz = 0, 0
+  if not old_file or not new_file then
+    return false
+  end
+  while true do
+    local block = old_file:read(2^13)
+    if not block then
+      old_file_sz = old_file:seek( "end" )
+      break
+    end
+    new_file:write(block)
+  end
+  old_file:close()
+  new_file_sz = new_file:seek( "end" )
+  new_file:close()
+  return new_file_sz == old_file_sz
+end
+-- =====================================================]]
+function InquiryPathBox(Header, Quest, DefaultPath)
+--[[
+    Number Box for user input with default value
+    Caller: local X = InquiryPathBox("Select Path", "Where is the file location?", "C:\\")
+    Dialog Header = "Tool Name"
+    User Question = "Path name?"
+    Default Value = "C:\\"
+    Returns = String
+  ]]
+  local myHtml = [[ <html> <head> <title>Easy Tools</title> <style type = "text/css"> html {overflow: hidden; } body {
+             background-color: #EBEBEB; overflow:hidden; font-family: Arial, Helvetica, sans-serif; font-size: 12px; } body, td,
+             th {font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; color: #000 ; } .FormButton {font-weight: bold ;
+             width: 100% ; font-family: Arial, Helvetica, sans-serif ; font-size: 12px ; } body { background-color: #EBEBEB; }
+             </style></head><body bgcolor = "#EBEBEB" text = "#000000"><table width = "470" border = "0" cellpadding = "0">
+             <tr><th align = "left" valign = "top" bgcolor = "#EBEBEB" id = "QuestionID"><strong>Message Here</strong></th>
+             <th align = "left" valign = "middle" bgcolor = "#EBEBEB"></th></tr><tr>
+             <th width = "381" align = "right" valign = "middle" bgcolor = "#EBEBEB" id = "QuestionID">
+             <input name = "DInput" type = "text" id = "DInput" size = "60"></th>
+             <th width = "83" align = "center" valign = "middle" bgcolor = "#EBEBEB"><span style="width: 15%">
+             <input id = "DirectoryPicker" class = "DirectoryPicker" name = "DirectoryPicker" type = "button" value = "Path">
+             </span></th></tr><tr><td colspan = "2" align = "center" valign = "middle" bgcolor = "#EBEBEB">
+             <table border = "0" width = "100%"><tr align = "right"><td style = "width: 20%"></td>
+             <td style = "width: 20%"></td><td style = "width: 25%"></td><td style = "width: 15%">
+             <input id = "ButtonCancel" class = "FormButton" name = "ButtonCancel" type = "button" value = "Cancel"></td>
+             <td style = "width: 15%"><input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK">
+             </td></tr></table></td></tr></table></body></html>]]
+  -- =============================================
+  local dialog = HTML_Dialog(true, myHtml, 505, 150, Header)
+    dialog:AddLabelField("QuestionID", Quest)
+    dialog:AddTextField("DInput", DefaultPath )
+    dialog:AddDirectoryPicker("DirectoryPicker",  "DInput",  true)
+    if not dialog:ShowDialog() then
+      return ""
+    else
+      return dialog:GetTextField("DInput")
+    end -- if end
+ end -- function end
+-- =====================================================]]
+function ExD2S(d)
+  return string.format("%.8f", d)
+end -- function end
+-- =====================================================]]
+function D2S(d)
+  return string.format("%.4f", d)
+end -- function end
+-- =====================================================]]
+function Padder(s)
+  local tt = ""
+  if string.sub(s, 2,2) == "." then
+    tt = " " .. s
+  else
+    tt = s
+  end -- if end
+  return tt
+end -- function end
+-- =====================================================]]
+function GetDistance(objA, objB)
+  local xDist = objB.x - objA.x
+  local yDist = objB.y - objA.y
+  return math.sqrt( (xDist ^ 2) + (yDist ^ 2) )
+end --  function end
+-- =====================================================]]
+function StartDate(LongShort)
+--[[
+--  |    %a  abbreviated weekday name (e.g., Wed)
+--  |    %A  full weekday name (e.g., Wednesday)
+--  |    %b  abbreviated month name (e.g., Sep)
+--  |    %B  full month name (e.g., September)
+--  |    %c  date and time (e.g., 09/16/98 23:48:10)
+--  |    %d  day of the month (16) [01-31]
+--  |    %H  hour, using a 24-hour clock (23) [00-23]
+--  |    %I  hour, using a 12-hour clock (11) [01-12]
+--  |    %M  minute (48) [00-59]
+--  |    %m  month (09) [01-12]
+--  |    %p  either "am" or "pm" (pm)
+--  |    %S  second (10) [00-61]
+--  |    %w  weekday (3) [0-6 = Sunday-Saturday]
+--  |    %x  date (e.g., 09/16/98)
+--  |    %X  time (e.g., 23:48:10)
+--  |    %Y  full year (1998)
+--  |    %y  two-digit year (98) [00-99]
+--  |    %%  the character `%´
+]]
+  if LongShort then
+    return os.date("%b %d, %Y") .. " - " .. os.date("%I") .. ":" .. os.date("%m") .. os.date("%p")
+  else
+    return os.date("%Y%m%d%H%M")
+  end
+end
+-- =====================================================]]
+function StartDateTime(LongShort)
+--[[ Date Value Codes
+--  |   %a  abbreviated weekday name (e.g., Wed)
+--  |    %A  full weekday name (e.g., Wednesday)
+--  |    %b  abbreviated month name (e.g., Sep)
+--  |    %B  full month name (e.g., September)
+--  |    %c  date and time (e.g., 09/16/98 23:48:10)
+--  |    %d  day of the month (16) [01-31]
+--  |    %H  hour, using a 24-hour clock (23) [00-23]
+--  |    %I  hour, using a 12-hour clock (11) [01-12]
+--  |    %M  minute (48) [00-59]
+--  |    %m  month (09) [01-12]
+--  |    %p  either "am" or "pm" (pm)
+--  |    %S  second (10) [00-61]
+--  |    %w  weekday (3) [0-6 = Sunday-Saturday]
+--  |    %x  date (e.g., 09/16/98)
+--  |    %X  time (e.g., 23:48:10)
+--  |    %Y  full year (e.g., 1998)
+--  |    %y  two-digit year (98) [00-99]
+--  |    %%  the character `%´ ]]
+    if LongShort then
+      return os.date("%b %d, %Y") .. " - " ..os.date("%I") .. ":" ..os.date("%m")..os.date("%p")
+    else
+      return os.date("%Y%m%d%H%M")
+    end
+  end
+-- =====================================================]]
+function Holer(pt, ang, dst, dia, lay)
+    local group = ContourGroup(true)
+    group:AddTail(CreateCircle(pt.x, pt.y, dia, 0.0, 0.0))
+    pt = Polar2D(pt, ang, dst)
+    group:AddTail(CreateCircle(pt.x, pt.y, dia, 0.0, 0.0))
+    AddGroupToJob(group, lay)
+  return true
+end  --  function end
+-- =====================================================]]
+function MarkPoint(Note, Pt, Size, LayerName)
+  --[[
+     | Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
+     | Draws mark on the drawing
+     | call = MarkPoint("Note: Hi", Pt1, 3, "Jim")
+   ]]
+      local layer = Milling.job.LayerManager:GetLayerWithName(LayerName)
+      local marker1 = CadMarker(Note, Pt, Size)
+      layer:AddObject(marker1, true)
+      DrawCircle(Pt, 0.25, LayerName)
+  return true
+end -- function end
+-- =====================================================]]
+function GetAngle(points1 , points2)
+    return math.deg(math.atan((points2.Y - points1.Y) / (points2.X - points1.X)))
+end -- function end
+-- =====================================================]]
+function Double2Fraction(Num)                           --  Converts a Number (Double) to a Frctional String
+  local Frac = tostring(Num)
+  if not Milling.Unit then
+    local AmountValue = math.floor(math.abs(Num))
+    local DicValue    = Num - AmountValue
+    AmountValue       = tostring(AmountValue)
+    Frac              = tostring(DicValue)
+    if     DicValue >= 0.90325 then
+      Frac = "15/16" .. string.char(34)
+    elseif DicValue >= 0.84375 then
+      Frac = "7/8"   .. string.char(34)
+    elseif DicValue >= 0.78125 then
+      Frac = "13/16" .. string.char(34)
+    elseif DicValue >= 0.71875 then
+      Frac = "3/4"   .. string.char(34)
+    elseif DicValue >= 0.65625 then
+      Frac = "11/16" .. string.char(34)
+    elseif DicValue >= 0.59375 then
+      Frac = "5/8"   .. string.char(34)
+    elseif DicValue >= 0.53125 then
+      Frac = "9/16"  .. string.char(34)
+    elseif DicValue >= 0.46875 then
+      Frac = "1/2"   .. string.char(34)
+    elseif DicValue >= 0.40625 then
+      Frac = "7/16"  .. string.char(34)
+    elseif DicValue >= 0.34375 then
+      Frac = "3/8"   .. string.char(34)
+    elseif DicValue >= 0.28125 then
+      Frac = "5/16"  .. string.char(34)
+    elseif DicValue >= 0.21875 then
+      Frac = "1/4"   .. string.char(34)
+    elseif DicValue >= 0.15625 then
+      Frac = "3/16"  .. string.char(34)
+    elseif DicValue >= 0.09375 then
+      Frac = "1/8"   .. string.char(34)
+    elseif DicValue >= 0.03125 then
+      Frac = "1/16"  .. string.char(34)
+    else
+      Frac = "0"
+    end -- If end
+    if Frac == "0" then
+      Frac = AmountValue .. string.char(34)
+    else
+      if AmountValue ~= "0" then
+        Frac = AmountValue .. "-" .. Frac
+      end
+    end
+  end
+  return Frac
+end
+-- ==================== End ============================]]

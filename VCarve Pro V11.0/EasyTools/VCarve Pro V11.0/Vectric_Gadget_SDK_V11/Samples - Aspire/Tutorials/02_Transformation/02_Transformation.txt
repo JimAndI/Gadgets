@@ -1,0 +1,1 @@
+Creates and then transforms a component.

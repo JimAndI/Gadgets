@@ -1,0 +1,5 @@
+Next Steps: Easy Locking Joint Maker
+=============================
+1. Use the MaterialBlock as the sizeing the end of board 
+2. Add Toolpaths
+3. Add help video and written file

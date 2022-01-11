@@ -1,0 +1,302 @@
+<html>
+<head>
+<title>About Form</title>
+<style type="text/css">
+html {
+	overflow:hidden
+}
+.DirectoryPicker {
+	font-weight:bold;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px
+}
+.FormButton {
+	font-weight:bold;
+	width:75px;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	white-space:nowrap;
+	background-color: #696969;
+	color: #FFFFFF
+}
+.LuaButton {
+	font-weight:bold;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	background-color:  #663300;
+	color: #FFFFFF
+}
+.ToolNameLabel {
+	font-family:Arial, Helvetica, sans-serif;
+	font-weight:bolder;
+	font-size:12px;
+	text-align:left;
+	color:#000
+}
+.ToolPicker {
+	font-weight:bold;
+	text-align:center;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:center;
+	width:50px;
+	background-color:  #663300;
+	color: #FFFFFF
+}
+.alert-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color: #FFFFFF;
+	text-align:center;
+	white-space:nowrap
+}
+.alert-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	text-shadow: 5px 5px 10px #FFF;
+	color:#FF0101;
+	text-align:left;
+	white-space:nowrap
+}
+.alert-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:#00F;
+	text-align:right;
+	white-space:nowrap
+}
+.error {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:18px;
+	font-weight:bold;
+	color:#FF0000;
+	text-align:left;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:10px;
+	padding-top:4px;
+	padding-bottom:4px;
+}
+.errorMessage {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color:#000;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:10px;
+	padding-top:4px;
+	padding-bottom:4px;
+}
+.errorTable {
+background-color:#FFFFFF white-space:nowrap;
+}
+.p1-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:left;
+	color: #000000;
+}
+.p1-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:center;
+	color: #000000;
+}
+.p1-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	text-align:right;
+	color: #000000;
+}
+.ver-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	text-align:center;
+white-space:nowrap color: #ffd9b3;
+}
+.h1-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	color: #000000;
+}
+.h1-rP {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	padding-right:4px;
+	padding-left:4px;
+	color: #000000;
+}
+.h1-rPx {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-align:right;
+	white-space:nowrap;
+	padding-right:8px;
+	padding-left:8px;
+	color: #000000;
+}
+.h2-l {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #663300;
+	text-align:left;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #000000;
+}
+.h2-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #663300;
+	text-align:center;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #000000;
+}
+.h2-r {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	color:  #000000;
+	text-align:right;
+	white-space:nowrap;
+	text-shadow: 2px 2px white;
+	color: #8E8D8A;
+}
+.h3-bc {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.h3 {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	white-space:nowrap;
+	color: #000000;
+}
+.webLink-c {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	font-weight:bold;
+	background-color: yellow;
+	text-align:center;
+	white-space:nowrap;
+}
+.jsbutton {
+	background-color: #663300;
+	border:2px solid #999;
+	border-right-color:#000;
+	border-bottom-color:#000;
+	border-top-color:#FFF;
+	border-left-color:#FFF; 
+	font-family:Arial, Helvetica, sans-serif;
+	text-align:center;
+	text-decoration:none;
+	font-size:12px;
+	margin:1px 1px;
+	color:#FFFFFF;
+}
+.jsTag-no-vis {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	display:none;
+	text-align:center;
+	color:#00F;
+	visibility: hidden;
+}
+body {
+	background-color: #EAE7DC;
+	background-position: center;
+	overflow:hidden;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+	color: #8E8D8A;
+background-image: url(]].. DialogWindow.myBackGround ..[[);
+}
+html {
+	overflow:hidden;
+}
+</style>
+</head>
+<body text = "#000000">
+<table width="680" border="0" cellpadding="0">
+  <tr>
+    <td align="center" nowrap="nowrap" class="h3-bc" id="SysName">Easy Cabinet Maker</td>
+  </tr>
+  <tr>
+    <td align="center" nowrap="nowrap" id="Version" class="p1-c">Version</td>
+  </tr>
+  <tr>
+    <td align="center" nowrap="nowrap"><hr></td>
+  </tr>
+  <tr>
+    <td align="center" nowrap="nowrap" class="alert-l">Disclaimer</td>
+  </tr>
+  <tr>
+    <td align="center" class="p1-l">The &quot;AppName&quot; Gadget is a plugin for Vectric software, V-Carve Pro and Aspire.<br>
+        Gadgets are an entirely optional add-in to Vectric's core software products.<br>
+        They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.<br>
+        In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.<br>
+        <br>
+        Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:<br>
+        1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.<br>
+        * If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.<br>
+        2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.<br>
+        3. This notice may not be removed or altered from any source distribution.<br>
+        <br>
+        The author heavily utilized the SDK documentation and supplied code samples in addition to the outstanding user community on the Vectric User forum.</p></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://forum.vectric.com" class="webLink-c">Vectric User Forum</a></td>
+  </tr>
+  <tr>
+    <td align="center" ><span class="h2-c">James Anderson</span></td>
+  </tr>
+  <tr>
+    <td align="center"><span class="h1-c">Houston, TX.</span></td>
+  </tr>
+  <tr>
+    <td><hr></td>
+  </tr>
+  <tr>
+    <td width="30%" align="center" style = "width: 15%"><input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK"></td>
+  </tr>
+</table>
+</body>
+</html>

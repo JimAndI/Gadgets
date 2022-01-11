@@ -1,0 +1,1 @@
+Creates a component, clones it and transforms both demonstrating combine modes.
