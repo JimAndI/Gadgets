@@ -1,0 +1,1118 @@
+-- ========================================================================================================================
+--  Gadgets are an entirely optional add-in to Vectric's core software products.
+--  They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.
+--  In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.
+--  Permission is granted to anyone to use this software for any purpose,
+--  including commercial applications, and to alter it and redistribute it freely,
+--  subject to the following restrictions:
+--  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+--  If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.
+--  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+--  3. This notice may not be removed or altered from any source distribution.
+-- ========================================================================================================================
+-- Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
+-- ========================================================================================================================
+function DebugMarkPoint(Note, Pt, Size, LayerName)
+--[[-- ==MarkPoint==
+| Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
+| Draws mark on the drawing
+| call = DebugMarkPoint("Note: Hi", Pt1, 3, "Jim")
+]]
+if Size == nil then
+  Size = 3
+end
+if LayerName == nil then
+  LayerName = "Debug"
+end
+  local function DrawCircle(job, Cpt, CircleRadius, LayerName)  -- Draws a circle
+-- | draws a circle based on user inputs
+-- | job - current validated job unique ID
+-- | Cpt - (2Dpoint) center of the circle
+-- | CircleRadius - radius of the circle
+-- | Layer - layer name to draw circle (make layer if not exist)
+    local pa = Polar2D(Cpt, 180.0, CircleRadius)
+    local pb = Polar2D(Cpt,   0.0, CircleRadius)
+    local line = Contour(0.0)
+    line:AppendPoint(pa); line:ArcTo(pb,1);   line:ArcTo(pa,1)
+    local layer = job.LayerManager:GetLayerWithName(LayerName)
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+  end -- function end
+-- ====]]
+  local job = VectricJob()
+  local layer = job.LayerManager:GetLayerWithName(LayerName)
+  local marker1 = CadMarker(Note, Pt, Size)
+  layer:AddObject(marker1, true)
+  DrawCircle(job, Pt, 0.25, LayerName)
+  return true
+end -- function end
+-- =====================================================]]
+function Sheetlabel(Wpt, xThickness, xType)
+  local pt1Text = Polar2D(Wpt, 90.0,  44.5 * Milling.Cal)
+  DrawWriter(Project.ProgramName, pt1Text, Project.TextHeight * 3.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 3.35)
+  DrawWriter("Cabinet ID: " .. Project.DrawerID, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  DrawWriter("Cabnet Name: " .. Project.CabinetName, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 2.75)
+  if xThickness then
+    DrawWriter("Material: " .. xThickness .. " " .. xType, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
+  end -- if end
+end
+-- =====================================================]]
+function DMark(Note, Pt)
+--[[-- ==MarkPoint==
+| Code sourced from Vectric Lua Interface for Gadgets, version 2.05, published September 12, 2018. by Vectric Ltd.
+| Draws mark on the drawing
+| call = DebugMarkPoint("Note: Hi", Pt1)
+]]
+  local function DrawCircle(job, Cpt, CircleRadius, LayerName)  -- Draws a circle
+-- | draws a circle based on user inputs
+-- | job - current validated job unique ID
+-- | Cpt - (2Dpoint) center of the circle
+-- | CircleRadius - radius of the circle
+-- | Layer - layer name to draw circle (make layer if not exist)
+    local pa   = Polar2D(Cpt, 180.0, CircleRadius)
+    local pb   = Polar2D(Cpt,   0.0, CircleRadius)
+    local line = Contour(0.0)
+    line:AppendPoint(pa); line:ArcTo(pb,1);   line:ArcTo(pa,1)
+    local layer = job.LayerManager:GetLayerWithName(LayerName)
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+  end -- function end
+-- ====]]
+  local job = VectricJob()
+  local where = Polar2D(Pt, 45.0, 0.125)
+  DrawLine(Pt, where, "Debug")
+  DrawWriter(Note, where, 0.125, "Debug", 0.0)
+  DrawCircle(job, Pt, 0.0125, "Debug")
+  return true
+end -- function end
+-- =====================================================]]
+function DrawBox(p1, p2, p3, p4, Layer)
+    local line = Contour(0.0)
+    local layer = Milling.job.LayerManager:GetLayerWithName(Layer)
+    line:AppendPoint(p1) ;   line:LineTo(p2);
+    line:LineTo(p3)      ;   line:LineTo(p4);
+    line:LineTo(p1);
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+  end -- function end
+-- =====================================================]]
+function AddGroupToJob(group, layer_name)
+  local cad_object = CreateCadGroup(group)
+  local layer = Milling.job.LayerManager:GetLayerWithName(layer_name)
+  layer:AddObject(cad_object, true)
+  return cad_object
+end
+-- =====================================================]]
+function DrawLine(Pt1, Pt2, Layer)
+    local line = Contour(0.0)
+    local layer = Milling.job.LayerManager:GetLayerWithName(Layer)
+    line:AppendPoint(Pt1) ;
+    line:LineTo(Pt2) ;
+    layer:AddObject(CreateCadContour(line), true)
+    return true
+end
+-- =====================================================]]
+function bool2S(x)                                      --  Converts Yes or No to True or False
+  if x then
+    return "True"
+  else
+    return "False"
+  end
+end --  function end
+-- =====================================================]]
+function ifT(x)                                         --  Converts True or False to Yes or No
+  if x then
+    return "Yes"
+  else
+    return "No"
+  end
+end --  function end
+-- =====================================================]]
+function ifY(x)                                         --  Converts Yes and No to True or False
+  if x == "Yes" then
+    return true
+  else
+    return false
+  end
+end --  function end
+-- =====================================================]]
+function MainValidate()
+  local val = true
+    if WallDim.CabHeight == 0 then
+      StatusMessage("Error", "Wall Cabinet Height",  "The Wall Cabinet Height cannot have a 0 value", "(5700)")
+      val = false
+    elseif WallDim.CabDepth == 0 then
+      StatusMessage("Error", "Wall Cabinet Depth",   "The Wall Cabinet Depth cannot have a 0 value", "(5800)")
+      val = false
+    elseif WallDim.CabLength == 0 then
+      StatusMessage("Error", "Wall Cabinet Length",  "The Wall Cabinet Length cannot have a 0 value", "(5900)")
+      val = false
+    elseif BaseDim.CabHeight == 0 then
+      StatusMessage("Error", "Base Cabinet Height",  "The Base Cabinet Height cannot have a 0 value", "(6000)")
+      val = false
+    elseif BaseDim.CabDepth == 0 then
+      StatusMessage("Error", "Base Cabinet Depth",   "The Base Cabinet Depth cannot have a 0 value", "(6100)")
+      val = false
+    elseif BaseDim.CabLength == 0 then
+      StatusMessage("Error", "Base Cabinet Length",  "The Base Cabinet Length cannot have a 0 value", "(6200)")
+      val = false
+    elseif All_Trim(Project.CabinetName) == "" then
+      StatusMessage("Error", "Project Cabinet Name", "The Cabinet Height cannot be blank", "(6300)")
+      val = false
+    end
+  return val
+end
+-- =====================================================]]
+function Sheet(Sname)
+  if GetAppVersion() >= 11.0 then
+    DialogWindow.Sheets = "disabled"
+  end
+  local job = VectricJob()
+  local sheet_manager = job.SheetManager
+  local sheet_ids = sheet_manager:GetSheetIds()
+  for id in sheet_ids do
+    if(sheet_manager:GetSheetName(id) == "Sheet 1") then
+      -- sheet_manager:CreateSheets(1, id)
+      sheet_manager:CreateSheets(1, id, Box2D(Point2D(0, 0), Point2D(48, 48)))
+    end
+  end
+end
+-- =====================================================]]
+function SetSheet(Sname)
+  local sheet_manager = Milling.job.SheetManager
+  local sheet_ids = sheet_manager:GetSheetIds()
+  for id in sheet_ids do
+    if(sheet_manager:GetSheetName(id) == Sname) then
+      sheet_manager.ActiveSheetId = id
+    end
+  end
+  Milling.job:Refresh2DView()
+end
+-- =====================================================]]
+function GetMaterialSettings()
+  local MaterialBlock = MaterialBlock()
+  Milling.MaterialBlockThickness = MaterialBlock.Thickness
+  Milling.MaterialBlockWidth     = MaterialBlock.Width
+  Milling.MaterialBlockHeight    = MaterialBlock.Height
+  Milling.MaterialBlockJobType   = MaterialBlock.JobType
+  if Milling.MaterialBlockJobType == 1 then
+    StatusMessage("Alert", "Project Setup", "This Gadget works best on Single Sided Jobs", "(6900)")
+  elseif Milling.MaterialBlockJobType == 2 then
+    StatusMessage("Error", "Job Setup", "This Gadget will not work on Rotary Job", "(6930)")
+    return false
+  end
+  Material.xy_origin = MaterialBlock.XYOrigin
+  if MaterialBlock.InMM then
+    Milling.Units = "Drawing Units: mm"
+    Milling.Unit  = true
+    Milling.Cal   = 25.4
+  else
+    Milling.Units = "Drawing Units: inches"
+    Milling.Unit  = false
+    Milling.Cal   = 1.0
+  end
+  Milling.UnitDisplay  = Milling.Units
+  --local units
+	if MaterialBlock.Width > MaterialBlock.Height then
+    Material.Orantation = "H" -- Horizontal
+	elseif MaterialBlock.Width < MaterialBlock.Height then
+    Material.Orantation = "V" -- Vertical
+  else
+    Material.Orantation = "S" -- Squair
+	end
+  if  Material.xy_origin == 0 then
+    Material.XYorigin = "Bottom Left Corner"
+    if Material.Orantation == "V" then
+      Material.Direction = 90.0
+      Cab.Wpt1 = Point2D( Milling.MaterialBlockWidth - (1.0 * Milling.Cal), 1.0 * Milling.Cal)
+    else
+      Material.Direction = 0.0
+      Cab.Wpt1 = Point2D(1.0 * Milling.Cal, 1.0 * Milling.Cal)
+    end
+  elseif Material.xy_origin == 1 then
+    Material.XYorigin = "Bottom Right Corner"
+    if Material.Orantation == "V" then
+      Material.Direction = 90.0
+      Cab.Wpt1 = Point2D(-1.0 * Milling.Cal, 1.0 * Milling.Cal)
+    else
+      Material.Direction = 180.0
+      Cab.Wpt1 = Point2D((-1.0 * Milling.Cal), (-1.0 * Milling.Cal) + MaterialBlock.Height)
+    end
+  elseif Material.xy_origin == 2 then
+    Material.XYorigin = "Top Right Corner"
+    if Material.Orantation == "V" then
+      Material.Direction = 90.0
+      Cab.Wpt1 = Point2D(-1.0 * Milling.Cal, (1.0 * Milling.Cal) - MaterialBlock.Height)
+    else
+      Material.Direction = 180.0
+      Cab.Wpt1 = Point2D((-1.0 * Milling.Cal), (-1.0 * Milling.Cal))
+    end
+  elseif Material.xy_origin == 3 then
+    Material.XYorigin = "Top Left Corner"
+    if Material.Orantation == "V" then
+      Material.Direction = 90.0
+      Cab.Wpt1 = Point2D( Milling.MaterialBlockWidth - (1.0 * Milling.Cal), (1.0 * Milling.Cal) - MaterialBlock.Height)
+    else
+      Material.Direction = 0.0
+      Cab.Wpt1 = Point2D(1.0 * Milling.Cal, (1.0 * Milling.Cal) - MaterialBlock.Height)
+    end
+  elseif Material.xy_origin == 4 then
+    Material.XYorigin = "Center"  -- NOTE: English spelling for Centre!
+    StatusMessage("Alert", "Sheet Setup", "Center XY Datum Position should not be used. Use corner of the Material", "(1610)")
+    Material.Direction = 0.0
+    Cab.Wpt1 = Point2D(1.0 * Milling.Cal, 1.0 * Milling.Cal)
+  end
+  return true
+end -- end function
+-- =====================================================]]
+function Mill_Math()   -- All the math for Wall Cabinet
+  if Milling.MillTool1.Name == "No Tool Selected" then
+    Milling.ProfileToolRadius = Milling.ProfileToolDia    * 0.500
+  else
+    Milling.ProfileToolDia    = Milling.MillTool1.ToolDia
+    Milling.ProfileToolRadius = Milling.MillTool1.ToolDia * 0.500
+  end
+  if Milling.MillTool2.Name == "No Tool Selected" then
+    Milling.PocketToolRadius  = Milling.PocketToolDia     * 0.500
+  else
+    Milling.PocketToolDia     = Milling.MillTool2.ToolDia
+    Milling.PocketToolRadius  = Milling.MillTool2.ToolDia * 0.500
+  end
+  Milling.ShelfPinRadius      = Milling.ShelfPinDiameter  * 0.500
+  Project.DrawerID            = StartDate()
+  return true
+end
+-- =====================================================]]
+function MyInquiryYesNo(Header, Question)
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml15, 440, 190, Header)
+  dialog:AddLabelField("Question", Question)
+  if not dialog:ShowDialog() then
+    return false
+  else
+    return true
+  end
+end
+-- =====================================================]]
+function StatusMessage(Type, Header, Question, ErrorNumber)
+  local dialog
+  local X = 460
+  local Y = 160
+  if string.len(Question) > 70 then
+    Y = Y + 20
+  end
+  if Project.Debugger then
+    Queston = Question .. " - " .. ErrorNumber
+  end
+  if Type == "Alert" then
+    dialog = HTML_Dialog(true, DialogWindow.myHtml16, X, Y, Header)
+  else -- "Error"
+    dialog = HTML_Dialog(true, DialogWindow.myHtml17, X, Y, Header)
+  end -- if end
+
+  if Project.Debugger then
+    Question = Question .. " " .. ErrorNumber
+  end
+  dialog:AddLabelField("Question", Type .. ": " .. Question)
+  dialog:ShowDialog()
+
+  if Project.Debugger then
+    DisplayMessageBox("Question Len " .. " = " .. tostring(string.len(Question)) .. ": \nWindow = " .. tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight))
+  end
+  return true
+end
+-- =====================================================]]
+function MillingValidater()
+  local MyTrue = false
+  if Milling.ProfileToolDia == 0 then
+    StatusMessage("Error", "Milling Settings", "Default Profile Default Bit Dia - value cannot be 0", "(2800)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.PocketToolDia == 0 then
+    StatusMessage("Error", "Milling Settings", "Default Pocket Bit Dia - value cannot be 0", "(2900)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.DadoBackHeight == 0 then
+    StatusMessage("Error", "Milling Settings", "Back Dado Height - value cannot be 0", "(3000)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.PartGap == 0 then
+    StatusMessage("Error", "Milling Settings", "Part Gap - value cannot be 0", "(3100)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.DadoBlindAmount == 0 then
+    StatusMessage("Error", "Milling Settings", "Dado Blind Amount - value cannot be 0", "(3200)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.DadoHeight == 0 then
+    StatusMessage("Error", "Milling Settings", "Dado Height - value cannot be 0", "(3300)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.AssemblyHoleStartEnd == 0 then
+    StatusMessage("Error", "Milling Settings", "Assembly Hole Start and End Space - value cannot be 0", "(3400)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.AssemblyHoleMaxSpace == 0 then
+    StatusMessage("Error", "Milling Settings", "Assembly Hole Max Space - value cannot be 0", "(3500)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.AssemblyHoleMaxSpace == Milling.AssemblyHoleMinSpace then
+    StatusMessage("Error", "Milling Settings", "The 'Assembly Hole Max' and 'Assembly Hole Min Space' values cannot equal", "(3600)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.AssemblyHoleMaxSpace < Milling.AssemblyHoleMinSpace then
+    StatusMessage("Error", "Milling Settings", "The 'Assembly Hole Max Space' cannot be larger than 'Assembly Hole Min Space'", "(3700)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.AssemblyHoleMinSpace == 0 then
+    StatusMessage("Error", "Milling Settings", "Assembly Hole Min Space - value cannot be 0", "(3900)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.ShelfPinLen == 0 then
+    StatusMessage("Error", "Milling Settings", "Shelf Pin Length - value cannot be 0", "(4000)")
+    OnLuaButton_InquiryMilling()
+  elseif Milling.PilotHoleDia == 0 then
+    StatusMessage("Error", "Milling Settings", "Pilot Hole Dia - value cannot be 0", "(4010)")
+    OnLuaButton_InquiryMilling()
+  elseif (Milling.MillTool6.Name ~= "No Tool Selected") and (Milling.PilotHoleDia < Milling.MillTool6.ToolDia) then
+    StatusMessage("Error", "Pilot Bit Dia", "Pilot Bit is larger than Pilot Hole Dia", "(4020)")
+    OnLuaButton_InquiryMilling()
+  else
+    MyTrue = true
+  end -- if end
+  return MyTrue
+end -- if end
+-- =====================================================]]
+function MillingTools()
+  if Milling.MillTool1.Name == "No Tool Selected" then
+    Milling.Profile = false
+  else
+    Milling.Profile = true
+  end  -- if end
+  if Milling.MillTool2.Name == "No Tool Selected" then
+    Milling.Pocket = false
+  else
+    Milling.Pocket = true
+  end  -- if end
+  if Milling.MillTool3.Name == "No Tool Selected" then
+    Milling.Clearning = false
+  else
+    Milling.Clearning = true
+  end  -- if end
+  if Milling.MillTool4.Name == "No Tool Selected" then
+    Milling.Drilling = false
+  else
+    Milling.Drilling = true
+  end  -- if end
+  if Milling.MillTool5.Name == "No Tool Selected" then
+    Milling.AddAssemblyHolesToolpath = false
+  else
+    Milling.AddAssemblyHolesToolpath = true
+  end  -- if end
+  if Milling.MillTool6.Name == "No Tool Selected" then
+    Milling.AddSlideHolesToolpath = false
+  else
+    Milling.AddSlideHolesToolpath = true
+  end  -- if end
+  Milling.Toolpath_Mgr = ToolpathManager()
+  if Milling.Toolpath_Mgr.Count > 0 then
+    Milling.Toolpath_Mgr:DeleteAllToolpaths()
+  end -- if end
+  return true
+end
+-- =====================================================]]
+function NextSheet(X, Y)
+  if X == nil then
+    X = Milling.MaterialBlockWidth
+  else
+    X = X + (2 * Milling.Cal)
+  end
+  if Y == nil then
+    Y = Milling.MaterialBlockHeight
+  else
+    Y = Y + (2 * Milling.Cal)
+  end
+  Milling.Sheet = Milling.Sheet + 1
+  local sheet_manager = Milling.job.SheetManager
+  local sheet_ids = sheet_manager:GetSheetIds()
+  for id in sheet_ids do
+    if(sheet_manager:GetSheetName(id) == "Sheet 1") then
+      -- sheet_manager:CreateSheets(1, id)
+      sheet_manager:CreateSheets(1, id, Box2D(Point2D(0, 0), Point2D(X, Y)))
+    end
+  end
+  SetSheet("Sheet " .. tostring(Milling.Sheet))
+  return true
+end
+-- =====================================================]]
+function SetSheet(Sname)
+  local sheet_manager = Milling.job.SheetManager
+  local sheet_ids = sheet_manager:GetSheetIds()
+  for id in sheet_ids do
+    if(sheet_manager:GetSheetName(id) == Sname) then
+      sheet_manager.ActiveSheetId = id
+    end
+  end
+end
+-- =====================================================]]
+function D(x)                               -- Returns double the value
+  return x * 2.0
+end -- function end
+-- =====================================================]]
+function H(x)                               -- Returns half the value
+  return x * 0.5
+end -- function end
+-- =====================================================]]
+function CutListfileWriterHeader(Cab)
+  if Hardware.Name == "No Drawer Slide" then
+    Hardware.RearPartNumber = "N/A"
+    BaseQuestion.DrawerRowCountX = "N/A"
+  else
+    BaseQuestion.DrawerRowCountX = BaseQuestion.DrawerRowCount .. " (L&R)"
+  end
+  local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-" .. Project.DrawerID .. ".dat", "w")
+
+  local DiagWall = math.sqrt ((WallDim.CabHeight - (WallDim.FaceFrameTopOverlap + (WallDim.FaceFrameBottomRailWidth - (WallDim.MaterialThickness + WallDim.FaceFrameBottomReveal))))^2 + (WallDim.CabLength - D(WallDim.FaceFrameSideReveal))^2)
+
+  local DiagFWall = math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2)
+  local DiagBase = math.sqrt (BaseDim.CabHeight^2 + (BaseDim.CabLength - D(BaseDim.FaceFrameSideReveal))^2)
+  local DiagFBase = math.sqrt (BaseDim.FaceFrameStileLength^2 + BaseDim.CabLength^2)
+  local Lines = "==================================================================================== \n"
+  file:write(Lines)
+  file:write(   "===============================  Cabinet Cut-list  ================================= \n")
+  file:write("  Project Run Date ID: " .. StartDate() .. "\n")
+  file:write("  Cabinet Project Name: " .. Project.ProgramName .. "\n")
+  file:write("  Cabinet Name: " .. Project.CabinetName .. "\n")
+  file:write("  " .. Milling.Units .. " \n")
+  file:write(Lines)
+  if Cab == "Both" then
+    file:write("  Wall Cabinet Size\n")
+    file:write("  Cabinet Finish      = " .. BOM.WallCabinetFinish                .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.WallFaceFrameFinish              .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)     .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(WallDim.CabHeight)             .. "\n")
+      file:write("  Cabinet Width       = " .. D2S(WallDim.CabLength)             .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(WallDim.CabDepth)              .. "\n")
+      file:write("  Cabinet Diagonal    = " .. D2S(DiagWall)                      .. ")\n")
+      if Project.CabinetStyle == "Face Frame" then
+        file:write("  Face Frame Diagonal = " .. DiagWall                         .. "\n")
+      end -- if end
+    else
+      file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)     .. " as " .. Double2Fraction(WallDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(WallDim.CabHeight) .. " (" .. D2S(WallDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(WallDim.CabLength) .. " (" .. D2S(WallDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(WallDim.CabDepth)  .. " (" .. D2S(WallDim.CabDepth)  .. ")\n")
+      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
+      if Project.CabinetStyle == "Face Frame" then
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFWall)       .. " (" .. DiagFWall               .. ")\n")
+      end -- if end
+    end
+    file:write(Lines)
+    file:write("  Base Cabinet Size\n")
+    file:write("  Cabinet Finish      = " .. BOM.BaseCabinetFinish                .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.BaseFaceFrameFinish              .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(BaseDim.CabHeight)             .. "\n")
+      file:write("  Cabinet  Width      = " .. D2S(BaseDim.CabLength)             .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(BaseDim.CabDepth)              .. "\n")
+      file:write("  Face Frame Diagonal = " .. DiagBase                           .. "\n")
+    else
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. " as ".. Double2Fraction(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(BaseDim.CabHeight) .. " (" .. D2S(BaseDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(BaseDim.CabLength) .. " (" .. D2S(BaseDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
+      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
+      if Project.CabinetStyle == "Face Frame" then
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFBase)          .. " (" .. DiagFBase               .. ")\n")
+      end -- if end
+    end
+    if Hardware.Name ~= "No Drawer Slide" then
+      file:write("  Drawer Slides Model = " .. Hardware.Name                             .. "\n")
+      file:write("  Drawer Rear Mount   = " .. Hardware.RearPartNumber                   .. "\n")
+      file:write("  Drawer Slides Count = " .. BaseQuestion.DrawerRowCountX              .. "\n")
+    end -- if end
+  elseif Cab == "Wall" then
+    file:write("  Wall Cabinet Size\n")
+    file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)       .. "\n")
+    file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)       .. "\n")
+    file:write("  Cabinet Finish      = " .. BOM.WallCabinetFinish                .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.WallFaceFrameFinish              .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)     .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(WallDim.CabHeight)             .. "\n")
+      file:write("  Cabinet Width       = " .. D2S(WallDim.CabLength)             .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(WallDim.CabDepth)              .. "\n")
+      file:write("  Cabinet Diagonal    = " .. DiagWall                           .. "\n")
+      if Project.CabinetStyle == "Face Frame" then
+        file:write("  Face Frame Diagonal = " .. DiagFWall                           .. "\n")
+      end -- if end
+    else
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. " as " .. Double2Fraction(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(WallDim.CabHeight) .. " (" .. D2S(WallDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(WallDim.CabLength) .. " (" .. D2S(WallDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(WallDim.CabDepth)  .. " (" .. D2S(WallDim.CabDepth)  .. ")\n")
+      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
+      if Project.CabinetStyle == "Face Frame" then
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFWall)          .. " (" .. DiagFWall               .. ")\n")
+      end -- if end
+    end
+  else
+    file:write("  Base Cabinet Size\n")
+    file:write("  Cabinet Finish      = " .. BOM.BaseCabinetFinish   .. "\n")
+    file:write("  Face Frame Finish   = " .. BOM.BaseFaceFrameFinish .. "\n")
+    if Milling.Unit then
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. D2S(BaseDim.CabHeight) .. "\n")
+      file:write("  Cabinet Width       = " .. D2S(BaseDim.CabLength) .. "\n")
+      file:write("  Cabinet Depth       = " .. D2S(BaseDim.CabDepth)  .. "\n")
+      file:write("  Cabinet Diagonal    = " .. DiagBase .. "\n")
+      if Project.CabinetStyle == "Face Frame" then
+        file:write("  Face Frame Diagonal = " .. DiagFBase .. "\n")
+      end -- if end
+    else
+      file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. " as " .. Double2Fraction(BaseDim.MaterialThickness) .. "\n")
+      file:write("  Cabinet Height      = " .. Double2Fraction(BaseDim.CabHeight) .. " (" .. D2S(BaseDim.CabHeight) .. ")\n")
+      file:write("  Cabinet Width       = " .. Double2Fraction(BaseDim.CabLength) .. " (" .. D2S(BaseDim.CabLength) .. ")\n")
+      file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
+      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
+      if Project.CabinetStyle == "Face Frame" then
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFBase)          .. " (" .. DiagFBase               .. ")\n")
+      end -- if end
+    end
+    if Hardware.Name ~= "No Drawer Slide" then
+      file:write("  Drawer Slides Model = " .. Hardware.Name                      .. "\n")
+      file:write("  Drawer Rear Mount   = " .. Hardware.RearPartNumber            .. "\n")
+      file:write("  Drawer Slides Count = " .. BaseQuestion.DrawerRowCountX       .. "\n")
+    end -- if end
+  end -- if Both
+  file:write(Lines)
+  file:write("  ID | Part Name              | Type | No | Thick | Material  | Width     | Length \n")
+  file:write(Lines)
+  file:close()
+  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-" .. Project.DrawerID .. ".csv", "w")
+  file:write("Type,Cabinet,ID,Part Name,Count,Thick,Material,Finish,Width,Length\n")
+  file:close()
+end
+-- =====================================================]]
+function CutListfileWriterItem(ID, Name, Cab, Count, Thick, Material, Finish, Width, Length)
+  local sThick, sWidth, sLength = ""
+  if string.len(ID) == 2 then ID = " " .. ID end
+  local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-" .. Project.DrawerID .. ".dat", "a")
+  local sID = " " .. ID .. " "
+  local Spc = "                                                         "
+  local sName     = string.sub("| "  .. Name .. Spc ,1, 25)
+  local sCab      = string.sub("| "  .. Cab  .. Spc ,1, 7)
+  local sCount    = string.sub("|  " .. Count .. Spc ,1, 5)
+  local sMaterial = string.sub("| "  .. Material .. Spc ,1, 12)
+  if Milling.Unit then
+    sThick    = string.sub("| " .. D2S(Thick) .. Spc ,1, 8)
+    sWidth    = string.sub("| " .. Padder(D2S(Width))  .. Spc ,1, 12)
+    sLength   = string.sub("| " .. Padder(D2S(Length)) .. Spc ,1,  12)
+  else
+    sThick    = string.sub("| " .. Double2Fraction(Thick)  .. Spc ,1, 8)
+    sWidth    = string.sub("| " .. Double2Fraction(Width)  .. Spc ,1, 12)
+    sLength   = string.sub("| " .. Double2Fraction(Length) .. Spc ,1, 12)
+  end
+  file:write(sID .. sName .. sCab .. sCount .. sThick .. sMaterial .. sWidth .. sLength .. "\n")
+  file:close()
+  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-" .. Project.DrawerID .. ".csv", "a")
+  file:write(Cab .. "," .. Project.CabinetName .. "," .. ID .. "," .. Name .. "," .. Count .. "," .. Thick .. "," .. Material .. "," .. Finish .. "," .. Width .. "," .. Length  .. "  \n")
+  file:close()
+end
+-- =====================================================]]
+function CutListfileWriterFooter()
+  local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-" .. Project.DrawerID .. ".dat", "a")
+  local Lines = "==================================================================================== \n"
+  file:write(Lines)
+  file:write("EOF \n")
+  file:close()
+  file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName ..  "-" .. Project.DrawerID .. ".csv", "a")
+  file:write("\n")
+  file:close()
+  return true
+end
+-- =====================================================]]
+function FaceFrameManiagement()
+  if Project.CabinetStyle == "No Face Frame" then
+    BaseDim.FaceFrameBottomReveal     = 0.000
+    BaseDim.FaceFrameSideReveal       = 0.000
+    BaseDim.FaceFrameBottomRailWidth  = BaseDim.MaterialThickness + BaseDim.ToeKickBottomOffsetHeight
+    BaseDim.FaceFrameThickness        = 0.000
+    WallDim.FaceFrameBottomReveal     = 0.000
+    WallDim.FaceFrameSideReveal       = 0.000
+    WallDim.FaceFrameThickness        = 0.000
+    WallQuestion.DrawFaceFrame        = false
+    BaseQuestion.DrawFaceFrame        = false
+  end
+end -- function end
+-- =====================================================]]
+function CreateLayerDrillingToolpath(layer_name, name, start_depth, cut_depth, retract_gap)
+  if Milling.Drilling then
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      StatusMessage("Error", "Profile Toolpath", "No Drilling layer found with name = " .. layer_name , "(4100)")
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      StatusMessage("Error", "Profile Toolpath", "No closed Drilling vectors found on layer " .. layer_name , "(4100)")
+      return false
+    end
+     -- Create tool we will use to machine vectors
+      local tool = Tool(Milling.MillTool4.Name, Tool.THROUGH_DRILL) -- BALL_NOSE, END_MILL, VBIT, THROUGH_DRILL
+      tool.InMM         = Milling.MillTool4.InMM -- tool_in_mm
+      tool.ToolDia      = Milling.MillTool4.ToolDia -- tool_dia
+      tool.Stepdown     = Milling.MillTool4.Stepdown -- tool_stepdown
+      tool.Stepover     = Milling.MillTool4.ToolDia * 0.25
+      tool.RateUnits    = Milling.MillTool4.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+      tool.FeedRate     = Milling.MillTool4.FeedRate  -- 30
+      tool.PlungeRate   = Milling.MillTool4.PlungeRate -- 10
+      tool.SpindleSpeed = Milling.MillTool4.SpindleSpeed -- 20000
+      tool.ToolNumber   = Milling.MillTool4.ToolNumber -- 1
+  --    tool.VBitAngle = 90.0                -- used for vbit only
+  --    tool.ClearStepover = tool_dia * 0.5  -- used for vbit only
+      -- we will set home position and safe z relative to material block size
+      local mtl_block = MaterialBlock()
+      local mtl_box = mtl_block.MaterialBox
+      local mtl_box_blc = mtl_box.BLC
+      -- Create object used to set home position and safez gap above material surface
+      local pos_data = ToolpathPosData()
+      pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+      pos_data.SafeZGap = mtl_block.Thickness * 0.1
+      -- Create  object used to pass drilling options
+      local drill_data = DrillParameterData()
+      -- start depth for toolpath
+      drill_data.StartDepth = start_depth
+      -- cut depth for toolpath this is depth below start depth
+      drill_data.CutDepth = cut_depth
+      -- if true perform peck drilling
+      drill_data.DoPeckDrill = retract_gap > 0.0
+      -- distance to retract above surface when peck drilling
+      drill_data.PeckRetractGap = retract_gap
+      -- if true in Aspire, project toolpath onto composite model
+      drill_data.ProjectToolpath = false
+      -- Create object which can used to automatically select geometry on layers etc
+      local geometry_selector = GeometrySelector()
+      -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+      local create_2d_previews = true
+      -- if this is true we will display errors and warning to the user
+      local display_warnings = false -- = true
+      -- Create our toolpath
+      local toolpath_manager = ToolpathManager()
+      local toolpath_id = toolpath_manager:CreateDrillingToolpath(
+                                              name,
+                                              tool,
+                                              drill_data,
+                                              pos_data,
+                                              geometry_selector,
+                                              create_2d_previews,
+                                              display_warnings
+                                              )
+      if toolpath_id  == nil  then
+        StatusMessage("Error", "Milling Settings", "Creating toolpath", "(4300)")
+        return false
+      end
+     end
+   return true
+end
+-- =====================================================]]
+function CreateLayerPilotHoleToolpath(layer_name, name, start_depth, cut_depth, retract_gap)
+  if Milling.AddAssemblyHolesBase or Milling.AddAssemblyHolesWall then
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      StatusMessage("Error", "Profile Toolpath", "No Drilling layer found with name = " .. layer_name, "(4400)")
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      StatusMessage("Error", "Pilot Hole Toolpath", "No closed Drilling vectors found on layer " .. layer_name, "(4500)")
+      return false
+    end
+     -- Create tool we will use to machine vectors
+      local tool = Tool(Milling.MillTool5.Name, Tool.THROUGH_DRILL)       -- BALL_NOSE, END_MILL, VBIT, THROUGH_DRILL
+      tool.InMM = Milling.MillTool5.InMM -- tool_in_mm
+      tool.ToolDia = Milling.MillTool5.ToolDia -- tool_dia
+      tool.Stepdown = Milling.MillTool5.Stepdown -- tool_stepdown
+      tool.Stepover = Milling.MillTool5.ToolDia * 0.25 * Milling.Cal
+      tool.RateUnits = Milling.MillTool5.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+      tool.FeedRate = Milling.MillTool5.FeedRate  -- 30
+      tool.PlungeRate = Milling.MillTool5.PlungeRate -- 10
+      tool.SpindleSpeed = Milling.MillTool5.SpindleSpeed -- 20000
+      tool.ToolNumber = Milling.MillTool5.ToolNumber -- 1
+  --    tool.VBitAngle = 90.0                -- used for vbit only
+  --    tool.ClearStepover = tool_dia * 0.5  -- used for vbit only
+      -- we will set home position and safe z relative to material block size
+      local mtl_block = MaterialBlock()
+      local mtl_box = mtl_block.MaterialBox
+      local mtl_box_blc = mtl_box.BLC
+      -- Create object used to set home position and safez gap above material surface
+      local pos_data = ToolpathPosData()
+      pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+      pos_data.SafeZGap = mtl_block.Thickness * 0.1 * Milling.Cal
+      -- Create  object used to pass drilling options
+      local drill_data = DrillParameterData()
+      -- start depth for toolpath
+      drill_data.StartDepth = start_depth
+      -- cut depth for toolpath this is depth below start depth
+      drill_data.CutDepth = cut_depth
+      -- if true perform peck drilling
+      drill_data.DoPeckDrill = retract_gap > 0.0
+      -- distance to retract above surface when peck drilling
+      drill_data.PeckRetractGap = retract_gap
+      -- if true in Aspire, project toolpath onto composite model
+      drill_data.ProjectToolpath = false
+      -- Create object which can used to automatically select geometry on layers etc
+      local geometry_selector = GeometrySelector()
+      -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+      local create_2d_previews = true
+      -- if this is true we will display errors and warning to the user
+      local display_warnings = false -- = true
+      -- Create our toolpath
+      local toolpath_manager = ToolpathManager()
+      local toolpath_id = toolpath_manager:CreateDrillingToolpath(
+                                              name,
+                                              tool,
+                                              drill_data,
+                                              pos_data,
+                                              geometry_selector,
+                                              create_2d_previews,
+                                              display_warnings
+                                              )
+      if toolpath_id  == nil  then
+        StatusMessage("Error", "Milling Settings", "Creating toolpath", "(4600)")
+        return false
+      end
+     end
+   return true
+end
+-- =====================================================]]
+function CreateLayerProfileToolpath(layer_name, name, start_depth, cut_depth, InOrOut, UseTab)
+  if Milling.Profile then
+  --  Please Note: CreateLayerProfileToolpath is provided by Vectric and can be found in the SDK and Sample Gadget files.
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      StatusMessage("Error", "Profile Toolpath", "No layer found with name = " .. layer_name, "(4700)")
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      StatusMessage("Error", "Profile Toolpath", "No closed vectors found on layer " .. layer_name, "(4800)")
+      return false
+    end
+  -- Create tool we will use to machine vectors
+    local tool               = Tool(Milling.MillTool1.Name, Tool.END_MILL) -- BALL_NOSE, END_MILL, VBIT
+          tool.InMM          = Milling.MillTool1.InMM         -- tool_in_mm
+          tool.ToolDia       = Milling.MillTool1.ToolDia      -- tool_dia
+          tool.Stepdown      = Milling.MillTool1.Stepdown     -- tool_stepdown
+          tool.Stepover      = Milling.MillTool1.Stepover     -- tool_dia * 0.25
+          tool.RateUnits     = Milling.MillTool1.RateUnits    -- Tool.MM_SEC -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC ...
+          tool.FeedRate      = Milling.MillTool1.FeedRate     -- 30
+          tool.PlungeRate    = Milling.MillTool1.PlungeRate   -- 10
+          tool.SpindleSpeed  = Milling.MillTool1.SpindleSpeed -- 20000
+          tool.ToolNumber    = Milling.MillTool1.ToolNumber   -- 1
+       -- tool.VBitAngle     = Carrier.MillTool.VBitAngle     -- 90.0 -- used for vbit only
+       -- tool.ClearStepover = tool_dia * 0.5                 -- used for vbit only
+  -- Create object used to set home position and safez gap above material surface
+    local pos_data = ToolpathPosData()
+          pos_data:SetHomePosition(0, 0, 5.0)
+          pos_data.SafeZGap    = 5.0
+  -- Create object used to pass profile options
+    local profile_data = ProfileParameterData()
+  -- start depth for toolpath
+    profile_data.StartDepth    = start_depth
+    profile_data.CutDepth      = cut_depth -- cut depth for toolpath this is depth below start depth
+    profile_data.CutDirection  = ProfileParameterData.CLIMB_DIRECTION -- direction of cut - ProfileParameterData. CLIMB_DIRECTION or ProfileParameterData.CONVENTIONAL_DIRECTION
+    if InOrOut == "IN" then
+      profile_data.ProfileSide = ProfileParameterData.PROFILE_INSIDE
+    elseif InOrOut == "OUT" then
+      profile_data.ProfileSide = ProfileParameterData.PROFILE_OUTSIDE
+    else  -- InOrOut == "ON"
+      profile_data.ProfileSide = ProfileParameterData.PROFILE_ON
+    end
+    profile_data.Allowance = 0.0 -- Allowance to leave on when machining
+    profile_data.KeepStartPoints = false -- true to preserve start point positions, false to reorder start points to minimise toolpath length
+    profile_data.CreateSquareCorners = false -- true if want to create 'square' external corners on toolpath
+    profile_data.CornerSharpen = false -- true to perform corner sharpening on internal corners (only with v-bits)
+    profile_data.UseTabs = UseTab -- true to use tabs (position of tabs must already have been defined on vectors)
+    profile_data.TabLength = 0.5 * Milling.Cal -- length for tabs if being used
+    profile_data.TabThickness = 0.25 * Milling.Cal
+    profile_data.Use3dTabs = true -- if true then create 3d tabs else 2d tabs
+    profile_data.ProjectToolpath = false -- if true in Aspire, project toolpath onto composite model
+    local ramping_data = RampingData() -- Create object used to control ramping
+    local lead_in_out_data = LeadInOutData() -- Create object used to control lead in/out
+    ramping_data.DoRamping = false -- if true we do ramping into toolpath
+    ramping_data.RampType = RampingData.RAMP_ZIG_ZAG -- type of ramping to perform RampingData.RAMP_LINEAR , RampingData.RAMP_ZIG_ZAG or RampingData.RAMP_SPIRAL
+    ramping_data.RampConstraint = RampingData.CONSTRAIN_ANGLE -- how ramp is contrained - either by angle or distance RampingData.CONSTRAIN_DISTANCE or RampingData.CONSTRAIN_ANGLE
+    ramping_data.RampDistance = 2.0 * Milling.Cal -- if we are constraining ramp by distance, distance to ramp over
+    ramping_data.RampAngle = 25.0 -- if we are contraining ramp by angle , angle to ramp in at (in degrees)
+    ramping_data.RampMaxAngleDist = 15 * Milling.Cal -- if we are contraining ramp by angle, max distance to travel before 'zig zaging' if zig zaging
+    ramping_data.RampOnLeadIn = false -- if true we restrict our ramping to lead in section of toolpath
+    lead_in_out_data.DoLeadIn = false -- if true we create lead ins on profiles (not for profile on)
+    lead_in_out_data.DoLeadOut = false -- if true we create lead outs on profiles (not for profile on)
+    lead_in_out_data.LeadType = LeadInOutData.CIRCULAR_LEAD -- type of leads to create LeadInOutData.LINEAR_LEAD or LeadInOutData.CIRCULAR_LEAD
+    lead_in_out_data.LeadLength = 5.0 * Milling.Cal -- length of lead to create
+    lead_in_out_data.LinearLeadAngle = 45 -- Angle for linear leads
+    lead_in_out_data.CirularLeadRadius = 2.0 * Milling.Cal-- Radius for circular arc leads
+    lead_in_out_data.OvercutDistance = 0.0 -- distance to 'overcut' (travel past start point) when profiling
+    local geometry_selector = GeometrySelector() -- Create object which can be used to automatically select geometry
+    local create_2d_previews = true -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+    local display_warnings =  false --true -- if this is true we will display errors and warning to the user
+    local toolpath_manager = ToolpathManager() -- Create our toolpath
+    local toolpath_id = toolpath_manager:CreateProfilingToolpath(name, tool, profile_data,
+                        ramping_data, lead_in_out_data, pos_data, geometry_selector, create_2d_previews, display_warnings)
+    if toolpath_id == nil then
+      StatusMessage("Error", "Milling Settings", "Creating toolpath", "(4900)")
+      return false
+    end
+  end
+  return true
+end
+-- =====================================================]]
+function CreateLayerPocketingToolpath(name, layer_name, start_depth, cut_depth)
+  if Milling.Pocket then
+    local selection = Milling.job.Selection  -- clear current selection
+          selection:Clear()
+  -- get layer
+    local layer = Milling.job.LayerManager:FindLayerWithName(layer_name)
+    if layer == nil then
+      StatusMessage("Error", "Pocketing Toolpath", "No layer found with name = " .. layer_name, "(5000)")
+      return false
+    end
+  -- select all closed vectors on the layer
+    if not SelectVectorsOnLayer(layer, selection, true, false, true) then
+      StatusMessage("Error", "Pocketing Toolpath", "No closed vectors found on layer " .. layer_name , "(5100)")
+      return false
+    end
+   -- Create tool we will use to machine vectors
+    local tool = Tool(Milling.MillTool2.Name, Tool.END_MILL)    -- BALL_NOSE, END_MILL, VBIT
+          tool.InMM         = Milling.MillTool2.InMM            -- tool_in_mm
+          tool.ToolDia      = Milling.MillTool2.ToolDia         -- tool_dia
+          tool.Stepdown     = Milling.MillTool2.Stepdown        -- tool_stepdown
+          tool.Stepover     = Milling.MillTool2.Stepover        -- tool_dia * (tool_stepover_percent / 100)
+          tool.RateUnits    = Milling.MillTool2.RateUnits       -- Tool.MM_SEC     -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+          tool.FeedRate     = Milling.MillTool2.FeedRate        -- 30
+          tool.PlungeRate   = Milling.MillTool2.PlungeRate      -- 10
+          tool.SpindleSpeed = Milling.MillTool2.SpindleSpeed    -- 20000
+          tool.ToolNumber   = Milling.MillTool2.ToolNumber      -- 1
+      --  tool.VBitAngle    = Milling.MillTool.VBitAngle        -- 90.0            -- used for vbit only
+      --  tool.ClearStepover = Milling.MillTool.ClearStepover   --  tool_dia * (tool_stepover_percent / 100)  -- used for vbit only
+   -- we will set home position and safe z relative to material block size
+    local mtl_block = MaterialBlock()
+    local mtl_box = mtl_block.MaterialBox
+    local mtl_box_blc = mtl_box.BLC
+   -- Create object used to set home position and safez gap above material surface
+    local pos_data = ToolpathPosData()
+          pos_data:SetHomePosition(mtl_box_blc.x, mtl_box_blc.y, mtl_box.TRC.z + (mtl_block.Thickness * 0.2) )
+          pos_data.SafeZGap = mtl_block.Thickness * 0.1
+   -- Create  object used to pass pocketing options
+    local pocket_data = PocketParameterData()
+          -- start depth for toolpath
+          pocket_data.StartDepth = start_depth
+          -- cut depth for toolpath this is depth below start depth
+          pocket_data.CutDepth = cut_depth
+          -- direction of cut for offet clearance - ProfileParameterData.CLIMB_DIRECTION or ProfileParameterData.CONVENTIONAL_DIRECTION - NOTE: enum from ProfileParameterData
+          pocket_data.CutDirection = ProfileParameterData.CLIMB_DIRECTION
+          -- Allowance to leave on when machining
+          pocket_data.Allowance = 0.0
+          -- if true use raster clearance strategy , else use offset area clearance
+          pocket_data.DoRasterClearance = false --true
+          -- angle for raster if using raster clearance
+          pocket_data.RasterAngle = 0
+          -- type of profile pass to perform  PocketParameterData.PROFILE_NONE , PocketParameterData.PROFILE_FIRST orPocketParameterData.PROFILE_LAST
+          pocket_data.ProfilePassType = PocketParameterData.PROFILE_LAST
+          -- if true we ramp into pockets (always zig-zag)
+          pocket_data.DoRamping = false
+          --  if ramping, distance to ramp over
+          pocket_data.RampDistance = 1.0
+          -- if true in Aspire, project toolpath onto composite model
+          pocket_data.ProjectToolpath = false
+   -- Create object which can used to automatically select geometry on layers etc
+    local geometry_selector = GeometrySelector()
+   -- if this is true we create 2d toolpaths previews in 2d view, if false we dont
+    local create_2d_previews = true
+   -- if this is true we will display errors and warning to the user
+    local display_warnings =  true -- false --
+   -- if we are doing two tool pocketing define tool to use for area clearance
+    local area_clear_tool = nil
+    if Milling.Clearning then
+   -- we just create a tool twice as large for testing here
+--   local jim = Milling.MillTool3
+    area_clear_tool = Tool(
+                          Milling.MillTool3.Name,
+                          Tool.END_MILL       -- BALL_NOSE, END_MILL, VBIT
+                          )
+     area_clear_tool.InMM         = Milling.MillTool3.InMM       -- tool_in_mm
+     area_clear_tool.ToolDia      = Milling.MillTool3.ToolDia    -- tool_dia * 2
+     area_clear_tool.Stepdown     = Milling.MillTool3.Stepdown   -- tool_stepdown * 2
+     area_clear_tool.Stepover     = Milling.MillTool3.Stepover   -- tool_dia * 2 *(tool_stepover_percent / 100)
+     area_clear_tool.RateUnits    = Milling.MillTool3.RateUnits  -- Tool.MM_SEC  -- MM_SEC, MM_MIN, METRES_MIN, INCHES_SEC, INCHES_MIN, FEET_MIN
+     area_clear_tool.FeedRate     = Milling.MillTool3.FeedRate      -- 30
+     area_clear_tool.PlungeRate   = Milling.MillTool3.PlungeRate    -- 10
+     area_clear_tool.SpindleSpeed = Milling.MillTool3.SpindleSpeed  -- 20000
+     area_clear_tool.ToolNumber   = Milling.MillTool3.ToolNumber    -- 1
+    end
+     -- area_clear_tool.VBitAngle     = Carrier.MillTool3.VBitAngle      -- 90.0 -- used for vbit only
+     -- area_clear_tool.ClearStepover = Carrier.MillTool3.ClearStepover  -- tool_dia * 2 * (tool_stepover_percent / 100)  -- used for vbit only
+   -- Create our toolpath
+    local toolpath_manager = ToolpathManager()
+    local toolpath_id = toolpath_manager:CreatePocketingToolpath(
+                                              name,
+                                              tool,
+                                              area_clear_tool,
+                                              pocket_data,
+                                              pos_data,
+                                              geometry_selector,
+                                              create_2d_previews,
+                                              display_warnings
+                                              )
+    if toolpath_id  == nil  then
+      StatusMessage("Error", "Milling Settings", "Creating toolpath", "(5400)")
+      return false
+    end
+  end
+  return true
+end
+-- =====================================================]]
+function MyLayerClear(LayerName)
+  local Mylayer = Milling.job.LayerManager:GetLayerWithName(LayerName)
+     if Mylayer.IsEmpty then
+        Milling.job.LayerManager:RemoveLayer(Mylayer)
+     end -- if end
+  return true
+end -- function end
+-- =====================================================]]
+function LayerClear()
+  MyLayerClear(Milling.LNBackPocket               .. "-Wall")
+  MyLayerClear(Milling.LNBackPocket               .. "-Base")
+  MyLayerClear(Milling.LNBackProfile              .. "-Wall")
+  MyLayerClear(Milling.LNBackProfile              .. "-Base")
+  MyLayerClear(Milling.LNCenterPanelProfile       .. "-Wall")
+  MyLayerClear(Milling.LNCenterPanelProfile       .. "-Base")
+  MyLayerClear(Milling.LNCenterPanelShelfPinDrill .. "-Wall")
+  MyLayerClear(Milling.LNCenterPanelShelfPinDrill .. "-Base")
+  MyLayerClear(Milling.LNDrawFaceFrame            .. "-Wall")
+  MyLayerClear(Milling.LNDrawFaceFrame            .. "-Base")
+  MyLayerClear(Milling.LNShelfProfile             .. "-Wall")
+  MyLayerClear(Milling.LNShelfProfile             .. "-Base")
+  MyLayerClear(Milling.LNSidePocket               .. "-Wall")
+  MyLayerClear(Milling.LNSidePocket               .. "-Base")
+  MyLayerClear(Milling.LNSideShelfPinDrill        .. "-Wall")
+  MyLayerClear(Milling.LNSideShelfPinDrill        .. "-Base")
+  MyLayerClear(Milling.LNAssemblyHole             .. "-Wall")
+  MyLayerClear(Milling.LNAssemblyHole             .. "-Base")
+  MyLayerClear(Milling.LNTopBottomProfile         .. "-Wall")
+  MyLayerClear(Milling.LNTopBottomProfile         .. "-Base")
+  MyLayerClear(Milling.LNTopBottomPocket          .. "-Wall")
+  MyLayerClear(Milling.LNTopBottomPocket          .. "-Base")
+  MyLayerClear(Milling.LNStretcherRailProfile     .. "-Wall")
+  MyLayerClear(Milling.LNStretcherRailProfile     .. "-Base")
+  MyLayerClear(Milling.LNDrawNotes                .. "-Wall")
+  MyLayerClear(Milling.LNDrawNotes                .. "-Base")
+  MyLayerClear(Milling.LNPartLabels               .. "-Wall")
+  MyLayerClear(Milling.LNPartLabels               .. "-Base")
+  MyLayerClear(Milling.LNDrawerSlideHole          .. "-Base")
+  MyLayerClear(Milling.LNDrawerSlideHole          .. "-Wall")
+  return true
+end -- function end
+-- =====================================================]]
+function LayerMake(What)
+  local Red, Green, Blue = 0, 0, 0
+  -- What = the Cabinet type ("", Wall, or Bass)
+  local function GetColor(str) -- returns color value for a Color Name
+    local sx = str
+    local Red, Green, Blue = 0
+    local Colors = {}
+    Colors.Black = "0, 0, 0";     Colors.Red     = "255, 0, 0";   Colors.Blue  = "0, 0, 255"; Colors.Yellow = "255, 255, 0"
+    Colors.Cyan  = "0, 255, 255"; Colors.Magenta = "255, 0, 255"; Colors.Green = "0, 128, 0"
+    if "" == str then
+      StatusMessage("Error", "Milling Settings", "Empty string passed", "(5500)")
+    else
+      str = Colors[str]
+      if "string" == type(str) then
+        if string.find(str, ",") then
+          Red   = tonumber(string.sub(str, 1, assert(string.find(str, ",") - 1)))
+          str   = string.sub(str, assert(string.find(str, ",") + 1))
+          Green = tonumber(string.sub(str, 1, assert(string.find(str, ",") - 1)))
+          Blue  = tonumber(string.sub(str, assert(string.find(str, ",") + 1)))
+        end -- if end
+      else
+        StatusMessage("Error", "Milling Settings", "Color " .. sx .. " not Found" , "(5600)")
+        Red = 0
+        Green = 0
+        Blue = 0
+      end -- if end
+    end -- if end
+    return Red, Green, Blue
+  end  -- function end
+  if #What > 0 then
+    local layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackPocket .. What)
+          Red, Green, Blue = GetColor(Milling.LNBackPocketColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNBackProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNBackProfileColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNBackProfileColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNCenterPanelShelfPinDrill .. What)
+          Red, Green, Blue = GetColor(Milling.LNCenterPanelShelfPinDrillColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawFaceFrame .. What)
+          Red, Green, Blue = GetColor(Milling.LNDrawFaceFrameColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNShelfProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNShelfProfileColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNSideProfileColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSidePocket .. What)
+          Red, Green, Blue = GetColor(Milling.LNSidePocketColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNSideShelfPinDrill .. What)
+          Red, Green, Blue = GetColor(Milling.LNSideShelfPinDrillColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNAssemblyHole .. What)
+          Red, Green, Blue = GetColor(Milling.LNAssemblyHoleColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNTopBottomProfileColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNTopBottomPocket .. What)
+          Red, Green, Blue = GetColor(Milling.LNTopBottomPocketColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNStretcherRailProfile .. What)
+          Red, Green, Blue = GetColor(Milling.LNStretcherRailProfileColor)
+          layer:SetColor (Red, Green, Blue)
+
+          layer = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawerSlideHole .. What)
+          Red, Green, Blue = GetColor(Milling.LNDrawerSlideHoleColor)
+          layer:SetColor (Red, Green, Blue)
+
+  else -- "" For all Cabinet types
+    local layerx = Milling.job.LayerManager:GetLayerWithName(Milling.LNDrawNotes)
+          Red, Green, Blue = GetColor(Milling.LNDrawNotesColor)
+          layerx:SetColor (Red, Green, Blue)
+
+          layerx = Milling.job.LayerManager:GetLayerWithName(Milling.LNPartLabels)
+          Red, Green, Blue = GetColor(Milling.LNPartLabelsColor)
+          layerx:SetColor (Red, Green, Blue)
+  end -- if end
+  return true
+end
+
+-- ==================== End ============================]]

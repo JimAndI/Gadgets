@@ -55,6 +55,7 @@ function main()
   ]]
 -- Localized Variables --
   local Layer
+  local pt1a, pt2a
   local MaterialBlock = MaterialBlock()
   local job = VectricJob()
   local line = Contour(0.0)
