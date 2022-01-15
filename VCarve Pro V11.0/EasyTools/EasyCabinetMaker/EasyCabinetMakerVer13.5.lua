@@ -17,8 +17,8 @@
 -- Version 12.5 - Dec 10, 2021 - Ready for Posting
 -- Version 13.0 - Jan  4, 2022 - Added New Sheet Management
 -- =====================================================]]
-require("mobdebug").start()
--- require "strict"
+-- require("mobdebug").start()
+require "strict"
 -- =====================================================]]
 -- Global variables
 local AppFile1, AppFile2, AppFile3, AppFile4, AppFile5, AppFile6, AppFile7, AppFile8 -- AppFiles
@@ -50,16 +50,16 @@ DrawerHeight              = 0.0
 DrawerCounts              = 0.0
 BaseDim.BottomRail        = false
 BaseDim.BottomPocket      = true
+DialogWindow.AboutHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/About.html"
 DialogWindow.BaseHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Base.html"
-DialogWindow.LayerHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Layers.html"
-DialogWindow.ProjectHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Project.html"
-DialogWindow.MillingHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
-DialogWindow.MainHelp     = "EasyCabinetMaker.pdf"
--- DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/index.html"
-DialogWindow.WallHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Wall.html"
-DialogWindow.PartDrawing  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/PartDrawing.html"
 DialogWindow.ExportHelp   = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/ImportExport.html"
 DialogWindow.HardwareHelp = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Hardware.html"
+DialogWindow.LayerHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Layers.html"
+DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/index.html"
+DialogWindow.MillingHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
+DialogWindow.PartDrawing  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/PartDrawing.html"
+DialogWindow.ProjectHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Project.html"
+DialogWindow.WallHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Wall.html"
 DialogWindow.DialogLoop   = true
 Tool_ID1 = ToolDBId()
 Tool_ID2 = ToolDBId()
@@ -451,7 +451,7 @@ function main(script_path)
     if Project.NewSheet == "Yes" then
       StatusMessage("Alert", "Project Sheet", "All Sheet are replicated from the initial sheet configuration. \n " ..
                                       "Therefore, you will need to manually adjust material thickness to \n" ..
-                                      "to match other varying part thicknesses", "(1492)")
+                                      "to match varying part thicknesses", "(1492)")
     else
       StatusMessage("Alert", "Project Sheet", "All Parts have been drawn on the same. \n " ..
                                       "Therefore, you will need to check the material thickness for \n" ..

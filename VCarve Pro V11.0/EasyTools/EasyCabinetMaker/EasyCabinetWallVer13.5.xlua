@@ -743,17 +743,16 @@ function Wall_CabinetFaceFrame()
       CutListfileWriterItem(BOM.PID, "Center Face Frame", "Wall", "1", WallDim.FaceFrameThickness, BOM.WallFaceFrameMateralType, BOM.WallFaceFrameFinish, WallDim.FaceFrameCenterStileWidth, GetDistance(D3, C3))
     end
   end
- -- Sheetlabel(Cab.Wpt1)
-
   return true
 end  --  function end
 -- =====================================================]]
 function Wall_Math()  --  All the math for Wall Cabinet
   WallDim.BackPanelWidth = WallDim.CabHeight - ((WallDim.FaceFrameTopReveal + Milling.DadoHeight) + ((WallDim.FaceFrameBottomRailWidth - WallDim.FaceFrameBottomReveal) - Milling.DadoHeight))
   WallDim.FaceFrameTopOverlap = WallDim.FaceFrameTopRailWidth - WallDim.FaceFrameTopReveal-WallDim.MaterialThickness
+  WallDim.FaceFrameBottomlap = WallDim.FaceFrameBottomRailWidth - (WallDim.FaceFrameBottomReveal + WallDim.MaterialThickness)
   WallDim.BackPanelLength = WallDim.CabLength - ( D(Milling.DadoHeight) + D(WallDim.FaceFrameSideReveal))
   WallDim.SidePanelWidth  = WallDim.CabDepth - WallDim.FaceFrameThickness
-  WallDim.SidePanelLength =  WallDim.CabHeight - WallDim.FaceFrameTopOverlap
+  WallDim.SidePanelLength =  WallDim.CabHeight - (WallDim.FaceFrameTopOverlap + WallDim.FaceFrameBottomlap)
   WallDim.TopBottomPanelWidth = WallDim.CabDepth - WallDim.FaceFrameThickness
   WallDim.TopBottomPanelLength =  WallDim.CabLength - ( D(Milling.DadoHeight) + D(WallDim.FaceFrameSideReveal))
   WallDim.FaceFrameStileLength = WallDim.CabHeight
