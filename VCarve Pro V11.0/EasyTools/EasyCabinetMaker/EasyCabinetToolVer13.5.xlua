@@ -47,8 +47,14 @@ end
   return true
 end -- function end
 -- =====================================================]]
-function Sheetlabel(Wpt, xThickness, xType)
-  local pt1Text = Polar2D(Wpt, 90.0,  44.5 * Milling.Cal)
+function Sheetlabel(Wpt, xThickness, xType, YY)
+  local pt1Text = Point2D(0.0,0.0)
+  if YY then
+
+    pt1Text = Polar2D(Polar2D(Wpt, 90.0,  YY), 90.0,  6.0 * Milling.Cal)
+  else
+    pt1Text = Polar2D(Wpt, 90.0,  Milling.MaterialBlockHeight + (4.0 * Milling.Cal))
+  end
   DrawWriter(Project.ProgramName, pt1Text, Project.TextHeight * 3.0, Milling.LNDrawNotes, 0.0)
   pt1Text = Polar2D(pt1Text, 270.0, Project.TextHeight * 3.35)
   DrawWriter("Cabinet ID: " .. Project.DrawerID, pt1Text, Project.TextHeight * 2.0, Milling.LNDrawNotes, 0.0)
@@ -269,6 +275,7 @@ function GetMaterialSettings()
 end -- end function
 -- =====================================================]]
 function Mill_Math()   -- All the math for Wall Cabinet
+
   if Milling.MillTool1.Name == "No Tool Selected" then
     Milling.ProfileToolRadius = Milling.ProfileToolDia    * 0.500
   else
@@ -436,18 +443,12 @@ function NextSheet(X, Y)
   return true
 end
 -- =====================================================]]
-function SetSheet(Sname)
-  local sheet_manager = Milling.job.SheetManager
-  local sheet_ids = sheet_manager:GetSheetIds()
-  for id in sheet_ids do
-    if(sheet_manager:GetSheetName(id) == Sname) then
-      sheet_manager.ActiveSheetId = id
-    end
-  end
-end
--- =====================================================]]
 function D(x)                               -- Returns double the value
+  if x then
   return x * 2.0
+else
+  return 0.0
+  end
 end -- function end
 -- =====================================================]]
 function H(x)                               -- Returns half the value
@@ -455,16 +456,20 @@ function H(x)                               -- Returns half the value
 end -- function end
 -- =====================================================]]
 function CutListfileWriterHeader(Cab)
+  local DSCount = 0.0
+  if BaseQuestion.DrawCenterPanel then
+    DSCount = BaseQuestion.DrawerRowCount * 2
+  else
+    DSCount = BaseQuestion.DrawerRowCount
+  end
   if Hardware.Name == "No Drawer Slide" then
     Hardware.RearPartNumber = "N/A"
     BaseQuestion.DrawerRowCountX = "N/A"
   else
-    BaseQuestion.DrawerRowCountX = BaseQuestion.DrawerRowCount .. " (L&R)"
+    BaseQuestion.DrawerRowCountX = DSCount .. " (L&R)"
   end
   local file = io.open(Project.ProjectPath .. "\\" .. Project.CabinetName .. "-" .. Project.DrawerID .. ".dat", "w")
-
   local DiagWall = math.sqrt ((WallDim.CabHeight - (WallDim.FaceFrameTopOverlap + (WallDim.FaceFrameBottomRailWidth - (WallDim.MaterialThickness + WallDim.FaceFrameBottomReveal))))^2 + (WallDim.CabLength - D(WallDim.FaceFrameSideReveal))^2)
-
   local DiagFWall = math.sqrt (WallDim.CabHeight^2 + WallDim.CabLength^2)
   local DiagBase = math.sqrt (BaseDim.CabHeight^2 + (BaseDim.CabLength - D(BaseDim.FaceFrameSideReveal))^2)
   local DiagFBase = math.sqrt (BaseDim.FaceFrameStileLength^2 + BaseDim.CabLength^2)
@@ -478,14 +483,14 @@ function CutListfileWriterHeader(Cab)
   file:write(Lines)
   if Cab == "Both" then
     file:write("  Wall Cabinet Size\n")
-    file:write("  Cabinet Finish      = " .. BOM.WallCabinetFinish                .. "\n")
-    file:write("  Face Frame Finish   = " .. BOM.WallFaceFrameFinish              .. "\n")
+    file:write("  Cabinet Finish      = "   .. BOM.WallCabinetFinish              .. "\n")
+    file:write("  Face Frame Finish   = "   .. BOM.WallFaceFrameFinish            .. "\n")
     if Milling.Unit then
       file:write("  Ply Thickness       = " .. D2S(WallDim.MaterialThickness)     .. "\n")
       file:write("  Cabinet Height      = " .. D2S(WallDim.CabHeight)             .. "\n")
       file:write("  Cabinet Width       = " .. D2S(WallDim.CabLength)             .. "\n")
       file:write("  Cabinet Depth       = " .. D2S(WallDim.CabDepth)              .. "\n")
-      file:write("  Cabinet Diagonal    = " .. D2S(DiagWall)                      .. ")\n")
+      file:write("  Carcass Diagonal    = " .. D2S(DiagWall)                      .. ")\n")
       if Project.CabinetStyle == "Face Frame" then
         file:write("  Face Frame Diagonal = " .. DiagWall                         .. "\n")
       end -- if end
@@ -494,15 +499,15 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Height      = " .. Double2Fraction(WallDim.CabHeight) .. " (" .. D2S(WallDim.CabHeight) .. ")\n")
       file:write("  Cabinet Width       = " .. Double2Fraction(WallDim.CabLength) .. " (" .. D2S(WallDim.CabLength) .. ")\n")
       file:write("  Cabinet Depth       = " .. Double2Fraction(WallDim.CabDepth)  .. " (" .. D2S(WallDim.CabDepth)  .. ")\n")
-      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
+      file:write("  Carcass Diagonal    = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
       if Project.CabinetStyle == "Face Frame" then
-        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFWall)       .. " (" .. DiagFWall               .. ")\n")
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFWall)       .. " (" .. DiagFWall              .. ")\n")
       end -- if end
     end
     file:write(Lines)
     file:write("  Base Cabinet Size\n")
-    file:write("  Cabinet Finish      = " .. BOM.BaseCabinetFinish                .. "\n")
-    file:write("  Face Frame Finish   = " .. BOM.BaseFaceFrameFinish              .. "\n")
+    file:write("  Cabinet Finish      = "   .. BOM.BaseCabinetFinish              .. "\n")
+    file:write("  Face Frame Finish   = "   .. BOM.BaseFaceFrameFinish            .. "\n")
     if Milling.Unit then
       file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. "\n")
       file:write("  Cabinet Height      = " .. D2S(BaseDim.CabHeight)             .. "\n")
@@ -514,15 +519,15 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Height      = " .. Double2Fraction(BaseDim.CabHeight) .. " (" .. D2S(BaseDim.CabHeight) .. ")\n")
       file:write("  Cabinet Width       = " .. Double2Fraction(BaseDim.CabLength) .. " (" .. D2S(BaseDim.CabLength) .. ")\n")
       file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
-      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
+      file:write("  Carcass Diagonal    = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
       if Project.CabinetStyle == "Face Frame" then
-        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFBase)          .. " (" .. DiagFBase               .. ")\n")
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFBase)       .. " (" .. DiagFBase              .. ")\n")
       end -- if end
     end
     if Hardware.Name ~= "No Drawer Slide" then
-      file:write("  Drawer Slides Model = " .. Hardware.Name                             .. "\n")
-      file:write("  Drawer Rear Mount   = " .. Hardware.RearPartNumber                   .. "\n")
-      file:write("  Drawer Slides Count = " .. BaseQuestion.DrawerRowCountX              .. "\n")
+      file:write("  Drawer Slides Model = " .. Hardware.Name                      .. "\n")
+      file:write("  Drawer Rear Mount   = " .. Hardware.RearPartNumber            .. "\n")
+      file:write("  Drawer Slides Count = " .. BaseQuestion.DrawerRowCountX       .. "\n")
     end -- if end
   elseif Cab == "Wall" then
     file:write("  Wall Cabinet Size\n")
@@ -535,18 +540,18 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Height      = " .. D2S(WallDim.CabHeight)             .. "\n")
       file:write("  Cabinet Width       = " .. D2S(WallDim.CabLength)             .. "\n")
       file:write("  Cabinet Depth       = " .. D2S(WallDim.CabDepth)              .. "\n")
-      file:write("  Cabinet Diagonal    = " .. DiagWall                           .. "\n")
+      file:write("  Carcass Diagonal    = " .. DiagWall                           .. "\n")
       if Project.CabinetStyle == "Face Frame" then
-        file:write("  Face Frame Diagonal = " .. DiagFWall                           .. "\n")
+        file:write("  Face Frame Diagonal = " .. DiagFWall                        .. "\n")
       end -- if end
     else
       file:write("  Ply Thickness       = " .. D2S(BaseDim.MaterialThickness)     .. " as " .. Double2Fraction(BaseDim.MaterialThickness) .. "\n")
       file:write("  Cabinet Height      = " .. Double2Fraction(WallDim.CabHeight) .. " (" .. D2S(WallDim.CabHeight) .. ")\n")
       file:write("  Cabinet Width       = " .. Double2Fraction(WallDim.CabLength) .. " (" .. D2S(WallDim.CabLength) .. ")\n")
       file:write("  Cabinet Depth       = " .. Double2Fraction(WallDim.CabDepth)  .. " (" .. D2S(WallDim.CabDepth)  .. ")\n")
-      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
+      file:write("  Carcass Diagonal    = " .. Double2Fraction(DiagWall)          .. " (" .. DiagWall               .. ")\n")
       if Project.CabinetStyle == "Face Frame" then
-        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFWall)          .. " (" .. DiagFWall               .. ")\n")
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFWall)       .. " (" .. DiagFWall              .. ")\n")
       end -- if end
     end
   else
@@ -558,7 +563,7 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Height      = " .. D2S(BaseDim.CabHeight) .. "\n")
       file:write("  Cabinet Width       = " .. D2S(BaseDim.CabLength) .. "\n")
       file:write("  Cabinet Depth       = " .. D2S(BaseDim.CabDepth)  .. "\n")
-      file:write("  Cabinet Diagonal    = " .. DiagBase .. "\n")
+      file:write("  Carcass Diagonal    = " .. DiagBase .. "\n")
       if Project.CabinetStyle == "Face Frame" then
         file:write("  Face Frame Diagonal = " .. DiagFBase .. "\n")
       end -- if end
@@ -567,9 +572,9 @@ function CutListfileWriterHeader(Cab)
       file:write("  Cabinet Height      = " .. Double2Fraction(BaseDim.CabHeight) .. " (" .. D2S(BaseDim.CabHeight) .. ")\n")
       file:write("  Cabinet Width       = " .. Double2Fraction(BaseDim.CabLength) .. " (" .. D2S(BaseDim.CabLength) .. ")\n")
       file:write("  Cabinet Depth       = " .. Double2Fraction(BaseDim.CabDepth)  .. " (" .. D2S(BaseDim.CabDepth)  .. ")\n")
-      file:write("  Cabinet Diagonal    = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
+      file:write("  Carcass Diagonal    = " .. Double2Fraction(DiagBase)          .. " (" .. DiagBase               .. ")\n")
       if Project.CabinetStyle == "Face Frame" then
-        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFBase)          .. " (" .. DiagFBase               .. ")\n")
+        file:write("  Face Frame Diagonal = " .. Double2Fraction(DiagFBase)       .. " (" .. DiagFBase               .. ")\n")
       end -- if end
     end
     if Hardware.Name ~= "No Drawer Slide" then

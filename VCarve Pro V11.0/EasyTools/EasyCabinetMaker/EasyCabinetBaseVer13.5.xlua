@@ -775,9 +775,9 @@ if BaseQuestion.DrawSidePanels then  -- Drawer Slides
     ptx = Cab.Wpt1
     anx = 90
     if side  ==  "L" then
-      ptx = Polar2D(Polar2D(Cab.Wpt2, 0, BaseDim.HoleDrop), 90, BaseDim.ShelfPinHoleFront)
+      ptx = Polar2D(Polar2D(Cab.Wpt2, 0, BaseDim.HoleDrop + BaseDim.MaterialThickness), 90, BaseDim.ShelfPinHoleFront)
     else
-      ptx = Polar2D(Polar2D(Cab.Wpt1, 0, BaseDim.HoleDrop), 90, (BaseDim.ThicknessBack + BaseDim.ShelfPinHoleBack))
+      ptx = Polar2D(Polar2D(Cab.Wpt1, 0, BaseDim.HoleDrop + BaseDim.MaterialThickness), 90, (BaseDim.ThicknessBack + BaseDim.ShelfPinHoleBack))
     end -- if end
     rows = BaseDim.HoleRows
     while (rows > 0) do
@@ -935,25 +935,31 @@ end
 -- =====================================================]]
 function Base_Math()                                    -- All the math for Base Cabinet
   Project.DrawerID             = StartDate()
-  BaseDim.BackPanelWidth       = BaseDim.CabHeight
-  BaseDim.SidePanelWidth       = BaseDim.CabDepth - BaseDim.FaceFrameThickness
+  BaseDim.DatoBackDepth        = BaseDim.ThicknessBack - Milling.DadoBackHeight
+  BaseDim.DatoDepth            = BaseDim.MaterialThickness - Milling.DadoHeight
   BaseDim.SidePanelLength      = BaseDim.CabHeight
-  BaseDim.TopBottomPanelWidth  = (BaseDim.CabDepth - BaseDim.FaceFrameThickness) - Milling.DadoBackHeight
-  BaseDim.BackPanelLength      = BaseDim.CabLength - ((Milling.DadoHeight + BaseDim.FaceFrameSideReveal) * 2.0)
+  BaseDim.SidePanelWidth       = BaseDim.CabDepth - BaseDim.FaceFrameThickness
+  BaseDim.BackPanelLength      = BaseDim.CabLength - D(Milling.DadoHeight + BaseDim.FaceFrameSideReveal)
+  BaseDim.BackPanelWidth       = BaseDim.CabHeight
   BaseDim.TopBottomPanelLength = BaseDim.BackPanelLength
+  BaseDim.TopBottomPanelWidth  = BaseDim.CabDepth - (BaseDim.FaceFrameThickness + Milling.DadoBackHeight)
+  BaseDim.CenterPanelLength    = BaseDim.SidePanelLength - (BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight + D(BaseDim.MaterialThickness)) + BaseDim.DatoDepth
+  BaseDim.CenterPanelWidth     = BaseDim.TopBottomPanelWidth
   BaseDim.FaceFrameStileLength = BaseDim.CabHeight - BaseDim.ToeKickHeight
-  BaseDim.FaceFrameRailLength  = BaseDim.CabLength - ( BaseDim.FaceFrameStileWidth * 2.0)
+  BaseDim.FaceFrameRailLength  = BaseDim.CabLength - D(BaseDim.FaceFrameStileWidth)
   BaseDim.ShelfWidth           = BaseDim.CabDepth - (BaseDim.ThicknessBack + BaseDim.FaceFrameThickness + BaseDim.ShelfFrontClearance)
   BaseDim.InsideDepth          = BaseDim.CabDepth - BaseDim.ThicknessBack
+  BaseDim.InsideLength         = BaseDim.CabLength  - D(BaseDim.MaterialThickness + BaseDim.FaceFrameSideReveal)
   BaseDim.ToeKickCoverHeight   = ((BaseDim.ToeKickHeight + BaseDim.FaceFrameBottomRailWidth) - (BaseDim.FaceFrameBottomReveal + BaseDim.MaterialThickness + BaseDim.ToeKickBottomOffsetHeight ))
   if BaseQuestion.AddCenterPanel then
-    BaseDim.ShelfLength              = (BaseDim.CabLength - ((BaseDim.FaceFrameSideReveal * 2.0) + (BaseDim.MaterialThickness  * 3.0) + (BaseDim.ShelfEndClarence * 4.0)))* 0.5
+    BaseDim.ShelfLength              = (H(BaseDim.CabLength) - ((BaseDim.MaterialThickness * 1.50) + BaseDim.FaceFrameSideReveal)) - D(BaseDim.ShelfEndClarence)
+    --BaseDim.ShelfLength              = (BaseDim.CabLength - (D(BaseDim.FaceFrameSideReveal) + (BaseDim.MaterialThickness  * 3.0) + D(D(BaseDim.ShelfEndClarence)))) * 0.5
     BaseDim.ShelfNoseLength          = BaseDim.ShelfLength
     BaseQuestion.NumberDrawersPerRow = 2
     BaseQuestion.AddCenterFaceFrame  = true
     BaseQuestion.AddStrecherPocket   = false
   else
-    BaseDim.ShelfLength              = (BaseDim.CabLength - (((BaseDim.MaterialThickness  + BaseDim.FaceFrameSideReveal) * 2.0) + (BaseDim.ShelfEndClarence * 2.0)))
+    BaseDim.ShelfLength              = BaseDim.CabLength - (D(BaseDim.MaterialThickness + BaseDim.FaceFrameSideReveal + BaseDim.ShelfEndClarence))
     BaseDim.ShelfNoseLength          = BaseDim.ShelfLength
     BaseQuestion.NumberDrawersPerRow = 1
     BaseQuestion.AddCenterFaceFrame  = false
@@ -1001,7 +1007,8 @@ function Base_Math()                                    -- All the math for Base
   if BaseQuestion.ShelfCount == 0 then -- Shelf Location
     Cab.Wpt9  = Polar2D(Cab.Wpt1, 90.0, (BaseDim.BackPanelLength + Milling.PartGap - BaseDim.FaceFrameThickness)) --  Shelves
     Cab.pt9b  = Cab.Wpt9
-    Cab.Wpt10 = Cab.Wpt9
+    -- Cab.Wpt10 = Cab.Wpt9
+    Cab.Wpt10 = Polar2D(Cab.Wpt1, 90.0, BaseDim.SidePanelWidth + Milling.PartGap)
   else
     if BaseDim.ShelfDistance < ((BaseDim.CabHeight + Milling.PartGap)  * 2.0) then
       Cab.Wpt9  = Polar2D(Cab.Wpt1, 90.0, (BaseDim.CabDepth        + Milling.PartGap - BaseDim.FaceFrameThickness)) --  Shelves
@@ -1017,8 +1024,9 @@ function Base_Math()                                    -- All the math for Base
   Cab.pt9a = Cab.Wpt9
   BaseDim.HoleSpace            = BaseDim.SidePanelWidth - (BaseDim.ThicknessBack + BaseDim.ShelfPinHoleFront + BaseDim.ShelfPinHoleBack)
   BaseDim.HoleRows             = (BaseDim.FaceFrameStileLength - (BaseDim.HoleDrop + BaseDim.ShelfHoleFirstRowSpacing + BaseDim.ShelfHoleLastRowSpacing)) / BaseDim.ShelfHoleSpacing
-  BaseDim.CenterPanelLength    = (BaseDim.SidePanelLength + Milling.DadoHeight) - (BaseDim.ToeKickCoverHeight + BaseDim.ToeKickBottomOffsetHeight + (BaseDim.MaterialThickness * 2.0))
-  BaseDim.CenterPanelWidth     = BaseDim.TopBottomPanelWidth
+
+
+
   if BaseQuestion.AddCenterPanel then   -- Center Panel Location
     Cab.pt10b  = Polar2D(Cab.pt9a,   0.0, BaseDim.CenterPanelLength + BaseDim.ShelfDistance)            --  Base Center Panel
     if GetDistance(Cab.pt9a, Cab.pt10b) > GetDistance(Cab.Wpt1, Cab.Wpt3) then
@@ -1250,8 +1258,6 @@ function Base_CabinetFaceFrame()
     lastBit = BaseDim.FaceFrameStileLength - (BaseDim.FaceFrameTopRailWidth + BaseDim.FaceFrameBottomRailWidth)
     Base_FFRows(lastBit, Cab.A1,  Cab.A2, false)
   end
-  Sheetlabel(Cab.Wpt1)
-
   return true
 end
 -- =====================================================]]

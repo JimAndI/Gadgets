@@ -609,7 +609,7 @@ end -- if end
       anx = 270.0
       ptx = Polar2D(Polar2D(ptx, 0.0, (WallDim.ShelfHoleFirstRowSpacing + WallDim.MaterialThickness)), 270.0, WallDim.ShelfPinHoleFront)
     end
-    local  rows = WallDim.HoleRows
+    local rows = WallDim.HoleRows
     while (rows >0) do
       Holer(ptx, anx, WallDim.HoleSpace, Milling.ShelfPinRadius, Milling.LNSideShelfPinDrill .. "-Wall")
       ptx = Polar2D(ptx, 0.0, WallDim.ShelfHoleSpacing)
@@ -746,30 +746,31 @@ function Wall_CabinetFaceFrame()
   return true
 end  --  function end
 -- =====================================================]]
-function Wall_Math()  --  All the math for Wall Cabinet
-  WallDim.BackPanelWidth = WallDim.CabHeight - ((WallDim.FaceFrameTopReveal + Milling.DadoHeight) + ((WallDim.FaceFrameBottomRailWidth - WallDim.FaceFrameBottomReveal) - Milling.DadoHeight))
-  WallDim.FaceFrameTopOverlap = WallDim.FaceFrameTopRailWidth - WallDim.FaceFrameTopReveal-WallDim.MaterialThickness
-  WallDim.FaceFrameBottomlap = WallDim.FaceFrameBottomRailWidth - (WallDim.FaceFrameBottomReveal + WallDim.MaterialThickness)
-  WallDim.BackPanelLength = WallDim.CabLength - ( D(Milling.DadoHeight) + D(WallDim.FaceFrameSideReveal))
+function Wall_Math()                                    --  All the math for Wall Cabinet
+  Project.DrawerID  = StartDate()
+  WallDim.DatoDepth = WallDim.MaterialThickness - Milling.DadoHeight
+  WallDim.BackPanelWidth = WallDim.CabHeight - ((WallDim.FaceFrameTopRailWidth - (WallDim.FaceFrameTopReveal + WallDim.DatoDepth)) + (WallDim.FaceFrameBottomRailWidth - (WallDim.FaceFrameBottomReveal + WallDim.DatoDepth)))
+  WallDim.BackPanelLength = WallDim.CabLength - D(Milling.DadoHeight + WallDim.FaceFrameSideReveal)
+
+  WallDim.SidePanelLength =  WallDim.CabHeight - ((WallDim.FaceFrameTopRailWidth - (WallDim.FaceFrameTopReveal + WallDim.MaterialThickness)) + (WallDim.FaceFrameBottomRailWidth - (WallDim.FaceFrameBottomReveal + WallDim.MaterialThickness)))
   WallDim.SidePanelWidth  = WallDim.CabDepth - WallDim.FaceFrameThickness
-  WallDim.SidePanelLength =  WallDim.CabHeight - (WallDim.FaceFrameTopOverlap + WallDim.FaceFrameBottomlap)
   WallDim.TopBottomPanelWidth = WallDim.CabDepth - WallDim.FaceFrameThickness
-  WallDim.TopBottomPanelLength =  WallDim.CabLength - ( D(Milling.DadoHeight) + D(WallDim.FaceFrameSideReveal))
+  WallDim.TopBottomPanelLength = WallDim.CabLength - D(Milling.DadoHeight + WallDim.FaceFrameSideReveal)
   WallDim.FaceFrameStileLength = WallDim.CabHeight
-  Project.DrawerID = StartDate()
   WallDim.FaceFrameRailLength = WallDim.CabLength - D(WallDim.FaceFrameStileWidth)
-  WallDim.ShelfWidth =  WallDim.CabDepth - (WallDim.ThicknessBack + WallDim.FaceFrameThickness + WallDim.ShelfFrontClearance + WallDim.ShelfFaceFrameThickness)
+  WallDim.ShelfWidth = WallDim.CabDepth - (WallDim.ThicknessBack + WallDim.FaceFrameThickness + WallDim.ShelfFrontClearance + WallDim.ShelfNosingThickness)
   if WallQuestion.AddCenterPanel then
-    WallDim.ShelfLength =  (H((WallDim.CabLength  - ((WallDim.MaterialThickness * 3.0) +  D(WallDim.FaceFrameSideReveal) ))) - D(WallDim.ShelfEndClarence))
-    WallDim.ShelfNoseLength  = WallDim.ShelfLength
+    WallDim.ShelfLength =  (H(WallDim.CabLength) - ((WallDim.MaterialThickness * 1.50) + WallDim.FaceFrameSideReveal)) - D(WallDim.ShelfEndClarence)
+    WallDim.ShelfNoseLength = WallDim.ShelfLength
   else
-    WallDim.ShelfLength = (WallDim.CabLength  - (D(WallDim.MaterialThickness)  + D(WallDim.FaceFrameSideReveal) + (WallDim.ShelfEndClarence * 2)) )
-    WallDim.ShelfNoseLength  = WallDim.ShelfLength
+    WallDim.ShelfLength = WallDim.CabLength  - D(WallDim.MaterialThickness + WallDim.FaceFrameSideReveal + WallDim.ShelfEndClarence)
+    WallDim.ShelfNoseLength = WallDim.ShelfLength
   end
   WallDim.HoleSpace = WallDim.SidePanelWidth - (WallDim.ThicknessBack + WallDim.ShelfPinHoleFront + WallDim.ShelfPinHoleBack)
-  WallDim.HoleRows = ((WallDim.CabHeight - (WallDim.ShelfHoleFirstRowSpacing + WallDim.ShelfHoleLastRowSpacing + (WallDim.MaterialThickness * 2.0))) / WallDim.ShelfHoleSpacing)
-  WallDim.CenterPanelLength = WallDim.SidePanelLength - (WallDim.FaceFrameBottomRailWidth + D(Milling.DadoHeight))
-  WallDim.CenterPanelWidth =  WallDim.CabDepth - (Milling.DadoBackHeight + WallDim.FaceFrameThickness )
+  WallDim.HoleRows = (WallDim.SidePanelLength - (D(WallDim.MaterialThickness) + WallDim.ShelfHoleFirstRowSpacing + WallDim.ShelfHoleLastRowSpacing)) / WallDim.ShelfHoleSpacing
+ WallDim.CenterPanelLength = WallDim.SidePanelLength - D(Milling.DadoHeight)
+ WallDim.CenterPanelWidth =  WallDim.CabDepth - (Milling.DadoBackHeight + WallDim.FaceFrameThickness)
+
   Cab.pt1b    = Polar2D(Cab.Wpt1, 0.0, WallDim.SidePanelLength)                            --  Right Side Panel Bottom
   Cab.Wpt2    = Polar2D(Cab.pt1b, 0.0, Milling.PartGap)                                    --  Left Side Panel
   Cab.pt2b    = Polar2D(Cab.Wpt2, 0.0, WallDim.SidePanelLength)                            --  Left Side Panel Bottom

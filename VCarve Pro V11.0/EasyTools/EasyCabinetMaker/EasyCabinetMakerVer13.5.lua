@@ -55,11 +55,15 @@ DialogWindow.BaseHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker
 DialogWindow.ExportHelp   = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/ImportExport.html"
 DialogWindow.HardwareHelp = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Hardware.html"
 DialogWindow.LayerHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Layers.html"
-DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/index.html"
+DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
+-- DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Slide29.htm"
+--DialogWindow.MainHelp     = "file:///C:/Users/James/Documents/JimAndi/www/EasyGadgets/EasyCabinetMaker/Help/Slide05.html"
 DialogWindow.MillingHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
 DialogWindow.PartDrawing  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/PartDrawing.html"
 DialogWindow.ProjectHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Project.html"
 DialogWindow.WallHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Wall.html"
+-- DialogWindow.WallHelp     = "file:///C:/Users/James/Documents/JimAndi/www/EasyGadgets/EasyCabinetMaker/Help/Slide05.html"
+
 DialogWindow.DialogLoop   = true
 Tool_ID1 = ToolDBId()
 Tool_ID2 = ToolDBId()
@@ -125,13 +129,14 @@ function main(script_path)
   DialogWindow.MainHelp = script_path .. "\\" .. DialogWindow.MainHelp
 
   AppFile1 = assert(loadfile(script_path .. "\\EasyCabinetToolVer"     .. VerNumber .. ".xlua")) (AppFile1) -- Load Tooll Function
-  AppFile2 = assert(loadfile(script_path .. "\\EasyCabinetWallVer"     .. VerNumber .. ".xlua")) (AppFile2) -- Load Tool2 Function
-  AppFile3 = assert(loadfile(script_path .. "\\EasyCabinetBaseVer"     .. VerNumber .. ".xlua")) (AppFile3) -- Load Tool3 Function
-  AppFile4 = assert(loadfile(script_path .. "\\EasyCabinetLibraryVer"  .. VerNumber .. ".xlua")) (AppFile4) -- Load Tool4 Function
+  AppFile2 = assert(loadfile(script_path .. "\\EasyCabinetLibraryVer"  .. VerNumber .. ".xlua")) (AppFile2) -- Load Tool4 Function
+  AppFile3 = assert(loadfile(script_path .. "\\EasyCabinetWallVer"     .. VerNumber .. ".xlua")) (AppFile3) -- Load Tool2 Function
+  AppFile4 = assert(loadfile(script_path .. "\\EasyCabinetBaseVer"     .. VerNumber .. ".xlua")) (AppFile4) -- Load Tool3 Function
   AppFile5 = assert(loadfile(script_path .. "\\EasyCabinetHardwareVer" .. VerNumber .. ".xlua")) (AppFile5) -- Load Tool5 Function
   AppFile6 = assert(loadfile(script_path .. "\\EasyCabinetImagesVer"   .. VerNumber .. ".xlua")) (AppFile6) -- Load Tool6 Function
   AppFile7 = assert(loadfile(script_path .. "\\EasyCabinetDialogVer"   .. VerNumber .. ".xlua")) (AppFile7) -- Load Tool7 Function
   AppFile8 = assert(loadfile(script_path .. "\\EasyCabinetRegistryVer" .. VerNumber .. ".xlua")) (AppFile8) -- Load Tool8 Function
+
   Images()
   HTML()
   GetMaterialSettings()
@@ -177,7 +182,7 @@ function main(script_path)
     LayerMake("")
     Mill_Math()
     MillingTools()
-    Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.MaterialThickness), BOM.WallCabinetMateralType)
+    Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.MaterialThickness), BOM.WallCabinetMateralType .. " - Wall: Side Panels")
     CutListfileWriterHeader(Project.Drawing)
     if Project.Drawing == "Wall" then
       Project.Drawingx = "Wall"
@@ -228,7 +233,7 @@ function main(script_path)
       -- ====
       if (Project.NewSheet == "Yes") and (WallDim.ShelfMaterialThickness ~= WallDim.MaterialThickness) then
         NextSheet((WallDim.ShelfLength + Milling.PartGap) * WallQuestion.ShelfCount, WallDim.ShelfWidth )
-        Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.ShelfMaterialThickness), BOM.WallCabinetMateralType)
+        Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.ShelfMaterialThickness), BOM.WallCabinetMateralType .. " - Wall: Shelf Panels", WallDim.ShelfWidth)
         Cab.Wpt8 = Cab.Wpt1
       else
         Cab.Wpt8 = Polar2D(Cab.Wpt5, 90.0, Milling.PartGap + WallDim.TopBottomPanelWidth)
@@ -251,11 +256,11 @@ function main(script_path)
       if Project.NewSheet == "Yes" then  -- Sheet 2
         if Material.Orantation == "V" then
           NextSheet(WallDim.BackPanelLength, WallDim.BackPanelWidth)
-          Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.ThicknessBack), BOM.WallCabinetMateralType)
+          Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.ThicknessBack), BOM.WallCabinetMateralType .. " - Wall: Back Panel", WallDim.BackPanelWidth)
           Cab.Wpt3 = Polar2D(Cab.Wpt1, 90.0, 10.0 * Milling.Cal)
         else
           NextSheet(WallDim.BackPanelWidth, WallDim.BackPanelLength)
-          Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.ThicknessBack), BOM.WallCabinetMateralType)
+          Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.ThicknessBack), BOM.WallCabinetMateralType .. " - Wall: Back Panel", WallDim.BackPanelLength)
           Cab.Wpt3 = Cab.Wpt1
         end
       end -- if end
@@ -271,11 +276,11 @@ function main(script_path)
         if Project.NewSheet == "Yes" then -- Sheet 3
           if Material.Orantation == "V" then
             NextSheet(WallDim.CabLength, WallDim.CabHeight)
-            Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.FaceFrameThickness), BOM.WallFaceFrameMateralType)
+            Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.FaceFrameThickness), BOM.WallFaceFrameMateralType .. " - Wall: Face Frame", WallDim.CabHeight)
             Cab.Wpt4 = Polar2D(Cab.Wpt1, 90.0, 10.0 * Milling.Cal)
           else
             NextSheet(WallDim.CabHeight, WallDim.CabLength)
-            Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.FaceFrameThickness), BOM.WallFaceFrameMateralType)
+            Sheetlabel(Cab.Wpt1, Double2Fraction(WallDim.FaceFrameThickness), BOM.WallFaceFrameMateralType .. " - Wall: Face Frame", WallDim.CabLength)
             Cab.Wpt4 = Cab.Wpt1
           end
           -- Cab.Wpt4 = Cab.Wpt1
@@ -309,7 +314,7 @@ function main(script_path)
       if Project.Drawing == "Both" then
         if Project.NewSheet == "Yes" then
           NextSheet()
-          Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.MaterialThickness), BOM.BaseCabinetMateralType)
+          Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.MaterialThickness), BOM.BaseCabinetMateralType .. " - Base: Side Panels")
         else
           if Material.Orantation == "V" then
             Cab.Wpt1 = Polar2D(Cab.Wpt1, 90.0, Milling.MaterialBlockWidth)
@@ -326,9 +331,10 @@ function main(script_path)
         CreateLayerDrillingToolpath(Milling.LNSideShelfPinDrill .. "-Base", Milling.Sheet .. "Base Shelf Pin Drilling", 0.0, Milling.ShelfPinLen, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
       end -- if end
       -- ====
-
       if (Project.NewSheet == "Yes") and (BaseDim.ShelfMaterialThickness ~= BaseDim.MaterialThickness) then
         Cab.Wpt10 = Cab.Wpt9
+      elseif BaseQuestion.ShelfCount == 0 and BaseQuestion.DrawSidePanels and BaseQuestion.AddCenterPanel and BaseQuestion.DrawCenterPanel then
+        Cab.Wpt10 = Polar2D(Cab.Wpt1, 90.0, BaseDim.SidePanelWidth + Milling.PartGap) --  Shelves
       end -- if end
 
       if BaseQuestion.AddCenterPanel and BaseQuestion.DrawCenterPanel then
@@ -339,6 +345,7 @@ function main(script_path)
           CreateLayerDrillingToolpath(Milling.LNCenterPanelShelfPinDrill .. "-Base", Milling.Sheet .. "Base Center Pin Drilling", 0.0, BaseDim.MaterialThickness, Milling.ShelfPinLen * 0.25, Milling.ShelfPinLen * 0.35)
         end -- if end
       end -- if end
+      -- ====
       if Milling.AddAssemblyHolesBase then
         CreateLayerDrillingToolpath(Milling.LNAssemblyHole .. "-Base", Milling.Sheet .. "Base Assembly Drilling", 0.0, Milling.ShelfPinLen, BaseDim.MaterialThickness, Milling.ShelfPinLen * 0.25)
       end -- if end
@@ -349,11 +356,10 @@ function main(script_path)
         CreateLayerPocketingToolpath(Milling.Sheet .. "Base Side Pockets", Milling.LNSidePocket .. "-Base", 0.0, (Milling.MaterialBlockThickness - Milling.DadoHeight))
         CreateLayerProfileToolpath(Milling.LNSideProfile .. "-Base", Milling.Sheet .. "Base Side Profile", 0.0, Milling.MaterialBlockThickness, "OUT", Milling.Tabs)
       end
-
       -- sheet 2 -- Base Shelfs
-      if (Project.NewSheet == "Yes") and (BaseDim.ShelfMaterialThickness ~= BaseDim.MaterialThickness) then
+      if BaseQuestion.ShelfCount > 0 and (Project.NewSheet == "Yes") and (BaseDim.ShelfMaterialThickness ~= BaseDim.MaterialThickness) then
         NextSheet((BaseDim.ShelfLength + Milling.PartGap) * BaseQuestion.ShelfCount, BaseDim.CabDepth + (4.0 * Milling.Cal))
-        Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.ShelfMaterialThickness), BOM.BaseCabinetMateralType)
+        Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.ShelfMaterialThickness), BOM.BaseCabinetMateralType .. " - Base: Shelf Panels", BaseDim.CabDepth + (4.0 * Milling.Cal))
         Cab.Wpt9 = Cab.Wpt1
       end -- if end
         if (BaseQuestion.ShelfCount >= 1) and BaseQuestion.DrawShelfPanel then
@@ -377,7 +383,7 @@ function main(script_path)
           BaseQuestion.DrawerRowCountSpace = BaseQuestion.DrawerRowCountSpace + BaseDim.StretcherWidth  + Milling.PartGap
 	      end
         NextSheet(BaseDim.CabHeight +  BaseQuestion.DrawerRowCountSpace, BaseDim.CabLength)
-        Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.MaterialThickness), BOM.BaseCabinetMateralType)
+        Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.MaterialThickness), BOM.BaseCabinetMateralType  .. " - Base: Bottom Panel and Toe Kick", BaseDim.CabLength)
         if Material.Orantation == "V" then
           Cab.Wpt3 = Polar2D(Cab.Wpt1, 90.0, 10.0 * Milling.Cal)
         else
@@ -409,7 +415,7 @@ function main(script_path)
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if Project.NewSheet == "Yes" then -- sheet 3
         NextSheet(BaseDim.CabHeight, BaseDim.CabLength)
-        Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.ThicknessBack), BOM.BaseCabinetMateralType)
+        Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.ThicknessBack), BOM.BaseCabinetMateralType .. " - Base: Back Panel", BaseDim.CabLength)
         if Material.Orantation == "V" then
           Cab.Wpt7 = Polar2D(Cab.Wpt1, 90.0, 10.0 * Milling.Cal)
         else
@@ -433,7 +439,7 @@ function main(script_path)
       if Project.CabinetStyle == "Face Frame" then
         if Project.NewSheet == "Yes" then
           NextSheet(BaseDim.CabHeight, BaseDim.CabLength)
-          Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.FaceFrameThickness), BOM.BaseFaceFrameMateralType)
+          Sheetlabel(Cab.Wpt1, Double2Fraction(BaseDim.FaceFrameThickness), BOM.BaseFaceFrameMateralType .. " Base: - Face Frame", BaseDim.CabLength)
           if Material.Orantation == "V" then
             Cab.Wpt8 = Polar2D(Cab.Wpt1, 90.0, 10.0 * Milling.Cal)
           else
