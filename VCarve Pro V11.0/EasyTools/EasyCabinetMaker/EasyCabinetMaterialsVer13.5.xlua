@@ -1,0 +1,192 @@
+-- ========================================================================================================================
+--  Gadgets are an entirely optional add-in to Vectric's core software products.
+--  They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.
+--  In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.
+--  Permission is granted to anyone to use this software for any purpose,
+--  including commercial applications, and to alter it and redistribute it freely,
+--  subject to the following restrictions:
+--  1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
+--  If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.
+--  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+--  3. This notice may not be removed or altered from any source distribution.
+-- ========================================================================================================================
+-- Easy Cabinet Maker was written by JimAndi Gadgets of Houston Texas 2020
+-- ========================================================================================================================
+-- Material.Faceframe   = {"Hardwood",  "Cedar",    "Maple",       "Oak",     "Pine",      "Poplar",     "Walnut"}
+-- Material.SheetGoods  = {"Plywood",   "Melamine", "Birch ply",   "Oak ply", "Maple ply", "Walnut ply", "Poplar ply", "Piano Ply"}
+-- Material.Finshes     = {"Unfinshed", "Paint",    "Primer Only", "Stain"}
+-- =====================================================]]
+function GetMaterirals()
+  local Runit = true
+  local myNumber = 1
+  local myValue = ""
+  while Runit do
+    myValue = INI_GetMateriralValue("Lumber", "Lumber" .. myNumber, "S")
+    myNumber = myNumber + 1
+    if myValue then
+      table.insert (Material.Faceframe, myValue)
+    else
+      Runit = false
+    end
+  end
+
+  Runit = true
+  myNumber = 1
+  myValue = ""
+
+  while Runit do
+    myValue = INI_GetMateriralValue("SheetGoods", "SheetGood" .. myNumber, "S")
+    myNumber = myNumber + 1
+    if myValue then
+      table.insert (Material.SheetGoods, myValue)
+    else
+      Runit = false
+    end
+  end
+
+  Runit = true
+  myNumber = 1
+  myValue = ""
+  while Runit do
+    myValue = INI_GetMateriralValue("Finishing", "Finish" .. myNumber, "S")
+    myNumber = myNumber + 1
+    if myValue then
+      table.insert (Material.Finshes, myValue)
+    else
+      Runit = false
+    end
+  end
+
+  return true
+end -- function end
+  -- =====================================================]]
+  function INI_ValidateItem(xFile, xGroup, xItem)
+    -- Reads INI file and returns true if group is found
+    local fileR = io.open(xFile)
+    local group = false
+    local item = false
+    local ItemLen = string.len(xItem)
+    for Line in fileR:lines() do
+      if string.upper(All_Trim(Line)) == "[" .. string.upper(All_Trim(xGroup)) .. "]" then
+      group = true
+      end -- if end
+      if group then
+        if xItem == string.sub(Line, 1, string.len(xItem))  then  -- Item
+          item = true
+        end -- if end
+      end -- if end
+    end -- for end
+     fileR:close()
+     return group
+  end -- function end
+-- =====================================================]]
+function INI_GetMateriralValue(GroupName, ItemName, ValueType)
+  -- ==GetIniValue(xPath, FileName, GroupName, ItemName, ValueType)==
+  -- Returns a value from a file, group, and Item
+  -- Usage: XX.YY = GetIniValue(xPath, FileName, GroupName, "XX.YY", "N") ''
+  local filenameR = Project.AppPath .. "\\" .. "EasyCabinetMaterials.ini"
+  local FL = LengthOfFile(filenameR)
+  local file = io.open(filenameR, "r")
+  local dat = "."
+  local ItemNameLen = string.len(ItemName)
+  while (FL >= 1) do
+    dat = All_Trim(file:read())
+    if string.upper(dat) == "[" .. string.upper(GroupName) .. "]" then
+      break
+    else
+      FL = FL - 1
+    end -- if end
+  end -- while end
+  while (FL >= 1) do
+    dat = All_Trim(file:read())
+    if ItemName == string.sub(dat, 1, ItemNameLen)  then
+      break
+    else
+      FL = FL - 1
+      if FL == 0 then
+        dat = "Error - item not  found"
+        break
+      end -- if end
+    end -- if end
+  end -- while end
+  file:close()-- closes the open file
+  if dat == "Error - item not  found" then
+    return nil
+  else
+    return StrIniValue(dat, ValueType)
+  end
+end -- function end
+-- =====================================================]]
+function INI_GetLumber()
+  local filenameR = Project.AppPath .. "\\" .. "EasyCabinetMaterirals.ini"
+  local FL = LengthOfFile(filenameR)
+  local file = io.open(filenameR, "r")
+  local dat = "."
+  GroupName = All_Trim(GroupName)
+  if Hardware.Name == "No Drawer Slide" then
+    Hardware.RearPartNumber = "No Drawer Slide"
+  else
+    while (FL >= 1) do
+      dat = All_Trim(file:read())
+      if dat == "[" .. GroupName .. "]" then
+        dat = All_Trim(file:read())
+        Hardware.Manufacturer      = INI_StrValue(dat, "S")
+        dat = All_Trim(file:read())
+        Hardware.PartNumber        = INI_StrValue(dat, "S")
+        dat = All_Trim(file:read())
+        Hardware.SlideLength       = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideCenterLine1  = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideHole1        = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideCenterLine2  = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideHole2        = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideCenterLine3  = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideHole3        = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideCenterLine4  = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideHole4        = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideCenterLine5  = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideHole5        = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideCenterLine6  = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.SlideHole6        = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearCenterLineA   = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearHoleA         = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearCenterLineB   = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearHoleB         = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearCenterLineC   = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearHoleC         = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearCenterLineD   = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearHoleD         = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearSideClearance = tonumber(INI_StrValue(dat, "D"))
+        dat = All_Trim(file:read())
+        Hardware.RearPartNumber    = INI_StrValue(dat, "S")
+        break
+      else
+        FL = FL - 1
+      end -- if end
+    end -- while end
+  end -- if end
+  file:close()-- closes the open file
+  return true
+end -- function end
+
+-- ==================== End ============================]]

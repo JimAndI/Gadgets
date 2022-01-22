@@ -22,11 +22,6 @@ function InquiryWallOrBase(Header)
   else
     dialog:AddDropDownList("Project.NewSheet", "No")
   end -- if end
-  dialog:AddDropDownList("Hardware.Name", Hardware.Name)
-  dialog:AddDropDownListValue("Hardware.Name", "No Drawer Slide")
-  for i, line in ipairs(Hardware.Slides) do
-    dialog:AddDropDownListValue("Hardware.Name", line)
-  end
   dialog:AddDoubleField("WallDim.CabHeight", WallDim.CabHeight)
   dialog:AddDoubleField("WallDim.CabDepth",  WallDim.CabDepth)
   dialog:AddDoubleField("WallDim.CabLength", WallDim.CabLength)
@@ -34,6 +29,7 @@ function InquiryWallOrBase(Header)
   dialog:AddDoubleField("BaseDim.CabDepth",  BaseDim.CabDepth)
   dialog:AddDoubleField("BaseDim.CabLength", BaseDim.CabLength)
   dialog:AddTextField("Project.CabinetName", Project.CabinetName)
+  dialog:AddTextField("Hardware.Name", Hardware.Name)
   dialog:AddLabelField("ToolNameLabel1",                      Milling.MillTool1.Name)
   dialog:AddToolPicker("ToolChooseButton1", "ToolNameLabel1", Tool_ID1)
   dialog:AddToolPickerValidToolType("ToolChooseButton1",      Tool.END_MILL)
@@ -59,7 +55,7 @@ function InquiryWallOrBase(Header)
     BaseDim.CabHeight   = dialog:GetDoubleField("BaseDim.CabHeight")
     BaseDim.CabDepth    = dialog:GetDoubleField("BaseDim.CabDepth")
     BaseDim.CabLength   = dialog:GetDoubleField("BaseDim.CabLength")
-    Hardware.Name       = dialog:GetDropDownListValue("Hardware.Name")
+    Hardware.Name       = dialog:GetTextField("Hardware.Name")
     Project.CabinetName = All_Trim(dialog:GetTextField("Project.CabinetName"))
     Project.NewSheet    = dialog:GetDropDownListValue("Project.NewSheet")
     Project.Drawing     = dialog:GetDropDownListValue("Project.Drawing")
@@ -153,10 +149,8 @@ end -- function end
 -- =====================================================]]
 function OnLuaButton_InquiryHelp()
   local Wx, Wy = DialogSize(DialogWindow.HelpXY)
-  local dialog = HTML_Dialog(true, DialogWindow.myHtml0, Wx, Wy, "Help")
-  DialogWindow.HelpImage = DialogWindow.Help01
+  local dialog = HTML_Dialog(true, DialogWindow.myHtml10, Wx, Wy, "Help")
   dialog:ShowDialog()
-
   DialogWindow.HelpXY = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
   RegistryWrite()
   return  true
@@ -551,12 +545,10 @@ function OnLuaButton_InquiryHardwareNew(NewDialog)
       elseif 0.0 == Hardware.RearPartNumber then
         StatusMessage("Error", "New Hardware Settings", "Rear Part Number connot be empty.", "(2200)")
         MyLoop = true
-      elseif CheckInList(Items) then
+      elseif not(CheckInList(Hardware.Name)) then
         AddNewGroupWriter(Hardware.Name)
         INI_ReadGroups()
         NewDialog:UpdateLabelField("Hardware.Name", Hardware.Name)
-        Hardware.Editdialog:UpdateDropDownList("Hardware.Name",      "No Drawer Slide")
-        Hardware.Editdialog:UpdateDropDownListValue("Hardware.Name", "No Drawer Slide")
         MyLoop = false
       else
         StatusMessage("Error", "New Hardware Settings", "Part Name was already found in the inventory list.", "(2300)")
@@ -579,37 +571,55 @@ function OnLuaButton_InquiryHardwareDelete(NewDialog)
       INI_ReadGroups()
       RegistryWrite()
     end
+  else
+    StatusMessage("Alert", "No Drawer Slide", "You selected 'No Drawer Slide' this item cannot be Deleted", "(1207)")
   end
   return true
 end -- function end
 -- =====================================================]]
 function OnLuaButton_InquiryHardwareEditQuestion(MyDia1)
-  Hardware.Name = All_Trim(MyDia1:GetDropDownListValue("Hardware.Name"))
-  if Hardware.Name == "No Drawer Slide" then
+  Hardware.Name = All_Trim(MyDia1:GetTextField("Hardware.Name"))
+  --[[ if Hardware.Name == "No Drawer Slide" then
     StatusMessage("Alert", "Slide Editing", "Cannot Edit this Drawer Slide.", "(1110)")
   elseif Hardware.Name == "" then
     StatusMessage("Alert", "Slide Editing", "Slide value cannot be blank.", "(1210)")
   else
+  ]]
     local Wx, Wy = DialogSize(DialogWindow.SlideMountXY)
     INI_GetValues(Hardware.Name)
     local dialog = HTML_Dialog(true, DialogWindow.myHtml11, Wx, Wy, "Hardware Configure")
     Hardware.Editdialog = dialog
     dialog:AddLabelField("Hardware.Name",              Hardware.Name)
-    dialog:AddDoubleField("Hardware.SlideHole1",       Hardware.SlideHole1)
-    dialog:AddDoubleField("Hardware.SlideCenterLine1", Hardware.SlideCenterLine1)
-    dialog:AddDoubleField("Hardware.SlideHole2",       Hardware.SlideHole2)
-    dialog:AddDoubleField("Hardware.SlideCenterLine2", Hardware.SlideCenterLine2)
-    dialog:AddDoubleField("Hardware.SlideHole3",       Hardware.SlideHole3)
-    dialog:AddDoubleField("Hardware.SlideCenterLine3", Hardware.SlideCenterLine3)
-    dialog:AddDoubleField("Hardware.SlideHole4",       Hardware.SlideHole4)
-    dialog:AddDoubleField("Hardware.SlideCenterLine4", Hardware.SlideCenterLine4)
-    dialog:AddDoubleField("Hardware.SlideHole5",       Hardware.SlideHole5)
-    dialog:AddDoubleField("Hardware.SlideCenterLine5", Hardware.SlideCenterLine5)
-    dialog:AddDoubleField("Hardware.SlideHole6",       Hardware.SlideHole6)
-    dialog:AddDoubleField("Hardware.SlideCenterLine6", Hardware.SlideCenterLine6)
+    if Hardware.Name == "No Drawer Slide" then
+      dialog:AddDoubleField("Hardware.SlideHole1",       0.0)
+      dialog:AddDoubleField("Hardware.SlideCenterLine1", 0.0)
+      dialog:AddDoubleField("Hardware.SlideHole2",       0.0)
+      dialog:AddDoubleField("Hardware.SlideCenterLine2", 0.0)
+      dialog:AddDoubleField("Hardware.SlideHole3",       0.0)
+      dialog:AddDoubleField("Hardware.SlideCenterLine3", 0.0)
+      dialog:AddDoubleField("Hardware.SlideHole4",       0.0)
+      dialog:AddDoubleField("Hardware.SlideCenterLine4", 0.0)
+      dialog:AddDoubleField("Hardware.SlideHole5",       0.0)
+      dialog:AddDoubleField("Hardware.SlideCenterLine5", 0.0)
+      dialog:AddDoubleField("Hardware.SlideHole6",       0.0)
+      dialog:AddDoubleField("Hardware.SlideCenterLine6", 0.0)
+    else
+      dialog:AddDoubleField("Hardware.SlideHole1",       Hardware.SlideHole1)
+      dialog:AddDoubleField("Hardware.SlideCenterLine1", Hardware.SlideCenterLine1)
+      dialog:AddDoubleField("Hardware.SlideHole2",       Hardware.SlideHole2)
+      dialog:AddDoubleField("Hardware.SlideCenterLine2", Hardware.SlideCenterLine2)
+      dialog:AddDoubleField("Hardware.SlideHole3",       Hardware.SlideHole3)
+      dialog:AddDoubleField("Hardware.SlideCenterLine3", Hardware.SlideCenterLine3)
+      dialog:AddDoubleField("Hardware.SlideHole4",       Hardware.SlideHole4)
+      dialog:AddDoubleField("Hardware.SlideCenterLine4", Hardware.SlideCenterLine4)
+      dialog:AddDoubleField("Hardware.SlideHole5",       Hardware.SlideHole5)
+      dialog:AddDoubleField("Hardware.SlideCenterLine5", Hardware.SlideCenterLine5)
+      dialog:AddDoubleField("Hardware.SlideHole6",       Hardware.SlideHole6)
+      dialog:AddDoubleField("Hardware.SlideCenterLine6", Hardware.SlideCenterLine6)
+    end -- if end
     if dialog:ShowDialog() then
       if Hardware.Name == "No Drawer Slide" then
-        MyDia1:UpdateDropDownListValue("Hardware.Name", "No Drawer Slide")
+        MyDia1:UpdateTextField("Hardware.Name", "No Drawer Slide")
       else
         if Hardware.SlideHole1 ~= dialog:GetDoubleField("Hardware.SlideHole1") then
           INI_UpdateItem(Hardware.Name, "SlideHole1", math.abs(dialog:GetDoubleField("Hardware.SlideHole1")))
@@ -647,7 +657,7 @@ function OnLuaButton_InquiryHardwareEditQuestion(MyDia1)
         if Hardware.SlideCenterLine6 ~= dialog:GetDoubleField("Hardware.SlideCenterLine6") then
           INI_UpdateItem(Hardware.Name, "SlideCenterLine6", math.abs(dialog:GetDoubleField("Hardware.SlideCenterLine6")))
         end
-        MyDia1:UpdateDropDownListValue("Hardware.Name", Hardware.Name)
+        MyDia1:UpdateTextField("Hardware.Name", Hardware.Name)
       end
       if Project.Debugger then
         StatusMessage("Alert", "Slide Editing", "Gadget restart is required.", "(1510)")
@@ -655,49 +665,68 @@ function OnLuaButton_InquiryHardwareEditQuestion(MyDia1)
       DialogWindow.SlideMountXY = tostring(dialog.WindowWidth) .. " x " .. tostring(dialog.WindowHeight)
       RegistryWrite()
     end -- if end
-    MyDia1:UpdateDropDownListValue("Hardware.Name", Hardware.Name)
-  end -- if end
+    MyDia1:UpdateTextField("Hardware.Name", Hardware.Name)
+  -- end -- if end
   return  true
 end -- function end
 -- =====================================================]]
 function OnLuaButton_InquiryHardwareSelection(dialogX)
-  if Hardware.Name == "No Drawer Slide" then
+  --[[if Hardware.Name == "No Drawer Slide" then
     StatusMessage("Alert", "Slide Editing", "Cannot edit this drawer Slide.", "(1310)")
-  else
+  else]]
     local Wx, Wy = DialogSize(DialogWindow.SlideSelectXY)
     local dialog = HTML_Dialog(true, DialogWindow.myHtml18, Wx, Wy, "Select Slide")
+
     dialog:AddDropDownList("Hardware.Name", Hardware.Name)
+    dialog:AddDropDownListValue("Hardware.Name", "No Drawer Slide")
     for _, line in ipairs(Hardware.Slides) do
       dialog:AddDropDownListValue("Hardware.Name", line)
-    end
+    end -- for end
     if dialog:ShowDialog() then
       Hardware.Name = dialog:GetDropDownListValue("Hardware.Name")
-      UpdateHardware(dialogX)
+      if Hardware.Name == "No Drawer Slide" then
+        dialogX:UpdateLabelField("Hardware.Name"              , Hardware.Name)
+        dialogX:UpdateDoubleField("Hardware.SlideHole1"       , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideHole2"       , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideHole3"       , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideHole4"       , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideHole5"       , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideHole6"       , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideCenterLine1" , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideCenterLine2" , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideCenterLine3" , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideCenterLine4" , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideCenterLine5" , 0.0)
+        dialogX:UpdateDoubleField("Hardware.SlideCenterLine6" , 0.0)
+      else
+        UpdateHardware(dialogX)
+      end -- if end
     end
     DialogWindow.SlideSelectXY = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
     RegistryWrite()
-  end
+  --end
   return true
 end -- function end
 -- =====================================================]]
 function OnLuaButton_InquiryRearMountEdit(MyDia1)
+
   if All_Trim(Hardware.RearPartNumber) == "" then
     StatusMessage("Alert", "Rear Part Number", "The Rear Mount has no Part Number. It Cannot Be Edited.","(1100)")
   elseif Hardware.Name == "No Drawer Slide" then
-    StatusMessage("Error", "Rear Part Number", "The Slide has been Deleted and cannot be edited.", "(1200)")
+    StatusMessage("Alert", "No Drawer Slide", "You selected 'No Drawer Slide' the Rear Mount cannot edited", "(1200)")
   else
     local Wx, Wy = DialogSize(DialogWindow.RearMountXY)
     local dialog = HTML_Dialog(true, DialogWindow.myHtml12, Wx, Wy, "Rear Mount Configure")
-    dialog:AddLabelField("Hardware.RearPartName",       Hardware.RearPartNumber)
-    dialog:AddDoubleField("Hardware.RearCenterLineA",   Hardware.RearCenterLineA)
-    dialog:AddDoubleField("Hardware.RearHoleA",         Hardware.RearHoleA)
-    dialog:AddDoubleField("Hardware.RearCenterLineB",   Hardware.RearCenterLineB)
-    dialog:AddDoubleField("Hardware.RearHoleB",         Hardware.RearHoleB)
-    dialog:AddDoubleField("Hardware.RearCenterLineC",   Hardware.RearCenterLineC)
-    dialog:AddDoubleField("Hardware.RearHoleC",         Hardware.RearHoleC)
-    dialog:AddDoubleField("Hardware.RearCenterLineD",   Hardware.RearCenterLineD)
-    dialog:AddDoubleField("Hardware.RearHoleD",         Hardware.RearHoleD)
-    dialog:AddDoubleField("Hardware.RearSideClearance", Hardware.RearSideClearance)
+      dialog:AddLabelField("Hardware.RearPartName",       Hardware.RearPartNumber)
+      dialog:AddDoubleField("Hardware.RearCenterLineA",   Hardware.RearCenterLineA)
+      dialog:AddDoubleField("Hardware.RearHoleA",         Hardware.RearHoleA)
+      dialog:AddDoubleField("Hardware.RearCenterLineB",   Hardware.RearCenterLineB)
+      dialog:AddDoubleField("Hardware.RearHoleB",         Hardware.RearHoleB)
+      dialog:AddDoubleField("Hardware.RearCenterLineC",   Hardware.RearCenterLineC)
+      dialog:AddDoubleField("Hardware.RearHoleC",         Hardware.RearHoleC)
+      dialog:AddDoubleField("Hardware.RearCenterLineD",   Hardware.RearCenterLineD)
+      dialog:AddDoubleField("Hardware.RearHoleD",         Hardware.RearHoleD)
+      dialog:AddDoubleField("Hardware.RearSideClearance", Hardware.RearSideClearance)
     if dialog:ShowDialog() then
       if Hardware.RearCenterLineA ~= dialog:GetDoubleField("Hardware.RearCenterLineA") then
         INI_UpdateItem(Hardware.Name,  "RearCenterLineA", math.abs(dialog:GetDoubleField("Hardware.RearCenterLineA")))
@@ -893,11 +922,19 @@ h2 span {
 	text-align: left;
 	white-space: nowrap;
 }
+.h1-lwrap {
+	font-size: 14px;
+	text-align: left;
+}
 .h1-r {
 	font-size: 12px;
 	font-weight: bold;
 	text-align: right;
 	white-space: nowrap;
+}
+.h1-rwrap {
+	font-size: 14px;
+	text-align: right;
 }
 .h1-rP {
 	font-size: 12px;
@@ -1100,7 +1137,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td><button class="FormButton"><span class="icon">Help</span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="GadgetName.Alert">.</td>
     <td class="h1-c"><input id="ButtonOK" class="FormButton" type="button" value="OK"></td>
     <td class="h1-c"><input id="ButtonCancel" class="FormButton" type="button" value="Cancel"></td>
@@ -1221,7 +1258,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td ><button class="FormButton"><span class="icon">Help</span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="GadgetName.Alert">.</td>
     <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
     <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -1374,7 +1411,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td ><button class="FormButton"><span class="icon"> Help </span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="GadgetName.Alert">.</td>
     <td class="h1-c"><input id="ButtonOK" class="FormButton" type="button" value="OK"></td>
     <td class="h1-c"><input id="ButtonCancel" class="FormButton" type="button" value="Cancel"></td>
@@ -1484,7 +1521,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td><button class="FormButton-Help"><span class="icon">     Help </span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="GadgetName.Alert"></td>
     <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
     <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -1724,7 +1761,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td><button class="FormButton-Help"><span class="icon">Help</span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="GadgetName.Alert">.</td>
     <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
     <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -1884,7 +1921,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td><button class="FormButton"><span class="icon">Help</span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="GadgetName.Alert">.</td>
     <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
     <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -1983,55 +2020,54 @@ table {
             <td class="h1-l"><input name="WallDim.CabHeight" type="text" class="h1-l" id="WallDim.CabHeight" size="10" maxlength="10" /></td>
         </tr>
     </table>
+
     <table>
       <tr>
-        <td colspan=4><h2><span>Cabinet Name and Base Drawer Slide Selection</span></h2></td>
+        <td colspan=5><h2><span>Cabinet Name and Base Drawer Slide Selection</span></h2></td>
       </td>
       </tr>
       <tr>
         <td class="h1-r"><label class="helplabel-r">Cabinet Name</label></td>
-        <td class="h2"><input type="text" class="h1-l" id="Project.CabinetName" size="14" maxlength="40" /></td>
-        <td class="h2-r"><label  class="h1-r">Slide Hardware<select size="1" id="Hardware.Name">
-            <option value="1">first</option>
-            <option value="2" selected>second</option>
-            <option value="3" >third</option>
-          </select></label>
-        </td>
-        <td class="h1-l"><input id = "InquiryHardwareEditQuestion"  class="LuaButton" type = "button" value = "Edit" ></td>
+        <td class="h1-l"><input type="text" class="h1-l" id="Project.CabinetName" size="14" maxlength="40" /></td>
+
+        <td class="h1-r"><label class="helplabel-r">Drawer Slide</label></td>
+        <td class="h1-l"><input name="Hardware.Name" type="text" class="h1-l" id="Hardware.Name" size="18" maxlength="25" /></td>
+        <td class="h1-r"><input id = "InquiryHardwareEditQuestion"  class="LuaButton" type = "button" value = "Edit" ></td>
       </tr>
       <tr>
-        <td colspan=4><h2><span>Tooling Selection</span></h2></td>
+        <td colspan=5><h2><span>Tooling Selection</span></h2></td>
       </tr>
     </table>
+
     <table>
       <tr>
         <td class="h1-r"><label class="helplabel-r");">Profile Bit:</label></td>
-        <td bgcolor="#33FFFF" class="ToolNameLabel"><span id="ToolNameLabel1">-</span></td>
+        <td colspan="5" bgcolor="#33FFFF" class="ToolNameLabel"><span id="ToolNameLabel1">-</span></td>
         <td class="h1-l"><input id = "ToolChooseButton1" class="ToolPicker" name = "ToolChooseButton1" type = "button" value = "Tool"></td>
       </tr>
       <tr>
         <td class="h1-r"><label class="helplabel-r">Pocket Bit:</label></td>
-        <td bgcolor="#FFFF33" class="ToolNameLabel"><span id="ToolNameLabel2">-</span></td>
+        <td colspan="5" bgcolor="#FFFF33" class="ToolNameLabel"><span id="ToolNameLabel2">-</span></td>
         <td class="h1-l"><input id = "ToolChooseButton2" class="ToolPicker" name = "ToolChooseButton2" type = "button" value = "Tool"></td>
       </tr>
       <tr>
         <td class="h1-r"><label class="helplabel-r">Pocket Clearing Bit:</label></td>
-        <td bgcolor="#FFFF33" class="ToolNameLabel"><span id="ToolNameLabel3">-</span></td>
+        <td colspan="5" bgcolor="#FFFF33" class="ToolNameLabel"><span id="ToolNameLabel3">-</span></td>
         <td class="h1-l"><input id = "ToolChooseButton3" class="ToolPicker" name = "ToolChooseButton3" type = "button" value = "Tool"></td>
       </tr>
       <tr>
         <td class="h1-r"><label class="helplabel-r">Shelf Pins:</label></td>
-        <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel4">-</span></td>
+        <td colspan="5" bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel4">-</span></td>
         <td class="hl-l"><input id = "ToolChooseButton4" class="ToolPicker" name = "ToolChooseButton4" type = "button" value = "Tool"></td>
       </tr>
       <tr>
         <td class="h1-r"><label class="helplabel-r">Assembly Pilot Holes:</label></td>
-        <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel5">-</span></td>
+        <td colspan="5" bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel5">-</span></td>
         <td class="hl-l"><input id = "ToolChooseButton5" class="ToolPicker" name = "ToolChooseButton5" type = "button" value = "Tool"></td>
       </tr>
       <tr>
         <td class="h1-r"><label class="helplabel-r">Hardware Pilot Holes:</label></td>
-        <td bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel6">-</span></td>
+        <td colspan="5" bgcolor="#00FFCC" class="ToolNameLabel"><span id="ToolNameLabel6">-</span></td>
         <td class="hl-l"><input id = "ToolChooseButton6" class="ToolPicker" name = "ToolChooseButton6" type = "button" value = "Tool"></td>
       </tr>
       <tr>
@@ -2040,6 +2076,7 @@ table {
         <td>&nbsp;</td>
       </tr>
     </table>
+
     <table>
       <tr>
         <td colspan=5><h2><span>Drawing Preferences</span></h2></td>
@@ -2052,12 +2089,13 @@ table {
         <td class="h1-r"><input id = "InquiryPartDrawing" class="LuaButton" type = "button" value = "Part Selecter"></td>
       </tr>
     </table>
+
     <table class="mytable" id="OkayButtonTable">
       <tr>
        <td colspan=5><h2><span></span></h2></td>
       </tr>
       <tr>
-          <td class="help_But"><button class="FormButton"><span class="icon">Help</span></button></td>
+          <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
           <td class="alert-l" id="GadgetName.Alert">.</td>
           <td class="h1-cOk"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
           <td class="h1-cOk"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -2129,7 +2167,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td><button class="FormButton-Help"><span class="icon">     Help </span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="GadgetName.Alert">.</td>
     <td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
     <td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -2156,7 +2194,7 @@ table {
       <td colspan=4><h2><span></span></h2></td>
     </tr>
     <tr>
-      <td><button class="FormButton"><span class="icon">Help</span></button></td>
+      <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
       <td class="alert-l" id="GadgetName.Alert">.</td>
       <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
       <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -2165,8 +2203,45 @@ table {
 </body>
 </html>
 ]]
--- =====================================================]] -- Open
-  DialogWindow.myHtml10 = [[]]
+-- =====================================================]] -- Help
+  DialogWindow.myHtml10 = [[<html>
+<head>
+    <title>About</title>
+    ]] .. DialogWindow.Style ..[[
+</head>
+<body>
+    <table>
+        <tr>
+          <td colspan="2" class="h3-c">Easy Cabinet Maker</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="h2-c">JimAndi Gadgets</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="h1-c">Houston, TX.</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="h1-c"><button class="FormButton" onclick="window.open(']] .. DialogWindow.Help .. [[');"> Web Help </button> </td>
+        <tr>
+          <td colspan="2"><h2><span>Gadget Over View</span></h2></td>
+        </tr>
+        <tr>
+          <td valign="top" class="h1-lwrap" >
+          <p class="h1-lwrap">The Easy Cabinet Maker Gadget is a plug-in program for the Vectric Aspire or VCarve Pro Versions 11+ products.</p>
+          <p class="h1-lwrap">The gadget produces a face frame style cabinet in the upper (wall) or lower (base) or both configuration. The program is designed on being 100% parametrically driven. This design allows the user to have complete control of all variables being defined by the user. </p>
+          <p class="h1-lwrap">Select the 'Web Help' above to open a online version of the gadget help.</p>
+          <p class="h1-lwrap">To access the 'PDF Help' the complete file path is provided at the bottom of this menu. Select the complete path and open the Windows Run tool and paste the path and and select the run button. (Note: To open the PDF file you will need the PDF reader) </p></td>
+          <td class="h2-c"><img src="]] .. DialogWindow.CabinetImage .. [[" width="231" height="400" alt="Smile"></td>
+        </tr>
+        <tr>
+          <td colspan="2"><h2><span></span></h2></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="h1-r"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
+        </tr>
+    </table>
+</body>
+</html>]]
 -- =====================================================]] -- Slide Mount Information
   DialogWindow.myHtml11 = [[<html>
 <head>
@@ -2240,7 +2315,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td height="24"><button class="FormButton"><span class="icon">Help</span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td width="120">&nbsp;</td>
     <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
     <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -2317,7 +2392,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td height="24"><button class="FormButton"><span class="icon">Help</span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td width="120">&nbsp;</td>
     <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
     <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -2352,7 +2427,7 @@ table {
         <td colspan=4><h2><span></span></h2></td>
       </tr>
       <tr>
-        <td><button class="FormButton"><span class="icon">Help</span></button></td>
+        <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
         <td class="alert-l" id="GadgetName.Alert">.</td>
         <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
         <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -2384,7 +2459,7 @@ table {
       <td colspan=4><h2><span></span></h2></td>
     </tr>
     <tr>
-      <td><button class="FormButton"><span class="icon">Help</span></button></td>
+      <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
       <td class="alert-l" id="GadgetName.Alert">.</td>
       <td class="h1-c"><input id="ButtonOK"     class="FormButton" name="ButtonOK"     type="button" value="OK"></td>
       <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>
@@ -2483,7 +2558,7 @@ table {
     <td colspan=4><h2><span></span></h2></td>
   </tr>
   <tr>
-    <td height="24"><button class="FormButton"><span class="icon">Help</span></button></td>
+    <td class="h1-l"><input id = "InquiryHelp" class="LuaButton" type = "button" value = "Help"></td>
     <td class="alert-l" id="Hardware.Alert1">.</td>
     <td class="h1-c"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td>
     <td class="h1-c"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td>

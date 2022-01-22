@@ -189,6 +189,7 @@ function INI_GetValues(GroupName)
 end -- function end
 -- =====================================================]]
 function UpdateHardware(NewDialog)
+
   INI_GetValues(Hardware.Name)
   NewDialog:UpdateDoubleField("Hardware.SlideHole1"       , Hardware.SlideHole1)
   NewDialog:UpdateDoubleField("Hardware.SlideHole2"       , Hardware.SlideHole2)
@@ -239,10 +240,10 @@ function INI_ReadGroups()
 end
 -- =====================================================]]
 function CheckInList(Items)                               -- Checks the INI list for Name is already in the list if
-  local ret = true
+  local ret = false
   for _, line in ipairs(Hardware.Slides) do
     if line == Items then
-      ret = false
+      ret = true
     end -- if end
   end
   return ret

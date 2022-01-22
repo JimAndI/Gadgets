@@ -21,7 +21,7 @@
 require "strict"
 -- =====================================================]]
 -- Global variables
-local AppFile1, AppFile2, AppFile3, AppFile4, AppFile5, AppFile6, AppFile7, AppFile8 -- AppFiles
+local AppFile1, AppFile2, AppFile3, AppFile4, AppFile5, AppFile6, AppFile7, AppFile8, AppFile9 -- AppFiles
 AQ = 0.0
 YearNumber = "2022"
 VerNumber = "13.5"
@@ -40,9 +40,9 @@ Material             = {}
 Cab                  = {}   -- Points
 DialogWindow         = {}   -- Dialog Managment
 Hardware.Slides      = {}
-Material.Faceframe   = {"Hardwood",  "Cedar",    "Maple",       "Oak",     "Pine",      "Poplar",     "Walnut"}
-Material.SheetGoods  = {"Plywood",   "Melamine", "Birch ply",   "Oak ply", "Maple ply", "Walnut ply", "Poplar ply", "Piano Ply"}
-Material.Finshes     = {"Unfinshed", "Paint",    "Primer Only", "Stain"}
+Material.Faceframe   = {}
+Material.SheetGoods  = {}
+Material.Finshes     = {}
 layer                = ""
 Project.Debugger          = false -- true -- used to desplay error numbers, points, and window X/Y values
 Project.Rest              = false
@@ -50,20 +50,7 @@ DrawerHeight              = 0.0
 DrawerCounts              = 0.0
 BaseDim.BottomRail        = false
 BaseDim.BottomPocket      = true
-DialogWindow.AboutHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/About.html"
-DialogWindow.BaseHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Base.html"
-DialogWindow.ExportHelp   = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/ImportExport.html"
-DialogWindow.HardwareHelp = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Hardware.html"
-DialogWindow.LayerHelp    = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Layers.html"
-DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
--- DialogWindow.MainHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Slide29.htm"
---DialogWindow.MainHelp     = "file:///C:/Users/James/Documents/JimAndi/www/EasyGadgets/EasyCabinetMaker/Help/Slide05.html"
-DialogWindow.MillingHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Milling.html"
-DialogWindow.PartDrawing  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/PartDrawing.html"
-DialogWindow.ProjectHelp  = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Project.html"
-DialogWindow.WallHelp     = "http://www.jimandi.com/EasyGadgets/EasyCabinetMaker/Help/Wall.html"
--- DialogWindow.WallHelp     = "file:///C:/Users/James/Documents/JimAndi/www/EasyGadgets/EasyCabinetMaker/Help/Slide05.html"
-
+DialogWindow.Help         = "https://www.jimandi.com/EasyGadgets/EasyCabinetMaker/EasyCabinetMakerHelp.html"
 DialogWindow.DialogLoop   = true
 Tool_ID1 = ToolDBId()
 Tool_ID2 = ToolDBId()
@@ -111,6 +98,7 @@ function main(script_path)
   local Drawing = false
   Hardware.Action = "HOLD"
   Project.AppPath = script_path
+  Project.HelpFile = Project.AppPath .. "\\EasyCabinetMaker.pdf"
   Milling.job = VectricJob()
   DialogWindow.Sheets = ""
 
@@ -126,20 +114,22 @@ function main(script_path)
                       "specify the material dimensions", "(1300)")
     return false
   end -- if end
-  DialogWindow.MainHelp = script_path .. "\\" .. DialogWindow.MainHelp
+  -- DialogWindow.MainHelp = script_path .. "\\" .. DialogWindow.MainHelp
 
-  AppFile1 = assert(loadfile(script_path .. "\\EasyCabinetToolVer"     .. VerNumber .. ".xlua")) (AppFile1) -- Load Tooll Function
-  AppFile2 = assert(loadfile(script_path .. "\\EasyCabinetLibraryVer"  .. VerNumber .. ".xlua")) (AppFile2) -- Load Tool4 Function
-  AppFile3 = assert(loadfile(script_path .. "\\EasyCabinetWallVer"     .. VerNumber .. ".xlua")) (AppFile3) -- Load Tool2 Function
-  AppFile4 = assert(loadfile(script_path .. "\\EasyCabinetBaseVer"     .. VerNumber .. ".xlua")) (AppFile4) -- Load Tool3 Function
-  AppFile5 = assert(loadfile(script_path .. "\\EasyCabinetHardwareVer" .. VerNumber .. ".xlua")) (AppFile5) -- Load Tool5 Function
-  AppFile6 = assert(loadfile(script_path .. "\\EasyCabinetImagesVer"   .. VerNumber .. ".xlua")) (AppFile6) -- Load Tool6 Function
-  AppFile7 = assert(loadfile(script_path .. "\\EasyCabinetDialogVer"   .. VerNumber .. ".xlua")) (AppFile7) -- Load Tool7 Function
-  AppFile8 = assert(loadfile(script_path .. "\\EasyCabinetRegistryVer" .. VerNumber .. ".xlua")) (AppFile8) -- Load Tool8 Function
+  AppFile1 = assert(loadfile(script_path .. "\\EasyCabinetToolVer"      .. VerNumber .. ".xlua")) (AppFile1) -- Load Tooll Function
+  AppFile2 = assert(loadfile(script_path .. "\\EasyCabinetLibraryVer"   .. VerNumber .. ".xlua")) (AppFile2) -- Load Tool4 Function
+  AppFile3 = assert(loadfile(script_path .. "\\EasyCabinetWallVer"      .. VerNumber .. ".xlua")) (AppFile3) -- Load Tool2 Function
+  AppFile4 = assert(loadfile(script_path .. "\\EasyCabinetBaseVer"      .. VerNumber .. ".xlua")) (AppFile4) -- Load Tool3 Function
+  AppFile5 = assert(loadfile(script_path .. "\\EasyCabinetHardwareVer"  .. VerNumber .. ".xlua")) (AppFile5) -- Load Tool5 Function
+  AppFile6 = assert(loadfile(script_path .. "\\EasyCabinetImagesVer"    .. VerNumber .. ".xlua")) (AppFile6) -- Load Tool6 Function
+  AppFile7 = assert(loadfile(script_path .. "\\EasyCabinetDialogVer"    .. VerNumber .. ".xlua")) (AppFile7) -- Load Tool7 Function
+  AppFile8 = assert(loadfile(script_path .. "\\EasyCabinetRegistryVer"  .. VerNumber .. ".xlua")) (AppFile8) -- Load Tool8 Function
+  AppFile9 = assert(loadfile(script_path .. "\\EasyCabinetMaterialsVer" .. VerNumber .. ".xlua")) (AppFile9) -- Load Tool9 Function
 
   Images()
   HTML()
   GetMaterialSettings()
+  GetMaterirals()
   RegistryRead()
   Base_Math()
   Wall_Math()
@@ -465,6 +455,7 @@ function main(script_path)
     end -- if end
   end -- if end
   LayerClear()
+  SetSheet("Sheet 1")
   Milling.job:Refresh2DView()
   return true
 end -- function end
