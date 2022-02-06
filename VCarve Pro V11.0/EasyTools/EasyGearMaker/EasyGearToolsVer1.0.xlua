@@ -1,11 +1,15 @@
 -- =====================================================]]
 function GearMath()
-    Gear.ToothAngle       = (360.0 / Gear.ToothCountNum)
-    Gear.PitchChord       = (Gear.ToothTickness * Gear.ToothCountNum)
-    Gear.PitchRadius      = (Gear.ToothTickness / 2.0) * (math.sin( 180.0 / Gear.ToothCountNum))
+    Gear.ToothAngle       = (360.0 / tonumber(Gear.ToothCountNum))
+    Gear.PitchChord       = (Gear.ToothTickness * tonumber(Gear.ToothCountNum))
+    Gear.PitchRadius      = (Gear.ToothTickness / 2.0) * (math.sin( 180.0 / tonumber(Gear.ToothCountNum)))
     Gear.PitchDiameter    = (Gear.PitchRadius * 2.0)
 	return true
 end -- function end
+-- =====================================================]]
+local function ToInteger(number)
+    return math.floor(tonumber(number) or error("Could not cast '" .. tostring(number) .. "' to number.'"))
+end
 -- =====================================================]]
 function RegistryRead(RegName)                                 -- Read from Registry values
   local RegistryRead = Registry(RegName)
@@ -28,6 +32,7 @@ function RegistryRead(RegName)                                 -- Read from Regi
   Gear.PitchDiameter              = RegistryRead:GetDouble("Gear.PitchDiameter",            15.5000)
   Gear.FilletRadius               = RegistryRead:GetDouble("Gear.FilletRadius",             0.0500)
   Gear.ToplandAmount              = RegistryRead:GetDouble("Gear.ToplandAmount",            0.5000)
+  Gear.ClearanceAmount            = RegistryRead:GetDouble("Gear.ClearanceAmount",          0.0050)
   Gear.FaceFlankRadius            = RegistryRead:GetDouble("Gear.FaceFlankRadius",          0.1250)
   Gear.PitchChord                 = RegistryRead:GetDouble("Gear.PitchChord",               1.0000)
   Gear.PitchRadius                = RegistryRead:GetDouble("Gear.PitchRadius",              5.5000)
@@ -59,6 +64,7 @@ function GetUnits()
   DialogWindow.UnitDisplay  = "Note: Units: (" .. DialogWindow.Units ..")"
   return true
 end -- end function
+
 -- =====================================================]]
 function RegistryWrite(RegName)                                -- Write to Registry values
   local RegistryWrite = Registry(RegName)
@@ -82,6 +88,7 @@ function RegistryWrite(RegName)                                -- Write to Regis
   RegValue = RegistryWrite:SetDouble("Gear.PitchDiameter",              Gear.PitchDiameter)
   RegValue = RegistryWrite:SetDouble("Gear.FilletRadius",               Gear.FilletRadius)
   RegValue = RegistryWrite:SetDouble("Gear.ToplandAmount",              Gear.ToplandAmount)
+  RegValue = RegistryWrite:SetDouble("Gear.ClearanceAmount",            Gear.ClearanceAmount)
   RegValue = RegistryWrite:SetDouble("Gear.FaceFlankRadius",            Gear.FaceFlankRadius)
   RegValue = RegistryWrite:SetDouble("Gear.PitchChord",                 Gear.PitchChord)
   RegValue = RegistryWrite:SetDouble("Gear.PitchRadius",                Gear.PitchRadius)

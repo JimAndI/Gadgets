@@ -17,8 +17,8 @@
 -- Version 12.5 - Dec 10, 2021 - Ready for Posting
 -- Version 13.0 - Jan  4, 2022 - Added New Sheet Management
 -- =====================================================]]
--- require("mobdebug").start()
-require "strict"
+require("mobdebug").start()
+--require "strict"
 -- =====================================================]]
 -- Global variables
 local AppFile1, AppFile2, AppFile3, AppFile4, AppFile5, AppFile6, AppFile7, AppFile8, AppFile9 -- AppFiles

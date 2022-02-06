@@ -35,9 +35,9 @@ Gear.Calulated = false
 -- =====================================================]]
 function OnLuaButton_InquiryGearCalulate(dialog)
   if dialog:GetLabelField("ToolNameLabel1") == "No Tool Selected" then
-    DisplayMessageBox("Error! You Must Select a Profile Tool First")
+         DisplayMessageBox("Alert: The Gear Maker is not configured." ..
+                          "\n A Profile bit must be selected.")
   else
-    Gear.Calulated        = true
     Gear.Addendum         = dialog:GetDoubleField("Gear.Addendum")
     Gear.Dedendum         = dialog:GetDoubleField("Gear.Dedendum")
     Gear.AddendumDiameter = dialog:GetDoubleField("Gear.AddendumDiameter")
@@ -48,6 +48,7 @@ function OnLuaButton_InquiryGearCalulate(dialog)
     Gear.FilletRadius     = dialog:GetDoubleField("Gear.FilletRadius")
     Gear.ToothAngle       = dialog:GetDoubleField("Gear.ToothAngle")
     Gear.ToplandAmount    = dialog:GetDoubleField("Gear.ToplandAmount")
+    Gear.ClearanceAmount    = dialog:GetDoubleField("Gear.ClearanceAmount")
     Gear.FaceFlankRadius  = dialog:GetDoubleField("Gear.FaceFlankRadius")
     Gear.ToothCount       = dialog:GetDropDownListValue("Gear.ToothCount")
     Gear.ToothCountNum    = string.format("%.0f", Gear.ToothCount)
@@ -64,9 +65,11 @@ function OnLuaButton_InquiryGearCalulate(dialog)
     dialog:UpdateDoubleField("Gear.PitchDiameter",              Gear.PitchDiameter)
     dialog:UpdateDoubleField("Gear.PitchChord",                 Gear.PitchChord)
     dialog:UpdateDoubleField("Gear.PitchRadius",                Gear.PitchRadius)
+    dialog:UpdateDoubleField("Gear.ClearanceAmount",                Gear.ClearanceAmount)
     dialog:UpdateDoubleField("Gear.FilletRadius",               Gear.FilletRadius)
     dialog:UpdateDoubleField("Gear.ToplandAmount",              Gear.ToplandAmount)
     dialog:UpdateDoubleField("Gear.FaceFlankRadius",            Gear.FaceFlankRadius)
+    Gear.Calulated = true
     RegistryWrite(Gear.RegName)
   end -- if end
   return true
@@ -89,6 +92,7 @@ function InquiryMain(Header)
   dialog:AddDoubleField("Gear.FilletRadius",                  Gear.FilletRadius)
   dialog:AddDoubleField("Gear.ToplandAmount",                 Gear.ToplandAmount)
   dialog:AddDoubleField("Gear.FaceFlankRadius",               Gear.FaceFlankRadius)
+  dialog:AddDoubleField("Gear.ClearanceAmount",               Gear.ClearanceAmount)
   dialog:AddDoubleField("Gear.ToothAngle",                    Gear.ToothAngle)
   dialog:AddLabelField("ToolNameLabel1",                      Milling.MillTool1.Name)
   dialog:AddToolPicker("ToolChooseButton1", "ToolNameLabel1", Tool_ID1)
@@ -107,6 +111,7 @@ function InquiryMain(Header)
     Gear.FilletRadius     = dialog:GetDoubleField("Gear.FilletRadius")
     Gear.ToplandAmount    = dialog:GetDoubleField("Gear.ToplandAmount")
     Gear.FaceFlankRadius  = dialog:GetDoubleField("Gear.FaceFlankRadius")
+    Gear.ClearanceAmount  = dialog:GetDoubleField("Gear.ClearanceAmount")
     Gear.ToothCount       = dialog:GetDropDownListValue("Gear.ToothCount")
     Gear.ShowLines        = dialog:GetDropDownListValue("Gear.ShowLines")
     Gear.ToothAngle       = dialog:GetDoubleField("Gear.ToothAngle")
@@ -129,6 +134,45 @@ function OnLuaButton_InquiryToolClear(dialog)
   return true
 end
 -- =====================================================]]
+function Polar2D(pt, ang, dis)
+  return Point2D((pt.X + dis * math.cos(math.rad(ang))), (pt.Y + dis * math.sin(math.rad(ang))))
+end -- End Function
+-- =====================================================]]
+function ValidJob()
+-- A better error message
+    Milling.Job = VectricJob()
+    if not Milling.Job.Exists then
+      DisplayMessageBox("Error: Cannot run the Gadget, no drawing found \n" ..
+                        "Please create a new file (drawing) and \n" ..
+                        "specify the material dimensions \n")
+      return false
+    else
+      return true
+    end  -- if end
+  end -- ValidJob end
+-- =====================================================]]
+function DrawCircle(Pt1, CenterRadius, Layer)
+  local pa = Polar2D(Pt1,   180.0, CenterRadius)
+  local pb = Polar2D(Pt1,     0.0, CenterRadius)
+  local line = Contour(0.0)
+  local layer = Milling.Job.LayerManager:GetLayerWithName(Layer)
+  line:AppendPoint(pa) ;
+  line:ArcTo(pb,1);
+  line:ArcTo(pa,1);
+  layer:AddObject(CreateCadContour(line), true)
+  return true
+end -- function end
+
+-- =====================================================]]
+function DrawLine(Pt1, Pt2, Layer)
+  local line = Contour(0.0)
+  local layer = Milling.Job.LayerManager:GetLayerWithName(Layer)
+  line:AppendPoint(Pt1) ;
+  line:LineTo(Pt2) ;
+  layer:AddObject(CreateCadContour(line), true)
+  return true
+end -- function end
+-- =====================================================]]
 function main(script_path)
   Gear.Loop = true
   Gear.Drawing = false
@@ -141,20 +185,39 @@ function main(script_path)
 
  while Gear.Loop do
     Gear.Drawing = InquiryMain(Gear.AppName)
-    if Drawing and (Milling.MillTool1.Name == "No Tool Selected") then
-      DisplayMessageBox("Alert: The Gear Maker is not configured." ..
-                        "\n A Profile bit must be selected.")
-      CabLoop = true
-      -- loop  -- if no Project Path
-    elseif Gear.Calulated then
-      DisplayMessageBox("Alert: The Calulate Gear button has not ran." ..
-                        "\n Select the Calulate Gear button.")
-      CabLoop = true
+    if Gear.Drawing then
+      if (Milling.MillTool1.Name == "No Tool Selected") then
+        DisplayMessageBox("Alert: The Gear Maker is not configured." ..
+                          "\n A Profile bit must be selected.")
+        Gear.Loop = true
+        -- loop  -- if no Project Path
+      elseif not(Gear.Calulated) then
+        DisplayMessageBox("Alert: The Calulate Gear button has not ran." ..
+                          "\n Select the Calulate Gear button.")
+        Gear.Loop = true
+      else
+        Gear.Loop = false
+      end -- if end
     else
-      CabLoop = false
+      Gear.Loop = false
     end -- if end
   end -- while end
 
+  if Gear.Drawing then
+    GearMath()
+    local Pt1 = Polar2D(Point2D(0,0), 45.0, Gear.PitchDiameter + 4.0)
+    local Pt2 = Pt1
+    local Ang = 0.0
+    DrawCircle(Pt1, Gear.AddendumDiameter * 0.5, "Addendum Diameter")
+    DrawCircle(Pt1, Gear.DedendumDiameter * 0.5, "Dedendum Diameter")
+    DrawCircle(Pt1, Gear.PitchRadius, "Pitch Diameter")
+    for _ = 1, tonumber(Gear.ToothCount), 1 do
+      Pt2 = Polar2D(Pt1, Ang, Gear.PitchDiameter + 1.0)
+      DrawLine(Pt1, Pt2, "Tooth Center")
+      Ang = Ang + Gear.ToothAngle
+    end -- for end
+  end -- if end
+  Milling.Job:Refresh2DView()
   return true
 end  -- function end
 -- ==================== End ============================]]

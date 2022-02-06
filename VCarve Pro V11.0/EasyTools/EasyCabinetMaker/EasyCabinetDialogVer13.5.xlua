@@ -351,11 +351,9 @@ function OnLuaButton_InquiryMilling()
     Milling.AssemblyHoleMaxSpace = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleMaxSpace"))
     Milling.AssemblyHoleMinSpace = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleMinSpace"))
     Milling.ProfileToolDia       = math.abs(dialog:GetDoubleField("Milling.ProfileToolDia"))
-
     Milling.PilotHoleDia         = math.abs(dialog:GetDoubleField("Milling.PilotHoleDia"))
     Milling.PilotHoleDepth       = math.abs(dialog:GetDoubleField("Milling.PilotHoleDepth"))
     Milling.AssemblyHoleDia      = math.abs(dialog:GetDoubleField("Milling.AssemblyHoleDia"))
-
     Milling.PocketToolDia        = math.abs(dialog:GetDoubleField("Milling.PocketToolDia"))
     Milling.DadoBlindAmount      = math.abs(dialog:GetDoubleField("Milling.DadoBlindAmount"))
     DialogWindow.MillingXY       = tostring(dialog.WindowWidth) .. " x " ..  tostring(dialog.WindowHeight)
@@ -2411,9 +2409,9 @@ table {
     <table>
       <tr>
         <th width="150" class="h1-l"><span class="helplabel-l">Manufacturer</span></th>
-        <th width="150" class="h1-l"><span class="helplabel-l">PartNumber  </span></th>
+        <th width="150" class="h1-l"><span class="helplabel-l">Part Number  </span></th>
         <th width="150" class="h1-l"><span class="helplabel-l">Slide Length</span></th>
-        <th width="150" class="h1-l"><span class="helplabel-l">Rear PartNumber</span></th>
+        <th width="150" class="h1-l"><span class="helplabel-l">Rear Part Number</span></th>
       </tr>
       <tr>
         <td><input type="text" class="h1-l" id="Hardware.Manufacturer"   size="15" maxlength="15" /></td>
