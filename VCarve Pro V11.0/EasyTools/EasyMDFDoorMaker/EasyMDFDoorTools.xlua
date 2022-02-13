@@ -1,0 +1,225 @@
+-- ==============================================================================
+--  Gadgets are an entirely optional add-in to Vectric's core software products.
+--  They are provided 'as-is', without any express or implied warranty, and you
+--  make use of them entirely at your own risk.
+--  In no event will the author(s) or Vectric Ltd. be held liable for any damages
+--  arising from their use.
+--  Permission is granted to anyone to use this software for any purpose,
+--  including commercial applications, and to alter it and redistribute it freely,
+--  subject to the following restrictions:
+--  1. The origin of this software must not be misrepresented;
+--     you must not claim that you wrote the original software.
+--     If you use this software in a product, an acknowledgement in the product
+--     documentation would be appreciated but is not required.
+--  2. Altered source versions must be plainly marked as such, and
+--     must not be misrepresented as being the original software.
+--  3. This notice may not be removed or altered from any source distribution.
+-- ==============================================================================
+-- ====================================================]]
+function LengthOfFile(filename)-- Returns file line count
+--[[
+Counts the lines in a file
+Returns: number
+]]
+    local len = 0
+    if FileExists(filename) then
+      local file = io.open(filename)
+      for Line in file:lines() do
+        len = len + 1
+      end
+      file:close() ;
+    end
+    return len
+end -- function end
+-- =====================================================]]
+function FileExists(name)
+-- FileExists(name
+-- DisplayMessageBox(name)
+    local f=io.open(name,"r")
+    if f~=nil then
+      io.close(f)
+      return true
+    else
+      return false
+    end
+end -- Function end
+-- ====================================================]]
+function All_Trim(s)                                    -- Trims spaces off both ends of a string
+ return s:match( "^%s*(.-)%s*$" )
+end -- function end
+-- ====================================================]]
+function Dubble2String(s)
+  return string.format("%.4f", s)
+end -- function end
+-- ====================================================]]
+function ProgressAmount(Record)
+  local X1 = (100.0 / Door.Records)
+  local X2 = X1 * Record
+  local X3 = math.abs(X2)
+  local X4 = (math.floor(X3))
+  return (math.floor(math.abs((100.0 / Door.Records) * Record)))
+end -- function end
+-- ====================================================]]
+function StartDateTime(LongShort)
+--[[ Date Value Codes
+--  |   %a  abbreviated weekday name (e.g., Wed)
+--  |    %A  full weekday name (e.g., Wednesday)
+--  |    %b  abbreviated month name (e.g., Sep)
+--  |    %B  full month name (e.g., September)
+--  |    %c  date and time (e.g., 09/16/98 23:48:10)
+--  |    %d  day of the month (16) [01-31]
+--  |    %H  hour, using a 24-hour clock (23) [00-23]
+--  |    %I  hour, using a 12-hour clock (11) [01-12]
+--  |    %M  minute (48) [00-59]
+--  |    %m  month (09) [01-12]
+--  |    %p  either "am" or "pm" (pm)
+--  |    %S  second (10) [00-61]
+--  |    %w  weekday (3) [0-6 = Sunday-Saturday]
+--  |    %x  date (e.g., 09/16/98)
+--  |    %X  time (e.g., 23:48:10)
+--  |    %Y  full year (e.g., 1998)
+--  |    %y  two-digit year (98) [00-99]
+--  |    %%  the character `%´ ]]
+  if LongShort then
+    return os.date("%b %d, %Y") .. " - " ..os.date("%I") .. ":" ..os.date("%m")..os.date("%p")
+  else
+    return os.date("%Y%m%d%H%M")
+  end
+end
+-- ====================================================]]
+function ChordSeg2Radius (Chr, Seg)
+  local rad = ((((Chr * Chr)/(Seg * 4)) + Seg) / 2.0)
+  return rad
+end
+-- ====================================================]]
+function RadSeg2Chord(Rad, Seg)
+  local Ang = 2 * math.acos(1 - (Seg/Rad))
+  local Chord = (2 * Rad) * math.sin(Ang * 0.5)
+  return Chord
+end
+-- ====================================================]]
+function RadChord2Segment (Rad, Chord)
+  local segment = (Rad - (0.5 * (math.sqrt((4.0 * Rad^2) - Chord^2))))
+  return segment
+end
+-- ====================================================]]
+function DrawLine(Pt1, Pt2, Layer)
+--[[Draws a line from Pt1 to Pt2 on the layer name.
+function main(script_path)
+local MyPt1 = Point2D(3.5,3.8)
+local MyPt2 = Point2D(3.5,6.8)
+local layer = "My Line"
+DrawLine(MyPt1 , MyPt2, MyPt3, Layer)
+return true
+end -- function end
+-- -----------------------------------------------------]]
+  local line = Contour(0.0)
+  local layer = Door.job.LayerManager:GetLayerWithName(Layer)
+  line:AppendPoint(Pt1) ;
+  line:LineTo(Pt2) ;
+  layer:AddObject(CreateCadContour(line), true)
+  return true
+end -- function end
+-- ====================================================]]
+function DrawBox(p1, p2, p3, p4, Layer)                -- Draws a box
+  local line = Contour(0.0)
+  local layer = Door.job.LayerManager:GetLayerWithName(Layer)
+  line:AppendPoint(p1)
+  line:LineTo(p2)
+  line:LineTo(p3)
+  line:LineTo(p4)
+  line:LineTo(p1)
+  layer:AddObject(CreateCadContour(line), true)
+  return true
+end -- function end
+-- ====================================================]]
+function GetFilename(path)
+    local start, _ = path:find('[%w%s!-={-|]+[_%.].+')
+    return path:sub(start,#path)
+end
+-- ====================================================]]
+function GetUnits()
+  local mtl_block = MaterialBlock()
+  if mtl_block.InMM then
+    Door.Units  = "Drawing Units: mm"
+    Door.Unit = true
+    Door.Cal = 25.4
+  else
+    Door.Units  = "Drawing Units: inches"
+    Door.Unit = false
+    Door.Cal = 1.0
+  end
+end -- end function
+-- ====================================================]]
+function GetDistance(pt1, pt2)
+  -- ===GetDistance(objA, objB)===
+  local xDist = pt2.x - pt1.x
+  local yDist = pt2.y - pt1.y
+  return math.sqrt((xDist ^ 2) + (yDist ^ 2))
+end -- function end
+-- ====================================================]]
+function StartDate(LongShort)
+--[[ Date Value Codes
+--  |   %a  abbreviated weekday name (e.g., Wed)
+--  |    %A  full weekday name (e.g., Wednesday)
+--  |    %b  abbreviated month name (e.g., Sep)
+--  |    %B  full month name (e.g., September)
+--  |    %c  date and time (e.g., 09/16/98 23:48:10)
+--  |    %d  day of the month (16) [01-31]
+--  |    %H  hour, using a 24-hour clock (23) [00-23]
+--  |    %I  hour, using a 12-hour clock (11) [01-12]
+--  |    %M  minute (48) [00-59]
+--  |    %m  month (09) [01-12]
+--  |    %p  either "am" or "pm" (pm)
+--  |    %S  second (10) [00-61]
+--  |    %w  weekday (3) [0-6 = Sunday-Saturday]
+--  |    %x  date (e.g., 09/16/98)
+--  |    %X  time (e.g., 23:48:10)
+--  |    %Y  full year (e.g., 1998)
+--  |    %y  two-digit year (98) [00-99]
+--  |    %%  the character `%´ ]]
+  if LongShort then
+    return os.date("%b %d, %Y")
+  else
+    return os.date("%Y%m%d")
+  end
+end
+-- ====================================================]]
+function Radius2Bulge (p1, p2, Rad)
+  local chord = math.sqrt(((p2.x - p1.x) ^ 2) + ((p2.y - p1.y) ^ 2))
+  local seg = (Rad - (0.5 * (math.sqrt((4.0 * Rad^2) - chord^2))))
+  local bulge = (2 * seg) / chord
+  return bulge
+end
+-- ====================================================]]
+function Polar2D(pt, ang, dis)
+  return Point2D((pt.X + dis * math.cos(math.rad(ang))), (pt.Y + dis * math.sin(math.rad(ang))))
+end
+-- ====================================================]]
+function RowPoint()
+  -- Move Right 10 times then move Up 1 and move right
+  -- Door.pt01 = last point door was drawn (0.0, 96.0)
+  -- Door.MaxWide = how many columns can be drawn (10)
+  -- Door.Row = is the Y value of Door Row
+  -- Door.Spacing = Step amount (96.0)
+  -- Door.RowCount = column position 1 - 10
+  if Door.RowCount < Door.MaxWide then
+    Door.pt01 = Polar2D(Door.pt01,  0.0, Door.Spacing)
+    Door.RowCount = Door.RowCount + 1
+  else
+    Door.Row = Door.Row + Door.Spacing
+    Door.pt01 = Point2D(0.0, Door.Row)
+    Door.RowCount = 1
+  end
+  return true
+end
+-- ====================================================]]
+-- ====================================================]]
+
+-- ====================================================]]
+
+-- ====================================================]]
+
+-- ====================================================]]
+
+-- ====================================================]]
