@@ -1,0 +1,640 @@
+-- ==============================================================================
+--  Gadgets are an entirely optional add-in to Vectric's core software products.
+--  They are provided 'as-is', without any express or implied warranty, and you
+--  make use of them entirely at your own risk.
+--  In no event will the author(s) or Vectric Ltd. be held liable for any damages
+--  arising from their use.
+--  Permission is granted to anyone to use this software for any purpose,
+--  including commercial applications, and to alter it and redistribute it freely,
+--  subject to the following restrictions:
+--  1. The origin of this software must not be misrepresented;
+--     you must not claim that you wrote the original software.
+--     If you use this software in a product, an acknowledgement in the product
+--     documentation would be appreciated but is not required.
+--  2. Altered source versions must be plainly marked as such, and
+--     must not be misrepresented as being the original software.
+--  3. This notice may not be removed or altered from any source distribution.
+-- ==============================================================================
+function HTML()
+-- ====================================================]] -- Style
+DialogWindow.Style = [[<style>
+html {
+	overflow: hidden
+}
+.DirectoryPicker {
+	width: 75px;
+	font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+	font-size: 12px;
+	white-space: nowrap;
+  background-color: #663300;
+  color: #FFFFFF;
+}
+.FormButton {
+	width: 75px;
+	font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+	font-size: 12px;
+	white-space: nowrap;
+  background-color: #663300;
+  color: #FFFFFF;
+}
+.FormButtonWide {
+  font-weight: bold;
+	width: 100px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	white-space: nowrap;
+  background-color: #663300;
+  color: #FFFFFF;
+}
+.LuaButton {
+  font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+  background-color: #663300;
+  color: #FFFFFF;
+}
+.FilePicker {
+  font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+  background-color: #663300;
+  color: #FFFFFF;
+}
+.ToolNameLabel {
+	font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+	font-size: 14px;
+	text-align: left;
+}
+.ToolPicker {
+  font-weight: bold;
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	width: 50px;
+ background-color: #663300;
+ color: #FFFFFF;
+}
+.alert-c {
+	font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 4px 4px #000000;
+  font-weight: bold;
+	font-size: 14px;
+	color: #FFF;
+	text-align: center;
+  width: 100%;
+	white-space: nowrap
+}
+.alert-l {
+	font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 4px 4px #000000;
+  font-weight: bold;
+	font-size: 14px;
+	color: #FF0101;
+	text-align: left;
+  width: 100%;
+	white-space: nowrap
+}
+.alert-r {
+	font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 4px 4px #000000;
+  font-weight: bold;
+	font-size: 14px;
+	color: #00F;
+	text-align: right;
+  width: 100%;
+	white-space: nowrap
+}
+h2 {
+   width: 100%;
+   color: #FFFFFF;
+   text-align: left;
+   font-size: 14px;
+   border-bottom: 1px solid;
+   line-height: 1.20em;
+   margin: 1px 0 2px;
+}
+h2 span {
+    padding:10 10px;
+}
+.error {
+	font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 4px 4px #000000;
+	font-size: 18px;
+   font-weight: bold;
+	color: #F00;
+	text-align: left;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 10px;
+	padding-top: 4px;
+	padding-bottom: 4px
+}
+.errorMessage {
+	font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 4px 4px #000000;
+	font-size: 12px;
+   font-weight: bold;
+	text-align: left;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 10px;
+	padding-top: 4px;
+	padding-bottom: 4px
+}
+table {
+	width: 100%;
+	border: 0;
+}
+.errorTable {
+	background-color: #FFF;
+	white-space: nowrap
+}
+.p1-l {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+}
+.p1-c {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+}
+.p1-r {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: right;
+}
+.ver-c {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-align: center;
+	white-space: nowrap;
+	color: #ffd9b3
+}
+.h1-c {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	white-space: nowrap;
+}
+.h1-l {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	white-space: nowrap;
+}
+.h1-r {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: right;
+	white-space: nowrap;
+}
+.h1-rP {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 4px;
+	padding-left: 4px;
+}
+.h1-rPx {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-align: right;
+	white-space: nowrap;
+	padding-right: 8px;
+	padding-left: 8px;
+}
+.h2-l {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: left;
+	white-space: nowrap;
+	text-shadow: 2px 2px white;
+}
+.h2-c {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: center;
+	white-space: nowrap;
+}
+.h2-r {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: right;
+	white-space: nowrap;
+}
+.h3-bc {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	text-align: center;
+	white-space: nowrap;
+}
+.h3 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	text-align: center;
+	white-space: nowrap;
+}
+.webLink-c {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	background-color: yellow;
+	text-align: center;
+	white-space: nowrap
+}
+.jsbutton {
+	background-color: #630;
+	border: 2px solid #999;
+	border-right-;
+	border-bottom-;
+	border-top-color: #FFF;
+	border-left-color: #FFF;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+	font-size: 12px;
+	margin: 1px 1px;
+	color: #FFF
+}
+.jsTag-no-vis {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	display: none;
+	text-align: center;
+	color: #00F;
+	visibility: hidden
+}
+body {
+	background-color: #3a4660;
+	background-position: center;
+	overflow: hidden;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 12px;
+	color: #FFFFFF;
+	background-image: url(]].. DialogWindow.myBackGround ..[[);
+}
+html {
+	overflow: hidden
+}
+</style>]]
+
+
+
+DialogWindow.myHtmlA = [[<!DOCTYPE html><head><title>Door Style</title> ]] .. DialogWindow.Style ..[[</head><body><table><tr><td><span class="h1-c">]] .. DialogWindow.Aimage ..[[</span></td><td colspan="2" valign="top"><table><tr><td colspan="2" class="h2-l" id="Door.Style">Door Style Name</td></tr><tr><td class="h2-r">A</td><td class="h1-l"><input type="text" id="Door.A" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">B</td><td class="h1-l"><input type="text" id="Door.B" size="10" maxlength="10" /></td></tr>
+</table></td></tr></table><table><tr><td><span class="h1-l"><select name="Door.Fluting" id="Door.Fluting"></select></span></td><td><span class="h2-r">Flute Spacing</span></td><td><span class="h1-l"><input type="text" id="Door.FluteSpacing" size="10" /></span></td></tr></table><table><tr><td colspan="3"><hr></td></tr><tr><td align="center"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td><td align="center"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td></tr></table></body></html>]]
+
+
+DialogWindow.myHtmlB = [[<!DOCTYPE html><head><title>Door Style</title> ]] .. DialogWindow.Style ..[[</head><body><table><tr><td><span class="h1-c">]] .. DialogWindow.Bimage ..[[</span></td><td colspan="2" valign="top"><table><tr><td colspan="2" class="h2-l" id="Door.Style">Door Style Name</td></tr><tr><td class="h2-r">A</td><td class="h1-l"><input type="text" id="Door.A" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">B</td><td class="h1-l"><input type="text" id="Door.B" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">C</td><td class="h1-l"><input type="text" id="Door.C" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">D</td><td class="h1-l"><input type="text" id="Door.D" size="10" maxlength="10" /></td></tr></table></td></tr></table><table><tr><td><span class="h1-l"><select name="Door.Fluting" id="Door.Fluting"></select></span></td><td><span class="h2-r">Flute Spacing</span></td><td><span class="h1-l"><input type="text" id="Door.FluteSpacing" size="10" /></span></td></tr></table><table><tr><td colspan="3"><hr></td></tr><tr><td align="center"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td><td align="center"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td></tr></table></body></html>]]
+
+
+DialogWindow.myHtmlC = [[<!DOCTYPE html><head><title>Door Style</title> ]] .. DialogWindow.Style ..[[</head><body><table><tr><td><span class="h1-c">]] .. DialogWindow.Cimage ..[[</span></td><td colspan="2" valign="top"><table><tr><td colspan="2" class="h2-l" id="Door.Style">Door Style Name</td></tr><tr><td class="h2-r">A</td><td class="h1-l"><input type="text" id="Door.A" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">B</td><td class="h1-l"><input type="text" id="Door.B" size="10" maxlength="10" /></td></tr>
+<tr><td class="h2-r">C</td><td class="h1-l"><input type="text" id="Door.C" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">D</td><td class="h1-l"><input type="text" id="Door.D" size="10" maxlength="10" /></td></tr></table></td></tr></table><table><tr><td><span class="h1-l"><select name="Door.Fluting" id="Door.Fluting"></select></span></td><td><span class="h2-r">Flute Spacing</span></td><td><span class="h1-l"><input type="text" id="Door.FluteSpacing" size="10" /></span></td></tr></table><table><tr><td colspan="3"><hr></td></tr><tr><td align="center"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td><td align="center"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td></tr></table></body></html>]]
+
+
+DialogWindow.myHtmlE = [[<!DOCTYPE html><head><title>Door Style</title> ]] .. DialogWindow.Style ..[[
+</head><body><table><tr><td><span class="h1-c">]] .. DialogWindow.Eimage ..[[</span></td><td colspan="2" valign="top"><table><tr><td colspan="2" class="h2-l" id="Door.Style">Door Style Name</td></tr><tr><td class="h2-r">A</td><td class="h1-l"><input type="text" id="Door.A" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">B</td><td class="h1-l"><input type="text" id="Door.B" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">C</td><td class="h1-l"><input type="text" id="Door.C" size="10" maxlength="10" /></td></tr></table></td></tr></table><table><tr><td><span class="h1-l"><select name="Door.Fluting" id="Door.Fluting"></select></span></td><td><span class="h2-r">Flute Spacing</span></td><td><span class="h1-l"><input type="text" id="Door.FluteSpacing" size="10" /></span></td></tr></table><table><tr><td colspan="3"><hr></td></tr><tr><td align="center"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td><td align="center"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td></tr></table></body></html>]]
+
+
+DialogWindow.myHtmlF = [[<!DOCTYPE html><head><title>Door Style</title> ]] .. DialogWindow.Style ..[[
+</head><body><table><tr><td><span class="h1-c">]] .. DialogWindow.Fimage ..[[</span></td><td colspan="2" valign="top"><table><tr><td colspan="2" class="h2-l" id="Door.Style">Door Style Name</td></tr><tr><td class="h2-r">A</td><td class="h1-l"><input type="text" id="Door.A" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">B</td><td class="h1-l"><input type="text" id="Door.B" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">C</td><td class="h1-l"><input type="text" id="Door.C" size="10" maxlength="10" /></td></tr></table></td></tr></table><table><tr><td><span class="h1-l"><select name="Door.Fluting" id="Door.Fluting"></select></span></td><td><span class="h2-r">Flute Spacing</span></td><td><span class="h1-l"><input type="text" id="Door.FluteSpacing" size="10" /></span></td></tr></table><table><tr><td colspan="3"><hr></td></tr><tr><td align="center"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td><td align="center"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td></tr></table></body></html>]]
+
+
+DialogWindow.myHtmlG = [[<!DOCTYPE html><head><title>Door Style</title> ]] .. DialogWindow.Style ..[[</head><body><table><tr><td><span class="h1-c">]] .. DialogWindow.Gimage ..[[</span></td><td colspan="2" valign="top"><table><tr><td colspan="2" class="h2-l" id="Door.Style">Door Style Name</td></tr><tr><td class="h2-r">A</td><td class="h1-l"><input type="text" id="Door.A" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">B</td><td class="h1-l"><input type="text" id="Door.B" size="10" maxlength="10" /></td></tr><tr><td class="h2-r">C</td><td class="h1-l"><input type="text" id="Door.C" size="10" maxlength="10" /></td></tr></table></td></tr></table><table><tr><td><span class="h1-l"><select name="Door.Fluting" id="Door.Fluting"></select></span></td><td><span class="h2-r">Flute Spacing</span></td><td><span class="h1-l"><input type="text" id="Door.FluteSpacing" size="10" /></span></td></tr></table><table><tr><td colspan="3"><hr></td></tr><tr><td align="center"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td><td align="center"><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td></tr></table></body></html>]]
+
+DialogWindow.myHtml3 = [[<!DOCTYPE html>
+<head>
+<title>Door Panel Milling</title>
+]] .. DialogWindow.Style ..[[
+</head>
+  <body>
+    <table>
+      <tr>
+        <td><span class="h1-c">]] .. DialogWindow.Dimage ..[[</span></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td>
+        <table>
+            <tr>
+              <td class="h2-r">A Radius</td>
+              <td class="h1-l"><input type="text" id="Panel.ARadius" size="6" maxlength="10" /></td>
+
+              <td class="h2-r">B Radius</td>
+              <td class="h1-l"><input type="text" id="Panel.BRadius" size="6" maxlength="10" /></td>
+
+              <td class="h2-r">C Radius</td>
+              <td class="h1-l"><input type="text" id="Panel.CRadius" size="6" maxlength="10" /></td>
+
+              <td class="h2-r">D Width</td>
+              <td class="h1-l"><input type="text" id="Panel.DWidth" size="6" maxlength="10" /></td>
+
+              <td class="h2-r">E Depth</td>
+              <td class="h1-l"><input type="text" id="Panel.EDepth" size="6" maxlength="10" /></td>
+            </tr>
+          </table>
+          </td>
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td  colspan="4"><hr /></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK">
+                         <input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel">
+                         </td>
+      </tr>
+    </table>
+  </body>
+</html>]]
+
+DialogWindow.myHtml6 = [[<!DOCTYPE html><html><head><title>About</title>]] .. DialogWindow.Style ..[[
+</head><body text = "#000000"><table width="680" border="0" cellpadding="0"><tr><td align="center" nowrap="nowrap" class="h3" id="SysName">MDF Door Maker</td></tr><tr><td align="center" nowrap="nowrap" class="h2-c" id="Version"><span class="h1-c">Version</span></td></tr><tr><td align="center" nowrap="nowrap"><hr></td></tr><tr><td align="center" nowrap="nowrap" class="h2-c">Disclaimer</td></tr><tr><td align="center" class="p1-l"><p class="p1-l">The ]] .. AppName .. [[ Gadget is a plugin for Vectric software, V-Carve Pro and Aspire.<br> Gadgets are an entirely optional add-in to Vectric's core software products.<br> They are provided 'as-is', without any express or implied warranty, and you make use of them entirely at your own risk.<br> In no event will the author(s) or Vectric Ltd. be held liable for any damages arising from their use.<br><br> Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:<br> 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.<br> * If you use this software in a product, an acknowledgement in the product documentation would be appreciated but is not required.<br> 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.<br> 3. This notice may not be removed or altered from any source distribution.<br><br>The author heavily utilized the SDK documentation and supplied code samples in addition to the outstanding user community on the Vectric User forum.</p></td></tr><tr><td align="center"><a href="https://forum.vectric.com" class="webLink-c">Vectric User Forum</a></td></tr><tr><td align="center" ><span class="h2-c">JimAndI Gadgets</span></td></tr><tr><td align="center"><span class="h1-c">Houston, TX.</span></td></tr><tr><td><hr></td></tr></table><table><tr><td class="h1-l" ><button class="FormButton" onClick="window.open(']] .. DialogWindow.ProjectSDK .. [[');"> Help </button></td><td class="h1-r"><input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "OK"></td></tr></table></body>]]
+
+
+DialogWindow.myHtml2 = [[<!DOCTYPE HTML><html lan><head><title>Easy Tools</title>]] .. DialogWindow.Style ..[[
+  </head><body bgcolor = "#EBEBEB" text = "#000000"><table><tr><td class="h1-c"><input type="image" name="imageField2" id="imageField2" src="Left.png" /></td><td rowspan="2"><table ><tr><td colspan="2" class="h2-l" id="Door.StyleName">Door Style Name</td></tr><tr><td class="h2-r">A</td><td class="h1-l"><input id="Door.A" size="10" type="text" /></td></tr><tr><td class="h2-r">B</td><td class="h1-l"><input id="Door.B" size="10" type="text" /></td></tr><tr><td class="h2-r">C</td><td class="h1-l"><input type="text" id="Door.C" size="10" /></td></tr><tr><td class="h2-r" id="Door.D">D</td><td class="h1-l"><input type="text" disabled id="Door.D" size="10" /></td></tr><tr><td class="h2-r" id="Door.E">E</td><td class="h1-l"><input type="text" disabled id="Door.E" size="10" /></td></tr><tr><td class="h2-r" id="Door.F">F</td><td class="h1-l"><input type="text" disabled id="Door.F" size="10" /></td></tr></table></td></tr><tr><td height="27" class="h1-c"></td></tr></table><table  id="HelpMessageOKCancel"><tr><td colspan="4"><hr></td></tr><tr><td><input id = "ButtonOK" class = "FormButton" name = "ButtonOK" type = "button" value = "Close Help"></td><tdid="Door.Alert">.</td><td><input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK"></td><td><input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel"></td></tr></table></body></html>]]
+
+-- Default Settings
+DialogWindow.myHtml1 = [[<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Default Settings</title>
+    ]] .. DialogWindow.Style ..[[
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td colspan=4>
+          <h2>
+            <span>Default Settings</span>
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r">Door Layout Spacing</td>
+        <td class="h1-l">
+          <input id="Door.Spacing" size="10" type="text" />
+        </td>
+        <td class="h1-r">Doors Per Row</td>
+        <td class="h1-l">
+          <input id="Door.MaxWide" size="10" type="text" />
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r">Bit Clearance Radius</td>
+        <td class="h1-l">
+          <input id="Door.BitRad" size="10" type="text" />
+        </td>
+        <td class="h1-r">Over Cut Amount</td>
+        <td class="h1-l">
+          <input type="text" id="Door.OverCut" size="10" maxlength="10" />
+        </td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan=4>
+          <h2>
+            <span>Milling Settings</span>
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r">Scribe Depth</td>
+        <td class="h1-l">
+          <input type="text" id="Door.ScribeDepth" size="10" maxlength="10" />
+        </td>
+        <td class="h1-r">Flute Depth</td>
+        <td class="h1-l">
+          <input type="text" id="Door.FluteDepth" size="10" maxlength="10" />
+        </td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan=2>
+          <h2>
+            <span>Layer Names</span>
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r">Outer Frame Layer Name:</td>
+        <td class="h1-l">
+          <input type="text" id="Door.LayerOFrame" size="35" maxlength="35" />
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r">Inter Frame Layer Name:</td>
+        <td class="h1-l">
+          <input type="text" id="Door.LayerIFrame" size="35" maxlength="35" />
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r">Fluteing Layer Name:</td>
+        <td class="h1-l">
+          <input type="text" id="Door.LayerFlutes" size="35" maxlength="35" />
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r">Scribe Line Layer Name:</td>
+        <td class="h1-l">
+          <input type="text" id="Door.LayerScribeLines" size="35" maxlength="35" />
+        </td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan=4>
+          <h2>
+            <span>CSV File Locaton</span>
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-l">
+          <input id="MakeCSV" class="LuaButton" name="MakeCSV" type="button" value=" Make CSV Seed File ">
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-l" colspan="3">
+          <input id="DirectoryPicker" class="DirectoryPicker" name="DirectoryPicker" type="button" value=" CSV Path ">
+          <input type="text" class="h1-l" id="DoorCSVPath" size="70" maxlength="200" />
+        </td>
+      </tr>
+    </table>
+    <table id="HelpMessageOKCancel">
+      <tr>
+        <td colspan="4">
+          <hr>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-l">
+          <button class="FormButton" onClick="window.open(']].. DialogWindow.ProjectSDK .. [[');"> Help </button>
+        </td>
+        <td class="alert-l" id="Door.Alert">.</td>
+        <td class="h1-r">
+          <input id="ButtonOK" class="FormButton" name="ButtonOK" type="button" value="OK">
+        </td>
+        <td>
+          <input id="ButtonCancel" class="FormButton" name="ButtonCancel" type="button" value="Cancel">
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>]]
+
+-- Main
+DialogWindow.Main =[[<!DOCTYPE html><html lang="en"><head><title>Main</title>]] .. DialogWindow.Style ..[[</head>
+  <body>
+    <table>
+      <tr>
+        <td colspan=3><h2>
+          <span>Milling and Defaults</span>
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td  width="33%" class="h1-l"><input id="InquiryPanel"   class="LuaButton" name="InquiryPanel"   type="button" value="Panel Milling"></td>
+        <td  width="33%" class="h1-c"><input id="InquiryDefault" class="LuaButton" name="InquiryDefault" type="button" value="Default Settings"></td>
+        <td  width="33%" class="h1-r"><input id="InquiryAbout"   class="LuaButton" name="InquiryAbout"   type="button" value="About Gadget"></td>
+      </tr>
+
+      <tr>
+        <td colspan=3><h2>
+          <span> Door Style</span>
+          </h2>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="h1-l"><select name="DoorStyle" id="DoorStyle"></select></td>
+        <td colspan=2  class="h1-l"><input name="InquiryStyle" type="button" class="LuaButton" id="InquiryStyle" value="Edit Style"></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan=7><h2><span>Manual Mode</span></h2></td>
+      </tr>
+      <tr>
+        <td class="h1-c">X Value</td>
+        <td class="h1-c">Y Value</td>
+        <td class="h1-c">Count</td>
+        <td class="h1-c">Height</td>
+        <td class="h1-c">Width</td>
+        <td class="h1-c">Scribe Lines</td>
+        <td class="h1-c">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="h1-c"><input type="text" id="Door.X"      size="6" maxlength="10" /></td>
+        <td class="h1-c"><input type="text" id="Door.Y"      size="6" maxlength="10" /></td>
+        <td class="h1-c"><input type="text" id="Door.Count"  size="6" maxlength="10" /></td>
+        <td class="h1-c"><input type="text" id="Door.Height" size="6" maxlength="10" /></td>
+        <td class="h1-c"><input type="text" id="Door.Width"  size="6" maxlength="10" /></td>
+        <td class="h1-c"><select id = "Door.ScribeLines">
+            <option selected>No</option>
+            <option>Yes</option>
+          </select></td>
+        <td align="right" ><span class="h2-r">
+          <input name="InquiryMakeDoor" type="button" class="LuaButton" id="InquiryMakeDoor" value="Build">
+          </span></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan=8><h2>
+          <span>Batch Mode</span>
+          </h2></td>
+      </tr>
+      <tr>
+        <td width="10"><span class="h1-r">
+          <input name="FilePicker" type="button" class="FilePicker" id="FilePicker" value="File">
+          </span></td>
+        <td width="100%" nowrap class="h1-l"><span id="ReadFile"></span></td>
+        <td width="15" align="right"><input name="InquiryRunCSV" type="button" class="LuaButton" id="InquiryRunCSV" value="Run CSV"></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan=7><h2>
+          <span>Tooling</span>
+          </h2>
+        </td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r");">Profile Bit:</label></td>
+        <td colspan="5" bgcolor="#336600" class="ToolNameLabel"><span id="ToolNameLabel1">-</span></td>
+        <td class="h1-l"><input id = "ToolChooseButton1" class="ToolPicker" name = "ToolChooseButton1" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Pocket Bit:</label></td>
+        <td colspan="5" bgcolor="#009999" class="ToolNameLabel"><span id="ToolNameLabel2">-</span></td>
+        <td class="h1-l"><input id = "ToolChooseButton2" class="ToolPicker" name = "ToolChooseButton2" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Pocket Clearing Bit:</label></td>
+        <td colspan="5" bgcolor="#009999" class="ToolNameLabel"><span id="ToolNameLabel3">-</span></td>
+        <td class="h1-l"><input id = "ToolChooseButton3" class="ToolPicker" name = "ToolChooseButton3" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Panel Forming Bit:</label></td>
+        <td colspan="5" bgcolor="#0000FF" class="ToolNameLabel"><span id="ToolNameLabel4">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton4" class="ToolPicker" name = "ToolChooseButton4" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Inside Edge Bit:</label></td>
+        <td colspan="5" bgcolor="#666666" class="ToolNameLabel"><span id="ToolNameLabel5">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton5" class="ToolPicker" name = "ToolChooseButton5" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Outside Edge Bit:</label></td>
+        <td colspan="5" bgcolor="#666666" class="ToolNameLabel"><span id="ToolNameLabel6">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton6" class="ToolPicker" name = "ToolChooseButton6" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Scribe Line Bit:</label></td>
+        <td colspan="5" bgcolor="#993333" class="ToolNameLabel"><span id="ToolNameLabel7">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton7" class="ToolPicker" name = "ToolChooseButton7" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Corner Cleaning Bit:</label></td>
+        <td colspan="5" bgcolor="#009999" class="ToolNameLabel"><span id="ToolNameLabel8">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton8" class="ToolPicker" name = "ToolChooseButton8" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td class="h1-r"><label class="helplabel-r">Fluting Bit:</label></td>
+        <td colspan="5" bgcolor="#0000FF" class="ToolNameLabel"><span id="ToolNameLabel9">-</span></td>
+        <td class="hl-l"><input id = "ToolChooseButton9" class="ToolPicker" name = "ToolChooseButton9" type = "button" value = "Tool"></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="3" class="h1-l"><input id = "InquiryToolClear" class="LuaButton" type = "button" value = "Clear All Tool Selections"></td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+    <table id="HelpMessageOKCancel">
+      <tr>
+        <td colspan=2><h2>
+          <span></span>
+          </h2></td>
+      </tr>
+      <tr>
+
+        <td class="alert-l" id="Door.Alert">.</td>
+        <td class="h1-r" ><input id="ButtonOK" class="FormButton" type="button" value="Close"></td>
+      </tr>
+    </table>
+  </body>
+</html>]]
+-- ====================================================]] -- Name
+  return true
+end -- function end
+-- ====================== END =========================]] -- Name
